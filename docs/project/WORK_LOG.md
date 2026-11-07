@@ -84,6 +84,11 @@
 - `docs/project/PROJECT_STATE.md`
 - `docs/project/WORK_LOG.md`
 
+### Follow-up commit — Platform logout cleanup
+- Removed the obsolete Network/POS `WorkspaceService` / `AppWorkspace` reset from `AuthRepositoryImpl.logout()`; the remote logout request and local `SessionService.terminateSession()` remain intact.
+- Removed the now-unused GetX import from the repository implementation.
+- The package and Dashboard CI results must be read from a run that tests the resulting branch HEAD; earlier in-progress runs for parent SHAs are not evidence for this commit.
+
 ### Verification outcomes and limitations
 - All changed source and documentation files were reviewed against the existing controller, binding, widget, and route contracts.
 - CI package tests passed. Full Dashboard analysis exposed both pre-existing cross-repository issues and presentation issues now corrected in the follow-up update.

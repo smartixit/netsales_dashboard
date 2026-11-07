@@ -40,7 +40,7 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - The standalone windowing package remains reusable and independent; Dashboard-specific sizes and route associations are owned by the host app config.
 
 ## Next steps
-1. Re-run CI after removing the obsolete Platform-inapplicable workspace reset dependency from AuthRepositoryImpl.
+1. Verify the quality-gate run triggered by the latest AuthRepositoryImpl cleanup commit; treat only a run whose tested SHA equals the current branch HEAD as authoritative.
 2. Resolve remaining cross-repository test imports/missing legacy mobile source files under a separately authorized Dashboard foundation/remediation scope.
 3. Once the analyzer gate is green, run the complete Flutter test suite and Windows Debug build.
 4. Perform Windows visual validation of Splash → Login → recovery/OTP/2FA/reset → authenticated handoff, including resize/transition interruption, plus responsive Web, Light/Dark, RTL and keyboard/pointer checks.
