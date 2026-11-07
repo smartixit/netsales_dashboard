@@ -303,6 +303,10 @@ class DesktopWindowingController {
     if (status == WindowOperationStatus.completed && profileId != null) {
       _activeProfileId = profileId;
       final profile = config.profiles[profileId];
+      final window = _window;
+      if (profile != null && window != null) {
+        _applyConstraints(profile, _workAreaFor(window.bounds.toRect()));
+      }
     }
   }
 
