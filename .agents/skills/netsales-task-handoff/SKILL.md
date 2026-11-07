@@ -22,7 +22,7 @@ Ensures that all completed engineering tasks are rigorously verified, cleanly lo
    - Confirm only files within the authorized scope were modified.
 3. **Run Real Verification Commands & Visual QA:**
    - Flutter: Run `flutter analyze` and relevant unit/widget tests.
-   - UI Review: When UI code was changed, verify visual quality, absence of overflow exceptions, responsive layout (mobile & tablet), RTL flow, and dark/light palettes per `flutter-premium-ui-ux`.
+   - UI Review: When UI code was changed, verify desktop window sizes and responsive Web viewports, absence of overflow exceptions, RTL/LTR, keyboard/pointer interaction, and dark/light palettes per `flutter-premium-ui-ux`.
    - Laravel: Run `vendor/bin/pint --format agent` and `vendor/bin/phpunit`.
    - Governance: Run `powershell -ExecutionPolicy Bypass -File scripts/verify-project-governance.ps1`.
 4. **Report Actual Command Outcomes:**
@@ -31,9 +31,9 @@ Ensures that all completed engineering tasks are rigorously verified, cleanly lo
 5. **Classify All Created and Modified Files:**
    - Document every file created, edited, moved, or deleted.
 6. **Update Work History Log:**
-   - Append a new task entry to [`docs/project/WORK_LOG.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/WORK_LOG.md).
+   - Append Dashboard task entries to this repository's `docs/project/WORK_LOG.md`. Never write Dashboard work history to the API repository.
 7. **Update Current Project State Snapshot:**
-   - Update [`docs/project/PROJECT_STATE.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/PROJECT_STATE.md) if the milestone status, blocker status, or authorized next steps have changed.
+   - Update this repository's `docs/project/PROJECT_STATE.md` when Dashboard status, blockers, or authorized next steps change. Update API state only for an explicitly authorized backend task.
 8. **Record Material Decisions in Append-Only Log:**
    - If explicit user approval was received for a decision, update status to `APPROVED` in [`docs/project/DECISION_LOG.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/DECISION_LOG.md).
    - If a new architectural recommendation arose, record it as `PROPOSED`. Never mark an unapproved recommendation as `APPROVED`.
