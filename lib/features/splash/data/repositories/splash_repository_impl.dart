@@ -2,11 +2,11 @@ import 'package:netsales_dashboard/core/routing/app_routes.dart';
 import 'package:netsales_dashboard/features/splash/data/datasources/splash_local_data_source.dart';
 import 'package:netsales_dashboard/features/splash/domain/repositories/splash_repository.dart';
 
-/// تطبيق مستودع الإقلاع بالاعتماد على مصدر البيانات المحلي
+/// Applies the verified startup decision to the Dashboard route graph.
 class SplashRepositoryImpl implements SplashRepository {
-  final SplashLocalDataSource _dataSource;
-
   const SplashRepositoryImpl(this._dataSource);
+
+  final SplashLocalDataSource _dataSource;
 
   @override
   Future<void> initializeServices() {
@@ -15,21 +15,15 @@ class SplashRepositoryImpl implements SplashRepository {
 
   @override
   Future<String> getBootDestination() async {
-    // 1. إذا كان أول تشغيل للتطبيق -> توجيه لجولة التعريف (Onboarding)
-    if (_dataSource.isFirstLaunch) {
-      return AppRoutes.onboarding;
-    }
-
-    // 2. إذا كانت هناك جلسة مصادقة محلية، نتحقق من صحتها وسريانها مع الخادم مباشرة
+    // Platform Dashboard has no onboarding or Network/POS account-selection flow.
+    // A cached session is accepted only after the API validates it.
     if (_dataSource.isAuthenticated) {
       final isValidOnServer = await _dataSource.validateSessionWithServer();
       if (isValidOnServer) {
         return AppRoutes.dashboard;
       }
-      return AppRoutes.welcome;
     }
 
-    // 3. مستخدم غير مسجل أكمل جولة التعريف سابقاً -> توجيه لواجهة الترحيب (Welcome)
-    return AppRoutes.welcome;
+    return AppRoutes.login;
   }
 }

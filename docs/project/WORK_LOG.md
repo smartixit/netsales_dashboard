@@ -29,5 +29,55 @@
 - Verify package API compatibility against installed resolved dependencies.
 - Synchronize `pubspec.lock` through `flutter pub get`.
 - Run package tests/analyzer and fix any failures.
-- Complete actual production Splash/Login/Dashboard route integration after those screens are present.
 - Test Windows animation and user interruption on a real native window.
+
+---
+
+## 2026-11-07 — Splash Screen & Authentication Presentation Delivery
+
+**Authorized scope:** User approved implementation of a premium Splash Screen and Authentication experience using the existing Data/Domain logic, existing GetX architecture, and standalone `desktop_windowing` package.
+
+### Implemented
+- Added a responsive Splash Screen using existing SplashController and SplashBinding.
+- Added shared `AuthScaffold` for a desktop brand/form split and compact responsive layout, with first-class Arabic/RTL composition and theme switching.
+- Implemented Login, Forgot Password, OTP Verification, Two-Factor Authentication, and Password Reset screens using the existing controllers, validators, and shared form/button/PIN/password widgets.
+- Added a clear temporary authenticated landing surface and an unauthorized UX surface; no incomplete operational dashboard modules were fabricated.
+- Registered Splash and all Authentication routes in `AppPages` and retained the existing per-feature GetX Bindings.
+- Defined the missing route constants used by controllers and guards.
+- Adjusted Splash routing to match the actual Platform Dashboard route graph: a server-validated active session proceeds to the authenticated route; otherwise startup reaches Login. Removed unavailable Welcome/Onboarding destinations from this host flow.
+- Updated Login presentation integration to prefill the phone number returned from recovery and removed a compile-time dependency on a missing pending-support dialog widget, using the existing CustomDialog instead.
+- Added Reset Password and Unauthorized route profiles to the Dashboard host window config only. The reusable package under `packages/desktop_windowing` remains independent and untouched.
+
+### Scope boundaries preserved
+- No Laravel API, API contract, Data layer, or Domain Use Case changes.
+- No Network/POS workspace selector, customer registration, or onboarding flow.
+- No duplicate windowing framework and no package source moved under `lib/core`.
+- GetX remains the exclusive state and DI system; screens/widgets added here are declarative.
+
+### Files created
+- `lib/features/splash/presentation/screens/splash_screen.dart`
+- `lib/features/auth/presentation/widgets/auth_scaffold.dart`
+- `lib/features/auth/presentation/screens/login_screen.dart`
+- `lib/features/auth/presentation/screens/forgot_password_screen.dart`
+- `lib/features/auth/presentation/screens/verify_otp_screen.dart`
+- `lib/features/auth/presentation/screens/reset_password_screen.dart`
+- `lib/features/auth/presentation/screens/two_factor_auth_screen.dart`
+- `lib/features/auth/presentation/screens/auth_success_screen.dart`
+- `lib/features/auth/presentation/screens/auth_unauthorized_screen.dart`
+
+### Files modified
+- `lib/core/routing/app_routes.dart`
+- `lib/core/routing/app_pages.dart`
+- `lib/core/config/desktop_windowing_config.dart`
+- `lib/features/splash/data/repositories/splash_repository_impl.dart`
+- `lib/features/splash/presentation/controllers/splash_controller.dart`
+- `lib/features/auth/presentation/bindings/login_binding.dart`
+- `lib/features/auth/presentation/controllers/login_controller.dart`
+- `docs/project/PROJECT_STATE.md`
+- `docs/project/WORK_LOG.md`
+
+### Verification outcomes and limitations
+- All changed source and documentation files were reviewed from the current branch source and assembled as Git objects.
+- Flutter/Dart commands, Windows builds, and rendered visual QA have **not** been executed in this environment. No analyzer/test/build pass is claimed.
+- CI status must be taken from a workflow run that tests the final commit SHA, not from runs associated with the baseline SHA.
+- The authenticated route uses a temporary, explicit handoff screen until the actual Platform Dashboard home feature is implemented.

@@ -1,8 +1,8 @@
 import 'package:desktop_windowing/desktop_windowing.dart';
 import 'package:flutter/widgets.dart';
 
-/// NetSales Dashboard window profiles. Values are calibrated starting points;
-/// each is clamped against the active display work area at runtime.
+/// NetSales Dashboard host profiles. The reusable package remains independent;
+/// these route profiles are application-specific configuration only.
 const WindowingConfig desktopWindowingConfig = WindowingConfig(
   initialProfileId: 'splash',
   profiles: {
@@ -35,7 +35,9 @@ const WindowingConfig desktopWindowingConfig = WindowingConfig(
     '/login': 'authentication',
     '/forgot-password': 'authentication',
     '/verify-otp': 'authentication',
+    '/reset-password': 'authentication',
     '/two-factor-auth': 'authentication',
+    '/unauthorized': 'authentication',
     '/dashboard': 'dashboard',
     '/dev/dashboard-metrics': 'dashboard',
     '/dev/data-grid': 'dashboard',
