@@ -87,7 +87,8 @@ lib/features/<feature_name>/
   - Typography: Reuse `AppTypography` styles (`badgeText`, `bodyLarge`, `titleMedium`, etc.).
   - Radii & Spacing: Reuse `AppRadius.full`, `AppRadius.chip`, `AppRadius.card`, `AppSpacing`.
   - Elevation & Motion: Reuse `AppElevation`, `AppGradients`, `AppMotion`, `AppThemes`.
-  - Breakpoints: Strictly adapt using `AppBreakpoints` (`mobileSmallMax: 360`, `mobileMax: 600`, `tabletMax: 900`, `desktopMax: 1240`).
+  - Desktop layout: Use `AppBreakpoints` and actual `LayoutBuilder` constraints. Keep window management in the reusable `packages/desktop_windowing` package and route-to-profile mapping in the Dashboard host adapter; never issue native resize commands from widgets or `build()`.
+- Web: Keep the interface responsive and do not attempt browser-window resizing.
 - **Permanent Premium UI/UX Standard (Mandatory):**
   - Follow the dedicated `flutter-premium-ui-ux` skill for information architecture, visual hierarchy, and distinct screen composition.
   - Strict prohibition against generic screen templates (e.g., repeating identical card stacks across different business features).
