@@ -26,10 +26,13 @@ Before writing any UI widgets:
 3. Establish a clear reading sequence and visual hierarchy (using typography, weight, and deliberate whitespace rather than competing loud colors).
 4. Apply **progressive disclosure** for secondary details to keep screens clean and uncluttered.
 
-## 4. Multi-Form Factor Adaptation (Mobile vs. Tablet)
-- **Mobile (< 600dp):** Focused, efficient vertical hierarchy, appropriate touch targets, and clear primary actions.
-- **Tablet (≥ 600dp):** Intelligent multi-column layouts, master-detail views, side panels, and constrained content width (`AppBreakpoints.maxContentWidth`). Never stretch mobile lists across full tablet width.
-- Always reuse `AppBreakpoints` (`mobileSmallMax: 360`, `mobileMax: 600`, `tabletMax: 900`, `desktopMax: 1240`).
+## 4. Desktop and Web Adaptive Layout
+- Treat the actual window/viewport constraints as the source of available space; never assume the full monitor width is available.
+- Desktop layouts must support compact laptop windows, standard desktop windows, wide monitors, manual resizing, and maximized states.
+- Use purposeful sidebar collapse, master-detail layouts, multi-column composition, and constrained content widths for data-dense screens.
+- Web must remain responsive without attempting to resize the browser window.
+- Preserve keyboard navigation, focus visibility, pointer affordances, and accessible minimum targets.
+- Reuse `AppBreakpoints` and extend them only through a centralized, documented rule.
 
 ## 5. Design System Token Invariants
 - **Colors:** Mandatory use of `AppColors.primary`, `AppColors.secondary`, `AppColors.tertiary`, and Material 3 surface hierarchy.
@@ -51,4 +54,4 @@ A UI feature is **incomplete** and rejected if it exhibits:
 - Excessive nested cards or visual clutter.
 - Broken responsive layout or awkward stretching.
 - Poor information hierarchy or unverified visual rendering.
-- Visual verification must cover actual affected screens across representative phone/tablet sizes and Light/Dark themes. Never claim visual verification without real rendered evidence.
+- Visual verification must cover actual affected screens across representative desktop window sizes and browser viewports, Light/Dark themes, keyboard/pointer interaction, and RTL/LTR where relevant. Never claim visual verification without real rendered evidence.
