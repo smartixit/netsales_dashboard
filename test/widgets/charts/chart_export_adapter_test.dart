@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:netsales/widgets/charts/charting.dart';
+import 'package:netsales_dashboard/widgets/charts/charting.dart';
 
 void main() {
   group('NetSalesChartsExportAdapter CSV', () {

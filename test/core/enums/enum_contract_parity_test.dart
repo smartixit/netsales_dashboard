@@ -1,21 +1,21 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:netsales/core/enums/backup_status.dart';
-import 'package:netsales/core/enums/device_type.dart';
-import 'package:netsales/core/enums/invoice_payment_status.dart';
-import 'package:netsales/core/enums/linking_challenge_status.dart';
-import 'package:netsales/core/enums/notification_type.dart';
-import 'package:netsales/core/enums/provider_subscription_status.dart';
-import 'package:netsales/core/enums/request_status.dart';
-import 'package:netsales/core/enums/role_key.dart';
-import 'package:netsales/core/enums/role_scope.dart';
-import 'package:netsales/core/enums/sale_type.dart';
-import 'package:netsales/core/enums/user_device_status.dart';
-import 'package:netsales/core/enums/user_status.dart';
-import 'package:netsales/core/enums/wallet_operation_type.dart';
-import 'package:netsales/core/presentation/enums/enum_presentation_registry.dart';
-import 'package:netsales/core/presentation/enums/semantic_tone.dart';
-import 'package:netsales/features/commercial/domain/entities/network_status.dart';
-import 'package:netsales/features/commercial/domain/entities/pos_status.dart';
+import 'package:netsales_dashboard/core/enums/backup_status.dart';
+import 'package:netsales_dashboard/core/enums/device_type.dart';
+import 'package:netsales_dashboard/core/enums/invoice_payment_status.dart';
+import 'package:netsales_dashboard/core/enums/linking_challenge_status.dart';
+import 'package:netsales_dashboard/core/enums/notification_type.dart';
+import 'package:netsales_dashboard/core/enums/provider_subscription_status.dart';
+import 'package:netsales_dashboard/core/enums/request_status.dart';
+import 'package:netsales_dashboard/core/enums/role_key.dart';
+import 'package:netsales_dashboard/core/enums/role_scope.dart';
+import 'package:netsales_dashboard/core/enums/sale_type.dart';
+import 'package:netsales_dashboard/core/enums/user_device_status.dart';
+import 'package:netsales_dashboard/core/enums/user_status.dart';
+import 'package:netsales_dashboard/core/enums/wallet_operation_type.dart';
+import 'package:netsales_dashboard/core/presentation/enums/enum_presentation_registry.dart';
+import 'package:netsales_dashboard/core/presentation/enums/semantic_tone.dart';
+import 'package:netsales_dashboard/core/enums/network_status.dart';
+import 'package:netsales_dashboard/core/enums/pos_status.dart';
 
 void main() {
   group('Cross-Repository Enum Contract Parity Tests', () {

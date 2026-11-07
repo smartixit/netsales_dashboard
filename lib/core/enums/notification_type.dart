@@ -62,7 +62,7 @@ enum NotificationType {
       case NotificationType.securityLoginAlert:
       case NotificationType.securityDeviceBlocked:
       case NotificationType.securityPasswordChanged:
-        return AppRoutes.activeSessions;
+        return AppRoutes.dashboard;
       default:
         return AppRoutes.dashboard;
     }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:netsales/widgets/inputs/custom_switch.dart';
-import 'package:netsales/widgets/inputs/custom_switch_list_tile.dart';
+import 'package:netsales_dashboard/widgets/inputs/custom_switch.dart';
+import 'package:netsales_dashboard/widgets/inputs/custom_switch_list_tile.dart';
 
 void main() {
   Widget wrapWidget(Widget child) {

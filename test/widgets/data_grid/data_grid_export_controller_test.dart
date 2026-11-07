@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:netsales/core/services/file_export_service.dart';
-import 'package:netsales/widgets/data_grid/adapters/app_data_grid_export_controller.dart';
+import 'package:netsales_dashboard/core/services/file_export_service.dart';
+import 'package:netsales_dashboard/widgets/data_grid/adapters/app_data_grid_export_controller.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class _MemoryExportService implements IFileExportService {

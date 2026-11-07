@@ -92,7 +92,7 @@ class AppCryptoService {
     if (_isInitialized) return;
 
     try {
-      _sodium = await SodiumInit.init(_loadPlatformDynamicLibrary);
+      _sodium = await SodiumInit.init();
       _isInitialized = true;
       log(
         '🔒 [Crypto] libsodium initialized successfully (version: ${_sodium?.version})',

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:netsales/widgets/dashboard_layout/dashboard_layout.dart';
+import 'package:netsales_dashboard/widgets/dashboard_layout/dashboard_layout.dart';
 
 void main() {
   final navigation = DashboardNavigationSection(

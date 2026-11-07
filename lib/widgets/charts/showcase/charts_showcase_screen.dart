@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:netsales/core/constants/app_spacing.dart';
-import 'package:netsales/core/themes/app_breakpoints.dart';
-import 'package:netsales/core/themes/app_themes.dart';
-import 'package:netsales/widgets/buttons/custom_button.dart';
-import 'package:netsales/widgets/charts/charting.dart';
+import 'package:netsales_dashboard/core/constants/app_spacing.dart';
+import 'package:netsales_dashboard/core/themes/app_breakpoints.dart';
+import 'package:netsales_dashboard/core/themes/app_themes.dart';
+import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
+import 'package:netsales_dashboard/widgets/charts/charting.dart';
 
 import 'charts_showcase_controller.dart';
 

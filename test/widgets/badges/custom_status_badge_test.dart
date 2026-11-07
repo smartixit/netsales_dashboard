@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:netsales/core/presentation/enums/enum_presentation.dart';
-import 'package:netsales/core/presentation/enums/semantic_tone.dart';
-import 'package:netsales/widgets/badges/custom_chip.dart';
-import 'package:netsales/widgets/badges/custom_status_badge.dart';
+import 'package:netsales_dashboard/core/presentation/enums/enum_presentation.dart';
+import 'package:netsales_dashboard/core/presentation/enums/semantic_tone.dart';
+import 'package:netsales_dashboard/widgets/badges/custom_chip.dart';
+import 'package:netsales_dashboard/widgets/badges/custom_status_badge.dart';
 
 Widget _buildTestApp(Widget child, {ThemeMode mode = ThemeMode.light}) {
   return ScreenUtilInit(
