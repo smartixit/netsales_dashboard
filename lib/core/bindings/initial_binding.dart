@@ -1,0 +1,36 @@
+import 'package:get/get.dart';
+import 'package:netsales_dashboard/core/services/app_exit_service.dart';
+import 'package:netsales_dashboard/core/services/credential_service.dart';
+import 'package:netsales_dashboard/core/services/date_picker_service.dart';
+import 'package:netsales_dashboard/core/services/file_picker_service.dart';
+
+/// ============================================================================
+/// حقن الاعتماديات العام الموحد للتطبيق (Global Application Bindings)
+/// ============================================================================
+/// مخصص حصرياً للخدمات العامة المشتركة عبر التطبيق التي لا تعيق الإقلاع الأولي
+/// في main()، مع منع تكرار حقن الخدمات السيادية المحقونة مسبقاً (Zero Duplication).
+class InitialBinding extends Bindings {
+  @override
+  void dependencies() {
+    // 1. خدمة الخروج الآمن بالنقر المزدوج
+    Get.lazyPut<AppExitService>(() => AppExitService.instance, fenix: true);
+
+    // 2. خدمة منتقي التاريخ والوقت الموحدة
+    Get.lazyPut<DatePickerService>(
+      () => DatePickerService.instance,
+      fenix: true,
+    );
+
+    // 3. خدمة اختيار المرفقات والملفات الموحدة
+    Get.lazyPut<FilePickerService>(
+      () => FilePickerService.instance,
+      fenix: true,
+    );
+
+    // 4. خدمة إدارة الاعتماد المشفرة والمصادقة الحيوية
+    Get.lazyPut<CredentialService>(
+      () => CredentialService.instance,
+      fenix: true,
+    );
+  }
+}

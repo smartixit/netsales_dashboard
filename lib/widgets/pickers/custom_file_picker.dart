@@ -1,0 +1,409 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:netsales_dashboard/core/constants/app_radius.dart';
+import 'package:netsales_dashboard/core/constants/app_spacing.dart';
+import 'package:netsales_dashboard/core/models/app_picked_file_model.dart';
+import 'package:netsales_dashboard/core/services/file_picker_service.dart';
+import 'package:netsales_dashboard/core/themes/app_colors.dart';
+import 'package:netsales_dashboard/core/themes/app_typography.dart';
+import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
+import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_shimmer.dart';
+import 'package:netsales_dashboard/widgets/pickers/widgets/file_card_item.dart';
+import 'package:netsales_dashboard/widgets/pickers/widgets/file_picker_dropzone.dart';
+
+/// أنماط العرض المتاحة لمنتقي الملفات الموحد (CustomFilePicker)
+enum FilePickerDisplayMode {
+  /// نمط السحب والإفلات الكامل (Dropzone)
+  dropzone,
+
+  /// نمط الزر المدمج (Compact Button)
+  button,
+
+  /// نمط بطاقة الاستمارة الرسمية (Form Card)
+  formCard,
+}
+
+/// منتقي المرفقات والملفات المؤسسي فائق التخصيص (CustomFilePicker)
+///
+/// يدعم تحديد سقف عدد الملفات، سقف الأحجام، تصفية الامتدادات، الحماية الأمنية،
+/// والسحب والإفلات على الحاسوب والويب، مع هيكل وميضي احترافي (Skeleton Shimmer) أثناء المعالجة والتحميل.
+class CustomFilePicker extends StatefulWidget {
+  final List<AppPickedFileModel>? initialFiles;
+  final ValueChanged<List<AppPickedFileModel>>? onFilesChanged;
+  final int maxFiles;
+  final int maxFileSizeBytes;
+  final int? maxTotalSizeBytes;
+  final List<String>? allowedExtensions;
+  final FileTypePreset preset;
+  final FilePickerDisplayMode displayMode;
+  final String? label;
+  final String? hint;
+  final bool isRequired;
+  final bool readOnly;
+  final String? Function(List<AppPickedFileModel>?)? validator;
+
+  const CustomFilePicker({
+    super.key,
+    this.initialFiles,
+    this.onFilesChanged,
+    this.maxFiles = 5,
+    this.maxFileSizeBytes = 2 * 1024 * 1024, // 2MB
+    this.maxTotalSizeBytes,
+    this.allowedExtensions,
+    this.preset = FileTypePreset.anySafe,
+    this.displayMode = FilePickerDisplayMode.dropzone,
+    this.label,
+    this.hint,
+    this.isRequired = false,
+    this.readOnly = false,
+    this.validator,
+  });
+
+  /// منشئ مخصص لملف مفرد (Single File / Document)
+  factory CustomFilePicker.single({
+    Key? key,
+    AppPickedFileModel? initialFile,
+    ValueChanged<AppPickedFileModel?>? onFileChanged,
+    int maxFileSizeBytes = 2 * 1024 * 1024,
+    List<String>? allowedExtensions,
+    FileTypePreset preset = FileTypePreset.anySafe,
+    FilePickerDisplayMode displayMode = FilePickerDisplayMode.button,
+    String? label,
+    String? hint,
+    bool isRequired = false,
+    bool readOnly = false,
+  }) {
+    return CustomFilePicker(
+      key: key,
+      initialFiles: initialFile != null ? [initialFile] : null,
+      maxFiles: 1,
+      maxFileSizeBytes: maxFileSizeBytes,
+      allowedExtensions: allowedExtensions,
+      preset: preset,
+      displayMode: displayMode,
+      label: label,
+      hint: hint,
+      isRequired: isRequired,
+      readOnly: readOnly,
+      onFilesChanged: (files) {
+        onFileChanged?.call(files.isNotEmpty ? files.first : null);
+      },
+    );
+  }
+
+  /// منشئ مخصص لجداول البيانات (Excel / CSV)
+  factory CustomFilePicker.spreadsheet({
+    Key? key,
+    List<AppPickedFileModel>? initialFiles,
+    ValueChanged<List<AppPickedFileModel>>? onFilesChanged,
+    int maxFiles = 1,
+    int maxFileSizeBytes = 10 * 1024 * 1024, // 10MB
+    String label = 'ملف كروت الشبكة (Excel / CSV)',
+    String hint = 'xlsx, xls, csv بحد أقصى 10MB',
+    bool isRequired = false,
+    bool readOnly = false,
+  }) {
+    return CustomFilePicker(
+      key: key,
+      initialFiles: initialFiles,
+      onFilesChanged: onFilesChanged,
+      maxFiles: maxFiles,
+      maxFileSizeBytes: maxFileSizeBytes,
+      preset: FileTypePreset.spreadsheetsOnly,
+      displayMode: FilePickerDisplayMode.dropzone,
+      label: label,
+      hint: hint,
+      isRequired: isRequired,
+      readOnly: readOnly,
+    );
+  }
+
+  @override
+  State<CustomFilePicker> createState() => _CustomFilePickerState();
+}
+
+class _CustomFilePickerState extends State<CustomFilePicker> {
+  late final List<AppPickedFileModel> _files;
+  bool _isPicking = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _files = List<AppPickedFileModel>.from(widget.initialFiles ?? []);
+  }
+
+  @override
+  void didUpdateWidget(covariant CustomFilePicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialFiles != null &&
+        widget.initialFiles != oldWidget.initialFiles) {
+      _files
+        ..clear()
+        ..addAll(widget.initialFiles!);
+    }
+  }
+
+  bool get _canAddMore => _files.length < widget.maxFiles;
+
+  Future<void> _pickFiles() async {
+    if (widget.readOnly || !_canAddMore || _isPicking) return;
+
+    setState(() => _isPicking = true);
+    try {
+      final remainingSlots = widget.maxFiles - _files.length;
+      final pickedList = await FilePickerService.instance.pickMultiFiles(
+        allowedExtensions: widget.allowedExtensions,
+        preset: widget.preset,
+        maxFiles: remainingSlots,
+        maxSizeBytes: widget.maxFileSizeBytes,
+        maxTotalSizeBytes: widget.maxTotalSizeBytes,
+      );
+
+      if (pickedList.isNotEmpty) {
+        setState(() {
+          _files.addAll(pickedList);
+        });
+        widget.onFilesChanged?.call(List.unmodifiable(_files));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isPicking = false);
+      }
+    }
+  }
+
+  void _handleDroppedFiles(List<AppPickedFileModel> dropped) {
+    if (widget.readOnly || !_canAddMore || _isPicking) return;
+
+    final remainingSlots = widget.maxFiles - _files.length;
+    final toAdd = dropped.take(remainingSlots).toList();
+
+    if (toAdd.isNotEmpty) {
+      setState(() {
+        _files.addAll(toAdd);
+      });
+      widget.onFilesChanged?.call(List.unmodifiable(_files));
+    }
+  }
+
+  void _removeFile(int index) {
+    if (widget.readOnly || _isPicking) return;
+    setState(() {
+      _files.removeAt(index);
+    });
+    widget.onFilesChanged?.call(List.unmodifiable(_files));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return FormField<List<AppPickedFileModel>>(
+      initialValue: _files,
+      validator: widget.validator,
+      builder: (fieldState) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 1. الترويسة والعنوان (إذا وجد)
+            if (widget.label != null) ...[
+              _FilePickerHeader(
+                label: widget.label!,
+                hint: widget.hint,
+                isRequired: widget.isRequired,
+                currentCount: _files.length,
+                maxFiles: widget.maxFiles,
+              ),
+              AppSpacing.vSm,
+            ],
+
+            // 2. منطقة الإدخال والاختيار بحسب النمط
+            if (!widget.readOnly && _canAddMore) ...[
+              if (widget.displayMode == FilePickerDisplayMode.dropzone ||
+                  widget.displayMode == FilePickerDisplayMode.formCard)
+                FilePickerDropzone(
+                  onBrowse: _pickFiles,
+                  onDroppedFiles: _handleDroppedFiles,
+                  enabled: !_isPicking,
+                  subtitle:
+                      widget.hint ??
+                      'الحد الأقصى: ${widget.maxFiles} ملفات (${widget.maxFileSizeBytes ~/ (1024 * 1024)}MB لكل ملف)',
+                )
+              else
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: CustomButton.outline(
+                    text: widget.maxFiles > 1 ? 'إرفاق ملفات' : 'إرفاق ملف',
+                    icon: Icons.attach_file_rounded,
+                    loading: _isPicking,
+                    onPressed: _isPicking ? null : _pickFiles,
+                  ),
+                ),
+            ],
+
+            // 3. رسالة خطأ التحقق إن وجدت
+            if (fieldState.hasError) ...[
+              AppSpacing.vXs,
+              Text(
+                fieldState.errorText!,
+                style: AppTypography.labelSmall.copyWith(color: colors.error),
+              ),
+            ],
+
+            // 4. قائمة الملفات المرفقة مع بطاقة الـ Skeleton الوميضية أثناء المعالجة
+            if (_files.isNotEmpty || _isPicking) ...[
+              AppSpacing.vMd,
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _files.length + (_isPicking ? 1 : 0),
+                separatorBuilder: (context, i) => AppSpacing.vSm,
+                itemBuilder: (context, index) {
+                  if (index < _files.length) {
+                    final file = _files[index];
+                    return FileCardItem(
+                      file: file,
+                      readOnly: widget.readOnly,
+                      onRemove: () => _removeFile(index),
+                    );
+                  }
+                  return _buildFileSkeletonCard(colors);
+                },
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+
+  /// هيكل وميضي يحاكي بطاقة الملف الفردي بدقة (File Card Skeleton)
+  Widget _buildFileSkeletonCard(AppColors colors) {
+    return CustomSkeletonShimmer(
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: colors.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          border: Border.all(
+            color: colors.outlineVariant.withValues(alpha: 0.35),
+            width: 1.w,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44.r,
+              height: 44.r,
+              decoration: BoxDecoration(
+                color: colors.surfaceContainerHigh,
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+              ),
+            ),
+            AppSpacing.hMd,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 140.w,
+                    height: 14.h,
+                    decoration: BoxDecoration(
+                      color: colors.surfaceContainerHigh,
+                      borderRadius: BorderRadius.circular(AppRadius.xs),
+                    ),
+                  ),
+                  AppSpacing.vXs,
+                  Container(
+                    width: 80.w,
+                    height: 10.h,
+                    decoration: BoxDecoration(
+                      color: colors.surfaceContainerHigh,
+                      borderRadius: BorderRadius.circular(AppRadius.xs),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            AppSpacing.hSm,
+            Container(
+              width: 32.r,
+              height: 32.r,
+              decoration: BoxDecoration(
+                color: colors.surfaceContainerHigh,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// ترويسة حقل منتقي الملفات
+class _FilePickerHeader extends StatelessWidget {
+  final String label;
+  final String? hint;
+  final bool isRequired;
+  final int currentCount;
+  final int maxFiles;
+
+  const _FilePickerHeader({
+    required this.label,
+    this.hint,
+    required this.isRequired,
+    required this.currentCount,
+    required this.maxFiles,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return Row(
+      children: [
+        Text(
+          label,
+          style: AppTypography.titleSmall.copyWith(
+            color: colors.onSurface,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        if (isRequired) ...[
+          AppSpacing.hXxs,
+          Text(
+            '*',
+            style: AppTypography.titleSmall.copyWith(
+              color: colors.error,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+        const Spacer(),
+        if (maxFiles > 1)
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.xxs,
+            ),
+            decoration: BoxDecoration(
+              color: colors.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(AppRadius.full),
+            ),
+            child: Text(
+              '$currentCount / $maxFiles',
+              style: AppTypography.labelSmall.copyWith(
+                color: colors.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
