@@ -77,7 +77,7 @@ Every data-driven screen must implement:
 ## 7. Proportionate Visual QA Gate
 Before reporting any UI feature complete:
 1. **Targeted Verification:** Visual verification must specifically cover the actual screens affected by the UI task.
-2. **Representative Viewports:** Test at representative phone and tablet sizes using widget tests or rendered inspection.
+2. **Representative Viewports:** Test compact, standard, and wide desktop window sizes plus responsive Web viewports using widget tests or rendered inspection.
 3. **Theme Coverage:** Verify both Light and Dark theme palettes.
 4. **No Unrendered Claims:** Inspect rendered output when the environment allows it; never claim visual verification without real rendered evidence.
 5. **Quality Standard:** Confirm zero layout overflows (`RenderFlex overflowed`) and responsive user feedback.
