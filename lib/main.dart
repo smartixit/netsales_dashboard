@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:desktop_windowing/desktop_windowing.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/bindings/initial_binding.dart';
 import 'package:netsales_dashboard/core/constants/app_constants.dart';
+import 'package:netsales_dashboard/core/config/desktop_windowing_config.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/exceptions/app_exception.dart';
 import 'package:netsales_dashboard/core/routing/app_pages.dart';
@@ -166,14 +168,28 @@ void main() async {
   // Edge-to-Edge (Android 15+ standard) — Guaranteed modern system bars
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
+  // Configure the desktop window before the first visible Flutter frame.
+  final windowing = DesktopWindowingController(config: desktopWindowingConfig);
+  try {
+    await windowing.initialize();
+  } catch (error, stackTrace) {
+    log('Desktop window initialization failed: $error', stackTrace: stackTrace);
+  }
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    unawaited(windowing.show());
+  });
+
   // 5. إطلاق الواجهة الرئيسية فوراً (Instant Native Splash Dismissal & Fast First Frame)
   // ملاحظة: الخدمات الثقيلة (Firebase/FCM, Libsodium, DeviceInfo, Ping) تُهيأ
   // بالتوازي وبشكل غير حاجب داخل SplashController أثناء دوران شاشة الإقلاع الأنيقة.
-  runApp(const MyApp());
+  runApp(MyApp(windowing: windowing));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.windowing});
+
+  final DesktopWindowingController windowing;
 
   @override
   Widget build(BuildContext context) {
@@ -193,6 +209,11 @@ class MyApp extends StatelessWidget {
             initialBinding: InitialBinding(),
             initialRoute: AppPages.initial,
             getPages: AppPages.routes,
+            routingCallback: (routing) {
+              if (routing != null) {
+                unawaited(windowing.applyRoute(routing.current));
+              }
+            },
             unknownRoute: GetPage(
               name: AppRoutes.notFound,
               page: () => const CustomNotFound(),
