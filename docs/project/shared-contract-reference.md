@@ -14,7 +14,7 @@ This document provides direct mapping from Flutter feature domains to their cano
 | **API Wire Contracts & Enums** | [`API_CONTRACTS.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/API_CONTRACTS.md) | Parse exact Enum wire values and map translated `*_label` fields. |
 | **RBAC & Tenant Scoping** | [`RBAC_AND_TENANT_CONTEXT.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/RBAC_AND_TENANT_CONTEXT.md) | Follow the endpoint's actual scope; do not invent tenant headers for global Platform Scope requests. |
 | **Financial Authority** | [`FINANCIAL_INVARIANTS.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/FINANCIAL_INVARIANTS.md) | **Zero client-side calculations.** Render authoritative numbers; treat previews as non-binding. |
-| **Active Project State** | [`PROJECT_STATE.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/PROJECT_STATE.md) | Check current authorized milestone before coding. |
+| **Active Project State** | `docs/project/PROJECT_STATE.md` | Check Dashboard-specific milestones and blockers before coding. |
 | **Decision Register** | [`DECISION_LOG.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/DECISION_LOG.md) | Adhere to `APPROVED` decisions; never implement `PROPOSED` decisions without authorization. |
 | **Work History** | [`WORK_LOG.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/WORK_LOG.md) | Log all executed tasks and verification outcomes. |
 
