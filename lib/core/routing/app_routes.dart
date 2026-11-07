@@ -7,6 +7,8 @@ abstract final class AppRoutes {
 
   // مسار البداية والتحقق الأولي
   static const String initial = '/splash';
+  static const String login = '/login';
+  static const String notFound = '/not-found';
 
   static const String dataGridShowcase = '/dev/data-grid';
 }
