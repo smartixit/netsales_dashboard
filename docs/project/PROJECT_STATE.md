@@ -25,23 +25,23 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - Applied follow-up analyzer fixes to the new presentation files: imported the shared color extension where used, removed an unused route-file import, and used idiomatic interpolation in UI strings.
 
 ## Verification status
-- GitHub Actions run [#44](https://github.com/smartixit/netsales_dashboard/actions/runs/42404700997) tested commit `95d249c25bd1dca578ebf9068671ef62097383b8`.
-- The `Desktop windowing package tests` job passed, including dependency resolution, `dart analyze packages/desktop_windowing`, and `flutter test packages/desktop_windowing/test`.
-- The Windows job passed toolchain setup and `flutter pub get --enforce-lockfile`, then failed at full `flutter analyze`. The analyzer reported 990 issues (862 errors, 28 warnings, 100 infos) on that commit. The initial analyzer diagnostics in the newly added screens (missing AppColors extension imports) and one unused route import were corrected in the follow-up source update.
-- The same analyzer output also includes errors in unchanged files, including `lib/features/auth/data/repositories/auth_repository_impl.dart` references to unavailable `WorkspaceService` / `AppWorkspace`, plus test files importing `package:netsales/...` and missing source files from the separate mobile repository. These were not changed because they are outside the requested presentation scope.
+- GitHub Actions run [#44](https://github.com/smartixit/netsales_dashboard/actions/runs/42404700997) tested commit `95d249c25bd1dca578ebf9068671ef62097383b8`. Its package job passed. Full analysis reported 990 issues (862 errors, 28 warnings, 100 infos); the diagnostics in the newly added Auth presentation files and the unused AppPages import were corrected in the next source update.
+- GitHub Actions run [#45](https://github.com/smartixit/netsales_dashboard/actions/runs/42405672764) tested commit `0f6a67e9edf1cda4fe344d8b3e46277c92595a1d`. The package job passed, as did Windows toolchain setup and `flutter pub get --enforce-lockfile`. Full analysis reported 975 issues (855 errors, 27 warnings, 93 infos). The changed Splash/Auth presentation files and route/config files had no remaining analyzer diagnostics.
+- In run #45, the remaining changed-scope diagnostics were three errors in the unchanged `AuthRepositoryImpl.logout()` workspace reset referencing missing `WorkspaceService` and `AppWorkspace`. This branch is the standalone Platform Dashboard and has no Network/POS workspace service. The follow-up removes only that obsolete workspace reset; the remote logout request and local `SessionService.terminateSession()` remain intact.
+- Other analyzer failures remain in untouched files, including tests importing `package:netsales/...` and source files from the separate mobile repository. The analyzer run still fails on these existing cross-repository references.
 - The workflow skipped the complete Flutter test suite and Windows Debug build because the analyzer step failed. No success is claimed for those checks.
 - Native animation behavior, manual resize interruption, and rendered visual QA on a real Windows/Web viewport remain unverified.
 
 ## Known baseline blockers and boundaries
 - The copied application bootstrap may still contain mobile-oriented initializations or references to mobile classes; this task did not expand into a bootstrap-wide remediation.
-- Full Dashboard analyzer health is not clean. Existing cross-repository test imports and unavailable workspace infrastructure in unchanged files remain outside this task.
+- Full Dashboard analyzer health is not clean. Existing cross-repository test imports and missing source files from the separate mobile repository remain outside the requested Auth/Splash presentation scope.
 - Platform Scope only: no Network/POS workspace selector, onboarding, or commercial account-registration screens were introduced.
 - Client guards are UX navigation only. Laravel remains the sole authentication and authorization authority.
 - The standalone windowing package remains reusable and independent; Dashboard-specific sizes and route associations are owned by the host app config.
 
 ## Next steps
-1. Re-run CI on the follow-up commit to confirm the new presentation diagnostics are cleared and classify remaining analyzer errors.
-2. Fix unrelated baseline analyzer/test import issues only under a separately authorized Dashboard foundation/remediation scope.
+1. Re-run CI after removing the obsolete Platform-inapplicable workspace reset dependency from AuthRepositoryImpl.
+2. Resolve remaining cross-repository test imports/missing legacy mobile source files under a separately authorized Dashboard foundation/remediation scope.
 3. Once the analyzer gate is green, run the complete Flutter test suite and Windows Debug build.
 4. Perform Windows visual validation of Splash → Login → recovery/OTP/2FA/reset → authenticated handoff, including resize/transition interruption, plus responsive Web, Light/Dark, RTL and keyboard/pointer checks.
 5. Implement the actual Platform Dashboard home feature as its own authorized delivery, then replace the temporary authenticated handoff route.

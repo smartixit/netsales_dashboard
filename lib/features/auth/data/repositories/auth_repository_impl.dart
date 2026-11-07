@@ -231,10 +231,9 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (_) {
       // نتسامح مع أخطاء انقطاع الشبكة أثناء تسجيل الخروج لضمان تنظيف الجلسة المحلية دوماً
     } finally {
+      // The standalone Platform Dashboard has no Network/POS workspace context.
+      // Terminating the platform session is the complete local logout operation.
       await SessionService.to.terminateSession();
-      if (Get.isRegistered<WorkspaceService>()) {
-        await WorkspaceService.to.setActiveWorkspace(AppWorkspace.unsupported);
-      }
     }
   }
 }

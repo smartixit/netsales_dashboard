@@ -20,13 +20,16 @@
 - `3600b0f6aec24740ee15d028b88cca380b9cb835` — read-only desktop-focused CI workflow.
 - Subsequent governance updates are recorded in branch history.
 - `95d249c25bd1dca578ebf9068671ef62097383b8` — initial Splash/Auth UI, route registration, and host config integration.
+- `0f6a67e9edf1cda4fe344d8b3e46277c92595a1d` — follow-up fixes for Auth presentation analyzer diagnostics and desktop Authentication window sizing.
 
 ### Verification
 - Repository files and official `window_manager 0.6.0` API documentation inspected.
 - GitHub Actions run #44: `Desktop windowing package tests` **passed** — dependency resolution, package analysis, and package tests all succeeded.
-- GitHub Actions run #44: Windows toolchain setup and `flutter pub get --enforce-lockfile` **passed**. Full `flutter analyze` **failed** with 990 issues (862 errors, 28 warnings, 100 infos) across the Dashboard. The analyzer identified missing shared color-extension imports and an unused import in the newly added presentation files; these are corrected in the follow-up source update.
-- Remaining analyzer examples in unchanged files include missing `WorkspaceService` / `AppWorkspace` references in `lib/features/auth/data/repositories/auth_repository_impl.dart`, and tests importing `package:netsales/...` source files which are not dependencies/paths of this repository.
-- CI skipped the full Flutter tests and Windows Debug build because `flutter analyze` failed. Those checks are not reported as passing.
+- GitHub Actions run #44: Windows toolchain setup and `flutter pub get --enforce-lockfile` **passed**. Full `flutter analyze` **failed** with 990 issues (862 errors, 28 warnings, 100 infos); the missing color-extension imports and unused AppPages import in the new presentation files were corrected.
+- GitHub Actions run #45: package analysis/tests, Windows toolchain setup, and `flutter pub get --enforce-lockfile` **passed**. Full `flutter analyze` **failed** with 975 issues (855 errors, 27 warnings, 93 infos). No remaining diagnostics were reported in the changed Splash/Auth presentation, route, or host window config files.
+- Run #45 isolated three errors in `AuthRepositoryImpl.logout()` from its obsolete `WorkspaceService` / `AppWorkspace` reset. The Platform Dashboard does not have Network/POS workspace state; the follow-up removes only that reset while preserving the remote logout request and local `SessionService.terminateSession()` call.
+- Other failures remain in unchanged legacy/test files, including imports of `package:netsales/...` and mobile source paths not present in this repository.
+- CI skipped full Flutter tests and Windows Debug build because full `flutter analyze` failed. Those checks are not reported as passing.
 - No real Windows window or browser was available for rendered visual QA; resize animation, interruption, keyboard/pointer, and RTL verification remain outstanding.
 
 ### Outstanding
