@@ -15,10 +15,6 @@
   - **NOT** a voucher-card inventory management app (no card vaults, serial numbers, PIN reveals, or physical warehouse stock).
   - **NOT** a consumer retail checkout POS.
   - **NOT** a router/RADIUS gateway configuration tool.
-- **Explicit Anti-Definitions:**
-  - **NOT** a voucher-card inventory management app (no card vaults, serial numbers, PIN reveals, or physical warehouse stock).
-  - **NOT** a consumer retail checkout POS (no retail sales to end-user citizens).
-  - **NOT** a router/RADIUS gateway configuration tool.
 
 ## 2. Financial Authority — Zero Client-Side Accounting
 - The Laravel API backend is the **100% authoritative entity** for all prices, package tariffs, contractual discounts, invoice line items, wallet balances, credit ceilings, debt aging tiers, and FIFO repayment allocations.
