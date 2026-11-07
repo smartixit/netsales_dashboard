@@ -78,6 +78,7 @@ jobs:
           cmake --version
 
       - name: Resolve dependencies and verify lockfile
+        id: resolve_dependencies
         run: |
           flutter pub get
           flutter pub get --enforce-lockfile
@@ -85,10 +86,22 @@ jobs:
       - name: Analyze complete dashboard
         run: flutter analyze
 
+      - name: Analyze Splash and Authentication delivery scope
+        if: ${{ !cancelled() && steps.resolve_dependencies.outcome == 'success' }}
+        run: >
+          dart analyze
+          lib/features/splash
+          lib/features/auth
+          lib/core/routing/app_routes.dart
+          lib/core/routing/app_pages.dart
+          lib/core/config/desktop_windowing_config.dart
+
       - name: Run complete Flutter test suite
+        if: ${{ !cancelled() && steps.resolve_dependencies.outcome == 'success' }}
         run: flutter test
 
       - name: Compile Windows Debug application
+        if: ${{ !cancelled() && steps.resolve_dependencies.outcome == 'success' }}
         env:
           CMAKE_POLICY_VERSION_MINIMUM: '3.5'
         run: flutter build windows --debug --verbose

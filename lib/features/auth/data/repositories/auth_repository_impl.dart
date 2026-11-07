@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/exceptions/app_exception.dart';
 import 'package:netsales_dashboard/core/models/user_model.dart';
 import 'package:netsales_dashboard/core/models/user_session_model.dart';

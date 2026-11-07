@@ -22,6 +22,13 @@
 - `95d249c25bd1dca578ebf9068671ef62097383b8` — initial Splash/Auth UI, route registration, and host config integration.
 - `0f6a67e9edf1cda4fe344d8b3e46277c92595a1d` — follow-up fixes for Auth presentation analyzer diagnostics and desktop Authentication window sizing.
 
+### Follow-up — CI #47 diagnosis and quality-gate correction
+- Run #47 tested `0300c6d7fe723d1aa5b82d22b2bd805c09bbd5c0`. The standalone windowing package analysis and tests passed, as did Windows toolchain setup and dependency lockfile verification.
+- Full analysis failed with 973 diagnostics (853 errors, 27 warnings, 93 infos). One error in the Auth repository was caused by removing the GetX import even though the permission refresh path still uses `Get.isRegistered<PermissionService>()`; restore that import. The earlier removal of the Network/POS workspace reset from logout is correct and remains.
+- The remaining errors are concentrated in unrelated legacy Dashboard areas: enum contract parity tests, Charts showcase/adapters, and legacy `package:netsales/...` imports/source references. The complete test suite and Windows build were skipped by the former fail-fast workflow.
+- Update the quality workflow to run a focused Splash/Auth analyzer, the complete test suite, and the Windows Debug build after dependency resolution even when the full-project analyzer reports baseline errors. The full analyzer remains a visible failing gate; no errors are suppressed.
+- Do not claim full test/build success until the resulting run reports those steps complete with successful conclusions.
+
 ### Verification
 - Repository files and official `window_manager 0.6.0` API documentation inspected.
 - GitHub Actions run #44: `Desktop windowing package tests` **passed** — dependency resolution, package analysis, and package tests all succeeded.
@@ -33,9 +40,8 @@
 - No real Windows window or browser was available for rendered visual QA; resize animation, interruption, keyboard/pointer, and RTL verification remain outstanding.
 
 ### Outstanding
-- Re-run CI after the follow-up presentation fixes.
-- Resolve unrelated baseline analyzer blockers under a separately authorized foundation-remediation task.
-- Run the complete Flutter test suite and Windows Debug build after the analyzer gate is clean.
+- Verify the new focused analyzer, full analyzer, test suite, and Windows Debug build independently on the next current-HEAD CI run.
+- Resolve unrelated baseline analyzer blockers under a separately scoped foundation-remediation task.
 - Test Windows animation and user interruption on a real native window.
 
 ---
