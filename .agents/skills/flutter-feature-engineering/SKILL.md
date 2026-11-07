@@ -92,7 +92,7 @@ lib/features/<feature_name>/
 - **Permanent Premium UI/UX Standard (Mandatory):**
   - Follow the dedicated `flutter-premium-ui-ux` skill for information architecture, visual hierarchy, and distinct screen composition.
   - Strict prohibition against generic screen templates (e.g., repeating identical card stacks across different business features).
-  - Explicit multi-form factor design for mobile (< 600dp) and tablet (≥ 600dp) using `AppBreakpoints`.
+  - Explicit responsive composition for compact, standard, and wide desktop windows and Web viewports using `AppBreakpoints` and actual layout constraints.
 - **Zero Financial Calculations:**
   - Never compute invoice line sums, discount subtotals, or repayment allocations on the client.
   - Display financial amounts originating directly from authoritative Laravel API responses.
