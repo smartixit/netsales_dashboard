@@ -16,7 +16,7 @@ This document provides direct mapping from Flutter feature domains to their cano
 | **Financial Authority** | [`FINANCIAL_INVARIANTS.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/FINANCIAL_INVARIANTS.md) | **Zero client-side calculations.** Render authoritative numbers; treat previews as non-binding. |
 | **Active Project State** | `docs/project/PROJECT_STATE.md` | Check Dashboard-specific milestones and blockers before coding. |
 | **Decision Register** | `docs/project/DECISION_LOG.md` | Follow Dashboard-specific decisions; shared API decisions remain in the API repository. |
-| **Work History** | [`WORK_LOG.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/WORK_LOG.md) | Log all executed tasks and verification outcomes. |
+| **Work History** | `docs/project/WORK_LOG.md` | Record Dashboard execution history locally. |
 
 ---
 
