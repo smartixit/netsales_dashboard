@@ -28,4 +28,4 @@ This document provides direct mapping from Flutter feature domains to their cano
    - Use `lib/core/services/` for system services (`ApiService`, `WorkspaceService`, `SessionService`, `ThemeService`, `StorageService`, etc.).
    - Use `lib/core/themes/` and `lib/core/constants/` for tokens (`AppColors`, `AppTypography`, `AppRadius`, `AppSpacing`, `AppElevation`, `AppGradients`, `AppMotion`, `AppThemes`).
 3. **Use GetX exclusively:** Prohibit Provider, Riverpod, Bloc, or stateful widget state machines.
-4. **Adaptive Breakpoints:** Build all screens to adapt across `AppBreakpoints` (Mobile: <=600dp, Tablet: <=900dp, Desktop: <=1240dp).
+4. **Desktop and Web Adaptation:** Build from actual window/viewport constraints; keep native window management inside `packages/desktop_windowing` and do not attempt to resize browser windows.
