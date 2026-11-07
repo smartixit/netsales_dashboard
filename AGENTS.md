@@ -1,17 +1,20 @@
-# NETSALES (FLUTTER) — CONSTITUTIONAL INVARIANTS & PERMANENT AGENT GOVERNANCE
+# NETSALES DASHBOARD — CONSTITUTIONAL INVARIANTS & PERMANENT AGENT GOVERNANCE
 
 ## 0. Permanent Mandatory Session Protocol & Technical Governance Gate
 - **Mandatory Session Protocol Invocation:** Every Antigravity session and task MUST begin by executing the `netsales-session-protocol` skill before performing any task analysis, project planning, or code modification.
-- **Exhaustive Dynamic Governance Reading:** The agent must discover the complete governance inventory across BOTH repositories (`smartixit/netsales` and `smartixit/netsales_api`) and read every mandatory document line-by-line (100% coverage).
+- **Exhaustive Dynamic Governance Reading:** The agent must discover the complete governance inventory across the active Dashboard repository (`smartixit/netsales_dashboard`) and the shared API repository (`smartixit/netsales_api`), then read every mandatory document line-by-line (100% coverage). The original `smartixit/netsales` repository is a source reference for inherited Flutter components only, not the Dashboard product scope.
 - **Technical Preflight Write Gate:** Mutating tools (`write_file`, `edit_file`, `run_command`, etc.) are technically locked by the `PreToolUse` governance hook until the per-session ledger records 100% complete reading coverage across both repositories. Zero project file modifications are permitted before the session protocol reaches `COMPLETE`.
 - **Approved Working Baseline Discipline:** Preserved baselines, confirmed decisions in `docs/project/DECISION_LOG.md`, and project status in `docs/project/PROJECT_STATE.md` must be respected. Never assume approval, modify application code outside authorization, or introduce unapproved architecture changes.
 
-## 1. Product Identity and Scope Restrictions
-- NetSales is an enterprise **B2B Network and Point-of-Sale (POS) Sales Management Platform**.
-- **Mobile/Tablet Scope Restriction:** The Flutter application is strictly restricted to two operating workspaces:
-  1. **Network Workspace** (`NETWORK_OWNER`, `NETWORK_USER`, `NETWORK_ACCOUNTANT`)
-  2. **POS Workspace** (`POS_AGENT`, `POS_USER`, `POS_ACCOUNTANT`)
-- **Platform Scope Exclusion:** `SUPER_ADMIN` and Platform SaaS licensing are strictly outside the mobile application's scope (reserved for Windows desktop). Do not introduce Platform Workspace navigation or platform management screens.
+## 1. Product Identity and Scope
+- This repository is the **standalone NetSales Platform Dashboard** for platform-scope users: `SUPER_ADMIN`, `SUPPORT_AGENT`, and platform `ACCOUNTANT`.
+- Its primary targets are Windows desktop and responsive Web. It is not the Network/POS mobile client and must not inherit its workspace exclusion as a Dashboard prohibition.
+- Platform responsibilities include SaaS subscriptions/licensing, platform support, global operations, and platform accounting surfaces exposed by the shared Laravel API contract.
+- Network and POS operational workspaces remain outside this repository's UI scope and belong to `smartixit/netsales`.
+- **Explicit Anti-Definitions:**
+  - **NOT** a voucher-card inventory management app (no card vaults, serial numbers, PIN reveals, or physical warehouse stock).
+  - **NOT** a consumer retail checkout POS.
+  - **NOT** a router/RADIUS gateway configuration tool.
 - **Explicit Anti-Definitions:**
   - **NOT** a voucher-card inventory management app (no card vaults, serial numbers, PIN reveals, or physical warehouse stock).
   - **NOT** a consumer retail checkout POS (no retail sales to end-user citizens).
@@ -73,11 +76,11 @@
   - **Utils (`lib/core/utils/`):** `DateFormatter`, `AmountFormatter`, `TextFormatter`, `FileSizeFormatter`, `FormValidators`, `IdempotencyHelper`, `SystemUiStyleResolver`.
   - **Core Services (`lib/core/services/`):** `ApiService`, `WorkspaceService`, `SessionService`, `ThemeService`, `StorageService`, `CredentialService`, `AppCryptoService`, `AppCacheService`, `InternetConnectionService`, `PermissionService`, `DeviceService`, `PushNotificationService`, `SmsRetrieverService`, `SoundService`, `ShareService`, `UrlLauncherService`, `FilePickerService`, `FileExportService`, `DatePickerService`, `ContactPickerService`, `QrCodeService`, `PublicSettingsService`, `AppExitService`.
   - **Theme & Design Tokens (`lib/core/themes/` & `lib/core/constants/`):** `AppColors`, `AppTypography`, `AppRadius`, `AppSpacing`, `AppBreakpoints`, `AppElevation`, `AppGradients`, `AppMotion`, `AppThemes`.
-- **Responsive Design:** Strict adherence to `AppBreakpoints` across mobile and tablet form factors.
+- **Responsive Design:** Dashboard layouts MUST adapt across desktop window sizes and browser viewports using `AppBreakpoints`, logical constraints, keyboard/pointer interaction, and overflow-safe data-dense layouts. Mobile-sized web layouts remain responsive fallbacks, not a mobile workspace.
 
 ## 5. Milestone Approval Discipline & Project Memory
 - Never implement features or start a new milestone without explicit user approval.
-- All persistent project memory, state, and decisions are canonically documented in `netsales_api/docs/project/` and referenced locally in `docs/project/`.
+- Shared product, financial, authorization, and API contracts remain canonical in `netsales_api/docs/project/`. Dashboard-specific architecture, decisions, status, and work history are maintained locally in this repository's `docs/project/`; do not write Dashboard work logs or decisions into the API repository.
 - Maintain clean handoffs and update `docs/project/WORK_LOG.md` upon completing authorized tasks.
 
 ## 6. Centralized Enum Contract & Semantic Badge Presentation System
