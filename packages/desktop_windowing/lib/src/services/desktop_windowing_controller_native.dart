@@ -31,7 +31,7 @@ class DesktopWindowingController {
 
   late final Ticker _ticker;
   Window? _window;
-  dynamic _listenerId;
+  ListenerId? _listenerId;
   bool _initialized = false;
   bool _nativeAnimation = false;
   String? _activeProfileId;
@@ -300,9 +300,6 @@ class DesktopWindowingController {
     if (status == WindowOperationStatus.completed && profileId != null) {
       _activeProfileId = profileId;
       final profile = config.profiles[profileId];
-      if (profile != null) {
-        _applyProfilePresentationState(profile);
-      }
     }
   }
 
@@ -340,8 +337,12 @@ class DesktopWindowingController {
     );
     final requestedMax = profile.constraints.maximumSize ?? workArea.size;
     final maxSize = Size(
-      math.max(minSize.width, math.min(requestedMax.width, workArea.width)).toDouble(),
-      math.max(minSize.height, math.min(requestedMax.height, workArea.height)).toDouble(),
+      math
+          .max(minSize.width, math.min(requestedMax.width, workArea.width))
+          .toDouble(),
+      math
+          .max(minSize.height, math.min(requestedMax.height, workArea.height))
+          .toDouble(),
     );
     window.minimumSize = minSize.toNative();
     window.maximumSize = maxSize.toNative();
@@ -363,19 +364,6 @@ class DesktopWindowingController {
 
   void _applyInitialPresentationState(WindowPresentationState state) {
     switch (state) {
-      case WindowPresentationState.normal:
-        break;
-      case WindowPresentationState.maximized:
-        _window?.maximize();
-      case WindowPresentationState.fullscreen:
-        if (_window != null) {
-          _window!.isFullScreen = true;
-        }
-    }
-  }
-
-  void _applyProfilePresentationState(WindowProfile profile) {
-    switch (profile.initialState) {
       case WindowPresentationState.normal:
         break;
       case WindowPresentationState.maximized:
