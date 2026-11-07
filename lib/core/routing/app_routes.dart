@@ -11,4 +11,5 @@ abstract final class AppRoutes {
   static const String notFound = '/not-found';
 
   static const String dataGridShowcase = '/dev/data-grid';
+  static const String dashboardMetricsShowcase = '/dev/dashboard-metrics';
 }
