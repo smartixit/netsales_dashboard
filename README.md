@@ -1,16 +1,21 @@
-# NetSales
+# NetSales Platform Dashboard
 
-A new Flutter project.
+Standalone Flutter Dashboard for NetSales Platform Scope roles: `SUPER_ADMIN`, `SUPPORT_AGENT`, and platform `ACCOUNTANT`.
 
-## Getting Started
+## Targets
+- Windows desktop
+- Responsive Web
 
-This project is a starting point for a Flutter application.
+Network and POS operational workspaces remain in the separate `smartixit/netsales` mobile client. Shared product, authorization, financial, and API contracts remain canonical in `smartixit/netsales_api`.
 
-A few resources to get you started if this is your first Flutter project:
+## Architecture
+- Feature-first Clean Architecture with GetX.
+- Laravel API is the sole authorization and financial authority.
+- Reusable dashboard layout, metrics, charts, and DataGrid components live under `lib/widgets`.
+- Reusable desktop window management lives in `packages/desktop_windowing`.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Toolchain
+- Flutter 3.47.9
+- Dart 3.13.7 or the SDK bundled with the selected Flutter release
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Run `flutter pub get`, `flutter analyze`, and `flutter test` from the repository root.
