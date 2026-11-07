@@ -432,8 +432,9 @@ class DesktopWindowingController {
     _cancelTransition(WindowOperationStatus.interruptedByNewRequest);
     _ticker.dispose();
     final window = _window;
-    if (window != null && _listenerId != null) {
-      window.removeListener(_listenerId);
+    final listenerId = _listenerId;
+    if (window != null && listenerId != null) {
+      window.removeListener(listenerId);
     }
     _window = null;
     _initialized = false;

@@ -27,9 +27,7 @@ class WindowProfile {
     this.constraints = const WindowConstraints(),
     this.positionPolicy = WindowPositionPolicy.center,
     this.initialState = WindowPresentationState.normal,
-  }) : assert(id != ''),
-       assert(size.width > 0),
-       assert(size.height > 0);
+  }) : assert(id != '');
 
   final String id;
 

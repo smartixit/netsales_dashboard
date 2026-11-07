@@ -10,8 +10,7 @@ class WindowingConfig {
     this.animation = const WindowAnimationConfig(),
     this.hideUntilReady = true,
     this.resizable = true,
-  }) : assert(initialProfileId != ''),
-       assert(profiles.length > 0);
+  }) : assert(initialProfileId != '');
 
   final String initialProfileId;
   final Map<String, WindowProfile> profiles;

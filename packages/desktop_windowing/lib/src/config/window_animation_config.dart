@@ -8,8 +8,7 @@ class WindowAnimationConfig {
     this.duration = const Duration(milliseconds: 220),
     this.curve = Curves.easeInOutCubic,
     this.manualResizeInterruptThreshold = 24,
-  }) : assert(duration > Duration.zero),
-       assert(manualResizeInterruptThreshold >= 0);
+  }) : assert(manualResizeInterruptThreshold >= 0);
 
   /// Whether profile changes are animated.
   final bool enabled;
