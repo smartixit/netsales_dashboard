@@ -1,4 +1,4 @@
-# NetSales — Shared Contract & Reference Index (Flutter)
+# NetSales Dashboard — Shared Contract & Reference Index
 
 This document provides direct mapping from Flutter feature domains to their canonical source specifications in `netsales_api/docs/project/`.
 
