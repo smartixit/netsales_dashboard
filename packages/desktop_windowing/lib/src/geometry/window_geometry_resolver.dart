@@ -25,8 +25,12 @@ class WindowGeometryResolver {
 
     final minWidth = math.min(minimum.width, safeWorkArea.width).toDouble();
     final minHeight = math.min(minimum.height, safeWorkArea.height).toDouble();
-    final maxWidth = math.max(minWidth, math.min(maximum.width, safeWorkArea.width)).toDouble();
-    final maxHeight = math.max(minHeight, math.min(maximum.height, safeWorkArea.height)).toDouble();
+    final maxWidth = math
+        .max(minWidth, math.min(maximum.width, safeWorkArea.width))
+        .toDouble();
+    final maxHeight = math
+        .max(minHeight, math.min(maximum.height, safeWorkArea.height))
+        .toDouble();
 
     final width = requestedSize.width.clamp(minWidth, maxWidth).toDouble();
     final height = requestedSize.height.clamp(minHeight, maxHeight).toDouble();
