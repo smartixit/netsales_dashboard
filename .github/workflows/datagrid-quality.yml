@@ -40,6 +40,11 @@ jobs:
           flutter --version
           dart --version
 
+      - name: Install Linux desktop native build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes pkg-config libgtk-3-dev libx11-dev libxi-dev
+
       - name: Resolve dependencies
         run: flutter pub get
 
