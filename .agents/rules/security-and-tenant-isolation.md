@@ -10,9 +10,10 @@ description: Flutter client-side authorization boundaries and tenant context pro
 - Flutter checks do **NOT** provide security enforcement.
 - The Laravel API is the sole authorization authority. Never rely on client state to prevent unauthorized data access.
 
-## 2. Tenant Context Propagation
-- When making API calls within a selected Network or POS context, pass the active tenant ID in the required request headers/parameters.
-- Never persist or switch tenant context silently without explicit user action.
+## 2. Platform Scope and Tenant Context
+- Platform Dashboard endpoints MUST follow their actual Laravel route and permission contract. Do not invent or attach Network/POS tenant identifiers to global Platform Scope requests.
+- When a feature explicitly operates on a Network or POS resource, pass the tenant context required by the API and rely on Laravel to validate membership and permission.
+- Never infer platform authority from a client-side role label or route name.
 
 ## 3. Graceful Authorization Failure
-- On 401 Unauthorized or 403 Forbidden responses, the application must handle the failure gracefully (clear invalid session, prompt for re-authentication, or route back to the workspace selector).
+- On 401 Unauthorized or 403 Forbidden responses, handle the failure gracefully through the established session and authorization flow. Platform users must not be redirected into Network/POS workspace selection unless the API contract explicitly requires it.
