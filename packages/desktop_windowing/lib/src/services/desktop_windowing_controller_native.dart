@@ -190,11 +190,11 @@ class DesktopWindowingController {
       );
     }
 
-    _applyConstraints(profile, workArea);
     _pendingProfileId = profileId;
 
     if (!config.animation.enabled) {
       window.bounds = target.toNative();
+      _applyConstraints(profile, workArea);
       _activeProfileId = profileId;
       _pendingProfileId = null;
       return WindowOperationResult(
@@ -203,6 +203,7 @@ class DesktopWindowingController {
       );
     }
 
+    _applyTransitionConstraints(current, target, workArea);
     return _animateBounds(current, target, profileId);
   }
 
@@ -330,6 +331,24 @@ class DesktopWindowingController {
     _nativeAnimation = false;
   }
 
+  void _applyTransitionConstraints(Rect start, Rect target, Rect workArea) {
+    final window = _window!;
+    final minimum = Size(
+      math.min(start.width, target.width).toDouble(),
+      math.min(start.height, target.height).toDouble(),
+    );
+    final maximum = Size(
+      math.max(start.width, target.width).toDouble(),
+      math.max(start.height, target.height).toDouble(),
+    );
+    window.minimumSize = minimum.toNative();
+    window.maximumSize = Size(
+      math.min(maximum.width, workArea.width).toDouble(),
+      math.min(maximum.height, workArea.height).toDouble(),
+    ).toNative();
+    window.isResizable = config.resizable;
+  }
+
   void _applyConstraints(WindowProfile profile, Rect workArea) {
     final window = _window!;
     final requestedMin = profile.constraints.minimumSize ?? Size.zero;
@@ -370,10 +389,12 @@ class DesktopWindowingController {
         break;
       case WindowPresentationState.maximized:
         _window?.maximize();
+        break;
       case WindowPresentationState.fullscreen:
         if (_window != null) {
           _window!.isFullScreen = true;
         }
+        break;
     }
   }
 
