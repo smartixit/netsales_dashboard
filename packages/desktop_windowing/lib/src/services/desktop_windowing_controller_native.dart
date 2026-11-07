@@ -335,13 +335,13 @@ class DesktopWindowingController {
     final window = _window!;
     final requestedMin = profile.constraints.minimumSize ?? Size.zero;
     final minSize = Size(
-      math.min(requestedMin.width, workArea.width),
-      math.min(requestedMin.height, workArea.height),
+      math.min(requestedMin.width, workArea.width).toDouble(),
+      math.min(requestedMin.height, workArea.height).toDouble(),
     );
     final requestedMax = profile.constraints.maximumSize ?? workArea.size;
     final maxSize = Size(
-      math.max(minSize.width, math.min(requestedMax.width, workArea.width)),
-      math.max(minSize.height, math.min(requestedMax.height, workArea.height)),
+      math.max(minSize.width, math.min(requestedMax.width, workArea.width)).toDouble(),
+      math.max(minSize.height, math.min(requestedMax.height, workArea.height)).toDouble(),
     );
     window.minimumSize = minSize.toNative();
     window.maximumSize = maxSize.toNative();
@@ -393,7 +393,7 @@ class DesktopWindowingController {
     return math.max(
       math.max((a.left - b.left).abs(), (a.top - b.top).abs()),
       math.max((a.width - b.width).abs(), (a.height - b.height).abs()),
-    );
+    ).toDouble();
   }
 
   void maximize() => _window?.maximize();
