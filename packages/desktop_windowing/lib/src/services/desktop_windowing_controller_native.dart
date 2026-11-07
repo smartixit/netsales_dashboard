@@ -256,7 +256,8 @@ class DesktopWindowingController {
 
     final progress = (elapsed.inMicroseconds /
             _transitionDuration.inMicroseconds)
-        .clamp(0.0, 1.0);
+        .clamp(0.0, 1.0)
+        .toDouble();
     final easedProgress = config.animation.curve.transform(progress);
     final nextBounds = Rect.lerp(start, target, easedProgress) ?? target;
 
