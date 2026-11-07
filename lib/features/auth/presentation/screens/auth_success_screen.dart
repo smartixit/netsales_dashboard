@@ -15,9 +15,10 @@ class AuthSuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final userName = SessionService.to.currentUser?.userFullName;
-    final greeting = userName?.trim().isNotEmpty == true
-        ? 'مرحباً ' + userName!.trim()
-        : 'مرحباً بك';
+    final greetingName = userName?.trim().isNotEmpty == true
+        ? userName!.trim()
+        : 'بك';
+    final greeting = 'مرحباً $greetingName';
 
     return Scaffold(
       backgroundColor: colors.surface,

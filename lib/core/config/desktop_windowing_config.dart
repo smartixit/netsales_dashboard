@@ -16,9 +16,9 @@ const WindowingConfig desktopWindowingConfig = WindowingConfig(
     ),
     'authentication': WindowProfile(
       id: 'authentication',
-      size: Size(860, 640),
+      size: Size(1040, 720),
       constraints: WindowConstraints(
-        minimumSize: Size(680, 520),
+        minimumSize: Size(900, 620),
       ),
     ),
     'dashboard': WindowProfile(

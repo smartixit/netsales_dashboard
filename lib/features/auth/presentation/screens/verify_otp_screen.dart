@@ -15,9 +15,7 @@ class VerifyOtpScreen extends GetView<VerifyOtpController> {
     return AuthScaffold(
       icon: Icons.mark_email_read_outlined,
       title: 'تحقق من رقم هاتفك',
-      subtitle: 'أدخل رمز التحقق المكوّن من ستة أرقام المرسل إلى ' +
-          controller.maskedPhone +
-          '.',
+      subtitle: 'أدخل رمز التحقق المكوّن من ستة أرقام المرسل إلى ${controller.maskedPhone}.',
       child: Form(
         key: controller.formKey,
         child: Column(
@@ -50,9 +48,7 @@ class VerifyOtpScreen extends GetView<VerifyOtpController> {
               () => CustomButton.text(
                 text: controller.canResend.value
                     ? 'إعادة إرسال الرمز'
-                    : 'إعادة الإرسال بعد ' +
-                        controller.cooldownSeconds.value.toString() +
-                        ' ثانية',
+                    : 'إعادة الإرسال بعد ${controller.cooldownSeconds.value} ثانية',
                 loading: controller.isResending.value,
                 enabled:
                     controller.canResend.value && !controller.isResending.value,

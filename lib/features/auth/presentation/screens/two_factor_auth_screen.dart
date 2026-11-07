@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_radius.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
+import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/utils/form_validators.dart';
 import 'package:netsales_dashboard/features/auth/presentation/controllers/two_factor_auth_controller.dart';
 import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_scaffold.dart';
@@ -16,9 +17,7 @@ class TwoFactorAuthScreen extends GetView<TwoFactorAuthController> {
     return AuthScaffold(
       icon: Icons.phonelink_lock_rounded,
       title: 'تأكيد تسجيل الدخول',
-      subtitle: 'أدخل رمز التحقق المرسل إلى ' +
-          controller.maskedPhone +
-          ' لتأكيد هويتك.',
+      subtitle: 'أدخل رمز التحقق المرسل إلى ${controller.maskedPhone} لتأكيد هويتك.',
       child: Form(
         key: controller.formKey,
         child: Column(
@@ -56,9 +55,7 @@ class TwoFactorAuthScreen extends GetView<TwoFactorAuthController> {
               () => CustomButton.text(
                 text: controller.canResend.value
                     ? 'إعادة إرسال رمز التحقق'
-                    : 'يمكن إعادة الإرسال بعد ' +
-                        controller.cooldownSeconds.value.toString() +
-                        ' ثانية',
+                    : 'يمكن إعادة الإرسال بعد ${controller.cooldownSeconds.value} ثانية',
                 loading: controller.isResending.value,
                 enabled:
                     controller.canResend.value && !controller.isResending.value,
@@ -106,7 +103,7 @@ class _DeviceInfo extends StatelessWidget {
               AppSpacing.hSm,
               Expanded(
                 child: Text(
-                  'تأكيد الجهاز: ' + deviceName,
+                  'تأكيد الجهاز: $deviceName',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
               ),

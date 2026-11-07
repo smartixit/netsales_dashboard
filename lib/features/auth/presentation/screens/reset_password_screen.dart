@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_radius.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
+import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/utils/form_validators.dart';
 import 'package:netsales_dashboard/features/auth/presentation/controllers/reset_password_controller.dart';
 import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_scaffold.dart';
@@ -141,7 +142,7 @@ class _PasswordStrength extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                (controller.passwordScore.value * 100).round().toString() + '%',
+                '${(controller.passwordScore.value * 100).round()}%',
                 style: Theme.of(context).textTheme.labelMedium,
               ),
             ],

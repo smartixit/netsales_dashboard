@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
+import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/utils/form_validators.dart';
 import 'package:netsales_dashboard/features/auth/presentation/controllers/login_controller.dart';
 import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_scaffold.dart';
