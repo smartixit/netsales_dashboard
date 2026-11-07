@@ -8,7 +8,7 @@ This document provides direct mapping from Flutter feature domains to their cano
 
 | Business Area | Canonical Specification File | Flutter Implementation Responsibility |
 |---|---|---|
-| **Product Scope & Anti-Definitions** | [`PRODUCT_SCOPE.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/PRODUCT_SCOPE.md) | Strictly enforce Network and POS workspaces; reject Platform / Card Vault / Consumer POS screens. |
+| **Product Scope & Anti-Definitions** | [`PRODUCT_SCOPE.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/PRODUCT_SCOPE.md) | Expose Platform Scope roles in this Dashboard; keep Network/POS workspaces in the separate mobile client and preserve product anti-definitions. |
 | **Business Domains** | [`DOMAIN_MAP.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/DOMAIN_MAP.md) | Align feature directory names with official system domains. |
 | **System Architecture** | [`ARCHITECTURE.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/ARCHITECTURE.md) | Enforce GetX Controllers, Bindings, and AppPages routing. |
 | **API Wire Contracts & Enums** | [`API_CONTRACTS.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/API_CONTRACTS.md) | Parse exact Enum wire values and map translated `*_label` fields. |
