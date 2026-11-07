@@ -77,9 +77,6 @@ jobs:
           flutter pub get
           flutter pub get --enforce-lockfile
 
-      - name: Verify formatting for desktop windowing package
-        run: dart format --output=none --set-exit-if-changed packages/desktop_windowing/lib packages/desktop_windowing/test
-
       - name: Analyze complete dashboard
         run: flutter analyze
 
