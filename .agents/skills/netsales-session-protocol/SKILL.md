@@ -15,7 +15,7 @@ Establishes an accurate, authoritative understanding of the current NetSales pro
 
 ## 1. Mandatory Dynamic Governance Inventory Reading Procedure
 
-Before modifying any project files, running mutating commands, or performing implementation tasks, every new Antigravity task and conversation must complete this mandatory reading procedure across the active Dashboard repository (`netsales_dashboard`) and the shared API repository (`netsales_api`). The original `netsales` repository is a component-source reference only.:
+Before modifying any project files, running mutating commands, or performing implementation tasks, every new Antigravity task and conversation must complete this mandatory reading procedure across the active Dashboard repository (`netsales_dashboard`) and the shared API repository (`netsales_api`). The original `netsales` repository is a component-source reference only.
 
 1. **Discover Dynamic Inventory:**
    - Scan both repositories dynamically to discover all files across:
