@@ -23,8 +23,6 @@ class AppLocalizations {
     'network_pos_relationship':'علاقة الشبكة ونقطة البيع',
     'required_fields':'حقول مطلوبة',
     'select_network_and_pos_required':'يجب اختيار شبكة ونقطة بيع قبل إنشاء الارتباط.',
-    'required_fields':'Required fields',
-    'select_network_and_pos_required':'Select both a network and a point of sale before creating the relationship.',
     'network_pos_link_creation_note':'اختر شبكة نشطة ونقطة بيع نشطة لإنشاء علاقة تجارية بينهما.',
     'select_network':'اختر مزود الشبكة',
     'select_pos':'اختر نقطة البيع',
@@ -199,6 +197,8 @@ class AppLocalizations {
 
   };
   static const Map<String, String> _english = {
+    'required_fields':'Required fields',
+    'select_network_and_pos_required':'Select both a network and a point of sale before creating the relationship.',
     'network_pos_links':'Network–POS Relationships',
     'network_pos_links_description':'Manage commercial relationships between network providers and points of sale across the platform.',
     'search_network_pos_links':'Search relationships',
