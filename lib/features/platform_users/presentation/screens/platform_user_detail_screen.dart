@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_session_entity.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/controllers/platform_user_detail_controller.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/widgets/platform_user_detail_header.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/widgets/platform_user_identity_panel.dart';
