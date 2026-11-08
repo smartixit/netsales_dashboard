@@ -19,6 +19,7 @@ import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_text_field.dart';
 import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
+import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart' show SnackType;
 
 enum SubscriptionWorkspaceSection { plans, subscriptions, requests }
 
@@ -93,7 +94,7 @@ class PlatformSubscriptionsScreen extends GetView<PlatformSubscriptionsControlle
   Widget _buildFilters(AppLocalizations l10n) => LayoutBuilder(builder: (context, constraints) {
     final search = switch (section) {
       SubscriptionWorkspaceSection.plans => CustomTextField(controller: controller.planSearchController, label: l10n.text('search_subscription_plans'), prefixIcon: const Icon(Icons.search_rounded), isRequired: false, onChanged: controller.onPlanSearchChanged),
-      SubscriptionWorkspaceSection.subscriptions => CustomTextField(controller: controller.subscriptionSearchController, label: l10n.text('search_provider_subscriptions'), prefixIcon: const Icon(Icons.search_rounded), isRequired: false, onChanged: controller.onSubscriptionSearchChanged),
+      SubscriptionWorkspaceSection.subscriptions => const SizedBox.shrink(),
       SubscriptionWorkspaceSection.requests => CustomTextField(controller: controller.requestSearchController, label: l10n.text('search_subscription_requests'), prefixIcon: const Icon(Icons.search_rounded), isRequired: false, onChanged: controller.onRequestSearchChanged),
     };
     final chips = switch (section) {
@@ -117,8 +118,8 @@ class PlatformSubscriptionsScreen extends GetView<PlatformSubscriptionsControlle
       ])),
     };
     return constraints.maxWidth > 900
-      ? Row(children: [SizedBox(width: 340, child: search), SizedBox(width: AppSpacing.md), Expanded(child: chips)])
-      : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [search, SizedBox(height: AppSpacing.sm), chips]);
+      ? (section == SubscriptionWorkspaceSection.subscriptions ? chips : Row(children: [SizedBox(width: 340, child: search), SizedBox(width: AppSpacing.md), Expanded(child: chips)]))
+      : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [if (section != SubscriptionWorkspaceSection.subscriptions) search, if (section != SubscriptionWorkspaceSection.subscriptions) SizedBox(height: AppSpacing.sm), chips]);
   });
 
   Widget _filters(List<Widget> children) => Wrap(spacing: AppSpacing.xs, runSpacing: AppSpacing.xs, children: children);
@@ -138,7 +139,7 @@ class PlatformSubscriptionsScreen extends GetView<PlatformSubscriptionsControlle
             itemBuilder: (context, index) {
               if (index == controller.plans.length) return Center(child: CustomButton.outline(text: l10n.text('load_more'), loading: controller.plansLoading.value, onPressed: controller.plansLoading.value ? null : () => controller.loadPlans(append: true)));
               final plan = controller.plans[index];
-              return SubscriptionPlanCard(plan: plan, l10n: l10n, canEdit: canEdit || canDelete, onEdit: () => _showPlanForm(context, l10n, plan), onToggle: () => _togglePlan(context, l10n, plan), onDelete: () => _deletePlan(context, l10n, plan));
+              return SubscriptionPlanCard(plan: plan, l10n: l10n, canEdit: canEdit, canDelete: canDelete, onEdit: () => _showPlanForm(context, l10n, plan), onToggle: () => _togglePlan(context, l10n, plan), onDelete: () => _deletePlan(context, l10n, plan));
             },
           );
         });
@@ -167,7 +168,7 @@ class PlatformSubscriptionsScreen extends GetView<PlatformSubscriptionsControlle
           itemBuilder: (context, index) {
             if (index == controller.requests.length) return Center(child: CustomButton.outline(text: l10n.text('load_more'), loading: controller.requestsLoading.value, onPressed: controller.requestsLoading.value ? null : () => controller.loadRequests(append: true)));
             final item = controller.requests[index];
-            return SubscriptionRequestCard(request: item, l10n: l10n, canReview: canApprove || canReject, onApprove: () => _approve(context, l10n, item), onReject: () => _reject(context, l10n, item));
+            return SubscriptionRequestCard(request: item, l10n: l10n, canApprove: canApprove, canReject: canReject, onApprove: () => _approve(context, l10n, item), onReject: () => _reject(context, l10n, item));
           },
         );
       }),
