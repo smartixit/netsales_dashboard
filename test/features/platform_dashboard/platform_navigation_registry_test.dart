@@ -4,6 +4,7 @@ import 'package:netsales_dashboard/core/constants/app_permissions.dart';
 import 'package:netsales_dashboard/core/services/permission_service.dart';
 import 'package:netsales_dashboard/core/routing/app_pages.dart';
 import 'package:netsales_dashboard/core/routing/app_routes.dart';
+import 'package:netsales_dashboard/core/routing/middlewares/auth_guard.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/navigation/platform_navigation_registry.dart';
 
 void main() {
@@ -85,6 +86,26 @@ void main() {
     for (final item in PlatformNavigationRegistry.destinations) {
       expect(PlatformNavigationRegistry.canOpen(item), isTrue, reason: 'Expected SUPER_ADMIN to access ${item.id}');
     }
+  });
+
+  test('dashboard shell is restricted to platform roles', () {
+    final dashboardPage = AppPages.routes.singleWhere(
+      (page) => page.name == AppRoutes.dashboard,
+    );
+    final roleGuards = dashboardPage.middlewares
+        .whereType<PermissionGuardMiddleware>()
+        .where((guard) => guard.anyRoles != null)
+        .toList(growable: false);
+
+    expect(roleGuards, hasLength(1));
+    expect(
+      roleGuards.single.anyRoles,
+      containsAll([
+        AppRoles.superAdmin,
+        AppRoles.supportAgent,
+        AppRoles.accountant,
+      ]),
+    );
   });
 
   test('all registered destinations resolve to nested GetX routes', () {

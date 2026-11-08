@@ -33,6 +33,12 @@ void main() {
     expect(find.text('Dashboard content'), findsOneWidget);
     expect(find.text('Home'), findsOneWidget);
     expect(find.text('Brand'), findsOneWidget);
+    expect(
+      find.byKey(
+        const ValueKey<String>('dashboard-navigation-active-indicator-home'),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('auto-collapses on compact desktop and allows an explicit expand override', (tester) async {

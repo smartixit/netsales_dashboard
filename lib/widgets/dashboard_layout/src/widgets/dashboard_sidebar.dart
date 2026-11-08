@@ -162,7 +162,9 @@ class _NavigationTile extends StatelessWidget {
       padding: EdgeInsets.only(bottom: theme.itemSpacing),
       child: Tooltip(
         message: collapsed ? (item.tooltip ?? item.label) : '',
-        child: CustomButton(
+        child: Stack(
+          children: [
+            CustomButton(
           variant: AppButtonVariant.custom,
           size: AppButtonSize.medium,
           width: double.infinity,
@@ -185,7 +187,26 @@ class _NavigationTile extends StatelessWidget {
                 if (item.badge != null) _Badge(label: item.badge!),
               ],
             ],
-          ),
+            ),
+            if (selected)
+              PositionedDirectional(
+                start: AppSpacing.xxs,
+                top: AppSpacing.sm,
+                bottom: AppSpacing.sm,
+                child: IgnorePointer(
+                  child: Container(
+                    key: ValueKey<String>(
+                      'dashboard-navigation-active-indicator-${item.id}',
+                    ),
+                    width: 3,
+                    decoration: BoxDecoration(
+                      color: theme.sidebarSelectedForeground,
+                      borderRadius: AppRadius.fullRadius,
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );

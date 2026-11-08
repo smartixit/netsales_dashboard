@@ -56,7 +56,16 @@ abstract final class AppPages {
       name: AppRoutes.dashboard,
       page: () => const PlatformDashboardScreen(),
       binding: PlatformDashboardBinding(),
-      middlewares: [AuthGuard()],
+      middlewares: [
+        AuthGuard(),
+        PermissionGuardMiddleware(
+          anyRoles: const [
+            AppRoles.superAdmin,
+            AppRoles.supportAgent,
+            AppRoles.accountant,
+          ],
+        ),
+      ],
       transition: Transition.fadeIn,
       children: [
         GetPage<dynamic>(name: '/overview', page: () => const PlatformOverviewScreen(), transition: Transition.fadeIn),
