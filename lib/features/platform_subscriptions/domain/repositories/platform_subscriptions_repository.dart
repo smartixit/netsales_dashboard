@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:netsales_dashboard/core/models/api_response.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/provider_subscription_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_feature_entity.dart';
@@ -31,6 +32,7 @@ abstract interface class PlatformSubscriptionsRepository {
     int perPage = 20,
   });
   Future<SubscriptionRequestEntity> getRequest(int id);
+  Future<Uint8List> getRequestReceipt(int id);
   Future<void> approveRequest(int id, {String? note});
   Future<void> rejectRequest(int id, {required String reason, String? note});
 }
