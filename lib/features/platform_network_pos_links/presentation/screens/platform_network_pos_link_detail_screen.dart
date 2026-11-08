@@ -26,8 +26,9 @@ class PlatformNetworkPosLinkDetailScreen
       padding: EdgeInsets.all(AppSpacing.lg),
       child: Obx(() {
         final link = controller.link.value;
-        if (controller.isLoading.value)
+        if (controller.isLoading.value) {
           return const CustomSkeletonGrid(count: 3);
+        }
         if (link == null) {
           return CustomErrorState.boxed(
             title: l10n.text('network_pos_link_detail_error'),

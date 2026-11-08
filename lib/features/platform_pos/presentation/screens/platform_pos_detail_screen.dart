@@ -25,14 +25,15 @@ class PlatformPosDetailScreen extends GetView<PlatformPosDetailController> {
     return Padding(
       padding: EdgeInsets.all(AppSpacing.lg),
       child: Obx(() {
-        if (controller.isLoading.value)
+        if (controller.isLoading.value) {
           return const CustomSkeletonGrid(
             count: 4,
             crossAxisCount: 1,
             itemHeight: 100,
           );
+        }
         final pos = controller.detail.value;
-        if (pos == null)
+        if (pos == null) {
           return CustomErrorState.boxed(
             title: l10n.text('pos_detail_load_error'),
             subtitle: controller.errorMessage.value,
@@ -40,6 +41,7 @@ class PlatformPosDetailScreen extends GetView<PlatformPosDetailController> {
             retryLabel: l10n.text('retry'),
             onRetry: controller.load,
           );
+        }
         final isPending = pos.status == 'PENDING';
         final canEdit = PermissionService.to.can(AppPermissions.posEdit);
         final canApprove = PermissionService.to.isSuperAdmin && canEdit;
@@ -135,8 +137,9 @@ class PlatformPosDetailScreen extends GetView<PlatformPosDetailController> {
     );
     if (confirmed == true) {
       try {
-        if (name.text.trim().isEmpty)
+        if (name.text.trim().isEmpty) {
           throw Exception(l10n.text('pos_name_required'));
+        }
         await controller.save(
           name: name.text,
           email: email.text,
@@ -201,8 +204,9 @@ class PlatformPosDetailScreen extends GetView<PlatformPosDetailController> {
     );
     if (confirmed == true) {
       try {
-        if (reason.text.trim().length < 3)
+        if (reason.text.trim().length < 3) {
           throw Exception(l10n.text('rejection_reason_required'));
+        }
         await controller.reject(reason.text);
         CustomSnackbar.show(
           title: l10n.text('success'),

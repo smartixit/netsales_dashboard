@@ -142,8 +142,9 @@ class PlatformNetworkDetailScreen
     );
     if (confirmed == true) {
       try {
-        if (name.text.trim().isEmpty)
+        if (name.text.trim().isEmpty) {
           throw Exception(l10n.text('network_name_required'));
+        }
         await controller.save(name: name.text, address: address.text);
         CustomSnackbar.show(
           title: l10n.text('success'),
@@ -203,8 +204,9 @@ class PlatformNetworkDetailScreen
     );
     if (confirmed == true) {
       try {
-        if (reason.text.trim().length < 3)
+        if (reason.text.trim().length < 3) {
           throw Exception(l10n.text('rejection_reason_required'));
+        }
         await controller.reject(reason.text);
         CustomSnackbar.show(
           title: l10n.text('success'),
