@@ -13,7 +13,8 @@ abstract interface class PlatformNetworksRepository {
 
   Future<PlatformNetworkEntity> updateNetwork(
     int networkId, {
-    required Map<String, dynamic> data,
+    required String name,
+    String? address,
   });
 
   Future<void> approveNetwork(int networkId);
