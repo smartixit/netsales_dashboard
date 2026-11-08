@@ -115,3 +115,27 @@
 
 ### Verification
 - Model and navigation tests added; no Flutter analyzer/test/build, GitHub Actions, or rendered visual QA result is claimed yet.
+
+
+## 2026-11-09 — M12 Platform Subscription Management
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/platform-subscriptions-center`
+
+### Implemented
+- Added pure Domain entities and response Models extending those entities for plans, features, plan-feature entitlements, provider subscriptions, feature consumption, and subscription requests.
+- Added separate RemoteDataSource interface/implementation, repository contract/implementation, and Use Cases for the verified Laravel API routes.
+- Added GetX controller/Binding with cursor pagination, independent request generations, server-side filters, and feature quota selection for plan creation/editing.
+- Replaced plan, provider-subscription, and request placeholders with real nested routes.
+- Built responsive premium plan cards, feature/limit editor, provider subscription cards with expandable server-reported consumption, and approval/rejection request cards.
+- Added extension workflow, status filtering, cursor load-more, inline feedback, loading/empty/error states, and Arabic/English copy.
+- Added model inheritance/parsing tests and nested route authorization tests.
+- Did not invent subscription KPIs, plan pricing formulas, currency labels, or usage totals.
+
+### API authorization finding
+- The existing subscription route group did not enforce the already-seeded `subscriptions.view/create/edit/delete/approve/reject` permissions.
+- Opened companion API hardening branch `fix/subscription-api-permissions` to enforce route-level authorization while preserving provider request submission and operational quota consumption/early-activation paths.
+- Flutter-only permissions are not treated as the security boundary.
+
+### Verification
+- No local Flutter analyzer/test/Windows build or live rendered visual QA is claimed. PR CI is pending.
