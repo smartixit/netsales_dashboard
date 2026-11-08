@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:netsales_dashboard/core/models/api_response.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/data/datasources/platform_subscriptions_remote_data_source.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/data/models/provider_subscription_model.dart';
@@ -46,6 +47,8 @@ class PlatformSubscriptionsRepositoryImpl implements PlatformSubscriptionsReposi
     _mapList<SubscriptionRequestModel, SubscriptionRequestEntity>(_remote.getRequests(networkId: networkId, planId: planId, status: status, paymentType: paymentType, fromDate: fromDate, toDate: toDate, search: search, cursor: cursor, perPage: perPage));
   @override
   Future<SubscriptionRequestEntity> getRequest(int id) => _required(_remote.getRequest(id));
+  @override
+  Future<Uint8List> getRequestReceipt(int id) => _remote.getRequestReceipt(id);
   @override
   Future<void> approveRequest(int id, {String? note}) async { final r = await _remote.approveRequest(id, note: note); _ensure(r.success, r.message); }
   @override
