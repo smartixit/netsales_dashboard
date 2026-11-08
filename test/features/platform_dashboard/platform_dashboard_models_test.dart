@@ -2,10 +2,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/data/models/platform_activity_model.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/data/models/platform_dashboard_overview_model.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/data/models/platform_notification_model.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_activity_entity.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_dashboard_overview_entity.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_notification_entity.dart';
 
 void main() {
   group('PlatformDashboardOverviewModel', () {
-    test('maps API overview payload into domain entities', () {
+    test('parses API payload into a model that is itself the domain entity', () {
       final model = PlatformDashboardOverviewModel.fromJson({
         'generated_at': '2026-11-08T10:00:00Z',
         'timezone': 'Asia/Aden',
@@ -77,7 +80,8 @@ void main() {
         ],
       });
 
-      final entity = model.toEntity();
+      final entity = model;
+      expect(model, isA<PlatformDashboardOverviewEntity>());
       expect(entity.timezone, 'Asia/Aden');
       expect(entity.period.days, 30);
       expect(entity.metrics.networks?.active, 9);
@@ -92,7 +96,7 @@ void main() {
     test('tolerates absent optional dashboard sections', () {
       final entity = PlatformDashboardOverviewModel.fromJson({
         'period': {'key': '7d', 'days': 7},
-      }).toEntity();
+      });
 
       expect(entity.period.key, '7d');
       expect(entity.metrics.networks, isNull);
@@ -102,7 +106,7 @@ void main() {
     });
   });
 
-  test('activity model maps transport fields into a domain entity', () {
+  test('activity model is a domain entity and parses transport fields', () {
     final entity = PlatformActivityModel.fromJson({
       'log_id': 8,
       'module': 'users',
@@ -113,13 +117,14 @@ void main() {
       'log_date': '2026-11-08T10:00:00Z',
     }).toEntity();
 
+    expect(entity, isA<PlatformActivityEntity>());
     expect(entity.id, 8);
     expect(entity.entityId, 12);
     expect(entity.actorName, 'Platform Admin');
     expect(entity.timestamp, isNotNull);
   });
 
-  test('notification model maps transport fields into a domain entity', () {
+  test('notification model is a domain entity and parses transport fields', () {
     final entity = PlatformNotificationModel.fromJson({
       'notification_id': 4,
       'notification_title': 'New request',
@@ -130,6 +135,7 @@ void main() {
       'created_at': '2026-11-08T10:00:00Z',
     }).toEntity();
 
+    expect(entity, isA<PlatformNotificationEntity>());
     expect(entity.id, 4);
     expect(entity.title, 'New request');
     expect(entity.isRead, isFalse);
