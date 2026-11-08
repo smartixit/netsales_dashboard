@@ -48,11 +48,15 @@ class PlatformNetworksRepositoryImpl implements PlatformNetworksRepository {
   @override
   Future<PlatformNetworkEntity> updateNetwork(
     int networkId, {
-    required Map<String, dynamic> data,
+    required String name,
+    String? address,
   }) async {
     final response = await _remoteDataSource.updateNetwork(
       networkId,
-      data: data,
+      data: <String, dynamic>{
+        'network_name': name,
+        'network_address': address,
+      },
     );
     if (!response.success || response.data == null) {
       throw Exception(response.message);
