@@ -19,14 +19,18 @@ class PlatformUserDetailBinding extends Bindings {
       );
     }
 
-    Get.lazyPut<PlatformUsersRemoteDataSource>(
-      PlatformUsersRemoteDataSourceImpl.new,
-    );
-    Get.lazyPut<PlatformUsersRepository>(
-      () => PlatformUsersRepositoryImpl(
-        Get.find<PlatformUsersRemoteDataSource>(),
-      ),
-    );
+    if (!Get.isRegistered<PlatformUsersRemoteDataSource>()) {
+      Get.lazyPut<PlatformUsersRemoteDataSource>(
+        PlatformUsersRemoteDataSourceImpl.new,
+      );
+    }
+    if (!Get.isRegistered<PlatformUsersRepository>()) {
+      Get.lazyPut<PlatformUsersRepository>(
+        () => PlatformUsersRepositoryImpl(
+          Get.find<PlatformUsersRemoteDataSource>(),
+        ),
+      );
+    }
     Get.lazyPut<GetPlatformUserDetailUseCase>(
       () => GetPlatformUserDetailUseCase(
         Get.find<PlatformUsersRepository>(),
