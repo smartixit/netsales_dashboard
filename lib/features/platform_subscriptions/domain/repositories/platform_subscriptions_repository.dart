@@ -24,7 +24,6 @@ abstract interface class PlatformSubscriptionsRepository {
     String? cursor, int perPage = 20,
   });
   Future<ProviderSubscriptionEntity> getProviderSubscription(int id);
-  Future<List<SubscriptionFeatureConsumptionEntity>> getConsumptions(int id);
   Future<ProviderSubscriptionEntity> extendSubscription(int id, int additionalDays);
 
   Future<ApiResponse<List<SubscriptionRequestEntity>>> getRequests({
