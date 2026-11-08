@@ -26,7 +26,7 @@ class PlatformNetworksList extends StatelessWidget {
   final AppLocalizations l10n;
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
+  Widget build(BuildContext context) => Obx(() => LayoutBuilder(
     builder: (context, constraints) {
       if (constraints.maxWidth >= 760) {
         return AppDataGrid<PlatformNetworkEntity>(
@@ -81,7 +81,7 @@ class PlatformNetworksList extends StatelessWidget {
         },
       );
     },
-  );
+  ));
 }
 
 class _NetworkCard extends StatelessWidget {
