@@ -63,6 +63,8 @@ class PlatformNetworkPosLinksController extends GetxController {
   String? _nextCursor;
   Timer? _debounce;
   int _requestGeneration = 0;
+  int _networkSearchGeneration = 0;
+  int _posSearchGeneration = 0;
 
   @override
   void onInit() {
@@ -156,26 +158,34 @@ class PlatformNetworkPosLinksController extends GetxController {
   }
 
   Future<void> searchNetworkOptions(String query) async {
+    final generation = ++_networkSearchGeneration;
     networkOptionsSearching.value = true;
     try {
       final response = await _getNetworks(search: query, perPage: 50);
+      if (generation != _networkSearchGeneration) return;
       if (response.success) {
         networks.assignAll(response.data?.where((item) => item.status == 'ACTIVE').toList() ?? const <PlatformNetworkEntity>[]);
       }
     } finally {
-      networkOptionsSearching.value = false;
+      if (generation == _networkSearchGeneration) {
+        networkOptionsSearching.value = false;
+      }
     }
   }
 
   Future<void> searchPosOptions(String query) async {
+    final generation = ++_posSearchGeneration;
     posOptionsSearching.value = true;
     try {
       final response = await _getPos(search: query, perPage: 50);
+      if (generation != _posSearchGeneration) return;
       if (response.success) {
         pointsOfSale.assignAll(response.data?.where((item) => item.status == 'ACTIVE').toList() ?? const <PlatformPosEntity>[]);
       }
     } finally {
-      posOptionsSearching.value = false;
+      if (generation == _posSearchGeneration) {
+        posOptionsSearching.value = false;
+      }
     }
   }
 
@@ -247,6 +257,8 @@ class PlatformNetworkPosLinksController extends GetxController {
   @override
   void onClose() {
     _requestGeneration++;
+    _networkSearchGeneration++;
+    _posSearchGeneration++;
     _debounce?.cancel();
     searchController.dispose();
     selectedNetworkListenable.dispose();
