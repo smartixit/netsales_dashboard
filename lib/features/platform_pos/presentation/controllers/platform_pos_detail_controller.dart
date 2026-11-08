@@ -7,14 +7,11 @@ import 'package:netsales_dashboard/features/platform_pos/domain/usecases/update_
 
 class PlatformPosDetailController extends GetxController {
   PlatformPosDetailController({
-    required GetPlatformPosDetailUseCase getPos,
-    required ApprovePlatformPosUseCase approvePos,
-    required RejectPlatformPosUseCase rejectPos,
-    required UpdatePlatformPosUseCase updatePos,
-  }) : _getPos = getPos,
-       _approvePos = approvePos,
-       _rejectPos = rejectPos,
-       _updatePos = updatePos;
+    required this._getPos,
+    required this._approvePos,
+    required this._rejectPos,
+    required this._updatePos,
+  });
 
   final GetPlatformPosDetailUseCase _getPos;
   final ApprovePlatformPosUseCase _approvePos;

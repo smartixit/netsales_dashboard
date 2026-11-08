@@ -52,8 +52,8 @@ class PlatformPosRemoteDataSourceImpl implements PlatformPosRemoteDataSource {
         'pos_name': name,
         'governorate_id': governorateId,
         'directorate_id': directorateId,
-        if (email != null) 'pos_email': email,
-        if (address != null) 'pos_address': address,
+        'pos_email': ?email,
+        'pos_address': ?address,
       },
       fromJson: (json) => PlatformPosModel.fromJson(_asJsonMap(json)),
     );

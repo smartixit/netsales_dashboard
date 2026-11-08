@@ -12,8 +12,7 @@ import 'package:netsales_dashboard/widgets/data_grid/adapters/net_sales_data_gri
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_state.dart';
 
 class PlatformPosController extends GetxController {
-  PlatformPosController({required GetPlatformPosListUseCase getPos})
-    : _getPos = getPos;
+  PlatformPosController({required this._getPos});
 
   final GetPlatformPosListUseCase _getPos;
   static const int pageSize = 20;
