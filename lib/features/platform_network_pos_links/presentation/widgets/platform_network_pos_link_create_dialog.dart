@@ -65,7 +65,6 @@ class _CreateContent extends StatelessWidget {
             .firstWhere((item) => item.id == id)
             .name,
         onChanged: (value) {
-          controller.selectedNetworkId.value = value;
           controller.selectedNetworkListenable.value = value;
         },
       ),
@@ -90,7 +89,6 @@ class _CreateContent extends StatelessWidget {
             .firstWhere((item) => item.id == id)
             .name,
         onChanged: (value) {
-          controller.selectedPosId.value = value;
           controller.selectedPosListenable.value = value;
         },
       ),
