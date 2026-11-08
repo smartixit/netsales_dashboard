@@ -52,7 +52,7 @@ class PlatformDashboardController extends GetxController {
   final RxString commandQuery = ''.obs;
   final RxString activeRoute = AppRoutes.overview.obs;
   final TextEditingController commandController = TextEditingController();
-  final RxBool sidebarCollapsed = false.obs;
+  final RxnBool sidebarCollapsed = RxnBool();
   final RxSet<String> expandedGroups = <String>{
     'platform', 'subscriptions', 'finance', 'support', 'system',
   }.obs;
@@ -231,7 +231,7 @@ class PlatformDashboardController extends GetxController {
     }
   }
 
-  void toggleSidebar() => sidebarCollapsed.toggle();
+  void setSidebarCollapsed(bool collapsed) => sidebarCollapsed.value = collapsed;
   void toggleGroup(String id) {
     if (expandedGroups.contains(id)) {
       expandedGroups.remove(id);

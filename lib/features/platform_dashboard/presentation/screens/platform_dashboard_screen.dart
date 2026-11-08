@@ -67,7 +67,6 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
         final navigation = PlatformNavigationRegistry.build(context);
         final selectedId = _selectedId(controller.activeRoute.value);
         final selectedLabel = _labelForId(context, selectedId);
-        final collapsed = controller.sidebarCollapsed.value;
         return DashboardShell(
           config: const DashboardLayoutConfig(
             expandedSidebarWidth: 272,
@@ -85,20 +84,14 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
               Get.toNamed<void>(route);
             }
           },
-          sidebarCollapsed: collapsed,
-          onSidebarCollapsedChanged: (_) => controller.toggleSidebar(),
+          sidebarCollapsed: controller.sidebarCollapsed.value,
+          onSidebarCollapsedChanged: controller.setSidebarCollapsed,
+          expandSidebarTooltip: l10n.text('expand_sidebar'),
+          collapseSidebarTooltip: l10n.text('collapse_sidebar'),
           expandedGroupIds: controller.expandedGroups.toSet(),
           onGroupExpansionChanged: controller.toggleGroup,
-          sidebarHeader: PlatformSidebarBrand(collapsed: collapsed),
-          sidebarFooter: PlatformNavigationFooter(collapsed: collapsed),
-          topbarLeading: CustomButton.icon(
-            icon: collapsed ? Icons.menu_open_rounded : Icons.menu_rounded,
-            tooltip: l10n.text(collapsed ? 'expand_sidebar' : 'collapse_sidebar'),
-            onPressed: controller.toggleSidebar,
-            foregroundColor: colors.onSurfaceVariant,
-            backgroundColor: Colors.transparent,
-            dimension: 40,
-          ),
+          sidebarHeaderBuilder: (collapsed) => PlatformSidebarBrand(collapsed: collapsed),
+          sidebarFooterBuilder: (collapsed) => PlatformNavigationFooter(collapsed: collapsed),
           search: isNarrow
               ? CustomButton.icon(
                   icon: Icons.search_rounded,

@@ -18,7 +18,10 @@ class DashboardShell extends StatelessWidget {
     this.sidebarHeader, this.sidebarFooter, this.topbarLeading, this.search,
     this.notifications, this.topbarActions, this.profile, this.onProfileTap,
     this.breadcrumbs = const [], this.onBreadcrumbTap, this.pageHeader,
-    this.sidebarCollapsed = false, this.onSidebarCollapsedChanged,
+    this.sidebarCollapsed, this.onSidebarCollapsedChanged,
+    this.sidebarHeaderBuilder, this.sidebarFooterBuilder,
+    this.expandSidebarTooltip = 'Expand navigation',
+    this.collapseSidebarTooltip = 'Collapse navigation',
     this.expandedGroupIds = const {}, this.onGroupExpansionChanged, this.content,
     super.key,
   });
@@ -38,8 +41,13 @@ class DashboardShell extends StatelessWidget {
   final List<DashboardBreadcrumb> breadcrumbs;
   final ValueChanged<String>? onBreadcrumbTap;
   final DashboardPageHeaderData? pageHeader;
-  final bool sidebarCollapsed;
+  /// Null keeps the responsive default; a value represents an explicit user override.
+  final bool? sidebarCollapsed;
   final ValueChanged<bool>? onSidebarCollapsedChanged;
+  final Widget Function(bool collapsed)? sidebarHeaderBuilder;
+  final Widget Function(bool collapsed)? sidebarFooterBuilder;
+  final String expandSidebarTooltip;
+  final String collapseSidebarTooltip;
   final Set<String> expandedGroupIds;
   final ValueChanged<String>? onGroupExpansionChanged;
   final Widget? content;
@@ -48,8 +56,8 @@ class DashboardShell extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final compact = constraints.maxWidth < config.mobileBreakpoint;
-      final autoCollapse = constraints.maxWidth < AppBreakpoints.desktopMax;
-      final effectiveCollapsed = !compact && (sidebarCollapsed || autoCollapse);
+      final autoCollapse = constraints.maxWidth < AppBreakpoints.desktopMax || config.initiallyCollapsed;
+      final effectiveCollapsed = !compact && (sidebarCollapsed ?? autoCollapse);
       final theme = DashboardLayoutTheme.of(context);
       final sidebar = DashboardSidebar(
         navigation: navigation,
@@ -57,8 +65,8 @@ class DashboardShell extends StatelessWidget {
         onNavigationSelected: onNavigationSelected,
         collapsed: compact ? false : effectiveCollapsed,
         onCollapsedChanged: onSidebarCollapsedChanged,
-        header: sidebarHeader,
-        footer: sidebarFooter,
+        header: sidebarHeaderBuilder?.call(compact ? false : effectiveCollapsed) ?? sidebarHeader,
+        footer: sidebarFooterBuilder?.call(compact ? false : effectiveCollapsed) ?? sidebarFooter,
         expandedGroupIds: expandedGroupIds,
         onGroupExpansionChanged: onGroupExpansionChanged,
       );
@@ -89,17 +97,15 @@ class DashboardShell extends StatelessWidget {
                                 dimension: 40,
                               ),
                             )
-                          : autoCollapse
-                              ? null
-                              : topbarLeading ??
-                                  (onSidebarCollapsedChanged == null
-                                      ? null
-                                      : CustomButton.icon(
-                                          icon: effectiveCollapsed ? Icons.menu_open_rounded : Icons.menu_rounded,
-                                          tooltip: effectiveCollapsed ? 'Expand navigation' : 'Collapse navigation',
-                                          onPressed: () => onSidebarCollapsedChanged!(!sidebarCollapsed),
-                                          dimension: 40,
-                                        )),
+                          : topbarLeading ??
+                              (onSidebarCollapsedChanged == null
+                                  ? null
+                                  : CustomButton.icon(
+                                      icon: effectiveCollapsed ? Icons.menu_open_rounded : Icons.menu_rounded,
+                                      tooltip: effectiveCollapsed ? expandSidebarTooltip : collapseSidebarTooltip,
+                                      onPressed: () => onSidebarCollapsedChanged!(!effectiveCollapsed),
+                                      dimension: 40,
+                                    )),
                       search: search,
                       notifications: notifications,
                       actions: topbarActions,

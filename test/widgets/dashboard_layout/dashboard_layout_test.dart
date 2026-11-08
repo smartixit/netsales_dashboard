@@ -35,6 +35,37 @@ void main() {
     expect(find.text('Brand'), findsOneWidget);
   });
 
+  testWidgets('auto-collapses on compact desktop and allows an explicit expand override', (tester) async {
+    tester.view.physicalSize = const Size(1100, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    bool? collapsedOverride;
+    Widget dashboard() => buildApp(
+      DashboardShell(
+        navigation: navigation,
+        selectedNavigationId: 'home',
+        onNavigationSelected: (_) {},
+        sidebarCollapsed: collapsedOverride,
+        onSidebarCollapsedChanged: (value) => collapsedOverride = value,
+        child: const Text('Compact desktop content'),
+      ),
+    );
+
+    await tester.pumpWidget(dashboard());
+    expect(find.byTooltip('Expand navigation'), findsOneWidget);
+    expect(find.text('Home'), findsNothing);
+
+    await tester.tap(find.byTooltip('Expand navigation'));
+    await tester.pump();
+    expect(collapsedOverride, isFalse);
+
+    await tester.pumpWidget(dashboard());
+    expect(find.byTooltip('Collapse navigation'), findsOneWidget);
+    expect(find.text('Home'), findsOneWidget);
+  });
+
   testWidgets('uses drawer navigation at compact width', (tester) async {
     tester.view.physicalSize = const Size(700, 900);
     tester.view.devicePixelRatio = 1;
