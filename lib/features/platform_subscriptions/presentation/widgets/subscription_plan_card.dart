@@ -30,7 +30,7 @@ class SubscriptionPlanCard extends StatelessWidget {
           SizedBox(width: AppSpacing.sm),
           Expanded(child: Text(plan.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleMedium)),
           CustomStatusBadge.fromPresentation(
-            plan.isActive ? const EnumPresentation(label: 'Active', tone: SemanticTone.success, icon: Icons.check_circle_rounded) : const EnumPresentation(label: 'Inactive', tone: SemanticTone.neutral, icon: Icons.pause_circle_outline_rounded),
+            plan.isActive ? EnumPresentation(label: l10n.text('active'), tone: SemanticTone.success, icon: Icons.check_circle_rounded) : EnumPresentation(label: l10n.text('inactive'), tone: SemanticTone.neutral, icon: Icons.pause_circle_outline_rounded),
             isCompact: true,
           ),
         ]),
@@ -55,7 +55,7 @@ class SubscriptionPlanCard extends StatelessWidget {
           SizedBox(height: AppSpacing.md), Divider(color: colors.outlineVariant),
           Wrap(spacing: AppSpacing.xs, runSpacing: AppSpacing.xs, children: [
             if (canEdit) CustomButton.text(text: l10n.text('edit'), size: AppButtonSize.small, onPressed: onEdit),
-            if (canEdit) CustomButton.text(text: l10n.text(plan.isActive ? 'deactivate' : 'activate'), size: AppButtonSize.small, onPressed: onToggle),
+            if (canDelete) CustomButton.text(text: l10n.text(plan.isActive ? 'deactivate' : 'activate'), size: AppButtonSize.small, onPressed: onToggle),
             if (canDelete) CustomButton.danger(text: l10n.text('delete'), size: AppButtonSize.small, onPressed: onDelete),
           ]),
         ],
