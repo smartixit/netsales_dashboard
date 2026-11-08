@@ -139,7 +139,7 @@ class AppLocalizations {
     'no_activity':'There is no activity to display.','module_not_delivered':'This destination is in the navigation map and will be delivered with its functional module.','module_not_authorized':'You do not have permission to view this module.',
     'network_error':'Could not reach the server. Check your connection and retry.','no_results':'No matching results.','filter':'Filter','clear_filters':'Clear filters','date_range':'Date range',
     'previous_7_days':'Last 7 days','previous_30_days':'Last 30 days','this_month':'This month','custom_range':'Custom range','all':'All','command_palette':'Quick search and navigation','shortcut':'Shortcut','close':'Close','open':'Open',
-    'status_online':'Online','status_offline':'Offline','updated_now':'Updated just now','overview_api_note':'dashboard/overview is registered in routes/api.php, but DashboardController is absent from the current API source.',
+    'status_online':'Online','status_offline':'Offline','updated_now':'Updated just now','overview_api_note':'Metrics are supplied by the server overview endpoint and are not calculated locally.',
     'platform_users_description':'Manage platform accounts and review their roles and account status.',
     'search_users':'Search users',
     'search_users_hint':'Name, phone number, or email address',
