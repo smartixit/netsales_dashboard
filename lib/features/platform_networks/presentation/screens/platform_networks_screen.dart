@@ -32,11 +32,13 @@ class PlatformNetworksScreen extends GetView<PlatformNetworksController> {
               description: l10n.text('platform_networks_description'),
               icon: Icons.router_rounded,
               actions: [
-                CustomButton.secondary(
-                  text: l10n.text('refresh'),
-                  prefix: const Icon(Icons.refresh_rounded, size: 18),
-                  loading: controller.isRefreshing.value,
-                  onPressed: controller.isRefreshing.value ? null : controller.loadNetworks,
+                Obx(
+                  () => CustomButton.secondary(
+                    text: l10n.text('refresh'),
+                    prefix: const Icon(Icons.refresh_rounded, size: 18),
+                    loading: controller.isRefreshing.value,
+                    onPressed: controller.isRefreshing.value ? null : controller.loadNetworks,
+                  ),
                 ),
               ],
             ),
