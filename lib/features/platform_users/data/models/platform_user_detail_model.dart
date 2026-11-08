@@ -28,12 +28,12 @@ class PlatformUserDetailModel {
   final List<PlatformUserBanModel> securityBans;
 
   factory PlatformUserDetailModel.fromJson(Map<String, dynamic> json) {
-    final role = json['role'] is Map
-        ? Map<String, dynamic>.from(json['role'] as Map)
+    final role = json['role'] is Map<Object?, Object?>
+        ? Map<String, dynamic>.from(json['role'] as Map<Object?, Object?>)
         : <String, dynamic>{};
     final devices = json['devices'] is List
         ? (json['devices'] as List)
-            .whereType<Map>()
+            .whereType<Map<Object?, Object?>>()
             .map((item) => PlatformUserDeviceModel.fromJson(
                   Map<String, dynamic>.from(item),
                 ))
