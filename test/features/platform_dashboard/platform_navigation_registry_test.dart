@@ -137,10 +137,16 @@ void main() {
         (page.middlewares ?? const <GetMiddleware>[])
             .whereType<PermissionGuardMiddleware>()
             .single
-            .requiredPermission,
-        AppPermissions.networksView,
+            .requiredRole,
+        AppRoles.superAdmin,
       );
     }
+    expect(
+      PlatformNavigationRegistry.destinations
+          .singleWhere((item) => item.id == 'network_pos_links')
+          .requiredRole,
+      AppRoles.superAdmin,
+    );
     expect(AppRoutes.networkDetail(73), '/dashboard/networks/73');
   });
 
