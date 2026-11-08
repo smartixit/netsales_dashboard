@@ -1,11 +1,30 @@
 import 'package:netsales_dashboard/core/models/api_response.dart';
 import 'package:netsales_dashboard/features/platform_users/data/datasources/platform_users_remote_data_source.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_entity.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_detail_entity.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/repositories/platform_users_repository.dart';
 
 class PlatformUsersRepositoryImpl implements PlatformUsersRepository {
   const PlatformUsersRepositoryImpl(this._remoteDataSource);
   final PlatformUsersRemoteDataSource _remoteDataSource;
+
+  @override
+  Future<PlatformUserDetailEntity?> getUserDetail(int id) async {
+    final response = await _remoteDataSource.getUserDetail(id);
+    if (!response.success || response.data == null) {
+      throw Exception(response.message);
+    }
+    return response.data!.toEntity();
+  }
+
+  @override
+  Future<List<PlatformUserSessionEntity>> getUserSessions(int id) async {
+    final response = await _remoteDataSource.getUserSessions(id);
+    if (!response.success) {
+      throw Exception(response.message);
+    }
+    return response.data?.map((model) => model.toEntity()).toList(growable: false) ?? const [];
+  }
 
   @override
   Future<ApiResponse<List<PlatformUserEntity>>> getUsers({
