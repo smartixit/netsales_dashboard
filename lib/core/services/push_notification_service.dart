@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/config/firebase_options.dart';
 import 'package:netsales_dashboard/core/constants/api_constants.dart';
+import 'package:netsales_dashboard/core/constants/app_constants.dart';
 import 'package:netsales_dashboard/core/constants/storage_keys.dart';
 import 'package:netsales_dashboard/core/enums/notification_type.dart';
 import 'package:netsales_dashboard/core/services/api_service.dart';
@@ -134,7 +135,7 @@ class PushNotificationService extends GetxService {
     return this;
   }
 
-  /// تهيئة إعدادات الإشعارات المحلية لنظامي Android و iOS
+  /// تهيئة إعدادات الإشعارات المحلية لنظامي Android و iOS و Windows
   Future<void> _initLocalNotifications() async {
     const androidSettings = AndroidInitializationSettings(
       '@drawable/ic_notification',
@@ -144,10 +145,16 @@ class PushNotificationService extends GetxService {
       requestBadgePermission: false,
       requestSoundPermission: false,
     );
+    const windowsSettings = WindowsInitializationSettings(
+      appName: AppConstants.appNameEn,
+      appUserModelId: 'Smartix.NetSales.Dashboard.1',
+      guid: '32f22b82-f5bf-4074-a633-90d2208d13aa',
+    );
 
     const initSettings = InitializationSettings(
       android: androidSettings,
       iOS: darwinSettings,
+      windows: windowsSettings,
     );
 
     await _localNotifications.initialize(
