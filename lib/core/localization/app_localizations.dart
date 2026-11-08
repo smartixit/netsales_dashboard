@@ -42,7 +42,7 @@ class AppLocalizations {
     'deactivate_link_confirmation':'سيتم تعطيل علاقة الشبكة ونقطة البيع. هل تريد المتابعة؟',
     'activate_link_confirmation':'سيتم إعادة تفعيل علاقة الشبكة ونقطة البيع. هل تريد المتابعة؟',
     'unlink_network_pos':'فك الارتباط',
-    'unlink_network_pos_confirmation':'سيؤدي فك الارتباط إلى حذف سجل العلاقة. لا تنفذ ذلك إلا بعد التأكد من عدم وجود التزامات تشغيلية أو مالية تمنع الإجراء.',
+    'unlink_network_pos_confirmation':'سيؤدي فك الارتباط إلى حذف سجل العلاقة فقط؛ لن يحذف الخادم محفظة نقطة البيع المرتبطة. تأكد من عدم وجود التزامات تشغيلية أو مالية قبل المتابعة.',
     'network_pos_link_status_updated':'تم تحديث حالة الارتباط.',
     'network_pos_link_removed':'تم فك الارتباط بنجاح.',
 
@@ -235,7 +235,7 @@ class AppLocalizations {
     'deactivate_link_confirmation':'This will deactivate the network–POS relationship. Continue?',
     'activate_link_confirmation':'This will reactivate the network–POS relationship. Continue?',
     'unlink_network_pos':'Unlink POS',
-    'unlink_network_pos_confirmation':'This permanently removes the relationship record. Confirm that no operational or financial obligations prevent unlinking.',
+    'unlink_network_pos_confirmation':'This removes only the relationship record; the server does not delete the associated POS wallet. Confirm that no operational or financial obligations prevent unlinking.',
     'network_pos_link_status_updated':'Relationship status updated.',
     'network_pos_link_removed':'Relationship removed successfully.',
 
