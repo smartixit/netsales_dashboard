@@ -6,6 +6,7 @@ import 'package:netsales_dashboard/features/platform_network_pos_links/presentat
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/dialogs/custom_dialog.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_dropdown.dart';
+import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
 
 class PlatformNetworkPosLinkCreateDialog {
   PlatformNetworkPosLinkCreateDialog._();
@@ -21,6 +22,11 @@ class PlatformNetworkPosLinkCreateDialog {
     onConfirm: () {
       if (controller.selectedNetworkListenable.value == null ||
           controller.selectedPosListenable.value == null) {
+        CustomSnackbar.show(
+          title: l10n.text('required_fields'),
+          message: l10n.text('select_network_and_pos_required'),
+          type: SnackType.warning,
+        );
         return;
       }
       Get.back<bool>(result: true);
@@ -61,9 +67,13 @@ class _CreateContent extends StatelessWidget {
               ),
             )
             .toList(growable: false),
-        itemSearchText: (id) => controller.networks
-            .firstWhere((item) => item.id == id)
-            .name,
+        itemSearchText: controller.networkNameFor,
+        selectedItemFallback: controller.selectedNetworkListenable.value == null
+            ? null
+            : DropdownItem<int>(
+                value: controller.selectedNetworkListenable.value!,
+                child: Text(controller.networkNameFor(controller.selectedNetworkListenable.value!)),
+              ),
         onChanged: (value) {
           controller.selectedNetworkListenable.value = value;
         },
@@ -85,9 +95,13 @@ class _CreateContent extends StatelessWidget {
               ),
             )
             .toList(growable: false),
-        itemSearchText: (id) => controller.pointsOfSale
-            .firstWhere((item) => item.id == id)
-            .name,
+        itemSearchText: controller.posNameFor,
+        selectedItemFallback: controller.selectedPosListenable.value == null
+            ? null
+            : DropdownItem<int>(
+                value: controller.selectedPosListenable.value!,
+                child: Text(controller.posNameFor(controller.selectedPosListenable.value!)),
+              ),
         onChanged: (value) {
           controller.selectedPosListenable.value = value;
         },
