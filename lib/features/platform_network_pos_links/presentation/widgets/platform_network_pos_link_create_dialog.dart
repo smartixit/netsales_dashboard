@@ -51,7 +51,7 @@ class _CreateContent extends StatelessWidget {
         style: Theme.of(context).textTheme.bodyMedium,
       ),
       SizedBox(height: AppSpacing.lg),
-      CustomDropdown<int>(
+      Obx(() => CustomDropdown<int>(
         label: l10n.text('network_name'),
         hint: l10n.text('select_network'),
         prefixIcon: Icons.router_outlined,
@@ -77,9 +77,9 @@ class _CreateContent extends StatelessWidget {
         onChanged: (value) {
           controller.selectedNetworkListenable.value = value;
         },
-      ),
+      )),
       SizedBox(height: AppSpacing.md),
-      CustomDropdown<int>(
+      Obx(() => CustomDropdown<int>(
         label: l10n.text('pos_name'),
         hint: l10n.text('select_pos'),
         prefixIcon: Icons.storefront_outlined,
@@ -105,7 +105,7 @@ class _CreateContent extends StatelessWidget {
         onChanged: (value) {
           controller.selectedPosListenable.value = value;
         },
-      ),
+      )),
       SizedBox(height: AppSpacing.md),
       Container(
         padding: EdgeInsets.all(AppSpacing.md),
