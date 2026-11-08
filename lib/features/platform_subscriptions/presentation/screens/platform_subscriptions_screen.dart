@@ -194,6 +194,35 @@ class PlatformSubscriptionsScreen extends GetView<PlatformSubscriptionsControlle
         CustomTextField(controller: controller.planValidityController, label: l10n.text('plan_validity_days'), keyboardType: TextInputType.number),
         SizedBox(height: AppSpacing.md),
         CustomTextField(controller: controller.planDescriptionController, label: l10n.text('description'), maxLines: 3, isRequired: false),
+        SizedBox(height: AppSpacing.lg),
+        Align(alignment: AlignmentDirectional.centerStart, child: Text(l10n.text('select_plan_features'), style: Theme.of(context).textTheme.titleSmall)),
+        SizedBox(height: AppSpacing.xs),
+        Text(l10n.text('unlimited_feature_quota'), style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+        SizedBox(height: AppSpacing.sm),
+        Obx(() => Wrap(
+          spacing: AppSpacing.xs,
+          runSpacing: AppSpacing.xs,
+          children: controller.featureCatalog.map((feature) {
+            final selected = controller.selectedFeatureIds.contains(feature.id);
+            return CustomButton(
+              text: feature.name,
+              size: AppButtonSize.small,
+              variant: selected ? AppButtonVariant.secondary : AppButtonVariant.outline,
+              prefix: Icon(selected ? Icons.check_circle_rounded : Icons.add_circle_outline_rounded, size: 16),
+              onPressed: () => controller.toggleFeatureSelection(feature),
+            );
+          }).toList(growable: false),
+        )),
+        Obx(() => Column(children: controller.featureCatalog.where((feature) => controller.selectedFeatureIds.contains(feature.id)).map((feature) => Padding(
+          padding: EdgeInsets.only(top: AppSpacing.sm),
+          child: CustomTextField(
+            controller: controller.featureLimitControllers[feature.id]!,
+            label: '${feature.name} · ${l10n.text('plan_feature_value')}',
+            hint: '-1',
+            isRequired: false,
+            maxLength: 50,
+          ),
+        )).toList(growable: false))),
       ])),
       onConfirm: () => Get.back<bool>(result: true),
       onCancel: () => Get.back<bool>(result: false),
