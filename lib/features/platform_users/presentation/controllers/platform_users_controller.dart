@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_entity.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/get_platform_users_use_case.dart';
+import 'package:netsales_dashboard/core/exceptions/app_exception.dart';
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_state.dart';
 
 class PlatformUsersController extends GetxController {
-  PlatformUsersController(this._getUsers);
-  final GetPlatformUsersUseCase _getUsers;
+  PlatformUsersController({required GetPlatformUsersUseCase getPlatformUsers})
+      : _getPlatformUsers = getPlatformUsers;
+
+  final GetPlatformUsersUseCase _getPlatformUsers;
   static const int _pageSize = 20;
   final users = <PlatformUserEntity>[].obs;
   final viewState = AppDataGridViewState.loading.obs;
@@ -40,26 +43,25 @@ class PlatformUsersController extends GetxController {
       nextCursor.value = null;
     }
     try {
-      final response = await _getUsers(
-        search: searchQuery.value,
-        status: selectedStatus.value.isEmpty ? null : selectedStatus.value,
-        cursor: append ? nextCursor.value : null,
-        perPage: _pageSize,
+      final page = await _getPlatformUsers.execute(
+        GetPlatformUsersParams(
+          search: searchQuery.value,
+          status: selectedStatus.value.isEmpty ? null : selectedStatus.value,
+          cursor: append ? nextCursor.value : null,
+          perPage: _pageSize,
+        ),
       );
       if (generation != _requestGeneration) return;
-      if (!response.success || response.data == null) {
-        throw Exception(response.message.isNotEmpty ? response.message : 'تعذر تحميل قائمة المستخدمين.');
-      }
       if (append) {
-        users.addAll(response.data!);
+        users.addAll(page.users);
       } else {
-        users.assignAll(response.data!);
+        users.assignAll(page.users);
       }
-      nextCursor.value = response.nextCursor;
+      nextCursor.value = page.nextCursor;
       viewState.value = users.isEmpty ? AppDataGridViewState.empty : AppDataGridViewState.success;
     } catch (error) {
       if (generation != _requestGeneration) return;
-      errorMessage.value = error.toString();
+      errorMessage.value = AppException.sanitizeMessage(error, fallback: 'تعذر تحميل قائمة المستخدمين.');
       if (!append || users.isEmpty) viewState.value = AppDataGridViewState.error;
     } finally {
       if (generation == _requestGeneration) isLoadingMore.value = false;
