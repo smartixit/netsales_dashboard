@@ -141,6 +141,20 @@ class PlatformNetworkPosLinksController extends GetxController {
     load();
   }
 
+  String networkNameFor(int id) {
+    for (final network in networks) {
+      if (network.id == id) return network.name;
+    }
+    return '';
+  }
+
+  String posNameFor(int id) {
+    for (final pos in pointsOfSale) {
+      if (pos.id == id) return pos.name;
+    }
+    return '';
+  }
+
   Future<void> searchNetworkOptions(String query) async {
     networkOptionsSearching.value = true;
     try {
