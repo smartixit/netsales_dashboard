@@ -41,7 +41,6 @@ class PlatformNetworksList extends StatelessWidget {
             allowColumnResizing: true,
             rowHeight: 66,
             headerRowHeight: 54,
-            columnWidthMode: ColumnWidthMode.none,
           ),
           viewState: controller.viewState.value,
           pagination: AppDataGridPagination.cursorBased(
