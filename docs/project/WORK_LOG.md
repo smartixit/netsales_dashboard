@@ -70,3 +70,8 @@
 ### Boundaries
 - POS creation, memberships, POS wallets, sales, debts, and network linking are deliberately not included in this first increment. Supported name/email/address editing is included.
 - No local analyzer/test/build or rendered visual QA is claimed.
+
+
+### M10 integration sequencing
+- M9 (Platform Networks) was merged into `main` before M10 was retargeted.
+- M10 PR #9 now targets `main` directly; its branch retains the merged M9 baseline and contains only the POS feature delta relative to the current main history.
