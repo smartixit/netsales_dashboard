@@ -48,6 +48,8 @@ class PlatformNetworkPosLinksController extends GetxController {
   final pointsOfSale = <PlatformPosEntity>[].obs;
   final selectedNetworkId = Rxn<int>();
   final selectedPosId = Rxn<int>();
+  final selectedNetworkListenable = ValueNotifier<int?>(null);
+  final selectedPosListenable = ValueNotifier<int?>(null);
   final isLoading = true.obs;
   final isLoadingMore = false.obs;
   final isLoadingOptions = false.obs;
@@ -170,14 +172,16 @@ class PlatformNetworkPosLinksController extends GetxController {
   }
 
   Future<void> create() async {
-    final networkId = selectedNetworkId.value;
-    final posId = selectedPosId.value;
+    final networkId = selectedNetworkListenable.value;
+    final posId = selectedPosListenable.value;
     if (isMutating.value || networkId == null || posId == null) return;
     isMutating.value = true;
     try {
       await _createLink(networkId: networkId, posId: posId);
       selectedNetworkId.value = null;
       selectedPosId.value = null;
+      selectedNetworkListenable.value = null;
+      selectedPosListenable.value = null;
       await loadSelectionOptions();
       await load();
     } finally {
@@ -215,6 +219,8 @@ class PlatformNetworkPosLinksController extends GetxController {
     _requestGeneration++;
     _debounce?.cancel();
     searchController.dispose();
+    selectedNetworkListenable.dispose();
+    selectedPosListenable.dispose();
     super.onClose();
   }
 }
