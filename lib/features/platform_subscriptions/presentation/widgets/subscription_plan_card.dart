@@ -9,10 +9,11 @@ import 'package:netsales_dashboard/core/presentation/enums/enum_presentation.dar
 import 'package:netsales_dashboard/core/presentation/enums/semantic_tone.dart';
 
 class SubscriptionPlanCard extends StatelessWidget {
-  const SubscriptionPlanCard({required this.plan, required this.l10n, required this.canEdit, required this.onEdit, required this.onToggle, required this.onDelete, super.key});
+  const SubscriptionPlanCard({required this.plan, required this.l10n, required this.canEdit, required this.canDelete, required this.onEdit, required this.onToggle, required this.onDelete, super.key});
   final SubscriptionPlanEntity plan;
   final AppLocalizations l10n;
   final bool canEdit;
+  final bool canDelete;
   final VoidCallback onEdit;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
@@ -50,12 +51,12 @@ class SubscriptionPlanCard extends StatelessWidget {
           _FeaturePill(icon: Icons.extension_rounded, label: l10n.text('plan_features_count').replaceAll('{count}', (plan.planFeatures.isNotEmpty ? plan.planFeatures.length : plan.features.length).toString())),
           _FeaturePill(icon: Icons.percent_rounded, label: l10n.text('plan_discount_value').replaceAll('{value}', AmountFormatter.format(plan.discount))),
         ]),
-        if (canEdit) ...[
+        if (canEdit || canDelete) ...[
           SizedBox(height: AppSpacing.md), Divider(color: colors.outlineVariant),
           Wrap(spacing: AppSpacing.xs, runSpacing: AppSpacing.xs, children: [
-            CustomButton.text(text: l10n.text('edit'), size: AppButtonSize.small, onPressed: onEdit),
-            CustomButton.text(text: l10n.text(plan.isActive ? 'deactivate' : 'activate'), size: AppButtonSize.small, onPressed: onToggle),
-            CustomButton.text(text: l10n.text('delete'), size: AppButtonSize.small, variant: AppButtonVariant.danger, onPressed: onDelete),
+            if (canEdit) CustomButton.text(text: l10n.text('edit'), size: AppButtonSize.small, onPressed: onEdit),
+            if (canEdit) CustomButton.text(text: l10n.text(plan.isActive ? 'deactivate' : 'activate'), size: AppButtonSize.small, onPressed: onToggle),
+            if (canDelete) CustomButton.danger(text: l10n.text('delete'), size: AppButtonSize.small, onPressed: onDelete),
           ]),
         ],
       ]),
