@@ -14,7 +14,6 @@ class ProviderSubscriptionCard extends StatelessWidget {
     required this.canEdit,
     required this.consumptions,
     required this.isLoadingConsumptions,
-    required this.onExpand,
     required this.onExtend,
     super.key,
   });
@@ -24,7 +23,6 @@ class ProviderSubscriptionCard extends StatelessWidget {
   final bool canEdit;
   final List<SubscriptionFeatureConsumptionEntity>? consumptions;
   final bool isLoadingConsumptions;
-  final ValueChanged<bool> onExpand;
   final VoidCallback onExtend;
 
   @override
@@ -41,7 +39,6 @@ class ProviderSubscriptionCard extends StatelessWidget {
         child: ExpansionTile(
           tilePadding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
           childrenPadding: EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
-          onExpansionChanged: onExpand,
           leading: Container(
             width: 42,
             height: 42,
