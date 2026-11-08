@@ -10,6 +10,7 @@ abstract final class AppRoutes {
   static const String overview = '/dashboard/overview';
   static const String account = '/dashboard/account';
   static const String users = '/dashboard/users';
+  static String userDetail(int id) => '/dashboard/users/$id';
   static const String roles = '/dashboard/roles';
   static const String networks = '/dashboard/networks';
   static const String pos = '/dashboard/pos';

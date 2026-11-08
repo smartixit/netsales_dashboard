@@ -19,7 +19,9 @@ import 'package:netsales_dashboard/features/platform_dashboard/presentation/scre
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/screens/platform_module_placeholder_screen.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/screens/platform_overview_screen.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/bindings/platform_users_binding.dart';
+import 'package:netsales_dashboard/features/platform_users/presentation/bindings/platform_user_detail_binding.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/screens/platform_users_screen.dart';
+import 'package:netsales_dashboard/features/platform_users/presentation/screens/platform_user_detail_screen.dart';
 import 'package:netsales_dashboard/features/splash/presentation/bindings/splash_binding.dart';
 import 'package:netsales_dashboard/features/splash/presentation/screens/splash_screen.dart';
 import 'package:netsales_dashboard/widgets/dashboard_metrics/showcase/dashboard_metrics_showcase_binding.dart';
@@ -73,6 +75,7 @@ abstract final class AppPages {
         GetPage<dynamic>(name: '/overview', page: () => const PlatformOverviewScreen(), transition: Transition.fadeIn),
         GetPage<dynamic>(name: '/account', page: () => const PlatformModulePlaceholderScreen(destinationId: 'account'), transition: Transition.fadeIn),
         GetPage<dynamic>(name: '/users', page: () => const PlatformUsersScreen(), binding: PlatformUsersBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.usersView)], transition: Transition.fadeIn),
+        GetPage<dynamic>(name: '/users/:id', page: () => const PlatformUserDetailScreen(), binding: PlatformUserDetailBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.usersView)], transition: Transition.fadeIn),
         _module('/roles', 'roles', AppPermissions.rolesView),
         _module('/networks', 'networks', AppPermissions.networksView),
         _module('/pos', 'pos', AppPermissions.posView),

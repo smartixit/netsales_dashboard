@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:netsales_dashboard/core/routing/app_routes.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/constants/app_radius.dart';
 import 'package:netsales_dashboard/core/enums/user_status.dart';
@@ -36,7 +38,8 @@ class PlatformUsersList extends StatelessWidget {
               )),
             );
           }
-          return _UserRow(user: controller.users[index], compact: compact);
+          final user = controller.users[index];
+          return InkWell(onTap: () => Get.toNamed(AppRoutes.userDetail(user.id)), borderRadius: BorderRadius.circular(AppRadius.md), child: _UserRow(user: user, compact: compact));
         },
       )),
     ]);

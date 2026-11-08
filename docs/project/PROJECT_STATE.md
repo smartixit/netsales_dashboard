@@ -104,3 +104,16 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - The route is protected by the existing `users.view` permission middleware. The server remains the authorization boundary.
 - Creation, editing, deletion, role filtering, and detail actions are intentionally not exposed in this first delivery: role-list API availability and the relevant UI workflows/contracts must be delivered in their own verified scope; no dead buttons or guessed endpoints are introduced.
 - Verification status: source changes committed; CI/analyzer/tests and live API data verification pending. No visual QA is claimed.
+
+
+## Platform User Details — Initial Delivery (2026-11-08)
+
+- Added a nested, `users.view`-guarded detail route under the persistent Dashboard shell.
+- Detail data is loaded through the existing `ApiService` from `GET /api/v1/users/{id}`, with typed Data/Domain mapping and a dedicated GetX Binding/Controller.
+- The detail page presents authoritative identity, role, account status, 2FA state, password-change requirement, login attempts, and server timestamps.
+- For users with `auth.view`, the page additionally requests active sessions from `GET /api/v1/security/users/{id}/sessions` and renders device/security-ban relationships returned by the user detail resource.
+- Device status/type labels are resolved through the existing `EnumPresentationRegistry` and rendered using `CustomStatusBadge`.
+- The directory now navigates to the corresponding user detail route.
+- No edit, reset-password, session-termination, ban/unban, or delete controls are exposed yet; those operations require their own fully implemented, permission-aware workflows.
+- API dependency: PR #7 (`netsales_api`) scopes device/security-ban relationships to `auth.view` and removes FCM registration tokens from device resources. Merge this API hardening before relying on the detail screen's security boundary.
+- Validation: source and model/route tests committed; current-head CI, full tests, and Windows compile are pending. No rendered visual QA is claimed.
