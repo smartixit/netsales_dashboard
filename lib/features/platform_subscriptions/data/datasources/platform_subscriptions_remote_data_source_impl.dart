@@ -79,12 +79,6 @@ class PlatformSubscriptionsRemoteDataSourceImpl implements PlatformSubscriptions
   );
 
   @override
-  Future<ApiResponse<ProviderSubscriptionModel>> activateQueuedSubscription(int networkId) => _api.post<ProviderSubscriptionModel>(
-    ApiConstants.providerSubscriptionActivateEarly(networkId),
-    fromJson: (json) => ProviderSubscriptionModel.fromJson(_map(json)),
-  );
-
-  @override
   Future<ApiResponse<List<SubscriptionRequestModel>>> getRequests({int? networkId, int? planId, String? status, String? paymentType, String? fromDate, String? toDate, String? search, String? cursor, int perPage = 20}) =>
       _api.getList<SubscriptionRequestModel>(
         ApiConstants.subscriptionPlanRequests,
