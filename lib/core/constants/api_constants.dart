@@ -52,8 +52,10 @@ abstract final class ApiConstants {
   // 4. إدارة المستخدمين والحسابات (Users Management)
   // ==========================================================================
   static const String users = '/users';
+  static const String platformRoles = '/roles';
   static const String usersTrashed = '/users/trashed';
   static String user(int id) => '/users/$id';
+  static String userStatus(int id) => '/users/$id/status';
   static String userPermissions(int id) => '/users/$id/permissions';
   static String userProfilePicture(int id) => '/users/$id/profile-picture';
   static String userRestore(int id) => '/users/$id/restore';
@@ -70,9 +72,9 @@ abstract final class ApiConstants {
       '/security/users/$userId/sessions';
   static String securityUserDevices(int userId) =>
       '/security/users/$userId/devices';
-  static const String securityBanUser = '/security/bans/users';
-  static const String securityBanDevice = '/security/bans/devices';
-  static String securityUnban(int banId) => '/security/bans/$banId/unban';
+  static const String securityBanUser = '/security/ban-user';
+  static const String securityBanDevice = '/security/ban-device';
+  static String securityUnban(int banId) => '/security/bans/$banId';
   static String securityTerminateSession(int sessionId) =>
       '/security/sessions/$sessionId/terminate';
 

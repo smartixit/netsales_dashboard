@@ -317,3 +317,16 @@
 - **Verification evidence:** Dashboard CI run \`42499932463\` tested \`c10af366...\` and was still in progress when last inspected. It does not verify the later commits. API CI run \`42499361996\` completed failure at Composer dependency audit; the workflow reports high-severity dependency advisories. Do not mark either pipeline green.
 - **Unverified:** Current Flutter analyzer, full tests, Windows Debug build, API Pint/PHPUnit, live API request against a configured database, and rendered Windows/Web visual QA.
 - **Next:** Inspect current HEAD CI and fix every source/test failure in one coherent pass. Then verify API contract/export and run API Pint/PHPUnit. Do not merge Dashboard PR without user authorization.
+
+
+
+---
+
+## [2026-11-08] Platform Users — Initial Directory
+- Created `feat/platform-users-management` on top of the Platform Dashboard delivery.
+- Implemented feature-first data/domain/presentation layers and GetX binding/controller.
+- Connected the users directory to `GET /api/v1/users` via the existing `ApiService.getList` and existing `UserModel`.
+- Added server-side search (name/phone/email), server-side status filters (ACTIVE/INACTIVE/PENDING/BANNED), and cursor-based next-page loading.
+- Added responsive desktop rows/mobile records and Arabic/English labels; route is guarded by `users.view`.
+- Not included: create/edit/delete/detail workflows and role dropdown. These are not presented as completed because their complete interaction/role-reference workflow is not part of this directory slice.
+- Validation not yet run against the updated branch; CI and visual validation are pending.

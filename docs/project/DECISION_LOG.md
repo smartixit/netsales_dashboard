@@ -44,3 +44,13 @@ Dashboard-specific decisions are maintained here. Shared product/API/financial d
 - **Decision:** Overview presentation consumes one server aggregate response through Clean Architecture and GetX. The client may format/display values but must not derive authoritative totals, balances, trends, or accounting figures.
 - **Scope:** Periods \`7d\`, \`30d\`, \`90d\`, \`12m\`; permission-aware metric groups, chart series, attention queues, and recent activity.
 - **Verification boundary:** Source integration is implemented, but runtime/CI and rendered visual verification are pending.
+
+
+
+| USERS-001 | 2026-11-08 | Deliver the Users directory first using the existing UserResource and cursor-paginated users endpoint; do not expose create/edit/delete or role filters until their complete UI/reference workflows are verified. | APPROVED |
+
+## USERS-001 — Users Directory Scope
+- Use the existing UserModel/UserResource contract and `GET /api/v1/users` endpoint.
+- Search and status filters are sent to Laravel; pagination remains cursor-based and server-owned.
+- Display only values present in the response. Do not fabricate role data, last-login values, counts, or client-side permissions.
+- Protect the destination with `users.view`; API authorization remains authoritative.
