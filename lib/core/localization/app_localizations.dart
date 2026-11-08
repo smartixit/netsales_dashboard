@@ -9,6 +9,17 @@ class AppLocalizations {
     return language[key] ?? _english[key] ?? key;
   }
   static const Map<String, String> _arabic = {
+    'plan_feature_value': 'حد الميزة (-1 غير محدود)',
+    'select_plan_features': 'المزايا والحصص المضمنة في الباقة',
+    'unlimited_feature_quota': 'حدد قيمة الحصة لكل ميزة. استخدم -1 للحصة غير المحدودة وفق عقد الخادم.',
+    'subscription_feature_consumption': 'استهلاك مزايا الاشتراك',
+    'expand_to_load_consumption': 'وسّع البطاقة لعرض استهلاك المزايا من الخادم.',
+    'no_feature_consumption': 'لا توجد بيانات استهلاك مسجلة لهذا الاشتراك.',
+    'feature_id_value': 'الميزة #{id}',
+    'unlimited': 'غير محدود',
+    'activate_queued_subscription': 'تفعيل الاشتراك المجدول الآن',
+    'activate_queued_subscription_confirmation': 'سيطلب من الخادم تفعيل الاشتراك المجدول لهذه الشبكة وفق ترتيب الاشتراكات وقواعده. هل تريد المتابعة؟',
+    'queued_subscription_activated': 'تم تفعيل الاشتراك المجدول.',
     'subscription_plans': 'باقات الاشتراك',
     'provider_subscriptions': 'اشتراكات مزودي الشبكات',
     'subscription_requests': 'طلبات الاشتراك والترقية',
@@ -253,6 +264,17 @@ class AppLocalizations {
 
   };
   static const Map<String, String> _english = {
+    'plan_feature_value': 'Feature quota (-1 means unlimited)',
+    'select_plan_features': 'Included features and quotas',
+    'unlimited_feature_quota': 'Set the quota value for each feature. Use -1 for an unlimited quota as defined by the server.',
+    'subscription_feature_consumption': 'Subscription feature consumption',
+    'expand_to_load_consumption': 'Expand this card to load server-reported feature usage.',
+    'no_feature_consumption': 'No feature consumption has been recorded for this subscription.',
+    'feature_id_value': 'Feature #{id}',
+    'unlimited': 'Unlimited',
+    'activate_queued_subscription': 'Activate queued subscription now',
+    'activate_queued_subscription_confirmation': 'The server will attempt to activate the queued subscription for this network according to its subscription ordering and rules. Continue?',
+    'queued_subscription_activated': 'Queued subscription activated.',
     'subscription_plans': 'Subscription plans',
     'provider_subscriptions': 'Provider subscriptions',
     'subscription_requests': 'Subscription & upgrade requests',
