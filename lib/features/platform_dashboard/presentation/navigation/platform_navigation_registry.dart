@@ -38,7 +38,7 @@ class PlatformNavigationRegistry {
     PlatformNavigationDestination(id: 'roles', route: '/dashboard/roles', labelKey: 'roles', icon: Icons.admin_panel_settings_outlined, permission: AppPermissions.rolesView, groupKey: 'platform'),
     PlatformNavigationDestination(id: 'networks', route: '/dashboard/networks', labelKey: 'networks', icon: Icons.router_outlined, permission: AppPermissions.networksView, groupKey: 'platform'),
     PlatformNavigationDestination(id: 'pos', route: '/dashboard/pos', labelKey: 'pos', icon: Icons.storefront_outlined, permission: AppPermissions.posView, groupKey: 'platform'),
-    PlatformNavigationDestination(id: 'network_pos_links', route: '/dashboard/network-pos-links', labelKey: 'network_pos_links', icon: Icons.hub_outlined, permission: AppPermissions.networksView, groupKey: 'platform'),
+    PlatformNavigationDestination(id: 'network_pos_links', route: '/dashboard/network-pos-links', labelKey: 'network_pos_links', icon: Icons.hub_outlined, permission: '', groupKey: 'platform', requiredRole: AppRoles.superAdmin),
     PlatformNavigationDestination(id: 'geography', route: '/dashboard/geography', labelKey: 'geography', icon: Icons.map_outlined, permission: AppPermissions.geographyView, groupKey: 'platform'),
     PlatformNavigationDestination(id: 'subscription_plans', route: '/dashboard/subscription-plans', labelKey: 'subscription_plans', icon: Icons.sell_outlined, permission: AppPermissions.subscriptionsView, groupKey: 'subscriptions'),
     PlatformNavigationDestination(id: 'provider_subscriptions', route: '/dashboard/provider-subscriptions', labelKey: 'provider_subscriptions', icon: Icons.card_membership_outlined, permission: AppPermissions.subscriptionsView, groupKey: 'subscriptions'),
