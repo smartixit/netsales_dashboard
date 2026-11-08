@@ -225,8 +225,9 @@ class PlatformNavigationRegistry {
 
   static bool canOpen(PlatformNavigationDestination destination) {
     if (destination.requiredRole != null &&
-        !PermissionService.to.hasRole(destination.requiredRole!))
+        !PermissionService.to.hasRole(destination.requiredRole!)) {
       return false;
+    }
     return destination.permission.isEmpty ||
         PermissionService.to.can(destination.permission);
   }

@@ -222,14 +222,17 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
   }
 
   String _selectedId(String route) {
-    if (route.endsWith('/overview') || route == AppRoutes.dashboard)
+    if (route.endsWith('/overview') || route == AppRoutes.dashboard) {
       return 'overview';
+    }
     if (route.endsWith('/account')) return 'account';
-    if (route.startsWith(AppRoutes.networks) && route != AppRoutes.networks)
+    if (route.startsWith(AppRoutes.networks) && route != AppRoutes.networks) {
       return 'networks';
+    }
     for (final destination in PlatformNavigationRegistry.destinations) {
-      if (route == destination.route || route.endsWith(destination.route))
+      if (route == destination.route || route.endsWith(destination.route)) {
         return destination.id;
+      }
     }
     return 'overview';
   }

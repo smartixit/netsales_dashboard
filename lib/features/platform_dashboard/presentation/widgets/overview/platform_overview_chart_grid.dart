@@ -52,12 +52,13 @@ class PlatformOverviewChartGrid extends StatelessWidget {
           l.text('activity'),
         ),
     ];
-    if (definitions.isEmpty)
+    if (definitions.isEmpty) {
       return CustomStatusBanner(
         title: l.text('module_not_authorized'),
         tone: CustomStatusBannerTone.info,
         compact: true,
       );
+    }
     return LayoutBuilder(
       builder: (context, c) {
         final columns = c.maxWidth >= 1200

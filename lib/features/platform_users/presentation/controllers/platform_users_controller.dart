@@ -67,8 +67,9 @@ class PlatformUsersController extends GetxController {
     } catch (error) {
       if (generation != _requestGeneration) return;
       errorMessage.value = error.toString();
-      if (!append || users.isEmpty)
+      if (!append || users.isEmpty) {
         viewState.value = AppDataGridViewState.error;
+      }
     } finally {
       if (generation == _requestGeneration) isLoadingMore.value = false;
     }
