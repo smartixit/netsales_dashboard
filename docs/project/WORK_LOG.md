@@ -1,4 +1,4 @@
-[object Object]
+# NetSales Dashboard — Work Log
 
 ## 2026-11-08 — Platform User Detail Screen
 
@@ -20,3 +20,14 @@
 - API PR #7 focused new security test passed in the full CI run. The overall Laravel suite remains red: 117 failures, 186 passes, and 3 skips; the failures are in unrelated legacy feature suites.
 - Dashboard CI for this branch has not yet been started. Run analyzer, focused/full tests, and Windows build after opening the PR.
 - Live Windows/Web visual inspection is not available in this execution context and is not claimed.
+
+## 2026-11-08 — Platform Dashboard Data/Domain Boundary Repair
+
+**Branch:** `refactor/platform-dashboard-architecture`
+
+- Updated Dashboard overview, activity, and notification models to extend their corresponding Domain entities.
+- Kept API parsing in Data models and removed all `toEntity()` mapping from Dashboard repository paths.
+- Reused the activity model inside the overview response parser so the recent activity collection is also composed of entity-inheriting models.
+- Retained the dedicated `PlatformDashboardRemoteDataSourceImpl` backed by the central ApiService and its existing GetX Binding registration.
+- Rewrote model tests to assert entity inheritance and direct parsed values.
+- Updated the existing Pull Request #6. GitHub Actions run #42513128438 was pending/in progress at the time of this entry. No local Flutter test/analyzer or visual QA is claimed.
