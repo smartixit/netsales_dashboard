@@ -11,7 +11,6 @@ import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecas
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_plans_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_features_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_requests_use_case.dart';
-import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_consumptions_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/reject_subscription_request_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/save_subscription_plan_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/toggle_subscription_plan_status_use_case.dart';
@@ -34,9 +33,6 @@ class PlatformSubscriptionsBinding extends Bindings {
     }
     if (!Get.isRegistered<GetProviderSubscriptionsUseCase>()) {
       Get.lazyPut<GetProviderSubscriptionsUseCase>(() => GetProviderSubscriptionsUseCase(Get.find<PlatformSubscriptionsRepository>()), fenix: true);
-    }
-    if (!Get.isRegistered<GetSubscriptionConsumptionsUseCase>()) {
-      Get.lazyPut<GetSubscriptionConsumptionsUseCase>(() => GetSubscriptionConsumptionsUseCase(Get.find<PlatformSubscriptionsRepository>()), fenix: true);
     }
     if (!Get.isRegistered<GetSubscriptionRequestsUseCase>()) {
       Get.lazyPut<GetSubscriptionRequestsUseCase>(() => GetSubscriptionRequestsUseCase(Get.find<PlatformSubscriptionsRepository>()), fenix: true);
@@ -67,7 +63,6 @@ class PlatformSubscriptionsBinding extends Bindings {
         getPlans: Get.find<GetSubscriptionPlansUseCase>(),
         getFeatures: Get.find<GetSubscriptionFeaturesUseCase>(),
         getSubscriptions: Get.find<GetProviderSubscriptionsUseCase>(),
-        getConsumptions: Get.find<GetSubscriptionConsumptionsUseCase>(),
         getRequests: Get.find<GetSubscriptionRequestsUseCase>(),
         savePlan: Get.find<SaveSubscriptionPlanUseCase>(),
         togglePlan: Get.find<ToggleSubscriptionPlanStatusUseCase>(),
