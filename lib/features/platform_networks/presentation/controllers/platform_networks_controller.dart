@@ -8,19 +8,15 @@ import 'package:netsales_dashboard/features/platform_networks/domain/entities/pl
 import 'package:netsales_dashboard/features/platform_networks/presentation/widgets/platform_network_grid_columns.dart';
 import 'package:netsales_dashboard/widgets/data_grid/adapters/app_data_grid_export_controller.dart';
 import 'package:netsales_dashboard/widgets/data_grid/adapters/net_sales_data_grid_source.dart';
-import 'package:netsales_dashboard/features/platform_networks/domain/usecases/approve_platform_network_use_case.dart';
 import 'package:netsales_dashboard/features/platform_networks/domain/usecases/get_platform_networks_use_case.dart';
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_state.dart';
 
 class PlatformNetworksController extends GetxController {
   PlatformNetworksController({
     required GetPlatformNetworksUseCase getNetworks,
-    required ApprovePlatformNetworkUseCase approveNetwork,
-  }) : _getNetworks = getNetworks,
-       _approveNetwork = approveNetwork;
+  }) : _getNetworks = getNetworks;
 
   final GetPlatformNetworksUseCase _getNetworks;
-  final ApprovePlatformNetworkUseCase _approveNetwork;
 
   static const int pageSize = 20;
 
@@ -33,7 +29,6 @@ class PlatformNetworksController extends GetxController {
   final isLoadingMore = false.obs;
   final isRefreshing = false.obs;
   final errorMessage = ''.obs;
-  final isApproving = <int>{}.obs;
   late final NetSalesDataGridSource<PlatformNetworkEntity> gridSource;
   final AppDataGridExportController exportController = AppDataGridExportController();
 
@@ -120,22 +115,6 @@ class PlatformNetworksController extends GetxController {
     if (selectedStatus.value == status) return;
     selectedStatus.value = status;
     loadNetworks();
-  }
-
-  Future<void> approve(int networkId) async {
-    if (isApproving.contains(networkId)) return;
-    isApproving.add(networkId);
-    try {
-      await _approveNetwork(networkId);
-      await loadNetworks();
-    } finally {
-      isApproving.remove(networkId);
-    }
-  }
-
-  void replaceNetwork(PlatformNetworkEntity updated) {
-    final index = networks.indexWhere((item) => item.id == updated.id);
-    if (index >= 0) networks[index] = updated;
   }
 
   @override
