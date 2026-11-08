@@ -1,43 +1,30 @@
-import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_ban_entity.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_detail_entity.dart';
 
 /// نموذج سجل الحظر كما يصل من SecurityBanResource في Laravel API.
-class PlatformUserBanModel {
+class PlatformUserBanModel extends PlatformUserBanEntity {
   const PlatformUserBanModel({
-    required this.id,
-    required this.type,
-    required this.typeLabel,
-    required this.reason,
-    required this.startedAt,
-    required this.endsAt,
+    required super.id,
+    required super.type,
+    required super.typeLabel,
+    required super.reason,
+    required super.startedAt,
+    required super.endsAt,
   });
 
-  final int id;
-  final String type;
-  final String? typeLabel;
-  final String? reason;
-  final String? startedAt;
-  final String? endsAt;
-
   factory PlatformUserBanModel.fromJson(Map<String, dynamic> json) {
-    final rawId = json['ban_id'];
     return PlatformUserBanModel(
-      id: rawId is num ? rawId.toInt() : int.tryParse(rawId?.toString() ?? '') ?? 0,
+      id: _toInt(json['ban_id']),
       type: json['ban_type']?.toString() ?? 'UNKNOWN',
       typeLabel: json['ban_type_label']?.toString(),
       reason: json['ban_reason']?.toString(),
-      startedAt: json['start_at']?.toString(),
-      endsAt: json['end_at']?.toString(),
+      startedAt: _toDateTime(json['start_at']),
+      endsAt: _toDateTime(json['end_at']),
     );
   }
 
-  PlatformUserBanEntity toEntity() {
-    return PlatformUserBanEntity(
-      id: id,
-      type: type,
-      typeLabel: typeLabel,
-      reason: reason,
-      startedAt: DateTime.tryParse(startedAt ?? ''),
-      endsAt: DateTime.tryParse(endsAt ?? ''),
-    );
-  }
+  static int _toInt(dynamic value) =>
+      value is num ? value.toInt() : int.tryParse(value?.toString() ?? '') ?? 0;
+
+  static DateTime? _toDateTime(dynamic value) =>
+      value == null ? null : DateTime.tryParse(value.toString());
 }
