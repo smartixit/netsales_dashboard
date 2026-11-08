@@ -135,3 +135,22 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 ### Verification boundary
 - Source and tests are committed on the feature branch. The GitHub Actions workflow is configured to run the full analyzer, full Flutter tests, and Windows Debug build on the pull request.
 - No local Flutter execution or rendered Windows/Web visual QA is claimed from this execution context.
+
+
+## Platform POS Management — Initial Delivery (2026-11-08)
+
+**Branch:** `feat/platform-pos-management` (based on the current Platform Networks feature branch).
+
+- Added the Platform POS feature using the existing Laravel `PosResource`, routes, and status contract.
+- Added `PlatformPosModel extends PlatformPosEntity`, with typed JSON parsing and no `toEntity()` conversion.
+- Added separate `PlatformPosRemoteDataSource` and `PlatformPosRemoteDataSourceImpl`, repository contract/implementation, and list/detail/approve/reject Use Cases.
+- Added GetX list/detail controllers and feature Bindings.
+- Added a responsive directory with server-side search/status filters, cursor pagination, shared Syncfusion DataGrid, responsive cards, loaded-row export, status badges, and server-sourced POS KPIs.
+- Added detail view for POS identity, owner, contact, geography, approval/rejection timestamps, and rejection reason, plus permission-aware name/email/address editing.
+- Supported name, email, and address edits use the existing PUT resource contract. Approval/rejection actions are exposed only to SUPER_ADMIN and only for PENDING records, matching the inspected Laravel controller/service behavior. Rejection requires a reason.
+- Added Arabic/English localization and model/route tests.
+- POS creation, memberships, wallet balances, sales, and financial details are not fabricated or exposed in this initial slice; they require their own complete workflows and permission-aware contracts.
+
+### Verification boundary
+- Source and tests are committed to the feature branch. CI/Windows compilation is not claimed from this execution context.
+- No rendered visual QA is claimed.

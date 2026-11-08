@@ -58,7 +58,9 @@ class PlatformPosDetailController extends GetxController {
   }) async {
     final current = detail.value;
     if (isSaving.value || current == null) return;
-    if (current.governorateId == null || current.directorateId == null) {
+    final governorateId = current.governorateId;
+    final directorateId = current.directorateId;
+    if (governorateId == null || directorateId == null) {
       throw Exception('لا يمكن تعديل نقطة البيع قبل توفر بيانات المحافظة والمديرية.');
     }
     isSaving.value = true;
@@ -66,8 +68,8 @@ class PlatformPosDetailController extends GetxController {
       detail.value = await _updatePos(
         posId,
         name: name.trim(),
-        governorateId: current.governorateId!,
-        directorateId: current.directorateId!,
+        governorateId: governorateId,
+        directorateId: directorateId,
         email: email.trim().isEmpty ? null : email.trim(),
         address: address.trim().isEmpty ? null : address.trim(),
       );
@@ -81,7 +83,7 @@ class PlatformPosDetailController extends GetxController {
     if (isApproving.value) return;
     isApproving.value = true;
     try {
-      detail.value = await _approvePos(posId);
+      await _approvePos(posId);
       await load();
     } finally {
       isApproving.value = false;
@@ -92,7 +94,7 @@ class PlatformPosDetailController extends GetxController {
     if (isRejecting.value) return;
     isRejecting.value = true;
     try {
-      detail.value = await _rejectPos(posId, reason: reason.trim());
+      await _rejectPos(posId, reason: reason.trim());
       await load();
     } finally {
       isRejecting.value = false;

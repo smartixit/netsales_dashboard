@@ -20,3 +20,13 @@
 - Listing search/status filters and cursor pagination are server-side. Client-side sorting/filtering is disabled unless a matching backend query contract is available.
 - Network KPI cards use the API's permission-filtered Dashboard Overview response. No local aggregate or financial calculations are allowed.
 - Provider creation, POS/subscription/financial/activity subviews, and network-specific reports are deferred until their complete workflows/contracts are verified.
+
+
+| POS-001 | 2026-11-08 | Deliver Platform POS directory and details using the existing POSResource/API contract. Keep status metrics server-sourced; expose approve/reject only to SUPER_ADMIN for PENDING records, and require a rejection reason. | APPROVED |
+
+## POS-001 — Platform POS Management
+- The directory and detail routes require `pos.view`.
+- POS status filtering and search use the existing API query parameters; pagination uses the API cursor contract.
+- POS approval and rejection are exposed only to `SUPER_ADMIN`, because `PosController` explicitly rejects other roles even if they hold `pos.edit`. Both actions are shown only while the POS is `PENDING`.
+- POS KPI cards use `dashboard/overview.metrics.pos`; no client-side aggregation or financial calculations are allowed.
+- The POS resource does not provide wallet, membership, sales, debt, or subscription detail collections in this response. Those belong to subsequent features and must not be inferred.

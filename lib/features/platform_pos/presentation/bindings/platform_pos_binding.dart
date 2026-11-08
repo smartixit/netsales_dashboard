@@ -7,6 +7,7 @@ import 'package:netsales_dashboard/features/platform_pos/domain/usecases/approve
 import 'package:netsales_dashboard/features/platform_pos/domain/usecases/get_platform_pos_detail_use_case.dart';
 import 'package:netsales_dashboard/features/platform_pos/domain/usecases/get_platform_pos_list_use_case.dart';
 import 'package:netsales_dashboard/features/platform_pos/domain/usecases/reject_platform_pos_use_case.dart';
+import 'package:netsales_dashboard/features/platform_pos/domain/usecases/update_platform_pos_use_case.dart';
 import 'package:netsales_dashboard/features/platform_pos/presentation/controllers/platform_pos_controller.dart';
 import 'package:netsales_dashboard/features/platform_pos/presentation/controllers/platform_pos_detail_controller.dart';
 
@@ -29,25 +30,41 @@ class PlatformPosBinding extends Bindings {
     }
     if (!Get.isRegistered<GetPlatformPosListUseCase>()) {
       Get.lazyPut<GetPlatformPosListUseCase>(
-        () => GetPlatformPosListUseCase(Get.find<PlatformPosRepository>()),
+        () => GetPlatformPosListUseCase(
+          Get.find<PlatformPosRepository>(),
+        ),
         fenix: true,
       );
     }
     if (!Get.isRegistered<GetPlatformPosDetailUseCase>()) {
       Get.lazyPut<GetPlatformPosDetailUseCase>(
-        () => GetPlatformPosDetailUseCase(Get.find<PlatformPosRepository>()),
+        () => GetPlatformPosDetailUseCase(
+          Get.find<PlatformPosRepository>(),
+        ),
         fenix: true,
       );
     }
     if (!Get.isRegistered<ApprovePlatformPosUseCase>()) {
       Get.lazyPut<ApprovePlatformPosUseCase>(
-        () => ApprovePlatformPosUseCase(Get.find<PlatformPosRepository>()),
+        () => ApprovePlatformPosUseCase(
+          Get.find<PlatformPosRepository>(),
+        ),
         fenix: true,
       );
     }
     if (!Get.isRegistered<RejectPlatformPosUseCase>()) {
       Get.lazyPut<RejectPlatformPosUseCase>(
-        () => RejectPlatformPosUseCase(Get.find<PlatformPosRepository>()),
+        () => RejectPlatformPosUseCase(
+          Get.find<PlatformPosRepository>(),
+        ),
+        fenix: true,
+      );
+    }
+    if (!Get.isRegistered<UpdatePlatformPosUseCase>()) {
+      Get.lazyPut<UpdatePlatformPosUseCase>(
+        () => UpdatePlatformPosUseCase(
+          Get.find<PlatformPosRepository>(),
+        ),
         fenix: true,
       );
     }
@@ -64,6 +81,7 @@ class PlatformPosBinding extends Bindings {
           getPos: Get.find<GetPlatformPosDetailUseCase>(),
           approvePos: Get.find<ApprovePlatformPosUseCase>(),
           rejectPos: Get.find<RejectPlatformPosUseCase>(),
+          updatePos: Get.find<UpdatePlatformPosUseCase>(),
         ),
       );
     }
