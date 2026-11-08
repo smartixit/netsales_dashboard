@@ -75,3 +75,27 @@
 ### M10 integration sequencing
 - M9 (Platform Networks) was merged into `main` before M10 was retargeted.
 - M10 PR #9 now targets `main` directly; its branch retains the merged M9 baseline and contains only the POS feature delta relative to the current main history.
+
+
+## 2026-11-08 — M11 Platform Network–POS Relationships
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/platform-network-pos-links`
+
+### Implemented
+- Added `PlatformNetworkPosLinkEntity` and `PlatformNetworkPosLinkModel extends PlatformNetworkPosLinkEntity` using the exact `NetworkPosResource` contract.
+- Added separate RemoteDataSource interface and `PlatformNetworkPosLinksRemoteDataSourceImpl`, repository, and Use Cases for listing, detail, creation, status updates, and unlink.
+- Added GetX controllers and feature Bindings, including reuse of existing Network/POS directory Use Cases for remote-search selection.
+- Built a responsive relationship directory with search, active/inactive server filters, cursor pagination, Syncfusion DataGrid, mobile cards, loaded-row Excel/PDF export, and detail navigation.
+- Built relationship detail view with both entities, relationship status, reference, creation time, activation/deactivation, and confirmed unlink.
+- Added Arabic/English copy, SUPER_ADMIN-only navigation/routes/actions, and model/route tests.
+- No API changes; all mutations call the existing Laravel endpoints.
+
+### Contract and authorization boundaries
+- Only SUPER_ADMIN has global Network–POS management access in the inspected API policy; other roles receive membership-scoped list data. The UI and routes therefore enforce SUPER_ADMIN access.
+- Relationship creation is limited to active networks and active POS records. Laravel remains authoritative and rejects inactive entities and duplicate links.
+- Laravel creates a missing POS wallet with initial balance 0.00 during link creation. Unlink deletes the relationship record but leaves the wallet untouched.
+- Network/POS membership management remains outside Platform Scope because it belongs to operational workspaces and is guarded by operational workspace scope.
+
+### Verification
+- Model and navigation tests added; no Flutter analyzer/test/build, GitHub Actions, or rendered visual QA result is claimed yet.
