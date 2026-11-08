@@ -72,7 +72,6 @@ class PlatformNetworksBinding extends Bindings {
       Get.lazyPut<PlatformNetworksController>(
         () => PlatformNetworksController(
           getNetworks: Get.find<GetPlatformNetworksUseCase>(),
-          approveNetwork: Get.find<ApprovePlatformNetworkUseCase>(),
         ),
       );
     }
