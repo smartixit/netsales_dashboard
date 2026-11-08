@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/provider_subscription_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_plan_entity.dart';
+import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_feature_entity.dart';
+import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_features_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_request_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/activate_queued_subscription_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/approve_subscription_request_use_case.dart';
@@ -18,6 +20,7 @@ import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecas
 class PlatformSubscriptionsController extends GetxController {
   PlatformSubscriptionsController({
     required GetSubscriptionPlansUseCase getPlans,
+    required GetSubscriptionFeaturesUseCase getFeatures,
     required GetProviderSubscriptionsUseCase getSubscriptions,
     required GetSubscriptionRequestsUseCase getRequests,
     required SaveSubscriptionPlanUseCase savePlan,
@@ -28,6 +31,7 @@ class PlatformSubscriptionsController extends GetxController {
     required ExtendProviderSubscriptionUseCase extendSubscription,
     required ActivateQueuedSubscriptionUseCase activateQueued,
   }) : _getPlans = getPlans,
+       _getFeatures = getFeatures,
        _getSubscriptions = getSubscriptions,
        _getRequests = getRequests,
        _savePlan = savePlan,
@@ -39,6 +43,7 @@ class PlatformSubscriptionsController extends GetxController {
        _activateQueued = activateQueued;
 
   final GetSubscriptionPlansUseCase _getPlans;
+  final GetSubscriptionFeaturesUseCase _getFeatures;
   final GetProviderSubscriptionsUseCase _getSubscriptions;
   final GetSubscriptionRequestsUseCase _getRequests;
   final SaveSubscriptionPlanUseCase _savePlan;
@@ -51,6 +56,9 @@ class PlatformSubscriptionsController extends GetxController {
 
   static const int pageSize = 20;
   final plans = <SubscriptionPlanEntity>[].obs;
+  final featureCatalog = <SubscriptionFeatureEntity>[].obs;
+  final selectedFeatureIds = <int>{}.obs;
+  final Map<int, TextEditingController> featureLimitControllers = <int, TextEditingController>{};
   final subscriptions = <ProviderSubscriptionEntity>[].obs;
   final requests = <SubscriptionRequestEntity>[].obs;
   final plansLoading = true.obs;
@@ -90,6 +98,7 @@ class PlatformSubscriptionsController extends GetxController {
   void onInit() {
     super.onInit();
     loadPlans();
+    loadFeatureCatalog();
     loadSubscriptions();
     loadRequests();
   }
@@ -107,6 +116,11 @@ class PlatformSubscriptionsController extends GetxController {
       planCursor.value = r.nextCursor;
     } catch (e) { if (generation == _planGeneration) plansError.value = e.toString(); }
     finally { if (generation == _planGeneration) plansLoading.value = false; }
+  }
+
+  Future<void> loadFeatureCatalog() async {
+    final response = await _getFeatures(status: '1', perPage: 100);
+    if (response.success) featureCatalog.assignAll(response.data ?? const <SubscriptionFeatureEntity>[]);
   }
 
   Future<void> loadSubscriptions({bool append = false}) async {
@@ -155,6 +169,11 @@ class PlatformSubscriptionsController extends GetxController {
       'plan_discount': planDiscountController.text.trim().isEmpty ? 0 : planDiscountController.text.trim(),
       'plan_validity': validity,
       'plan_desc': planDescriptionController.text.trim(),
+      'features': selectedFeatureIds.map((id) => <String, dynamic>{
+        'feature_id': id,
+        'plan_feature_value': featureLimitControllers[id]?.text.trim().isNotEmpty == true ? featureLimitControllers[id]!.text.trim() : '-1',
+        'status': true,
+      }).toList(growable: false),
     };
     isMutating.value = true;
     try {
@@ -209,6 +228,22 @@ class PlatformSubscriptionsController extends GetxController {
     planDiscountController.text = plan?.discount ?? '0';
     planValidityController.text = (plan?.validityDays ?? 30).toString();
     planDescriptionController.text = plan?.description ?? '';
+    selectedFeatureIds.assignAll((plan?.planFeatures ?? const []).map((feature) => feature.featureId));
+    for (final controller in featureLimitControllers.values) { controller.dispose(); }
+    featureLimitControllers.clear();
+    for (final feature in plan?.planFeatures ?? const []) {
+      featureLimitControllers[feature.featureId] = TextEditingController(text: feature.value);
+    }
+  }
+
+  void toggleFeatureSelection(SubscriptionFeatureEntity feature, {String? currentValue}) {
+    if (selectedFeatureIds.contains(feature.id)) {
+      selectedFeatureIds.remove(feature.id);
+      featureLimitControllers.remove(feature.id)?.dispose();
+    } else {
+      selectedFeatureIds.add(feature.id);
+      featureLimitControllers[feature.id] = TextEditingController(text: currentValue ?? feature.defaultValue ?? '-1');
+    }
   }
 
   void _ensure(bool success, String message) {
@@ -219,6 +254,7 @@ class PlatformSubscriptionsController extends GetxController {
   void onClose() {
     _planGeneration++; _subscriptionGeneration++; _requestGeneration++;
     _planDebounce?.cancel(); _requestDebounce?.cancel();
+    for (final c in featureLimitControllers.values) { c.dispose(); }
     for (final c in [planSearchController, requestSearchController, planNameController, planPriceController, planDiscountController, planValidityController, planDescriptionController, rejectReasonController, reviewNoteController, extensionDaysController]) { c.dispose(); }
     super.onClose();
   }
