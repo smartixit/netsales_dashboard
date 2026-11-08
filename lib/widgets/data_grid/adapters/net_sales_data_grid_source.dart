@@ -265,7 +265,7 @@ class NetSalesDataGridSource<T> extends DataGridSource {
     RowColumnIndex rowColumnIndex,
     GridColumn column,
   ) async {
-    final item = itemForRow(row);
+    final item = itemForRow(dataGridRow);
     final definition = _columnFor(column.columnName);
     if (item == null || definition == null) return false;
     final value =
