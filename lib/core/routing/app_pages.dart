@@ -25,6 +25,9 @@ import 'package:netsales_dashboard/features/platform_users/presentation/screens/
 import 'package:netsales_dashboard/features/platform_networks/presentation/bindings/platform_networks_binding.dart';
 import 'package:netsales_dashboard/features/platform_networks/presentation/screens/platform_networks_screen.dart';
 import 'package:netsales_dashboard/features/platform_networks/presentation/screens/platform_network_detail_screen.dart';
+import 'package:netsales_dashboard/features/platform_pos/presentation/bindings/platform_pos_binding.dart';
+import 'package:netsales_dashboard/features/platform_pos/presentation/screens/platform_pos_screen.dart';
+import 'package:netsales_dashboard/features/platform_pos/presentation/screens/platform_pos_detail_screen.dart';
 import 'package:netsales_dashboard/features/splash/presentation/bindings/splash_binding.dart';
 import 'package:netsales_dashboard/features/splash/presentation/screens/splash_screen.dart';
 import 'package:netsales_dashboard/widgets/dashboard_metrics/showcase/dashboard_metrics_showcase_binding.dart';
@@ -82,7 +85,8 @@ abstract final class AppPages {
         _module('/roles', 'roles', AppPermissions.rolesView),
         GetPage<dynamic>(name: '/networks', page: () => const PlatformNetworksScreen(), binding: PlatformNetworksBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.networksView)], transition: Transition.fadeIn),
         GetPage<dynamic>(name: '/networks/:id', page: () => const PlatformNetworkDetailScreen(), binding: PlatformNetworksBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.networksView)], transition: Transition.fadeIn),
-        _module('/pos', 'pos', AppPermissions.posView),
+        GetPage<dynamic>(name: '/pos', page: () => const PlatformPosScreen(), binding: PlatformPosBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.posView)], transition: Transition.fadeIn),
+        GetPage<dynamic>(name: '/pos/:id', page: () => const PlatformPosDetailScreen(), binding: PlatformPosBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.posView)], transition: Transition.fadeIn),
         _module('/geography', 'geography', AppPermissions.geographyView),
         _module('/subscription-plans', 'subscription_plans', AppPermissions.subscriptionsView),
         _module('/provider-subscriptions', 'provider_subscriptions', AppPermissions.subscriptionsView),
