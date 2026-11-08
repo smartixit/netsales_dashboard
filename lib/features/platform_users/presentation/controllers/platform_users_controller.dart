@@ -1,18 +1,15 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:netsales_dashboard/core/models/user_model.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_entity.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/get_platform_users_use_case.dart';
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_state.dart';
 
 class PlatformUsersController extends GetxController {
   PlatformUsersController(this._getUsers);
-
   final GetPlatformUsersUseCase _getUsers;
   static const int _pageSize = 20;
-
-  final users = <UserModel>[].obs;
+  final users = <PlatformUserEntity>[].obs;
   final viewState = AppDataGridViewState.loading.obs;
   final searchController = TextEditingController();
   final searchQuery = ''.obs;
@@ -23,7 +20,7 @@ class PlatformUsersController extends GetxController {
   Timer? _searchDebounce;
   int _requestGeneration = 0;
 
-  bool get hasMore => nextCursor.value != null && nextCursor.value!.isNotEmpty;
+  bool get hasMore => nextCursor.value?.isNotEmpty ?? false;
 
   @override
   void onInit() {
@@ -42,7 +39,6 @@ class PlatformUsersController extends GetxController {
       errorMessage.value = '';
       nextCursor.value = null;
     }
-
     try {
       final response = await _getUsers(
         search: searchQuery.value,
@@ -54,22 +50,17 @@ class PlatformUsersController extends GetxController {
       if (!response.success || response.data == null) {
         throw Exception(response.message.isNotEmpty ? response.message : 'تعذر تحميل قائمة المستخدمين.');
       }
-      final page = response.data!;
       if (append) {
-        users.addAll(page);
+        users.addAll(response.data!);
       } else {
-        users.assignAll(page);
+        users.assignAll(response.data!);
       }
       nextCursor.value = response.nextCursor;
       viewState.value = users.isEmpty ? AppDataGridViewState.empty : AppDataGridViewState.success;
     } catch (error) {
       if (generation != _requestGeneration) return;
-      if (append && users.isNotEmpty) {
-        errorMessage.value = error.toString();
-      } else {
-        errorMessage.value = error.toString();
-        viewState.value = AppDataGridViewState.error;
-      }
+      errorMessage.value = error.toString();
+      if (!append || users.isEmpty) viewState.value = AppDataGridViewState.error;
     } finally {
       if (generation == _requestGeneration) isLoadingMore.value = false;
     }
@@ -81,16 +72,10 @@ class PlatformUsersController extends GetxController {
     _searchDebounce = Timer(const Duration(milliseconds: 400), loadUsers);
   }
 
-  void setStatus(String? status) {
-    final next = status ?? '';
-    if (selectedStatus.value == next) return;
-    selectedStatus.value = next;
+  void setStatus(String status) {
+    if (selectedStatus.value == status) return;
+    selectedStatus.value = status;
     loadUsers();
-  }
-
-  void clearSearch() {
-    searchController.clear();
-    onSearchChanged('');
   }
 
   @override
