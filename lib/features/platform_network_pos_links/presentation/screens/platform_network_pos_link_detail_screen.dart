@@ -53,13 +53,13 @@ class PlatformNetworkPosLinkDetailScreen
                     CustomButton.outline(
                       text: link.isActive ? l10n.text('deactivate_link') : l10n.text('activate_link'),
                       loading: controller.isMutating.value,
-                      onPressed: controller.isMutating.value ? null : () => _toggle(context, l10n, link.isActive),
+                      onPressed: controller.isMutating.value ? null : () => _toggle(l10n, link.isActive),
                     ),
                   if (canEdit)
                     CustomButton.danger(
                       text: l10n.text('unlink_network_pos'),
                       loading: controller.isMutating.value,
-                      onPressed: controller.isMutating.value ? null : () => _unlink(context, l10n),
+                      onPressed: controller.isMutating.value ? null : () => _unlink(l10n),
                     ),
                 ],
               ),
@@ -82,7 +82,7 @@ class PlatformNetworkPosLinkDetailScreen
     );
   }
 
-  Future<void> _toggle(BuildContext context, AppLocalizations l10n, bool active) async {
+  Future<void> _toggle(AppLocalizations l10n, bool active) async {
     final accepted = await CustomDialog.confirmation(
       title: l10n.text(active ? 'deactivate_link' : 'activate_link'),
       message: l10n.text(active ? 'deactivate_link_confirmation' : 'activate_link_confirmation'),
@@ -94,7 +94,7 @@ class PlatformNetworkPosLinkDetailScreen
     await _runMutation(l10n, () => controller.setStatus(!active), l10n.text('network_pos_link_status_updated'));
   }
 
-  Future<void> _unlink(BuildContext context, AppLocalizations l10n) async {
+  Future<void> _unlink(AppLocalizations l10n) async {
     final accepted = await CustomDialog.danger(
       title: l10n.text('unlink_network_pos'),
       message: l10n.text('unlink_network_pos_confirmation'),
