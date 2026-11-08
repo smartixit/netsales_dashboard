@@ -1,6 +1,5 @@
 import 'package:netsales_dashboard/core/models/api_response.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/provider_subscription_entity.dart';
-import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_feature_consumption_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_feature_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_plan_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_request_entity.dart';
