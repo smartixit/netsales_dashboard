@@ -108,6 +108,17 @@ void main() {
     );
   });
 
+  test('platform user detail route is nested and permission guarded', () {
+    final dashboardPage = AppPages.routes.singleWhere((page) => page.name == AppRoutes.dashboard);
+    final detailPage = dashboardPage.children.singleWhere((page) => page.name == '/users/:id');
+    expect(detailPage.binding, isNotNull);
+    expect(
+      (detailPage.middlewares ?? const <GetMiddleware>[]).whereType<PermissionGuardMiddleware>().single.requiredPermission,
+      AppPermissions.usersView,
+    );
+    expect(AppRoutes.userDetail(41), '/dashboard/users/41');
+  });
+
   test('all registered destinations resolve to nested GetX routes', () {
     expect(PlatformNavigationRegistry.routeForId('overview'), AppRoutes.overview);
     for (final item in PlatformNavigationRegistry.destinations) {
