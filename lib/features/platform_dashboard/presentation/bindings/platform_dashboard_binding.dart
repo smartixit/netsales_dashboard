@@ -9,6 +9,7 @@ import 'package:netsales_dashboard/features/platform_dashboard/data/datasources/
 import 'package:netsales_dashboard/features/platform_dashboard/data/repositories/platform_dashboard_repository_impl.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/repositories/platform_dashboard_repository.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/usecases/get_notification_count_use_case.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/domain/usecases/get_platform_dashboard_overview_use_case.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/usecases/get_platform_notifications_use_case.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/usecases/get_recent_platform_activity_use_case.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/usecases/mark_all_notifications_read_use_case.dart';
@@ -34,6 +35,7 @@ class PlatformDashboardBinding extends Bindings {
     }
     final repository = Get.find<PlatformDashboardRepository>();
     Get.lazyPut(() => LogoutUseCase(Get.find<AuthRepository>()));
+    Get.lazyPut(() => GetPlatformDashboardOverviewUseCase(repository));
     Get.lazyPut(() => GetPlatformNotificationsUseCase(repository));
     Get.lazyPut(() => GetNotificationCountUseCase(repository));
     Get.lazyPut(() => MarkNotificationReadUseCase(repository));
@@ -42,11 +44,11 @@ class PlatformDashboardBinding extends Bindings {
     Get.lazyPut<PlatformDashboardController>(
       () => PlatformDashboardController(
         logoutUseCase: Get.find<LogoutUseCase>(),
+        getOverview: Get.find<GetPlatformDashboardOverviewUseCase>(),
         getNotifications: Get.find(),
         getNotificationCount: Get.find(),
         markNotificationRead: Get.find(),
         markAllNotificationsRead: Get.find(),
-        getRecentActivity: Get.find(),
       ),
     );
   }

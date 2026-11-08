@@ -7,7 +7,10 @@ class PlatformActivityEntity {
     required this.timestamp,
     this.entityId,
     this.actorName,
+    this.contextLabel,
+    this.source,
   });
+
   final int id;
   final String module;
   final String action;
@@ -15,4 +18,6 @@ class PlatformActivityEntity {
   final int? entityId;
   final DateTime? timestamp;
   final String? actorName;
+  final String? contextLabel;
+  final String? source;
 }

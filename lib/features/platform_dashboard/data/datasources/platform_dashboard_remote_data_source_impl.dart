@@ -2,12 +2,33 @@ import 'package:netsales_dashboard/core/constants/api_constants.dart';
 import 'package:netsales_dashboard/core/services/api_service.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/data/datasources/platform_dashboard_remote_data_source.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/data/models/platform_activity_model.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/data/models/platform_dashboard_overview_model.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/data/models/platform_notification_model.dart';
 
 class PlatformDashboardRemoteDataSourceImpl implements PlatformDashboardRemoteDataSource {
   PlatformDashboardRemoteDataSourceImpl({ApiService? apiService})
       : _api = apiService ?? ApiService.instance;
+
   final ApiService _api;
+
+  @override
+  Future<PlatformDashboardOverviewModel> getOverview({required String period}) async {
+    final response = await _api.get<PlatformDashboardOverviewModel>(
+      ApiConstants.dashboardOverview,
+      queryParameters: {'period': period},
+      fromJson: (json) => PlatformDashboardOverviewModel.fromJson(
+        Map<String, dynamic>.from(json as Map),
+      ),
+    );
+    if (!response.success || response.data == null) {
+      throw Exception(
+        response.message.isEmpty
+            ? 'Unable to load the platform overview.'
+            : response.message,
+      );
+    }
+    return response.data!;
+  }
 
   @override
   Future<List<PlatformNotificationModel>> getUnreadNotifications({required int limit}) async {

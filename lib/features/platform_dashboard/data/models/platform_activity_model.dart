@@ -9,6 +9,8 @@ class PlatformActivityModel extends PlatformActivityEntity {
     required super.timestamp,
     super.entityId,
     super.actorName,
+    super.contextLabel,
+    super.source,
   });
 
   factory PlatformActivityModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,7 @@ class PlatformActivityModel extends PlatformActivityEntity {
       entityId: int.tryParse(json['entity_id']?.toString() ?? ''),
       timestamp: DateTime.tryParse(json['log_date']?.toString() ?? ''),
       actorName: actor,
+      source: 'system_log',
     );
   }
 
