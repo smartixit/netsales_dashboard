@@ -7,6 +7,7 @@ import 'package:netsales_dashboard/features/platform_pos/domain/usecases/approve
 import 'package:netsales_dashboard/features/platform_pos/domain/usecases/get_platform_pos_detail_use_case.dart';
 import 'package:netsales_dashboard/features/platform_pos/domain/usecases/get_platform_pos_list_use_case.dart';
 import 'package:netsales_dashboard/features/platform_pos/domain/usecases/reject_platform_pos_use_case.dart';
+import 'package:netsales_dashboard/features/platform_pos/domain/usecases/update_platform_pos_use_case.dart';
 import 'package:netsales_dashboard/features/platform_pos/presentation/controllers/platform_pos_controller.dart';
 import 'package:netsales_dashboard/features/platform_pos/presentation/controllers/platform_pos_detail_controller.dart';
 
@@ -59,6 +60,14 @@ class PlatformPosBinding extends Bindings {
         fenix: true,
       );
     }
+    if (!Get.isRegistered<UpdatePlatformPosUseCase>()) {
+      Get.lazyPut<UpdatePlatformPosUseCase>(
+        () => UpdatePlatformPosUseCase(
+          Get.find<PlatformPosRepository>(),
+        ),
+        fenix: true,
+      );
+    }
     if (!Get.isRegistered<PlatformPosController>()) {
       Get.lazyPut<PlatformPosController>(
         () => PlatformPosController(
@@ -72,6 +81,7 @@ class PlatformPosBinding extends Bindings {
           getPos: Get.find<GetPlatformPosDetailUseCase>(),
           approvePos: Get.find<ApprovePlatformPosUseCase>(),
           rejectPos: Get.find<RejectPlatformPosUseCase>(),
+          updatePos: Get.find<UpdatePlatformPosUseCase>(),
         ),
       );
     }
