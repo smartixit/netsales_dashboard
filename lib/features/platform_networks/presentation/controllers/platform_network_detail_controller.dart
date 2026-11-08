@@ -7,14 +7,11 @@ import 'package:netsales_dashboard/features/platform_networks/domain/usecases/up
 
 class PlatformNetworkDetailController extends GetxController {
   PlatformNetworkDetailController({
-    required GetPlatformNetworkDetailUseCase getNetwork,
-    required UpdatePlatformNetworkUseCase updateNetwork,
-    required ApprovePlatformNetworkUseCase approveNetwork,
-    required RejectPlatformNetworkUseCase rejectNetwork,
-  }) : _getNetwork = getNetwork,
-       _updateNetwork = updateNetwork,
-       _approveNetwork = approveNetwork,
-       _rejectNetwork = rejectNetwork;
+    required this._getNetwork,
+    required this._updateNetwork,
+    required this._approveNetwork,
+    required this._rejectNetwork,
+  });
 
   final GetPlatformNetworkDetailUseCase _getNetwork;
   final UpdatePlatformNetworkUseCase _updateNetwork;

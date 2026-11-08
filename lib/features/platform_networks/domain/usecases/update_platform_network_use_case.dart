@@ -9,5 +9,5 @@ class UpdatePlatformNetworkUseCase {
     int networkId, {
     required String name,
     String? address,
-  }) => _repository.updateNetwork(networkId, data: data);
+  }) => _repository.updateNetwork(networkId, name: name, address: address);
 }

@@ -13,8 +13,8 @@ import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_state.
 
 class PlatformNetworksController extends GetxController {
   PlatformNetworksController({
-    required GetPlatformNetworksUseCase getNetworks,
-  }) : _getNetworks = getNetworks;
+    required this._getNetworks,
+  });
 
   final GetPlatformNetworksUseCase _getNetworks;
 
