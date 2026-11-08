@@ -92,7 +92,7 @@ void main() {
     final dashboardPage = AppPages.routes.singleWhere(
       (page) => page.name == AppRoutes.dashboard,
     );
-    final roleGuards = dashboardPage.middlewares
+    final roleGuards = (dashboardPage.middlewares ?? const <GetMiddleware>[])
         .whereType<PermissionGuardMiddleware>()
         .where((guard) => guard.anyRoles != null)
         .toList(growable: false);
