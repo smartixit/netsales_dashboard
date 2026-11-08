@@ -18,6 +18,8 @@ import 'package:netsales_dashboard/features/platform_dashboard/presentation/bind
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/screens/platform_dashboard_screen.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/screens/platform_module_placeholder_screen.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/screens/platform_overview_screen.dart';
+import 'package:netsales_dashboard/features/platform_users/presentation/bindings/platform_users_binding.dart';
+import 'package:netsales_dashboard/features/platform_users/presentation/screens/platform_users_screen.dart';
 import 'package:netsales_dashboard/features/splash/presentation/bindings/splash_binding.dart';
 import 'package:netsales_dashboard/features/splash/presentation/screens/splash_screen.dart';
 import 'package:netsales_dashboard/widgets/dashboard_metrics/showcase/dashboard_metrics_showcase_binding.dart';
@@ -70,7 +72,7 @@ abstract final class AppPages {
       children: [
         GetPage<dynamic>(name: '/overview', page: () => const PlatformOverviewScreen(), transition: Transition.fadeIn),
         GetPage<dynamic>(name: '/account', page: () => const PlatformModulePlaceholderScreen(destinationId: 'account'), transition: Transition.fadeIn),
-        _module('/users', 'users', AppPermissions.usersView),
+        GetPage<dynamic>(name: '/users', page: () => const PlatformUsersScreen(), binding: PlatformUsersBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.usersView)], transition: Transition.fadeIn),
         _module('/roles', 'roles', AppPermissions.rolesView),
         _module('/networks', 'networks', AppPermissions.networksView),
         _module('/pos', 'pos', AppPermissions.posView),

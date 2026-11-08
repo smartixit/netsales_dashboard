@@ -94,3 +94,13 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - **Backend PR #3 was merged** into \`netsales_api\`; merged head \`99f8066cb9f2a40cd8289981de50323c1608ea30\`. Its CI run still reports failure in Composer security audit due to dependency advisories; this is not a passing verification.
 - **Important verification boundary:** The latest Dashboard CI run observed before this state update tested an earlier HEAD (\`c10af366...\`), not the current HEAD. The latest commits have not yet been validated by Flutter analyzer/tests/Windows build. No visual QA is claimed.
 - **Known integration item:** Backend currently returns recent activity rows for audit-authorized users or support-ticket creation activity for support-only users. It does not synthesize activity when neither source permission is available.
+
+
+
+## Platform Users — Initial Operational Screen (2026-11-08)
+- Added the Platform Users feature with data source, repository contract/implementation, use case, GetX binding/controller, and a responsive users directory screen.
+- Uses the existing `GET /api/v1/users` endpoint through `ApiService.getList`, server-side text search, server-side status filtering, and cursor-based forward pagination.
+- User rows are mapped through the existing `UserModel` / API `UserResource`; role/status/last-login are displayed only when returned by the API.
+- The route is protected by the existing `users.view` permission middleware. The server remains the authorization boundary.
+- Creation, editing, deletion, role filtering, and detail actions are intentionally not exposed in this first delivery: role-list API availability and the relevant UI workflows/contracts must be delivered in their own verified scope; no dead buttons or guessed endpoints are introduced.
+- Verification status: source changes committed; CI/analyzer/tests and live API data verification pending. No visual QA is claimed.
