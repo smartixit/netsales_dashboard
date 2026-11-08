@@ -157,9 +157,8 @@ class PlatformSubscriptionsScreen extends GetView<PlatformSubscriptionsControlle
               subscription: item,
               l10n: l10n,
               canEdit: canEdit,
-              consumptions: controller.consumptionsBySubscription[item.id],
-              isLoadingConsumptions: controller.loadingConsumptionIds.contains(item.id),
-              onExpand: (expanded) { if (expanded) controller.loadConsumptions(item.id); },
+              consumptions: item.consumptions,
+              isLoadingConsumptions: false,
               onExtend: () => _extend(context, l10n, item),
             );
           },
