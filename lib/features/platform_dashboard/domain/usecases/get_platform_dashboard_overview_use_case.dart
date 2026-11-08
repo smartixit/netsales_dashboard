@@ -6,7 +6,11 @@ class GetPlatformDashboardOverviewUseCase {
 
   final PlatformDashboardRepository _repository;
 
-  Future<PlatformDashboardOverviewEntity> call({String period = '30d'}) {
+  Future<PlatformDashboardOverviewEntity> execute({String period = '30d'}) {
     return _repository.getOverview(period: period);
+  }
+
+  Future<PlatformDashboardOverviewEntity> call({String period = '30d'}) {
+    return execute(period: period);
   }
 }

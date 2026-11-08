@@ -16,39 +16,93 @@ import 'package:netsales_dashboard/features/platform_dashboard/domain/usecases/m
 import 'package:netsales_dashboard/features/platform_dashboard/domain/usecases/mark_notification_read_use_case.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/controllers/platform_dashboard_controller.dart';
 
+/// Composition root لاعتماديات غلاف لوحة المنصة.
 class PlatformDashboardBinding extends Bindings {
   @override
   void dependencies() {
     if (!Get.isRegistered<AuthRemoteDataSource>()) {
-      Get.lazyPut<AuthRemoteDataSource>(() => const AuthRemoteDataSourceImpl(), fenix: true);
+      Get.lazyPut<AuthRemoteDataSource>(
+        () => const AuthRemoteDataSourceImpl(),
+        fenix: true,
+      );
     }
     if (!Get.isRegistered<AuthRepository>()) {
-      Get.lazyPut<AuthRepository>(() => AuthRepositoryImpl(Get.find<AuthRemoteDataSource>()), fenix: true);
+      Get.lazyPut<AuthRepository>(
+        () => AuthRepositoryImpl(Get.find<AuthRemoteDataSource>()),
+        fenix: true,
+      );
     }
+    if (!Get.isRegistered<LogoutUseCase>()) {
+      Get.lazyPut<LogoutUseCase>(
+        () => LogoutUseCase(Get.find<AuthRepository>()),
+      );
+    }
+
     if (!Get.isRegistered<PlatformDashboardRemoteDataSource>()) {
-      Get.lazyPut<PlatformDashboardRemoteDataSource>(() => PlatformDashboardRemoteDataSourceImpl());
+      Get.lazyPut<PlatformDashboardRemoteDataSource>(
+        PlatformDashboardRemoteDataSourceImpl.new,
+      );
     }
     if (!Get.isRegistered<PlatformDashboardRepository>()) {
       Get.lazyPut<PlatformDashboardRepository>(
-        () => PlatformDashboardRepositoryImpl(Get.find<PlatformDashboardRemoteDataSource>()),
+        () => PlatformDashboardRepositoryImpl(
+          Get.find<PlatformDashboardRemoteDataSource>(),
+        ),
       );
     }
-    final repository = Get.find<PlatformDashboardRepository>();
-    Get.lazyPut(() => LogoutUseCase(Get.find<AuthRepository>()));
-    Get.lazyPut(() => GetPlatformDashboardOverviewUseCase(repository));
-    Get.lazyPut(() => GetPlatformNotificationsUseCase(repository));
-    Get.lazyPut(() => GetNotificationCountUseCase(repository));
-    Get.lazyPut(() => MarkNotificationReadUseCase(repository));
-    Get.lazyPut(() => MarkAllNotificationsReadUseCase(repository));
-    Get.lazyPut(() => GetRecentPlatformActivityUseCase(repository));
+
+    if (!Get.isRegistered<GetPlatformDashboardOverviewUseCase>()) {
+      Get.lazyPut<GetPlatformDashboardOverviewUseCase>(
+        () => GetPlatformDashboardOverviewUseCase(
+          Get.find<PlatformDashboardRepository>(),
+        ),
+      );
+    }
+    if (!Get.isRegistered<GetPlatformNotificationsUseCase>()) {
+      Get.lazyPut<GetPlatformNotificationsUseCase>(
+        () => GetPlatformNotificationsUseCase(
+          Get.find<PlatformDashboardRepository>(),
+        ),
+      );
+    }
+    if (!Get.isRegistered<GetNotificationCountUseCase>()) {
+      Get.lazyPut<GetNotificationCountUseCase>(
+        () => GetNotificationCountUseCase(
+          Get.find<PlatformDashboardRepository>(),
+        ),
+      );
+    }
+    if (!Get.isRegistered<MarkNotificationReadUseCase>()) {
+      Get.lazyPut<MarkNotificationReadUseCase>(
+        () => MarkNotificationReadUseCase(
+          Get.find<PlatformDashboardRepository>(),
+        ),
+      );
+    }
+    if (!Get.isRegistered<MarkAllNotificationsReadUseCase>()) {
+      Get.lazyPut<MarkAllNotificationsReadUseCase>(
+        () => MarkAllNotificationsReadUseCase(
+          Get.find<PlatformDashboardRepository>(),
+        ),
+      );
+    }
+    if (!Get.isRegistered<GetRecentPlatformActivityUseCase>()) {
+      Get.lazyPut<GetRecentPlatformActivityUseCase>(
+        () => GetRecentPlatformActivityUseCase(
+          Get.find<PlatformDashboardRepository>(),
+        ),
+      );
+    }
+
     Get.lazyPut<PlatformDashboardController>(
       () => PlatformDashboardController(
         logoutUseCase: Get.find<LogoutUseCase>(),
         getOverview: Get.find<GetPlatformDashboardOverviewUseCase>(),
-        getNotifications: Get.find(),
-        getNotificationCount: Get.find(),
-        markNotificationRead: Get.find(),
-        markAllNotificationsRead: Get.find(),
+        getNotifications: Get.find<GetPlatformNotificationsUseCase>(),
+        getNotificationCount: Get.find<GetNotificationCountUseCase>(),
+        markNotificationRead: Get.find<MarkNotificationReadUseCase>(),
+        markAllNotificationsRead:
+            Get.find<MarkAllNotificationsReadUseCase>(),
       ),
     );
   }

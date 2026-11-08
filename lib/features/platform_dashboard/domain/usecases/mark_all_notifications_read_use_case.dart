@@ -2,6 +2,10 @@ import 'package:netsales_dashboard/features/platform_dashboard/domain/repositori
 
 class MarkAllNotificationsReadUseCase {
   const MarkAllNotificationsReadUseCase(this._repository);
+
   final PlatformDashboardRepository _repository;
-  Future<void> call() => _repository.markAllNotificationsRead();
+
+  Future<void> execute() => _repository.markAllNotificationsRead();
+
+  Future<void> call() => execute();
 }

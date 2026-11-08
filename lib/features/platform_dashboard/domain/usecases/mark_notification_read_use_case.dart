@@ -2,7 +2,12 @@ import 'package:netsales_dashboard/features/platform_dashboard/domain/repositori
 
 class MarkNotificationReadUseCase {
   const MarkNotificationReadUseCase(this._repository);
+
   final PlatformDashboardRepository _repository;
-  Future<void> call(int notificationId) =>
-      _repository.markNotificationRead(notificationId);
+
+  Future<void> execute(int notificationId) {
+    return _repository.markNotificationRead(notificationId);
+  }
+
+  Future<void> call(int notificationId) => execute(notificationId);
 }

@@ -1,24 +1,30 @@
-import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_activity_entity.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/data/models/platform_activity_model.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_dashboard_overview_entity.dart';
 
+/// نموذج استجابة Dashboard؛ يرث الكيان الدوميني ولا ينشئ نسخة تحويل منفصلة.
 class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
-  const PlatformDashboardOverviewModel({
-    required super.generatedAt,
-    required super.timezone,
-    required super.period,
-    required super.metrics,
-    required super.charts,
-    required super.attentionGroups,
-    required super.recentActivity,
-  });
+  PlatformDashboardOverviewModel._(PlatformDashboardOverviewEntity entity)
+      : super(
+          generatedAt: entity.generatedAt,
+          timezone: entity.timezone,
+          period: entity.period,
+          metrics: entity.metrics,
+          charts: entity.charts,
+          attentionGroups: entity.attentionGroups,
+          recentActivity: entity.recentActivity,
+        );
 
   factory PlatformDashboardOverviewModel.fromJson(Map<String, dynamic> json) {
+    return PlatformDashboardOverviewModel._(_parse(json));
+  }
+
+  static PlatformDashboardOverviewEntity _parse(Map<String, dynamic> json) {
     final rawPeriod = _asMap(json['period']);
     final rawMetrics = _asMap(json['metrics']);
     final rawCharts = _asMap(json['charts']);
     final rawAttention = _asMap(json['attention']);
 
-    return PlatformDashboardOverviewModel(
+    return PlatformDashboardOverviewEntity(
       generatedAt: _dateTime(json['generated_at']),
       timezone: json['timezone']?.toString() ?? 'Asia/Aden',
       period: PlatformDashboardPeriodEntity(
@@ -43,8 +49,7 @@ class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
                 period: map['period']?.toString() ?? '',
                 value: _asInt(map['value']),
               );
-            })
-            .toList(growable: false),
+            }).toList(growable: false),
         providerDistribution: _asList(rawCharts['provider_distribution'])
             .map((item) {
               final map = _asMap(item);
@@ -52,12 +57,10 @@ class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
                 entity: map['entity']?.toString() ?? '',
                 status: map['status']?.toString() ?? '',
                 statusLabel: map['status_label']?.toString() ??
-                    map['status']?.toString() ??
-                    '',
+                    map['status']?.toString() ?? '',
                 value: _asInt(map['value']),
               );
-            })
-            .toList(growable: false),
+            }).toList(growable: false),
         operationalActivity: _asList(rawCharts['operational_activity'])
             .map((item) {
               final map = _asMap(item);
@@ -65,51 +68,36 @@ class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
                 date: map['date']?.toString() ?? '',
                 value: _asInt(map['value']),
               );
-            })
-            .toList(growable: false),
+            }).toList(growable: false),
       ),
       attentionGroups: rawAttention.entries.map((entry) {
         final group = _asMap(entry.value);
-        final items = _asList(group['items'])
-            .map((item) {
-              final map = _asMap(item);
-              return PlatformDashboardAttentionItemEntity(
-                id: _asInt(map['id']),
-                title: map['title']?.toString() ?? '',
-                subtitle: map['subtitle']?.toString() ?? '',
-                routeKey: map['route_key']?.toString() ?? '',
-                occurredAt: _dateTime(map['occurred_at']),
-                dueAt: _dateTime(map['due_at']),
-              );
-            })
-            .toList(growable: false);
+        final items = _asList(group['items']).map((item) {
+          final map = _asMap(item);
+          return PlatformDashboardAttentionItemEntity(
+            id: _asInt(map['id']),
+            title: map['title']?.toString() ?? '',
+            subtitle: map['subtitle']?.toString() ?? '',
+            routeKey: map['route_key']?.toString() ?? '',
+            occurredAt: _dateTime(map['occurred_at']),
+            dueAt: _dateTime(map['due_at']),
+          );
+        }).toList(growable: false);
         return PlatformDashboardAttentionGroupEntity(
           key: entry.key,
           count: _asInt(group['count']),
           items: items,
         );
       }).toList(growable: false),
-      recentActivity: _asList(json['recent_activity'])
-          .map((item) {
-            final map = _asMap(item);
-            return PlatformActivityEntity(
-              id: _asInt(map['id']),
-              action: map['title']?.toString() ?? '',
-              module: map['module']?.toString() ?? '',
-              entityType: map['entity_type']?.toString() ?? '',
-              entityId: _nullableInt(map['entity_id']),
-              actorName: _nullableString(map['actor_name']),
-              contextLabel: _nullableString(map['context_label']),
-              timestamp: _dateTime(map['occurred_at']),
-              source: _nullableString(map['source']),
-            );
-          })
-          .toList(growable: false),
+      recentActivity: _asList(json['recent_activity']).map((item) {
+        final map = _asMap(item);
+        return PlatformActivityModel.fromJson(map);
+      }).toList(growable: false),
     );
   }
 
   static PlatformEntityStatusMetricEntity? _statusMetric(dynamic value) {
-    if (value is! Map) return null;
+    if (value is! Map<Object?, Object?>) return null;
     final map = _asMap(value);
     return PlatformEntityStatusMetricEntity(
       total: _asInt(map['total']),
@@ -122,7 +110,7 @@ class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
   }
 
   static PlatformSubscriptionMetricEntity? _subscriptionMetric(dynamic value) {
-    if (value is! Map) return null;
+    if (value is! Map<Object?, Object?>) return null;
     final map = _asMap(value);
     return PlatformSubscriptionMetricEntity(
       total: _asInt(map['total']),
@@ -134,7 +122,7 @@ class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
   }
 
   static PlatformSupportMetricEntity? _supportMetric(dynamic value) {
-    if (value is! Map) return null;
+    if (value is! Map<Object?, Object?>) return null;
     final map = _asMap(value);
     return PlatformSupportMetricEntity(
       totalTickets: _asInt(map['total_tickets']),
@@ -143,7 +131,7 @@ class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
   }
 
   static PlatformSalesMetricEntity? _salesMetric(dynamic value) {
-    if (value is! Map) return null;
+    if (value is! Map<Object?, Object?>) return null;
     final map = _asMap(value);
     return PlatformSalesMetricEntity(
       invoiceCount: _asInt(map['invoice_count']),
@@ -154,7 +142,7 @@ class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
   }
 
   static PlatformExpensesMetricEntity? _expensesMetric(dynamic value) {
-    if (value is! Map) return null;
+    if (value is! Map<Object?, Object?>) return null;
     final map = _asMap(value);
     return PlatformExpensesMetricEntity(
       count: _asInt(map['count']),
@@ -164,24 +152,15 @@ class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
 
   static Map<String, dynamic> _asMap(dynamic value) {
     if (value is Map<String, dynamic>) return value;
-    if (value is Map) return Map<String, dynamic>.from(value);
+    if (value is Map<Object?, Object?>) return Map<String, dynamic>.from(value);
     return const <String, dynamic>{};
   }
 
   static List<dynamic> _asList(dynamic value) =>
       value is List ? value : const <dynamic>[];
 
-  static int _asInt(dynamic value) {
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    return int.tryParse(value?.toString() ?? '') ?? 0;
-  }
-
-  static int? _nullableInt(dynamic value) =>
-      value == null ? null : _asInt(value);
-
-  static String? _nullableString(dynamic value) =>
-      value?.toString();
+  static int _asInt(dynamic value) =>
+      value is num ? value.toInt() : int.tryParse(value?.toString() ?? '') ?? 0;
 
   static DateTime? _dateTime(dynamic value) =>
       value == null ? null : DateTime.tryParse(value.toString());

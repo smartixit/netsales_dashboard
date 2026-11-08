@@ -3,7 +3,14 @@ import 'package:netsales_dashboard/features/platform_dashboard/domain/repositori
 
 class GetRecentPlatformActivityUseCase {
   const GetRecentPlatformActivityUseCase(this._repository);
+
   final PlatformDashboardRepository _repository;
-  Future<List<PlatformActivityEntity>> call({int limit = 6}) =>
-      _repository.getRecentActivity(limit: limit);
+
+  Future<List<PlatformActivityEntity>> execute({int limit = 6}) {
+    return _repository.getRecentActivity(limit: limit);
+  }
+
+  Future<List<PlatformActivityEntity>> call({int limit = 6}) {
+    return execute(limit: limit);
+  }
 }
