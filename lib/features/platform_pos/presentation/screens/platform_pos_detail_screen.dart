@@ -4,6 +4,7 @@ import 'package:netsales_dashboard/core/constants/app_permissions.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/core/services/permission_service.dart';
+import 'package:netsales_dashboard/features/platform_pos/domain/entities/platform_pos_entity.dart';
 import 'package:netsales_dashboard/features/platform_pos/presentation/controllers/platform_pos_detail_controller.dart';
 import 'package:netsales_dashboard/features/platform_pos/presentation/widgets/platform_pos_detail_header.dart';
 import 'package:netsales_dashboard/features/platform_pos/presentation/widgets/platform_pos_information_section.dart';
@@ -59,11 +60,11 @@ class PlatformPosDetailScreen extends GetView<PlatformPosDetailController> {
   Future<void> _edit(
     BuildContext context,
     AppLocalizations l10n,
-    dynamic pos,
+    PlatformPosEntity pos,
   ) async {
-    final name = TextEditingController(text: pos.name as String);
-    final email = TextEditingController(text: (pos.email as String?) ?? '');
-    final address = TextEditingController(text: (pos.address as String?) ?? '');
+    final name = TextEditingController(text: pos.name);
+    final email = TextEditingController(text: pos.email ?? '');
+    final address = TextEditingController(text: pos.address ?? '');
     final confirmed = await CustomDialog.show(
       type: DialogType.custom,
       title: l10n.text('edit_pos'),
