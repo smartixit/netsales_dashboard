@@ -104,11 +104,11 @@ class PlatformNetworkPosLinkDetailScreen
       onConfirm: () => Get.back<bool>(result: true),
     ).showDialog();
     if (accepted != true) return;
-    await _runMutation(l10n, controller.unlink, l10n.text('network_pos_link_removed'));
-    Get.offNamed<void>(AppRoutes.networkPosLinks);
+    final removed = await _runMutation(l10n, controller.unlink, l10n.text('network_pos_link_removed'));
+    if (removed) Get.offNamed<void>(AppRoutes.networkPosLinks);
   }
 
-  Future<void> _runMutation(
+  Future<bool> _runMutation(
     AppLocalizations l10n,
     Future<void> Function() action,
     String success,
@@ -118,9 +118,11 @@ class PlatformNetworkPosLinkDetailScreen
       await action();
       if (CustomAnimationOverlay.isShowing) await CustomAnimationOverlay.hide();
       await CustomAnimationOverlay.showSuccess(message: success);
+      return true;
     } catch (error) {
       if (CustomAnimationOverlay.isShowing) await CustomAnimationOverlay.hide();
       CustomSnackbar.show(title: l10n.text('error'), message: error.toString(), type: SnackType.error);
+      return false;
     }
   }
 }
