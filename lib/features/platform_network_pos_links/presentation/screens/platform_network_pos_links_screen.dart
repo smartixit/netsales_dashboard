@@ -8,7 +8,6 @@ import 'package:netsales_dashboard/features/platform_network_pos_links/domain/en
 import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/controllers/platform_network_pos_links_controller.dart';
 import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/widgets/platform_network_pos_link_create_dialog.dart';
 import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/widgets/platform_network_pos_links_filter_bar.dart';
-import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/widgets/platform_network_pos_link_grid_columns.dart';
 import 'package:netsales_dashboard/core/presentation/enums/enum_presentation_registry.dart';
 import 'package:netsales_dashboard/widgets/badges/custom_status_badge.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
@@ -51,7 +50,7 @@ class PlatformNetworkPosLinksScreen
                       loading: controller.isMutating.value,
                       onPressed: controller.isMutating.value
                           ? null
-                          : () => _create(context, l10n),
+                          : () => _create(l10n),
                     ),
                   ),
                 Obx(
@@ -98,7 +97,7 @@ class PlatformNetworkPosLinksScreen
                   icon: Icons.link_off_rounded,
                   badgeText: l10n.text('network_pos_links'),
                   actionLabel: canCreate ? l10n.text('create_network_pos_link') : null,
-                  onAction: canCreate ? () => _create(context, l10n) : null,
+                  onAction: canCreate ? () => _create(l10n) : null,
                 );
               }
               return AppDataGrid<PlatformNetworkPosLinkEntity>(
@@ -139,7 +138,7 @@ class PlatformNetworkPosLinksScreen
     );
   }
 
-  Future<void> _create(BuildContext context, AppLocalizations l10n) async {
+  Future<void> _create(AppLocalizations l10n) async {
     await controller.loadSelectionOptions();
     if (controller.networks.isEmpty || controller.pointsOfSale.isEmpty) {
       CustomSnackbar.show(
