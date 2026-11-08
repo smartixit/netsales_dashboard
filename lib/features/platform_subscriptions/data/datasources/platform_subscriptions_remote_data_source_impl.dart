@@ -65,11 +65,6 @@ class PlatformSubscriptionsRemoteDataSourceImpl implements PlatformSubscriptions
     ApiConstants.providerSubscription(id), fromJson: (json) => ProviderSubscriptionModel.fromJson(_map(json)),
   );
 
-  @override
-  Future<ApiResponse<List<SubscriptionFeatureConsumptionModel>>> getConsumptions(int id) => _api.getList<SubscriptionFeatureConsumptionModel>(
-    ApiConstants.providerSubscriptionConsumptions(id),
-    fromJson: (json) => SubscriptionFeatureConsumptionModel.fromJson(_map(json)),
-  );
 
   @override
   Future<ApiResponse<ProviderSubscriptionModel>> extendSubscription(int id, int additionalDays) => _api.post<ProviderSubscriptionModel>(
