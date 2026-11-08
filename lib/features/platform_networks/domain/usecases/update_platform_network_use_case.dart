@@ -7,6 +7,7 @@ class UpdatePlatformNetworkUseCase {
 
   Future<PlatformNetworkEntity> call(
     int networkId, {
-    required Map<String, dynamic> data,
+    required String name,
+    String? address,
   }) => _repository.updateNetwork(networkId, data: data);
 }
