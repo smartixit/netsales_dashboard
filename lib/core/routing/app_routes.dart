@@ -1,21 +1,38 @@
-/// ============================================================================
-/// ثوابت مسارات التطبيق (Application Routes)
-/// ============================================================================
 abstract final class AppRoutes {
   AppRoutes._();
-
   static const String initial = '/splash';
   static const String login = '/login';
   static const String forgotPassword = '/forgot-password';
   static const String verifyOtp = '/verify-otp';
   static const String resetPassword = '/reset-password';
   static const String twoFactorAuth = '/two-factor-auth';
-
-  /// Current authenticated landing surface until the platform home is delivered.
   static const String dashboard = '/dashboard';
+  static const String overview = '/dashboard/overview';
+  static const String account = '/dashboard/account';
+  static const String users = '/dashboard/users';
+  static const String roles = '/dashboard/roles';
+  static const String networks = '/dashboard/networks';
+  static const String pos = '/dashboard/pos';
+  static const String geography = '/dashboard/geography';
+  static const String subscriptionPlans = '/dashboard/subscription-plans';
+  static const String providerSubscriptions = '/dashboard/provider-subscriptions';
+  static const String subscriptionRequests = '/dashboard/subscription-requests';
+  static const String sales = '/dashboard/sales';
+  static const String networkWallets = '/dashboard/network-wallets';
+  static const String posWallets = '/dashboard/pos-wallets';
+  static const String expenses = '/dashboard/expenses';
+  static const String bankAccounts = '/dashboard/bank-accounts';
+  static const String financialReports = '/dashboard/financial-reports';
+  static const String supportTickets = '/dashboard/support-tickets';
+  static const String notifications = '/dashboard/notifications';
+  static const String notificationManagement = '/dashboard/notification-management';
+  static const String sessions = '/dashboard/sessions';
+  static const String auditLogs = '/dashboard/audit-logs';
+  static const String settings = '/dashboard/settings';
+  static const String backups = '/dashboard/backups';
+  static const String scheduledTasks = '/dashboard/scheduled-tasks';
   static const String unauthorized = '/unauthorized';
   static const String notFound = '/not-found';
-
   static const String dataGridShowcase = '/dev/data-grid';
   static const String dashboardMetricsShowcase = '/dev/dashboard-metrics';
 }

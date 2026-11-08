@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-11-08  
 **Repository:** `smartixit/netsales_dashboard`  
-**Working branch:** `feat/desktop-windowing-foundation`  
+**Working branch:** `feat/platform-main-layout`  
 **Authentication UI delivery baseline:** `ce9bc0ee1b167c21ee74ffdd2f7614d18a60e97a`
 
 ## Current work
@@ -51,3 +51,46 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 2. Diagnose any remaining analyzer/test/build failures from their full logs and repair root causes in a coherent batch.
 3. Perform Windows visual validation of Splash → Login → recovery/OTP/2FA/reset → authenticated handoff, including resize/transition interruption, plus responsive Web, Light/Dark, RTL and keyboard/pointer checks.
 4. Implement the actual Platform Dashboard home feature as its own authorized delivery, then replace the temporary authenticated handoff route.
+
+## Platform Main Layout delivery (2026-11-08)
+
+### Implemented in source; CI/visual validation pending
+- Persistent nested Platform Dashboard shell with Sidebar, Topbar, Page Header, and one route outlet.
+- Permission-driven navigation for SUPER_ADMIN, SUPPORT_AGENT, and ACCOUNTANT, matching the API permission seed assignments. ACCOUNTANT does not receive `support.view` in the current API seeder; support tickets remain hidden.
+- Expand/collapse sidebar, automatic collapse below desktop breakpoint, responsive drawer below 900 dp, compact topbar on narrow screens, persisted Arabic/English locale, RTL/LTR from active locale, and existing Light/Dark ThemeService.
+- Platform Overview composes Dashboard Metrics, Syncfusion chart cards, recent activity timeline, and audit DataGrid. KPI cards show neutral unavailable values and charts remain empty until server aggregate data exists.
+- Notifications and audit records use existing API endpoints through typed repository/use-case layers.
+- Shared command palette, notification center, section header, filter bar, date range selector, activity timeline, profile menu, shortcut hint, and status banner components are added.
+
+### Known integration boundaries
+- `GET /api/v1/dashboard/overview` is registered in API routes but the referenced DashboardController is absent from the current API source tree. Aggregate KPIs, trend series, distribution data, and attention queues remain unavailable. No fake data is used and no API changes were made.
+- Global search indexes permitted routes/actions only; entity search awaits a server contract.
+- Backups and scheduled tasks are client-visible only to SUPER_ADMIN because dedicated permission keys are absent; API-side authorization must be verified.
+- Other module destinations are route placeholders pending their feature-specific delivery.
+
+### CI verification — exact HEAD 35a913eb3cf1dead647d58075a1f89f0bd0cfba8
+- Run [#42491537717](https://github.com/smartixit/netsales_dashboard/actions/runs/42491537717) completed with **success** on the exact current branch HEAD.
+- Desktop windowing package analysis and tests passed.
+- Full Dashboard `flutter analyze` passed.
+- Focused Splash/Authentication analysis passed.
+- Full Flutter test suite passed.
+- Windows Debug compilation passed.
+- The earlier duplicate-local and unawaited-future analyzer diagnostics in `PlatformDashboardController` were corrected in the verified HEAD.
+
+### Remaining validation and delivery boundaries
+- Live rendered Windows/Web visual QA remains outstanding: resize/transition behavior, focus/hover, keyboard/mouse, RTL/LTR, Light/Dark, and minimum 1120×720 window behavior. No visual pass is claimed.
+- `GET /api/v1/dashboard/overview` remains unavailable for aggregate data because the referenced DashboardController is absent from current API source. No fake KPI, chart, attention, or financial values are supplied.
+- Non-overview module destinations remain route placeholders pending their separately scoped feature delivery.
+- Pull Request [#2](https://github.com/smartixit/netsales_dashboard/pull/2) is open and has not been merged.
+
+
+## Platform Overview — Live API Integration (2026-11-08)
+- **Dashboard branch:** \`feat/platform-main-layout\`
+- **Current implementation HEAD:** \`d3053d48773620dd1ee44208050af4c86ba293b9\`
+- Added typed Overview domain entities and JSON model mapping for period, permission-filtered metrics, charts, attention queues, and recent activity.
+- Added \`GET /api/v1/dashboard/overview?period=7d|30d|90d|12m\` data-source integration through the existing ApiService, repository contract/implementation, use case, and Dashboard Binding.
+- Replaced neutral placeholder KPI values and API-unavailable banners with server-returned metrics; added server-backed chart series, period selection, attention queue navigation, refresh/loading/error/stale handling, and Arabic/English labels.
+- Recent activity is now read from the Overview response rather than requiring a separate audit endpoint request. The activity section reuses the existing timeline component.
+- **Backend PR #3 was merged** into \`netsales_api\`; merged head \`99f8066cb9f2a40cd8289981de50323c1608ea30\`. Its CI run still reports failure in Composer security audit due to dependency advisories; this is not a passing verification.
+- **Important verification boundary:** The latest Dashboard CI run observed before this state update tested an earlier HEAD (\`c10af366...\`), not the current HEAD. The latest commits have not yet been validated by Flutter analyzer/tests/Windows build. No visual QA is claimed.
+- **Known integration item:** Backend currently returns recent activity rows for audit-authorized users or support-ticket creation activity for support-only users. It does not synthesize activity when neither source permission is available.

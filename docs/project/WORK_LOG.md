@@ -190,3 +190,130 @@
 - CI package tests passed. Full Dashboard analysis exposed both pre-existing cross-repository issues and presentation issues now corrected in the follow-up update.
 - The CI workflow has not yet been rerun against the follow-up source update. Full tests and Windows compile remain blocked until the complete analyzer is clean.
 - No rendered visual QA is claimed. The authenticated route uses a temporary, explicit handoff screen until the actual Platform Dashboard home feature is implemented.
+
+## 2026-11-08 — Platform Main Layout and Overview foundation
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/platform-main-layout`  
+**Base:** `94be488f753823fde78492ebe537fb6998e8d50b`  
+**API reference:** `smartixit/netsales_api` main (read-only inspection; no API changes)
+
+### Implemented
+- Added the Platform Dashboard feature with Data/Domain/Presentation separation, notification and audit-log remote data sources, repository contract/implementation, typed models/entities, use cases, and `PlatformDashboardBinding`.
+- Replaced the authenticated temporary handoff with a persistent `DashboardShell` and nested GetX `GetRouterOutlet` routes. Route-state synchronization is connected to the app routing callback so back/forward navigation updates the selected destination and page header.
+- Reworked the shared Dashboard Layout sidebar into permission-filtered groups with expandable headings, collapsed icon-only navigation, active-state treatment, tooltips, and the shared `CustomButton` system. The shell, sidebar, topbar, and page header now use the app design tokens rather than raw Flutter button widgets.
+- Added responsive shell behavior: expanded sidebar on wide desktop, automatic collapse below the desktop breakpoint, and a drawer below 900 dp. Compact search/profile controls are used below the tablet breakpoint. Nested dashboard routes share the dashboard window profile.
+- Added one permission-aware Navigation Registry for `SUPER_ADMIN`, `SUPPORT_AGENT`, and `ACCOUNTANT`, with route-level permission middleware. The registry follows the API RolePermissionSeeder; ACCOUNTANT does not receive `support.view` in the API seeder, so support tickets remain hidden. Backups and scheduled tasks are restricted to SUPER_ADMIN in the client because no dedicated permission keys exist.
+- Added Arabic/English locale persistence and removed forced global RTL direction so Flutter resolves RTL/LTR from the selected locale. Existing ThemeService remains the source for Light/Dark mode.
+- Added Overview composition: personalized greeting/date, permission-filtered quick navigation, KPI cards using `DashboardMetrics`, three Syncfusion chart surfaces, recent activity timeline, audit DataGrid, and a needs-attention section.
+- Added reusable widgets: Command Palette (Ctrl/Cmd+K), Notification Center, Section Header, Filter Bar, Date Range Selector with presets, Activity Timeline, Profile Menu, Shortcut Hint, and Status Banner. Existing Empty/Error/Skeleton/Offline feedback components are reused.
+- Wired notifications to existing API endpoints (list, unread count, mark one read, mark all read) and recent audit activity to the existing system-log endpoint, subject to permissions.
+- Added tests for role-aware navigation, nested route registration, and Arabic/English localization.
+
+### Data/API boundary and known integration blocker
+- API routes register `GET /api/v1/dashboard/overview`, but the referenced `DashboardController` is absent from the current API repository tree. No fabricated metrics, chart series, attention items, or financial values are supplied. KPI values remain neutral placeholders and chart cards remain in empty state until the server-side aggregation contract/controller exists.
+- Global search currently covers authorized navigation destinations/actions only. Entity search is not claimed because no global entity-search API contract was identified.
+- Backup/scheduled-task navigation is UI-restricted to SUPER_ADMIN; API-side authorization for those endpoints still requires independent verification. Laravel remains the security authority.
+- Non-overview module destinations are route placeholders only; their feature screens are not falsely marked as delivered by this Main Layout task.
+
+### Verification status
+- Feature source and tests are committed; current-HEAD GitHub Actions is the required executable verification.
+- No local Flutter SDK execution, interactive Windows runtime, or browser visual session was available in this GitHub-only execution context. CI and visual QA are pending; neither is claimed as passed.
+- No Laravel API files or financial/business logic were modified.
+
+## 2026-11-08 — Platform Main Layout CI remediation and verification
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/platform-main-layout`  
+**Verified HEAD:** `35a913eb3cf1dead647d58075a1f89f0bd0cfba8`  
+**Pull Request:** [#2](https://github.com/smartixit/netsales_dashboard/pull/2)  
+**CI run:** [#42491537717](https://github.com/smartixit/netsales_dashboard/actions/runs/42491537717)
+
+### Analyzer remediation
+- Removed the duplicate local `arabic` declaration in `PlatformDashboardController.logout()`.
+- Marked the intentionally fire-and-forget initial header refresh with `unawaited(refreshHeaderData())` and imported `dart:async`, resolving the analyzer's unawaited-future diagnostic without changing the asynchronous loading behavior.
+
+### Verified CI outcomes on the exact HEAD
+- Desktop windowing package analysis: **passed**.
+- Desktop windowing package tests: **passed**.
+- Full Dashboard `flutter analyze`: **passed**.
+- Focused Splash/Authentication analysis: **passed**.
+- Full Flutter test suite: **passed**.
+- Windows Debug compilation: **passed**.
+- Workflow run conclusion: **success**.
+
+### Delivery boundary
+- PR #2 is open and not merged.
+- No Laravel API source or database changes were made.
+- Live rendered Windows/Web visual QA has not been performed and is not claimed.
+- The dashboard aggregate endpoint remains blocked by the missing server-side DashboardController/verified aggregate response contract. No fake KPI, chart, attention, or financial values were introduced.
+- Non-overview module destinations remain route placeholders pending their separately scoped feature delivery.
+
+### Files changed in the PR
+- `docs/project/DECISION_LOG.md`
+- `docs/project/PROJECT_STATE.md`
+- `docs/project/WORK_LOG.md`
+- `lib/core/config/desktop_windowing_config.dart`
+- `lib/core/localization/app_localizations.dart`
+- `lib/core/routing/app_pages.dart`
+- `lib/core/routing/app_routes.dart`
+- `lib/core/services/locale_service.dart`
+- `lib/core/themes/app_breakpoints.dart`
+- `lib/features/platform_dashboard/data/datasources/platform_dashboard_remote_data_source.dart`
+- `lib/features/platform_dashboard/data/datasources/platform_dashboard_remote_data_source_impl.dart`
+- `lib/features/platform_dashboard/data/models/platform_activity_model.dart`
+- `lib/features/platform_dashboard/data/models/platform_notification_model.dart`
+- `lib/features/platform_dashboard/data/repositories/platform_dashboard_repository_impl.dart`
+- `lib/features/platform_dashboard/domain/entities/platform_activity_entity.dart`
+- `lib/features/platform_dashboard/domain/entities/platform_notification_entity.dart`
+- `lib/features/platform_dashboard/domain/repositories/platform_dashboard_repository.dart`
+- `lib/features/platform_dashboard/domain/usecases/get_notification_count_use_case.dart`
+- `lib/features/platform_dashboard/domain/usecases/get_platform_notifications_use_case.dart`
+- `lib/features/platform_dashboard/domain/usecases/get_recent_platform_activity_use_case.dart`
+- `lib/features/platform_dashboard/domain/usecases/mark_all_notifications_read_use_case.dart`
+- `lib/features/platform_dashboard/domain/usecases/mark_notification_read_use_case.dart`
+- `lib/features/platform_dashboard/presentation/bindings/platform_dashboard_binding.dart`
+- `lib/features/platform_dashboard/presentation/controllers/platform_dashboard_controller.dart`
+- `lib/features/platform_dashboard/presentation/navigation/platform_navigation_registry.dart`
+- `lib/features/platform_dashboard/presentation/screens/platform_dashboard_screen.dart`
+- `lib/features/platform_dashboard/presentation/screens/platform_module_placeholder_screen.dart`
+- `lib/features/platform_dashboard/presentation/screens/platform_overview_screen.dart`
+- `lib/features/platform_dashboard/presentation/widgets/overview/platform_overview_chart_grid.dart`
+- `lib/features/platform_dashboard/presentation/widgets/overview/platform_recent_activity_section.dart`
+- `lib/features/platform_dashboard/presentation/widgets/overview/platform_welcome_panel.dart`
+- `lib/features/platform_dashboard/presentation/widgets/platform_navigation_footer.dart`
+- `lib/features/platform_dashboard/presentation/widgets/platform_sidebar_brand.dart`
+- `lib/main.dart`
+- `lib/widgets/dashboard_extras/custom_activity_timeline.dart`
+- `lib/widgets/dashboard_extras/custom_command_palette.dart`
+- `lib/widgets/dashboard_extras/custom_date_range_selector.dart`
+- `lib/widgets/dashboard_extras/custom_filter_bar.dart`
+- `lib/widgets/dashboard_extras/custom_notification_center.dart`
+- `lib/widgets/dashboard_extras/custom_profile_menu.dart`
+- `lib/widgets/dashboard_extras/custom_section_header.dart`
+- `lib/widgets/dashboard_extras/custom_shortcut_hint.dart`
+- `lib/widgets/dashboard_extras/custom_status_banner.dart`
+- `lib/widgets/dashboard_extras/dashboard_extras.dart`
+- `lib/widgets/dashboard_layout/src/layout/dashboard_shell.dart`
+- `lib/widgets/dashboard_layout/src/widgets/dashboard_page_header.dart`
+- `lib/widgets/dashboard_layout/src/widgets/dashboard_sidebar.dart`
+- `lib/widgets/dashboard_layout/src/widgets/dashboard_topbar.dart`
+- `test/core/localization/app_localizations_test.dart`
+- `test/features/platform_dashboard/platform_navigation_registry_test.dart`
+- `test/widgets/dashboard_layout/dashboard_layout_test.dart`
+
+
+---
+
+## [2026-11-08] Platform Overview — Live Data Integration
+- **Authorized task:** User explicitly approved continuing implementation of the real-data Platform Overview.
+- **Dashboard implementation commits:**
+  - \`0e8c30eaf47fedb7be3d60cb2e986d846c084596\` — typed Overview domain/data contract, repository, use case, and binding integration.
+  - \`c10af366af5cab88709787533d329a4c2d9b6bad\` — Overview controller, period/refresh state, and ApiConstants endpoint; also corrected the existing nullable GetX route-middleware test expression.
+  - \`fdbeb8bb4e6471e9946e86f0a8a0f309dc2b0385\` — real metric rendering, chart series, attention queues, and localization.
+  - \`d3053d48773620dd1ee44208050af4c86ba293b9\` — aligned recent activity section and chart context handling.
+- **Backend:** PR #3 in \`smartixit/netsales_api\` was merged; merged head \`99f8066cb9f2a40cd8289981de50323c1608ea30\`.
+- **Files added/changed in Dashboard:** Overview entity/model/use case; Overview data source and repository contracts/implementation; activity entity/model extension; Dashboard binding/controller; API constant; Overview screen, chart grid, recent activity section, localization; navigation registry test null-safety correction.
+- **Verification evidence:** Dashboard CI run \`42499932463\` tested \`c10af366...\` and was still in progress when last inspected. It does not verify the later commits. API CI run \`42499361996\` completed failure at Composer dependency audit; the workflow reports high-severity dependency advisories. Do not mark either pipeline green.
+- **Unverified:** Current Flutter analyzer, full tests, Windows Debug build, API Pint/PHPUnit, live API request against a configured database, and rendered Windows/Web visual QA.
+- **Next:** Inspect current HEAD CI and fix every source/test failure in one coherent pass. Then verify API contract/export and run API Pint/PHPUnit. Do not merge Dashboard PR without user authorization.

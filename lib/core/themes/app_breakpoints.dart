@@ -76,11 +76,17 @@ class AppBreakpoints {
   /// أقصى عرض للمحتوى الرئيسي والبطاقات في الشاشات العريضة لمنع تشتت القراءة
   static const double maxContentWidth = 1200.0;
 
+  /// Wider content ceiling reserved for high-density enterprise dashboards.
+  static const double maxDashboardContentWidth = 1800.0;
+
   /// أقصى عرض للنوافذ المنبثقة وصناديق الحوار المعتمدة
   static const double maxModalWidth = 480.0;
 
   /// أقصى عرض للقائمة الجانبية الممتدة (Navigation Drawer)
   static const double maxDrawerWidth = 320.0;
+
+  /// Standard width for compact dashboard filter search controls.
+  static const double filterSearchWidth = 288.0;
 
   /// العرض القياسي للشريط الجانبي المصغر (Navigation Rail)
   static const double navigationRailWidth = 72.0;
