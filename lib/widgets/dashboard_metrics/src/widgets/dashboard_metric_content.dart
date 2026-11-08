@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/widgets/dashboard_metrics/src/models/dashboard_metric_threshold.dart';
 
 import '../enums/dashboard_metric_direction.dart';
@@ -295,14 +296,14 @@ class _StatusCaption extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 4),
+          padding: EdgeInsets.only(top: AppSpacing.xs),
           child: Container(
             width: 8,
             height: 8,
             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: AppSpacing.sm),
         Expanded(
           child: Text(
             label ?? '',

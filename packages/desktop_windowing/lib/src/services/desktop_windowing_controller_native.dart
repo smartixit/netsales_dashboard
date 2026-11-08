@@ -20,8 +20,9 @@ import '../routing/window_profile_router.dart';
 class DesktopWindowingController {
   DesktopWindowingController({
     required this.config,
-    WindowGeometryResolver geometryResolver = const WindowGeometryResolver(),
-  }) : _geometryResolver = geometryResolver,
+    WindowGeometryResolver? geometryResolver,
+  }) : _geometryResolver =
+           geometryResolver ?? const WindowGeometryResolver(),
        _router = WindowProfileRouter(config.routeProfiles) {
     _ticker = Ticker(_handleAnimationFrame, debugLabel: 'DesktopWindowing');
   }

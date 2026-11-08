@@ -1,5 +1,3 @@
-library desktop_windowing;
-
 export 'src/config/window_animation_config.dart';
 export 'src/config/window_constraints.dart';
 export 'src/config/window_profile.dart';

@@ -24,14 +24,19 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - Extended only the Dashboard host window route mapping for Reset Password and Unauthorized screens. Adjusted the Dashboard Authentication host profile to 1040×720 with 900×620 minimum dimensions so the desktop brand/form split is visible at startup. The package itself was not moved, copied, or modified.
 - Applied follow-up analyzer fixes to the new presentation files: imported the shared color extension where used, removed an unused route-file import, and used idiomatic interpolation in UI strings.
 
-## Recent DataGrid and Dashboard Metrics repair
-- Run [#54](https://github.com/smartixit/netsales_dashboard/actions/runs/42477073243) tested `88062b911c4113c828de3d46eb28ac2d45a38786`. The package checks and focused Splash/Auth analysis passed; full analysis, full tests (121 passed / 3 failed), and Windows Debug build failed.
-- The DataGrid analyzer, test-compilation, and Windows kernel-snapshot errors shared one root cause: malformed `AppDataGridExportController` class/constructor syntax. The independent Dashboard Metrics test failure came from `_StatusCaption` text overflowing its Row.
-- A corrective commit now restores the constructor body and makes status-caption text wrap within available width. Its CI verification is pending; no success is claimed yet.
+## Recent CI #55 verification and follow-up cleanup
+- Run [#55](https://github.com/smartixit/netsales_dashboard/actions/runs/42478869409) tested the exact branch HEAD `71fbd8c5167340ea37f1151fddd2c6245c85834a`.
+- The Desktop Windowing package analyzer/tests passed, and focused Splash/Authentication analysis reported no issues.
+- The complete Flutter test suite passed **130 tests**, including DataGrid export and Dashboard Metrics overflow regression coverage.
+- Windows Debug compilation succeeded and produced `build/windows/x64/runner/Debug/NetSales.exe` with 0 native build errors.
+- The full analyzer step failed only on two informational lints: `unnecessary_library_name` in the package barrel and `prefer_initializing_formals` in the native controller constructor.
+- Follow-up source changes remove both lints without reducing the public geometry-resolver injection seam. The status caption spacing now uses shared `AppSpacing` tokens. The showcase interaction test targets the containing `ChoiceChip` instead of its inner text to avoid a hit-test warning.
+- Verification of these follow-up changes is pending a new CI run for the resulting current HEAD.
 
 ## Verification status
-- GitHub Actions run [#54](https://github.com/smartixit/netsales_dashboard/actions/runs/42477073243) is the latest completed run for the previous HEAD. The package test job passed. Full analysis failed with 23 issues, focused Splash/Auth analysis passed, the complete test suite had 121 passes and 3 failures, and Windows Debug compilation failed while generating the Dart kernel snapshot from the same DataGrid syntax defect.
-- The next current-HEAD CI run must be checked independently for the complete analyzer, all Flutter tests, and Windows Debug build. Earlier runs for older SHAs are not evidence for the next commit.
+- Run #55 conclusively verifies: package checks passed, focused Splash/Auth analysis passed, all 130 Flutter tests passed, and Windows Debug compilation passed.
+- Run #55 overall conclusion is **failure solely because full `flutter analyze` returned exit code 1 for the two informational diagnostics described above**.
+- The current follow-up commit must be checked independently for a clean full analyzer, a still-green complete test suite, and a successful Windows Debug build.
 - No rendered Windows/Web visual QA is claimed. Native animation behavior, manual resize interruption, and keyboard/pointer/RTL verification remain outstanding.
 
 ## Known baseline blockers and boundaries

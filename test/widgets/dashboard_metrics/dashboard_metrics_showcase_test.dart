@@ -55,7 +55,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('داكن'));
+    await tester.tap(find.widgetWithText(ChoiceChip, 'داكن'));
     await tester.pumpAndSettle();
 
     expect(
@@ -66,7 +66,9 @@ void main() {
       findsWidgets,
     );
 
-    await tester.tap(find.textContaining('من اليمين لليسار'));
+    await tester.tap(
+      find.widgetWithText(ChoiceChip, 'من اليمين لليسار · RTL'),
+    );
     await tester.pumpAndSettle();
 
     expect(
