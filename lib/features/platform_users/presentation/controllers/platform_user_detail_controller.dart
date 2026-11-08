@@ -1,23 +1,35 @@
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_permissions.dart';
+import 'package:netsales_dashboard/core/exceptions/app_exception.dart';
 import 'package:netsales_dashboard/core/services/permission_service.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_detail_entity.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_session_entity.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/get_platform_user_detail_use_case.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/get_platform_user_sessions_use_case.dart';
 
+/// يدير حالة العرض وعمليات القراءة في شاشة تفاصيل مستخدم المنصة.
 class PlatformUserDetailController extends GetxController {
-  PlatformUserDetailController(this.userId, this._getDetail, this._getSessions);
-  final int userId;
-  final GetPlatformUserDetailUseCase _getDetail;
-  final GetPlatformUserSessionsUseCase _getSessions;
-  final detail = Rxn<PlatformUserDetailEntity>();
-  final sessions = <PlatformUserSessionEntity>[].obs;
-  final isLoading = true.obs;
-  final isSessionsLoading = false.obs;
-  final errorMessage = ''.obs;
-  final sessionsError = ''.obs;
+  PlatformUserDetailController({
+    required this.userId,
+    required GetPlatformUserDetailUseCase getUserDetail,
+    required GetPlatformUserSessionsUseCase getUserSessions,
+  }) : _getUserDetail = getUserDetail,
+       _getUserSessions = getUserSessions;
 
-  bool get canViewSecurity => PermissionService.to.can(AppPermissions.authView);
+  final int userId;
+  final GetPlatformUserDetailUseCase _getUserDetail;
+  final GetPlatformUserSessionsUseCase _getUserSessions;
+
+  final Rxn<PlatformUserDetailEntity> detail = Rxn<PlatformUserDetailEntity>();
+  final RxList<PlatformUserSessionEntity> sessions =
+      <PlatformUserSessionEntity>[].obs;
+  final RxBool isLoading = true.obs;
+  final RxBool isSessionsLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  final RxString sessionsError = ''.obs;
+
+  bool get canViewSecurity =>
+      PermissionService.to.can(AppPermissions.authView);
 
   @override
   void onInit() {
@@ -29,16 +41,15 @@ class PlatformUserDetailController extends GetxController {
     isLoading.value = true;
     errorMessage.value = '';
     try {
-      final result = await _getDetail(userId);
-      if (result == null) {
-        throw Exception('لم يتم العثور على حساب المستخدم المطلوب.');
-      }
-      detail.value = result;
+      detail.value = await _getUserDetail.execute(userId);
       if (canViewSecurity) {
         await loadSessions();
       }
     } catch (error) {
-      errorMessage.value = error.toString();
+      errorMessage.value = AppException.sanitizeMessage(
+        error,
+        fallback: 'تعذر تحميل تفاصيل المستخدم.',
+      );
     } finally {
       isLoading.value = false;
     }
@@ -49,9 +60,12 @@ class PlatformUserDetailController extends GetxController {
     isSessionsLoading.value = true;
     sessionsError.value = '';
     try {
-      sessions.assignAll(await _getSessions(userId));
+      sessions.assignAll(await _getUserSessions.execute(userId));
     } catch (error) {
-      sessionsError.value = error.toString();
+      sessionsError.value = AppException.sanitizeMessage(
+        error,
+        fallback: 'تعذر تحميل جلسات المستخدم.',
+      );
     } finally {
       isSessionsLoading.value = false;
     }
