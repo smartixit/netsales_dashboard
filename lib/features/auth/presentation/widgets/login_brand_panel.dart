@@ -79,7 +79,7 @@ class LoginBrandPanel extends StatelessWidget {
                             children: [
                               Text(
                                 'NetSales',
-                                style: AppTypography.headlineMedium.copyWith(
+                                style: AppTypography.titleSmall.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: -0.5,
@@ -87,7 +87,7 @@ class LoginBrandPanel extends StatelessWidget {
                               ),
                               Text(
                                 'منصة إدارة الحسابات والعمليات',
-                                style: AppTypography.bodySmall.copyWith(
+                                style: AppTypography.titleSmall.copyWith(
                                   color: Colors.white.withValues(alpha: 0.75),
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -102,7 +102,7 @@ class LoginBrandPanel extends StatelessWidget {
                       // ── Headline ──
                       Text(
                         'إدارة متكاملة.\nوقرارات مالية دقيقة.',
-                        style: AppTypography.displaySmall.copyWith(
+                        style: AppTypography.titleMedium.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w800,
                           height: 1.3,
@@ -119,7 +119,7 @@ class LoginBrandPanel extends StatelessWidget {
                         ),
                       ),
 
-                      SizedBox(height: AppSpacing.section),
+                      AppSpacing.vMd,
 
                       // ── Interactive Pillar Cards ──
                       _PillarHighlightCard(
@@ -236,7 +236,7 @@ class _PillarHighlightCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(AppSpacing.md),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AppRadius.md),
