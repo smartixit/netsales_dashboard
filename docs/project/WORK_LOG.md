@@ -1,4 +1,4 @@
-[object Object]
+# NetSales Dashboard — Work Log
 
 ## 2026-11-08 — Platform User Detail Screen
 
@@ -20,3 +20,14 @@
 - API PR #7 focused new security test passed in the full CI run. The overall Laravel suite remains red: 117 failures, 186 passes, and 3 skips; the failures are in unrelated legacy feature suites.
 - Dashboard CI for this branch has not yet been started. Run analyzer, focused/full tests, and Windows build after opening the PR.
 - Live Windows/Web visual inspection is not available in this execution context and is not claimed.
+
+## 2026-11-08 — Platform Users Data/Domain Boundary Repair
+
+**Branch:** `refactor/platform-users-architecture`
+
+- Updated every Platform Users response model to extend its matching Domain entity: user, detail, device, ban, and session.
+- Moved wire timestamp parsing into model factories so the inherited Domain properties are already typed as `DateTime?`.
+- Removed `toEntity()` mapping and made the repository return model instances through the Domain repository contract.
+- Kept `PlatformUsersRemoteDataSource` as the abstraction and `PlatformUsersRemoteDataSourceImpl` as a separate ApiService-backed implementation; wired the implementation explicitly in both directory and detail Bindings.
+- Updated model tests to assert direct entity inheritance and optional security relationship handling.
+- Pull Request #7 opened. GitHub Actions run #42513044434 was in progress at the time of this entry. No local Flutter test/analyzer or visual QA is claimed.
