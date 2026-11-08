@@ -21,13 +21,13 @@
 - Dashboard CI for this branch has not yet been started. Run analyzer, focused/full tests, and Windows build after opening the PR.
 - Live Windows/Web visual inspection is not available in this execution context and is not claimed.
 
-## 2026-11-08 — Platform Dashboard Data/Domain Boundary Repair
+## 2026-11-08 — Platform Users Data/Domain Boundary Repair
 
-**Branch:** `refactor/platform-dashboard-architecture`
+**Branch:** `refactor/platform-users-architecture`
 
-- Updated Dashboard overview, activity, and notification models to extend their corresponding Domain entities.
-- Kept API parsing in Data models and removed all `toEntity()` mapping from Dashboard repository paths.
-- Reused the activity model inside the overview response parser so the recent activity collection is also composed of entity-inheriting models.
-- Retained the dedicated `PlatformDashboardRemoteDataSourceImpl` backed by the central ApiService and its existing GetX Binding registration.
-- Rewrote model tests to assert entity inheritance and direct parsed values.
-- Updated the existing Pull Request #6. GitHub Actions run #42513128438 was pending/in progress at the time of this entry. No local Flutter test/analyzer or visual QA is claimed.
+- Updated every Platform Users response model to extend its matching Domain entity: user, detail, device, ban, and session.
+- Moved wire timestamp parsing into model factories so the inherited Domain properties are already typed as `DateTime?`.
+- Removed `toEntity()` mapping and made the repository return model instances through the Domain repository contract.
+- Kept `PlatformUsersRemoteDataSource` as the abstraction and `PlatformUsersRemoteDataSourceImpl` as a separate ApiService-backed implementation; wired the implementation explicitly in both directory and detail Bindings.
+- Updated model tests to assert direct entity inheritance and optional security relationship handling.
+- Pull Request #7 opened. GitHub Actions run #42513044434 was in progress at the time of this entry. No local Flutter test/analyzer or visual QA is claimed.

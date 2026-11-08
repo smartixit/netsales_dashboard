@@ -1,9 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:netsales_dashboard/features/platform_users/data/models/platform_user_detail_model.dart';
+import 'package:netsales_dashboard/features/platform_users/data/models/platform_user_model.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_detail_entity.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_entity.dart';
 
 void main() {
   group('PlatformUserDetailModel', () {
-    test('maps server user, device and ban details without exposing device credentials', () {
+    test('parses user, device and ban details as domain entities directly', () {
       final model = PlatformUserDetailModel.fromJson({
         'user_id': 41,
         'role_id': 2,
@@ -15,8 +18,8 @@ void main() {
         'user_2fa_enabled': true,
         'must_change_password': false,
         'user_login_attempts': 1,
-        'created_at': '2026-11-01 10:00:00',
-        'updated_at': '2026-11-02 10:00:00',
+        'created_at': '2026-11-01T10:00:00Z',
+        'updated_at': '2026-11-02T10:00:00Z',
         'role': {'role_name': 'Support Agent', 'role_key': 'SUPPORT_AGENT'},
         'devices': [
           {
@@ -27,7 +30,7 @@ void main() {
             'status': 'ACTIVE',
             'status_label': 'مفعّل',
             'is_primary': true,
-            'last_used_at': '2026-11-08 10:30:00',
+            'last_used_at': '2026-11-08T10:30:00Z',
           },
         ],
         'security_bans': [
@@ -36,22 +39,26 @@ void main() {
             'ban_type': 'TEMPORARY',
             'ban_type_label': 'مؤقت',
             'ban_reason': 'Security review',
-            'start_at': '2026-11-07 10:00:00',
-            'end_at': '2026-11-09 10:00:00',
+            'start_at': '2026-11-07T10:00:00Z',
+            'end_at': '2026-11-09T10:00:00Z',
           },
         ],
       });
 
-      final entity = model.toEntity();
-      expect(entity.user.id, 41);
-      expect(entity.user.roleName, 'Support Agent');
-      expect(entity.twoFactorEnabled, isTrue);
-      expect(entity.devices.single.id, 8);
-      expect(entity.devices.single.type, 'WINDOWS');
-      expect(entity.securityBans.single.reason, 'Security review');
+      expect(model, isA<PlatformUserDetailEntity>());
+      expect(model.user, isA<PlatformUserEntity>());
+      expect(model.user, isA<PlatformUserModel>());
+      expect(model.user.id, 41);
+      expect(model.user.roleName, 'Support Agent');
+      expect(model.twoFactorEnabled, isTrue);
+      expect(model.devices.single, isA<PlatformUserDeviceEntity>());
+      expect(model.devices.single.id, 8);
+      expect(model.devices.single.type, 'WINDOWS');
+      expect(model.securityBans.single, isA<PlatformUserBanEntity>());
+      expect(model.securityBans.single.reason, 'Security review');
     });
 
-    test('tolerates missing optional security relationships for callers without auth.view', () {
+    test('tolerates absent optional security relationships', () {
       final model = PlatformUserDetailModel.fromJson({
         'user_id': 42,
         'role_id': 3,
@@ -60,10 +67,10 @@ void main() {
         'status': 'ACTIVE',
       });
 
-      final entity = model.toEntity();
-      expect(entity.user.id, 42);
-      expect(entity.devices, isEmpty);
-      expect(entity.securityBans, isEmpty);
+      expect(model, isA<PlatformUserDetailEntity>());
+      expect(model.user.id, 42);
+      expect(model.devices, isEmpty);
+      expect(model.securityBans, isEmpty);
     });
   });
 }
