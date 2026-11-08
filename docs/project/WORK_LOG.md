@@ -1,5 +1,41 @@
 # NetSales Dashboard — Work Log
 
+## 2026-11-08 — DataGrid compile repair and Dashboard Metrics overflow
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/desktop-windowing-foundation`  
+**Diagnostic baseline:** `88062b911c4113c828de3d46eb28ac2d45a38786`
+
+### CI #54 findings
+- Run [#54](https://github.com/smartixit/netsales_dashboard/actions/runs/42477073243) tested the exact diagnostic baseline SHA and completed with failure.
+- The independent `desktop_windowing` package analyzer and test job passed. Splash/Authentication focused analysis also passed.
+- Full `flutter analyze` reported 23 issues. The DataGrid cascade originated from an invalid class declaration in `AppDataGridExportController`: constructor parameters and initializer were placed on the class declaration instead of inside a constructor declaration. This made `gridKey`, `exportExcel`, and `exportPdf` appear missing to dependent source and tests.
+- The full test suite reported 121 passing tests and 3 failures: the two DataGrid test files could not compile from that same syntax error, while the Dashboard Metrics showcase test reported two horizontal RenderFlex overflows in `_StatusCaption` (124 px and 152 px) at a 242 px available width.
+- Windows Debug compilation reached Flutter kernel snapshot generation, then failed on the same DataGrid Dart syntax error. No separate MSVC or CMake source compilation failure was evidenced.
+
+### Corrective changes in this commit
+- Restore a valid `AppDataGridExportController` class body and named constructor. Preserve the existing injectable `IFileExportService` seam and the existing `gridKey`, Excel, and PDF export methods.
+- Make the status caption text flexible and wrapping within the row's remaining width, while retaining its semantic marker, theme-derived color, and typography.
+- No Material button replacements, API changes, financial logic, or feature architecture changes are part of this repair.
+
+### Files modified
+- `lib/widgets/data_grid/adapters/app_data_grid_export_controller.dart`
+- `lib/widgets/dashboard_metrics/src/widgets/dashboard_metric_content.dart`
+- `docs/project/WORK_LOG.md`
+- `docs/project/PROJECT_STATE.md`
+
+### Verification at commit preparation
+- Source and existing DataGrid export tests were inspected. The existing tests already exercise injected service construction, mounted/unmounted grid behavior, Excel/PDF output, selected-row export, and storage failure handling.
+- The two concrete code fixes were reviewed against the failing CI diagnostics. No local Flutter SDK execution is available in this GitHub-only execution context; the new current-HEAD CI run is the required executable verification and is not yet complete.
+- No Windows runtime or browser visual session was available; rendered visual QA is not claimed.
+
+### Pending verification
+- Read the new current-HEAD run and its job/step logs after this commit is pushed.
+- Require the DataGrid export tests and Dashboard Metrics showcase test to pass, and inspect the complete analyzer and Windows Debug build outcomes before declaring the repair complete.
+
+---
+
+
 ## 2026-11-07 — Desktop Windowing Foundation (in progress)
 
 **Repository:** `smartixit/netsales_dashboard`  
@@ -26,7 +62,7 @@
 - Run #47 tested `0300c6d7fe723d1aa5b82d22b2bd805c09bbd5c0`. The standalone windowing package analysis and tests passed, as did Windows toolchain setup and dependency lockfile verification.
 - Full analysis failed with 973 diagnostics (853 errors, 27 warnings, 93 infos). One error in the Auth repository was caused by removing the GetX import even though the permission refresh path still uses `Get.isRegistered<PermissionService>()`; restore that import. The earlier removal of the Network/POS workspace reset from logout is correct and remains.
 - The remaining errors are concentrated in unrelated legacy Dashboard areas: enum contract parity tests, Charts showcase/adapters, and legacy `package:netsales/...` imports/source references. The complete test suite and Windows build were skipped by the former fail-fast workflow.
-- Update the quality workflow to run a focused Splash/Auth analyzer, the complete test suite, and the Windows Debug build after dependency resolution even when the full-project analyzer reports baseline errors. The full analyzer remains a visible failing gate; no errors are suppressed.
+- Update the quality workflow to run a focused Splash/Auth analyzer, the complete test suite, and the Windows Debug build after dependency resolution even when the full-project analyzer reports baseline errors. The full analyzer remains a failing quality gate; no errors are suppressed.
 - Do not claim full test/build success until the resulting run reports those steps complete with successful conclusions.
 
 ### Verification

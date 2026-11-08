@@ -292,18 +292,25 @@ class _StatusCaption extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = tokens.colorFor(tone);
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
         ),
         const SizedBox(width: 8),
-        Text(
-          label ?? '',
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: color,
-            fontWeight: FontWeight.w600,
+        Expanded(
+          child: Text(
+            label ?? '',
+            softWrap: true,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],
