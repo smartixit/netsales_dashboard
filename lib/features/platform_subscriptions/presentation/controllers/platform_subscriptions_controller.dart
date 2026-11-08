@@ -11,6 +11,9 @@ import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecas
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_provider_subscriptions_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_plans_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_requests_use_case.dart';
+import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_request_receipt_use_case.dart';
+import 'package:netsales_dashboard/core/services/file_export_service.dart';
+import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/reject_subscription_request_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/save_subscription_plan_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/toggle_subscription_plan_status_use_case.dart';
@@ -22,6 +25,7 @@ class PlatformSubscriptionsController extends GetxController {
     required GetSubscriptionFeaturesUseCase getFeatures,
     required GetProviderSubscriptionsUseCase getSubscriptions,
     required GetSubscriptionRequestsUseCase getRequests,
+    required GetSubscriptionRequestReceiptUseCase getRequestReceipt,
     required SaveSubscriptionPlanUseCase savePlan,
     required ToggleSubscriptionPlanStatusUseCase togglePlan,
     required DeleteSubscriptionPlanUseCase deletePlan,
@@ -32,6 +36,7 @@ class PlatformSubscriptionsController extends GetxController {
        _getFeatures = getFeatures,
        _getSubscriptions = getSubscriptions,
        _getRequests = getRequests,
+       _getRequestReceipt = getRequestReceipt,
        _savePlan = savePlan,
        _togglePlan = togglePlan,
        _deletePlan = deletePlan,
@@ -44,6 +49,7 @@ class PlatformSubscriptionsController extends GetxController {
   final GetSubscriptionFeaturesUseCase _getFeatures;
   final GetProviderSubscriptionsUseCase _getSubscriptions;
   final GetSubscriptionRequestsUseCase _getRequests;
+  final GetSubscriptionRequestReceiptUseCase _getRequestReceipt;
   final SaveSubscriptionPlanUseCase _savePlan;
   final ToggleSubscriptionPlanStatusUseCase _togglePlan;
   final DeleteSubscriptionPlanUseCase _deletePlan;
@@ -193,6 +199,28 @@ class PlatformSubscriptionsController extends GetxController {
     isMutating.value = true;
     try { await _deletePlan(id); await loadPlans(); }
     finally { isMutating.value = false; }
+  }
+
+  Future<void> openReceipt(SubscriptionRequestEntity request) async {
+    isMutating.value = true;
+    try {
+      final bytes = await _getRequestReceipt(request.id);
+      final rawExtension = request.receiptPath?.split('.').last.toLowerCase();
+      final extension = rawExtension != null && rawExtension.length <= 5 ? rawExtension : null;
+      final result = await FileExportService.instance.saveFile(
+        bytes: bytes,
+        fileName: 'subscription-receipt-${request.id}',
+        extension: extension,
+        folderName: 'Subscription Receipts',
+        autoOpen: true,
+        showFeedback: true,
+      );
+      if (!result.isSuccess) throw Exception(result.errorMessage ?? 'Unable to open receipt.');
+    } catch (error) {
+      CustomSnackbar.show(title: 'Receipt', message: error.toString(), type: SnackType.error);
+    } finally {
+      isMutating.value = false;
+    }
   }
 
   Future<void> approve(SubscriptionRequestEntity request) async {
