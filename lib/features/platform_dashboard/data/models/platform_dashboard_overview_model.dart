@@ -1,25 +1,32 @@
-import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_activity_entity.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/data/models/platform_activity_model.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_dashboard_overview_entity.dart';
 
-/// نموذج نقل لاستجابة Platform Dashboard Overview.
-class PlatformDashboardOverviewModel {
-  const PlatformDashboardOverviewModel(this._json);
-
-  final Map<String, dynamic> _json;
+/// نموذج استجابة Dashboard؛ يرث الكيان الدوميني ولا ينشئ نسخة تحويل منفصلة.
+class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
+  PlatformDashboardOverviewModel._(PlatformDashboardOverviewEntity entity)
+      : super(
+          generatedAt: entity.generatedAt,
+          timezone: entity.timezone,
+          period: entity.period,
+          metrics: entity.metrics,
+          charts: entity.charts,
+          attentionGroups: entity.attentionGroups,
+          recentActivity: entity.recentActivity,
+        );
 
   factory PlatformDashboardOverviewModel.fromJson(Map<String, dynamic> json) {
-    return PlatformDashboardOverviewModel(Map<String, dynamic>.from(json));
+    return PlatformDashboardOverviewModel._(_parse(json));
   }
 
-  PlatformDashboardOverviewEntity toEntity() {
-    final rawPeriod = _asMap(_json['period']);
-    final rawMetrics = _asMap(_json['metrics']);
-    final rawCharts = _asMap(_json['charts']);
-    final rawAttention = _asMap(_json['attention']);
+  static PlatformDashboardOverviewEntity _parse(Map<String, dynamic> json) {
+    final rawPeriod = _asMap(json['period']);
+    final rawMetrics = _asMap(json['metrics']);
+    final rawCharts = _asMap(json['charts']);
+    final rawAttention = _asMap(json['attention']);
 
     return PlatformDashboardOverviewEntity(
-      generatedAt: _dateTime(_json['generated_at']),
-      timezone: _json['timezone']?.toString() ?? 'Asia/Aden',
+      generatedAt: _dateTime(json['generated_at']),
+      timezone: json['timezone']?.toString() ?? 'Asia/Aden',
       period: PlatformDashboardPeriodEntity(
         key: rawPeriod['key']?.toString() ?? '30d',
         days: _asInt(rawPeriod['days']),
@@ -82,19 +89,9 @@ class PlatformDashboardOverviewModel {
           items: items,
         );
       }).toList(growable: false),
-      recentActivity: _asList(_json['recent_activity']).map((item) {
+      recentActivity: _asList(json['recent_activity']).map((item) {
         final map = _asMap(item);
-        return PlatformActivityEntity(
-          id: _asInt(map['id']),
-          action: map['title']?.toString() ?? '',
-          module: map['module']?.toString() ?? '',
-          entityType: map['entity_type']?.toString() ?? '',
-          entityId: _nullableInt(map['entity_id']),
-          actorName: _nullableString(map['actor_name']),
-          contextLabel: _nullableString(map['context_label']),
-          timestamp: _dateTime(map['occurred_at']),
-          source: _nullableString(map['source']),
-        );
+        return PlatformActivityModel.fromJson(map);
       }).toList(growable: false),
     );
   }
