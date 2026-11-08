@@ -181,7 +181,7 @@ class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
       value == null ? null : _asInt(value);
 
   static String? _nullableString(dynamic value) =>
-      value == null ? null : value.toString();
+      value?.toString();
 
   static DateTime? _dateTime(dynamic value) =>
       value == null ? null : DateTime.tryParse(value.toString());

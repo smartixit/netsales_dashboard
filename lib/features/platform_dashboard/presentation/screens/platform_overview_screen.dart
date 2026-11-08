@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
-import 'package:netsales_dashboard/core/services/permission_service.dart';
 import 'package:netsales_dashboard/core/services/session_service.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/controllers/platform_dashboard_controller.dart';
@@ -48,7 +47,7 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
             ]),
           ],
           AppSpacing.vXl,
-          CustomSectionHeader(title:l10n.text('performance_overview'),description:data==null?l10n.text('overview_api_unavailable'):l10n.text('overview_period_'+data.period.key),leading:Icon(Icons.insights_rounded,color:colors.primary)),
+          CustomSectionHeader(title:l10n.text('performance_overview'),description:data==null?l10n.text('overview_api_unavailable'):l10n.text('overview_period_${data.period.key}'),leading:Icon(Icons.insights_rounded,color:colors.primary)),
           AppSpacing.vMd,
           if(loading&&data==null) const CustomSkeletonGrid(count:5,crossAxisCount:3,itemHeight:132)
           else if(failed&&data==null) CustomErrorState.boxed(title:l10n.text('overview_load_failed'),subtitle:l10n.text('overview_api_unavailable'),retryLabel:l10n.text('refresh'),onRetry:controller.refreshHeaderData,type:ErrorStateType.server)
@@ -74,15 +73,15 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
   List<DashboardMetricData> _metrics(AppLocalizations l10n,PlatformDashboardOverviewEntity data){
     final metrics=data.metrics;
     return [
-      if(metrics.networks case final network?) DashboardMetricData(id:'active_networks',title:l10n.text('active_network_providers'),value:network.active.toString(),variant:DashboardMetricVariant.standard,icon:Icons.router_outlined,description:l10n.text('total')+': '+network.total.toString(),tone:DashboardMetricTone.success),
-      if(metrics.pos case final pos?) DashboardMetricData(id:'active_pos',title:l10n.text('active_pos'),value:pos.active.toString(),variant:DashboardMetricVariant.standard,icon:Icons.storefront_outlined,description:l10n.text('total')+': '+pos.total.toString(),tone:DashboardMetricTone.success),
+      if(metrics.networks case final network?) DashboardMetricData(id:'active_networks',title:l10n.text('active_network_providers'),value:network.active.toString(),variant:DashboardMetricVariant.standard,icon:Icons.router_outlined,description:'${l10n.text('total')}: ${network.total}',tone:DashboardMetricTone.success),
+      if(metrics.pos case final pos?) DashboardMetricData(id:'active_pos',title:l10n.text('active_pos'),value:pos.active.toString(),variant:DashboardMetricVariant.standard,icon:Icons.storefront_outlined,description:'${l10n.text('total')}: ${pos.total}',tone:DashboardMetricTone.success),
       if(metrics.subscriptions case final subscriptions?)...[
-        DashboardMetricData(id:'active_subscriptions',title:l10n.text('active_subscriptions'),value:subscriptions.active.toString(),variant:DashboardMetricVariant.standard,icon:Icons.card_membership_outlined,description:l10n.text('total')+': '+subscriptions.total.toString(),tone:DashboardMetricTone.success),
+        DashboardMetricData(id:'active_subscriptions',title:l10n.text('active_subscriptions'),value:subscriptions.active.toString(),variant:DashboardMetricVariant.standard,icon:Icons.card_membership_outlined,description:'${l10n.text('total')}: ${subscriptions.total}',tone:DashboardMetricTone.success),
         DashboardMetricData(id:'expiring_subscriptions',title:l10n.text('expiring_subscriptions'),value:subscriptions.expiringWithin7Days.toString(),variant:DashboardMetricVariant.standard,icon:Icons.hourglass_bottom_rounded,tone:DashboardMetricTone.warning,description:l10n.text('within_seven_days')),
       ],
-      if(metrics.support case final support?) DashboardMetricData(id:'support_tickets',title:l10n.text('support_tickets'),value:support.totalTickets.toString(),variant:DashboardMetricVariant.standard,icon:Icons.support_agent_outlined,tone:DashboardMetricTone.info,description:l10n.text('unread_messages')+': '+support.unreadMessages.toString()),
-      if(metrics.sales case final sales?) DashboardMetricData(id:'sales_invoices',title:l10n.text('sales_invoices'),value:sales.invoiceCount.toString(),variant:DashboardMetricVariant.standard,icon:Icons.receipt_long_outlined,description:l10n.text('sales_total')+': '+sales.totalAmount),
-      if(metrics.expenses case final expenses?) DashboardMetricData(id:'expenses',title:l10n.text('expenses'),value:expenses.count.toString(),variant:DashboardMetricVariant.standard,icon:Icons.payments_outlined,description:l10n.text('expenses_total')+': '+expenses.totalAmount),
+      if(metrics.support case final support?) DashboardMetricData(id:'support_tickets',title:l10n.text('support_tickets'),value:support.totalTickets.toString(),variant:DashboardMetricVariant.standard,icon:Icons.support_agent_outlined,tone:DashboardMetricTone.info,description:'${l10n.text('unread_messages')}: ${support.unreadMessages}'),
+      if(metrics.sales case final sales?) DashboardMetricData(id:'sales_invoices',title:l10n.text('sales_invoices'),value:sales.invoiceCount.toString(),variant:DashboardMetricVariant.standard,icon:Icons.receipt_long_outlined,description:'${l10n.text('sales_total')}: ${sales.totalAmount}'),
+      if(metrics.expenses case final expenses?) DashboardMetricData(id:'expenses',title:l10n.text('expenses'),value:expenses.count.toString(),variant:DashboardMetricVariant.standard,icon:Icons.payments_outlined,description:'${l10n.text('expenses_total')}: ${expenses.totalAmount}'),
     ];
   }
 }
@@ -116,7 +115,7 @@ class _AttentionSection extends StatelessWidget{
       if(groups.isEmpty) CustomStatusBanner(title:l.text('nothing_needs_attention'),message:l.text('attention_queue_empty'),tone:CustomStatusBannerTone.success,icon:Icons.task_alt_rounded,compact:true)
       else for(final group in groups)...[
         Padding(padding:EdgeInsets.only(bottom:AppSpacing.xs),child:Row(children:[
-          Expanded(child:Text(l.text('attention_'+group.key),style:Theme.of(context).textTheme.titleSmall)),
+          Expanded(child:Text(l.text('attention_${group.key}'),style:Theme.of(context).textTheme.titleSmall)),
           Text(group.count.toString(),style:Theme.of(context).textTheme.labelLarge),
         ])),
         for(final item in group.items) ListTile(

@@ -60,34 +60,39 @@ class SplashProgressBar extends StatelessWidget {
         AppSpacing.vMd,
 
         // ── Phased Status Readout ──
-        Obx(() {
-          final message = controller.statusMessage.value;
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 280),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0.0, 0.15),
-                    end: Offset.zero,
-                  ).animate(animation),
-                  child: child,
+        SizedBox(
+          height: 24,
+          child: Center(
+            child: Obx(() {
+              final message = controller.statusMessage.value;
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                layoutBuilder: (currentChild, previousChildren) {
+                  return currentChild ?? const SizedBox.shrink();
+                },
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  );
+                },
+                child: Text(
+                  message,
+                  key: ValueKey<String>(message),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.labelSmall.copyWith(
+                    color: const Color(0xFFA7F3D0).withValues(alpha: 0.85),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 11.5,
+                    letterSpacing: 0.2,
+                  ),
                 ),
               );
-            },
-            child: Text(
-              message,
-              key: ValueKey<String>(message),
-              textAlign: TextAlign.center,
-              style: AppTypography.labelSmall.copyWith(
-                color: Colors.white.withValues(alpha: 0.72),
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.2,
-              ),
-            ),
-          );
-        }),
+            }),
+          ),
+        ),
       ],
     );
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/core/services/permission_service.dart';
@@ -16,9 +15,9 @@ class PlatformOverviewChartGrid extends StatelessWidget {
     final p=PermissionService.to;
     final charts=overview.charts;
     final definitions=<Widget>[
-      if(p.can('subscriptions.view')) _chart(l.text('subscription_trend'),ChartFamily.cartesian,ChartType.line,charts.subscriptionTrend.map((point)=>ChartDataPoint(x:point.period,y:point.value)).toList(growable:false),l.text('subscriptions')),
-      if(p.can('networks.view')||p.can('pos.view')) _chart(l.text('provider_distribution'),ChartFamily.circular,ChartType.doughnut,charts.providerDistribution.where((point)=>point.value>0).map((point)=>ChartDataPoint(x:point.statusLabel,y:point.value)).toList(growable:false),l.text('providers')),
-      if(p.can('support.view')||p.can('system_logs.view')) _chart(l.text('operational_activity'),ChartFamily.comparison,ChartType.column,charts.operationalActivity.map((point)=>ChartDataPoint(x:point.date,y:point.value)).toList(growable:false),l.text('activity')),
+      if(p.can('subscriptions.view')) _chart(context,l.text('subscription_trend'),ChartFamily.cartesian,ChartType.line,charts.subscriptionTrend.map((point)=>ChartDataPoint(x:point.period,y:point.value)).toList(growable:false),l.text('subscriptions')),
+      if(p.can('networks.view')||p.can('pos.view')) _chart(context,l.text('provider_distribution'),ChartFamily.circular,ChartType.doughnut,charts.providerDistribution.where((point)=>point.value>0).map((point)=>ChartDataPoint(x:point.statusLabel,y:point.value)).toList(growable:false),l.text('providers')),
+      if(p.can('support.view')||p.can('system_logs.view')) _chart(context,l.text('operational_activity'),ChartFamily.comparison,ChartType.column,charts.operationalActivity.map((point)=>ChartDataPoint(x:point.date,y:point.value)).toList(growable:false),l.text('activity')),
     ];
     if(definitions.isEmpty)return CustomStatusBanner(title:l.text('module_not_authorized'),tone:CustomStatusBannerTone.info,compact:true);
     return LayoutBuilder(builder:(context,c){

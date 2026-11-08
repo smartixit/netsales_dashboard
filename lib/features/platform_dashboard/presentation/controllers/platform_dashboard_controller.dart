@@ -81,7 +81,7 @@ class PlatformDashboardController extends GetxController {
   }
   void setSidebarCollapsed(bool collapsed)=>sidebarCollapsed.value=collapsed;
   void toggleGroup(String id){if(expandedGroups.contains(id)){expandedGroups.remove(id);}else{expandedGroups.add(id);}}
-  List<ActivityTimelineItem> get activityItems=>(overview.value?.recentActivity??const <PlatformActivityEntity>[]).map((item)=>ActivityTimelineItem(id:item.id.toString(),title:item.action,description:item.contextLabel??(item.module+' • '+item.entityType+(item.entityId==null?'':' #'+item.entityId.toString())),timestamp:item.timestamp?.toLocal().toString().substring(0,16)??'—',actor:item.actorName,icon:Icons.history_rounded)).toList(growable:false);
+  List<ActivityTimelineItem> get activityItems=>(overview.value?.recentActivity??const <PlatformActivityEntity>[]).map((item)=>ActivityTimelineItem(id:item.id.toString(),title:item.action,description:item.contextLabel??('${item.module} • ${item.entityType}${item.entityId==null?'':' #${item.entityId}'}'),timestamp:item.timestamp?.toLocal().toString().substring(0,16)??'—',actor:item.actorName,icon:Icons.history_rounded)).toList(growable:false);
   @override
   void onClose(){commandController.dispose();super.onClose();}
 }

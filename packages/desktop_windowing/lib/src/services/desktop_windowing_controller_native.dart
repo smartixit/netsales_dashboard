@@ -389,6 +389,7 @@ class DesktopWindowingController {
     window.isVisibleInTaskbar = !profile.skipTaskbar;
 
     if (profile.frameless) {
+      window.titleBarStyle = TitleBarStyle.hidden;
       window.setFrameless(true);
     } else {
       window.setFrameless(false);
