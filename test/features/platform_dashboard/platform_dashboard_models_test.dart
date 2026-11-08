@@ -133,7 +133,7 @@ void main() {
       'notification_type_label': 'Request',
       'is_read': false,
       'created_at': '2026-11-08T10:00:00Z',
-    }).toEntity();
+    });
 
     expect(entity, isA<PlatformNotificationEntity>());
     expect(entity.id, 4);
