@@ -10,3 +10,13 @@
 - The initial delivery is read-only. Mutations must be delivered as complete workflows with server permission checks and confirmed endpoint contracts.
 
 | ARCH-001 | 2026-11-08 | Data response models inherit their corresponding pure-Dart Domain entities; JSON parsing remains in Data, and repositories return these model instances directly through Domain contracts. Each remote datasource contract has a separate ApiService-backed `*_impl.dart` implementation registered in its feature Binding. | APPROVED |
+
+
+| NET-001 | 2026-11-08 | Deliver Platform Networks as a permission-aware management feature using the existing NetworkResource/API contracts. Reuse dashboard overview metrics only; do not invent POS counts, financial indicators, or network activity data. The initial delivery includes directory, details, supported edit, approval, and rejection workflows. | APPROVED |
+
+## NET-001 — Platform Networks Management
+- The feature is restricted by `networks.view`; edit, approve, and reject controls additionally require `networks.edit`, `networks.approve`, and `networks.reject` respectively.
+- The DataSource interface and ApiService-backed `RemoteDataSourceImpl` remain separate; response Models inherit their Domain Entities.
+- Listing search/status filters and cursor pagination are server-side. Client-side sorting/filtering is disabled unless a matching backend query contract is available.
+- Network KPI cards use the API's permission-filtered Dashboard Overview response. No local aggregate or financial calculations are allowed.
+- Provider creation, POS/subscription/financial/activity subviews, and network-specific reports are deferred until their complete workflows/contracts are verified.
