@@ -47,8 +47,6 @@ class PlatformSubscriptionsRepositoryImpl implements PlatformSubscriptionsReposi
   @override
   Future<ProviderSubscriptionEntity> extendSubscription(int id, int additionalDays) => _required(_remote.extendSubscription(id, additionalDays));
   @override
-  Future<ProviderSubscriptionEntity> activateQueuedSubscription(int networkId) => _required(_remote.activateQueuedSubscription(networkId));
-  @override
   Future<ApiResponse<List<SubscriptionRequestEntity>>> getRequests({int? networkId, int? planId, String? status, String? paymentType, String? fromDate, String? toDate, String? search, String? cursor, int perPage = 20}) =>
     _mapList<SubscriptionRequestModel, SubscriptionRequestEntity>(_remote.getRequests(networkId: networkId, planId: planId, status: status, paymentType: paymentType, fromDate: fromDate, toDate: toDate, search: search, cursor: cursor, perPage: perPage));
   @override
