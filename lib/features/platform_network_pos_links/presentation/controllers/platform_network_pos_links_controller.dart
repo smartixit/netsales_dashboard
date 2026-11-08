@@ -47,8 +47,6 @@ class PlatformNetworkPosLinksController extends GetxController {
   final links = <PlatformNetworkPosLinkEntity>[].obs;
   final networks = <PlatformNetworkEntity>[].obs;
   final pointsOfSale = <PlatformPosEntity>[].obs;
-  final selectedNetworkId = Rxn<int>();
-  final selectedPosId = Rxn<int>();
   final selectedNetworkListenable = ValueNotifier<int?>(null);
   final selectedPosListenable = ValueNotifier<int?>(null);
   final isLoading = true.obs;
@@ -63,7 +61,6 @@ class PlatformNetworkPosLinksController extends GetxController {
 
   late final NetSalesDataGridSource<PlatformNetworkPosLinkEntity> dataSource;
   String? _nextCursor;
-  final List<String> _cursorHistory = <String>[];
   Timer? _debounce;
   int _requestGeneration = 0;
 
@@ -85,7 +82,6 @@ class PlatformNetworkPosLinksController extends GetxController {
     if (reset) {
       isLoading.value = true;
       _nextCursor = null;
-      _cursorHistory.clear();
     }
     errorMessage.value = '';
     try {
@@ -124,12 +120,6 @@ class PlatformNetworkPosLinksController extends GetxController {
   Future<void> loadMore() async {
     if (!hasMore.value || isLoadingMore.value || _nextCursor == null) return;
     isLoadingMore.value = true;
-    await load(reset: false);
-  }
-
-  Future<void> loadPrevious() async {
-    if (_cursorHistory.isEmpty || isLoading.value) return;
-    _nextCursor = _cursorHistory.removeLast();
     await load(reset: false);
   }
 
@@ -206,8 +196,6 @@ class PlatformNetworkPosLinksController extends GetxController {
     isMutating.value = true;
     try {
       await _createLink(networkId: networkId, posId: posId);
-      selectedNetworkId.value = null;
-      selectedPosId.value = null;
       selectedNetworkListenable.value = null;
       selectedPosListenable.value = null;
       await loadSelectionOptions();
