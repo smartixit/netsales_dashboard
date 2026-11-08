@@ -42,15 +42,13 @@ class NetSalesDashboardMetricsThemeAdapter {
 
   static Widget wrap({required BuildContext context, required Widget child}) {
     final theme = Theme.of(context);
+    final extensions = theme.extensions.values
+        .where((extension) => extension is! DashboardMetricsTheme)
+        .toList(growable: true);
+    extensions.add(of(context));
+
     return Theme(
-      data: theme.copyWith(
-        extensions: <ThemeExtension<dynamic>>[
-          ...theme.extensions.values.where(
-            (extension) => extension is! DashboardMetricsTheme,
-          ),
-          of(context),
-        ],
-      ),
+      data: theme.copyWith(extensions: extensions),
       child: child,
     );
   }

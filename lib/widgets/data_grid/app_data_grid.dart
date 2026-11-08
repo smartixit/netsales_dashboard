@@ -380,11 +380,12 @@ class AppDataGrid<T> extends StatelessWidget {
                   ? (details) {
                       final accepted =
                           features.onColumnResizeUpdate?.call(details) ?? true;
-                      if (accepted)
+                      if (accepted) {
                         source.updateColumnWidth(
                           details.column.columnName,
                           details.width,
                         );
+                      }
                       return accepted;
                     }
                   : null,
@@ -644,14 +645,14 @@ class _GridToolbar extends StatelessWidget {
           Row(
             children: [
               CustomChip(
-                label: isRemote ? '${itemCount} سجل محمّل' : '${itemCount} سجل',
+                label: isRemote ? '$itemCount سجل محمّل' : '$itemCount سجل',
                 icon: Icons.table_rows_outlined,
                 isCompact: true,
               ),
               if (selectedCount > 0) ...[
                 AppSpacing.hXs,
                 CustomChip(
-                  label: selectedCount.toString() + ' محدد',
+                  label: '$selectedCount محدد',
                   icon: Icons.check_circle_outline_rounded,
                   isCompact: true,
                 ),
@@ -673,7 +674,7 @@ class _MobileGridList<T> extends StatelessWidget {
     this.allowPullToRefresh = false,
     this.allowSelection = false,
     this.allowMultiSelection = true,
-    this.selectedItems = const <T>[],
+    this.selectedItems = const [],
     this.onSelectionChanged,
     this.itemBuilder,
     this.isRemote = false,
@@ -717,7 +718,7 @@ class _MobileGridList<T> extends StatelessWidget {
         AppSpacing.md,
       ),
       itemCount: rows.length,
-      separatorBuilder: (_, __) => AppSpacing.vSm,
+      separatorBuilder: (_, _) => AppSpacing.vSm,
       itemBuilder: (context, index) {
         final item = rows[index];
         final isSelected = selectedItems.contains(item);
@@ -739,13 +740,13 @@ class _MobileGridList<T> extends StatelessWidget {
                   onSelectionChanged!(
                     [item],
                     allowMultiSelection
-                        ? const <T>[]
+                        ? <T>[]
                         : selectedItems
                               .where((value) => value != item)
                               .toList(growable: false),
                   );
                 } else {
-                  onSelectionChanged!(const <T>[], [item]);
+                  onSelectionChanged!(<T>[], [item]);
                 }
               },
             ),
@@ -851,10 +852,7 @@ class _GridPaginationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final label = pagination.mode == AppDataGridPaginationMode.pageBased
-        ? 'صفحة ' +
-              pagination.currentPage.toString() +
-              ' من ' +
-              pagination.totalPages.toString()
+        ? 'صفحة ${pagination.currentPage} من ${pagination.totalPages}'
         : pagination.pageLabel ?? 'تصفح النتائج';
     return Container(
       padding: EdgeInsetsDirectional.fromSTEB(
