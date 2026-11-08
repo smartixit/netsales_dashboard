@@ -30,7 +30,7 @@ class PlatformNetworkPosLinksScreen
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final canCreate = PermissionService.to.can('networks.edit');
+    final canCreate = PermissionService.to.isSuperAdmin;
     return Padding(
       padding: EdgeInsets.all(AppSpacing.lg),
       child: Column(
