@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:netsales_dashboard/core/constants/app_radius.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
@@ -53,7 +54,7 @@ class CustomProfileMenu extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: compact ? AppSpacing.xs : AppSpacing.sm, vertical: AppSpacing.xs),
         decoration: BoxDecoration(
           color: colors.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: AppRadius.fullRadius,
           border: Border.all(color: colors.outlineVariant),
         ),
         child: Row(
