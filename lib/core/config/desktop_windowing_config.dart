@@ -82,7 +82,10 @@ const WindowingConfig desktopWindowingConfig = WindowingConfig(
     '/dev/data-grid': 'dashboard',
   },
   animation: WindowAnimationConfig(
-    enabled: false,
+    enabled: true,
+    preferNative: true,
+    duration: Duration(milliseconds: 220),
+    curve: Curves.easeInOutCubic,
   ),
   hideUntilReady: true,
   resizable: true,
