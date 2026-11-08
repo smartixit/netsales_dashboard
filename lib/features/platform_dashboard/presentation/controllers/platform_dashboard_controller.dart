@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/routing/app_routes.dart';
@@ -63,7 +65,7 @@ class PlatformDashboardController extends GetxController {
     super.onInit();
     final current = Get.currentRoute;
     if (current.startsWith(AppRoutes.dashboard)) activeRoute.value = current;
-    refreshHeaderData();
+    unawaited(refreshHeaderData());
   }
 
   void setActiveRoute(String route) {
@@ -207,7 +209,6 @@ class PlatformDashboardController extends GetxController {
       cancelLabel: arabic ? 'إلغاء' : 'Cancel',
     );
     if (confirmed != true) return;
-    final arabic = LocaleService.to.isArabic;
     try {
       await CustomAnimationOverlay.showLoading(
         message: arabic ? 'جارٍ إنهاء الجلسة...' : 'Ending session...',
