@@ -9,6 +9,16 @@ class AppLocalizations {
     return language[key] ?? _english[key] ?? key;
   }
   static const Map<String, String> _arabic = {
+    'active': 'نشط',
+    'inactive': 'غير نشط',
+    'pending': 'قيد الانتظار',
+    'approved': 'تمت الموافقة',
+    'rejected': 'مرفوض',
+    'save': 'حفظ',
+    'description': 'الوصف',
+    'delete': 'حذف',
+    'edit': 'تعديل',
+    'approve': 'موافقة',
     'plan_feature_value': 'حد الميزة (-1 غير محدود)',
     'select_plan_features': 'المزايا والحصص المضمنة في الباقة',
     'unlimited_feature_quota': 'حدد قيمة الحصة لكل ميزة. استخدم -1 للحصة غير المحدودة وفق عقد الخادم.',
@@ -264,6 +274,16 @@ class AppLocalizations {
 
   };
   static const Map<String, String> _english = {
+    'active': 'Active',
+    'inactive': 'Inactive',
+    'pending': 'Pending',
+    'approved': 'Approved',
+    'rejected': 'Rejected',
+    'save': 'Save',
+    'description': 'Description',
+    'delete': 'Delete',
+    'edit': 'Edit',
+    'approve': 'Approve',
     'plan_feature_value': 'Feature quota (-1 means unlimited)',
     'select_plan_features': 'Included features and quotas',
     'unlimited_feature_quota': 'Set the quota value for each feature. Use -1 for an unlimited quota as defined by the server.',
