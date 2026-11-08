@@ -10,6 +10,7 @@ import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecas
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_plans_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_features_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_requests_use_case.dart';
+import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_request_receipt_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/reject_subscription_request_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/save_subscription_plan_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/toggle_subscription_plan_status_use_case.dart';
@@ -36,6 +37,9 @@ class PlatformSubscriptionsBinding extends Bindings {
     if (!Get.isRegistered<GetSubscriptionRequestsUseCase>()) {
       Get.lazyPut<GetSubscriptionRequestsUseCase>(() => GetSubscriptionRequestsUseCase(Get.find<PlatformSubscriptionsRepository>()), fenix: true);
     }
+    if (!Get.isRegistered<GetSubscriptionRequestReceiptUseCase>()) {
+      Get.lazyPut<GetSubscriptionRequestReceiptUseCase>(() => GetSubscriptionRequestReceiptUseCase(Get.find<PlatformSubscriptionsRepository>()), fenix: true);
+    }
     if (!Get.isRegistered<SaveSubscriptionPlanUseCase>()) {
       Get.lazyPut<SaveSubscriptionPlanUseCase>(() => SaveSubscriptionPlanUseCase(Get.find<PlatformSubscriptionsRepository>()), fenix: true);
     }
@@ -60,6 +64,7 @@ class PlatformSubscriptionsBinding extends Bindings {
         getFeatures: Get.find<GetSubscriptionFeaturesUseCase>(),
         getSubscriptions: Get.find<GetProviderSubscriptionsUseCase>(),
         getRequests: Get.find<GetSubscriptionRequestsUseCase>(),
+        getRequestReceipt: Get.find<GetSubscriptionRequestReceiptUseCase>(),
         savePlan: Get.find<SaveSubscriptionPlanUseCase>(),
         togglePlan: Get.find<ToggleSubscriptionPlanStatusUseCase>(),
         deletePlan: Get.find<DeleteSubscriptionPlanUseCase>(),
