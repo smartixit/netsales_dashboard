@@ -1,12 +1,10 @@
 import 'package:netsales_dashboard/core/models/api_response.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/data/datasources/platform_subscriptions_remote_data_source.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/data/models/provider_subscription_model.dart';
-import 'package:netsales_dashboard/features/platform_subscriptions/data/models/subscription_feature_consumption_model.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/data/models/subscription_feature_model.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/data/models/subscription_plan_model.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/data/models/subscription_request_model.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/provider_subscription_entity.dart';
-import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_feature_consumption_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_feature_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_plan_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_request_entity.dart';
@@ -40,10 +38,7 @@ class PlatformSubscriptionsRepositoryImpl implements PlatformSubscriptionsReposi
     _mapList<ProviderSubscriptionModel, ProviderSubscriptionEntity>(_remote.getProviderSubscriptions(networkId: networkId, planId: planId, status: status, activeOnly: activeOnly, cursor: cursor, perPage: perPage));
   @override
   Future<ProviderSubscriptionEntity> getProviderSubscription(int id) => _required(_remote.getProviderSubscription(id));
-  @override
-  Future<List<SubscriptionFeatureConsumptionEntity>> getConsumptions(int id) async {
-    final r = await _remote.getConsumptions(id); _ensure(r.success, r.message); return r.data ?? const <SubscriptionFeatureConsumptionModel>[];
-  }
+
   @override
   Future<ProviderSubscriptionEntity> extendSubscription(int id, int additionalDays) => _required(_remote.extendSubscription(id, additionalDays));
   @override
