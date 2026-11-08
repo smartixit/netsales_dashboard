@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:netsales_dashboard/core/routing/app_routes.dart';
+import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/core/presentation/enums/enum_presentation_registry.dart';
 import 'package:netsales_dashboard/features/platform_network_pos_links/domain/entities/platform_network_pos_link_entity.dart';
@@ -55,6 +58,19 @@ class PlatformNetworkPosLinkGridColumns {
       valueGetter: (row) => row.createdAt?.toLocal().toString().split('.').first ?? '—',
       width: 180,
       allowFiltering: false,
+    ),
+    AppDataGridColumn(
+      name: 'actions',
+      label: l10n.text('actions'),
+      valueGetter: (row) => row.id,
+      width: 130,
+      allowSorting: false,
+      allowFiltering: false,
+      cellBuilder: (context, row, value) => CustomButton.text(
+        text: l10n.text('view_details'),
+        size: AppButtonSize.small,
+        onPressed: () => Get.toNamed<void>(AppRoutes.networkPosLinkDetail(row.id)),
+      ),
     ),
   ];
 }
