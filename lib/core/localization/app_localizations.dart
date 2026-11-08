@@ -9,6 +9,11 @@ class AppLocalizations {
     return language[key] ?? _english[key] ?? key;
   }
   static const Map<String, String> _arabic = {
+    'link_status_active':'نشط',
+    'link_status_inactive':'معطّل',
+    'back':'رجوع',
+    'confirm':'تأكيد',
+    'saving':'جارٍ الحفظ...',
     'network_pos_links':'ارتباطات الشبكات ونقاط البيع',
     'network_pos_links_description':'إدارة علاقات الشراكة بين مزودي الشبكات ونقاط البيع على مستوى المنصة.',
     'search_network_pos_links':'البحث في الارتباطات',
@@ -197,6 +202,11 @@ class AppLocalizations {
 
   };
   static const Map<String, String> _english = {
+    'link_status_active':'Active',
+    'link_status_inactive':'Inactive',
+    'back':'Back',
+    'confirm':'Confirm',
+    'saving':'Saving...',
     'required_fields':'Required fields',
     'select_network_and_pos_required':'Select both a network and a point of sale before creating the relationship.',
     'network_pos_links':'Network–POS Relationships',
