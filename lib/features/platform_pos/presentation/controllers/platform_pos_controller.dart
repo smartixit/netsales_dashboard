@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:netsales_dashboard/core/localization/app_localizations.dart';
+import 'package:netsales_dashboard/core/services/locale_service.dart';
 import 'package:netsales_dashboard/features/platform_pos/domain/entities/platform_pos_entity.dart';
+import 'package:netsales_dashboard/features/platform_pos/presentation/widgets/platform_pos_grid_columns.dart';
 import 'package:netsales_dashboard/features/platform_pos/domain/usecases/get_platform_pos_list_use_case.dart';
 import 'package:netsales_dashboard/widgets/data_grid/adapters/app_data_grid_export_controller.dart';
 import 'package:netsales_dashboard/widgets/data_grid/adapters/net_sales_data_grid_source.dart';
@@ -38,12 +41,12 @@ class PlatformPosController extends GetxController {
     super.onInit();
     gridSource = NetSalesDataGridSource<PlatformPosEntity>(
       items: const <PlatformPosEntity>[],
-      columns: const [],
+      columns: PlatformPosGridColumns.build(
+        AppLocalizations(LocaleService.to.locale),
+      ),
     );
     load();
   }
-
-  void attachColumns(List<dynamic> columns) {}
 
   Future<void> load({bool append = false}) async {
     if (append && (!hasMore || isLoadingMore.value)) return;
