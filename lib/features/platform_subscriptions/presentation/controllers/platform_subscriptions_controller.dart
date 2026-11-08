@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/provider_subscription_entity.dart';
+import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_feature_consumption_entity.dart';
+import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_consumptions_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_plan_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_feature_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_features_use_case.dart';
@@ -22,6 +24,7 @@ class PlatformSubscriptionsController extends GetxController {
     required GetSubscriptionPlansUseCase getPlans,
     required GetSubscriptionFeaturesUseCase getFeatures,
     required GetProviderSubscriptionsUseCase getSubscriptions,
+    required GetSubscriptionConsumptionsUseCase getConsumptions,
     required GetSubscriptionRequestsUseCase getRequests,
     required SaveSubscriptionPlanUseCase savePlan,
     required ToggleSubscriptionPlanStatusUseCase togglePlan,
@@ -33,6 +36,7 @@ class PlatformSubscriptionsController extends GetxController {
   }) : _getPlans = getPlans,
        _getFeatures = getFeatures,
        _getSubscriptions = getSubscriptions,
+       _getConsumptions = getConsumptions,
        _getRequests = getRequests,
        _savePlan = savePlan,
        _togglePlan = togglePlan,
@@ -45,6 +49,7 @@ class PlatformSubscriptionsController extends GetxController {
   final GetSubscriptionPlansUseCase _getPlans;
   final GetSubscriptionFeaturesUseCase _getFeatures;
   final GetProviderSubscriptionsUseCase _getSubscriptions;
+  final GetSubscriptionConsumptionsUseCase _getConsumptions;
   final GetSubscriptionRequestsUseCase _getRequests;
   final SaveSubscriptionPlanUseCase _savePlan;
   final ToggleSubscriptionPlanStatusUseCase _togglePlan;
@@ -61,6 +66,8 @@ class PlatformSubscriptionsController extends GetxController {
   final Map<int, TextEditingController> featureLimitControllers = <int, TextEditingController>{};
   final subscriptions = <ProviderSubscriptionEntity>[].obs;
   final requests = <SubscriptionRequestEntity>[].obs;
+  final consumptionsBySubscription = <int, List<SubscriptionFeatureConsumptionEntity>>{}.obs;
+  final loadingConsumptionIds = <int>{}.obs;
   final plansLoading = true.obs;
   final subscriptionsLoading = true.obs;
   final requestsLoading = true.obs;
@@ -136,6 +143,13 @@ class PlatformSubscriptionsController extends GetxController {
       subscriptionCursor.value = r.nextCursor;
     } catch (e) { if (generation == _subscriptionGeneration) subscriptionsError.value = e.toString(); }
     finally { if (generation == _subscriptionGeneration) subscriptionsLoading.value = false; }
+  }
+
+  Future<void> loadConsumptions(int subscriptionId) async {
+    if (consumptionsBySubscription.containsKey(subscriptionId) || loadingConsumptionIds.contains(subscriptionId)) return;
+    loadingConsumptionIds.add(subscriptionId);
+    try { consumptionsBySubscription[subscriptionId] = await _getConsumptions(subscriptionId); }
+    finally { loadingConsumptionIds.remove(subscriptionId); }
   }
 
   Future<void> loadRequests({bool append = false}) async {
