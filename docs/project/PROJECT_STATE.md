@@ -154,3 +154,21 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 ### Verification boundary
 - Source and tests are committed to the feature branch. CI/Windows compilation is not claimed from this execution context.
 - No rendered visual QA is claimed.
+
+
+## M11 — Platform Network–POS Relationships (In Progress)
+
+**Branch:** `feat/platform-network-pos-links`
+
+- Added a dedicated `platform_network_pos_links` feature for the global Network–POS relationship records exposed by `/network-pos`.
+- The feature covers server-side search/status filtering, cursor pagination, relationship details, create, status update, and unlink.
+- Creation selectors reuse the existing Network and POS list Use Cases with remote search and only offer ACTIVE records. The Laravel service revalidates both entities as active.
+- Relationship Models extend pure-Dart Domain Entities. The feature has distinct RemoteDataSource and RemoteDataSourceImpl contracts, repository, Use Cases, GetX controllers, and route Bindings.
+- Access is SUPER_ADMIN-only because the inspected `NetworkPosPolicy` grants global management through its `before()` bypass only to SUPER_ADMIN. Non-super-admin index results are tenant-membership scoped; no broader platform access is fabricated.
+- Membership administration is explicitly excluded: operational membership routes are guarded by Operational Workspace Scope and are not part of the Platform Scope dashboard.
+- Creating a link causes Laravel to create a missing POS wallet for that network with an initial balance of 0.00. Unlink removes the NetworkPos relation only; the service does not delete the wallet.
+- No client-side wallet or financial calculations are performed.
+
+### Verification boundary
+- Implementation and focused model/route tests are committed to the feature branch.
+- Flutter analyzer, tests, Windows build, CI, and rendered visual QA have not yet been verified in this execution context.

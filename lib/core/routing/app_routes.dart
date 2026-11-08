@@ -16,6 +16,8 @@ abstract final class AppRoutes {
   static String networkDetail(int id) => '/dashboard/networks/$id';
   static const String pos = '/dashboard/pos';
   static String posDetail(int id) => '/dashboard/pos/$id';
+  static const String networkPosLinks = '/dashboard/network-pos-links';
+  static String networkPosLinkDetail(int id) => '/dashboard/network-pos-links/$id';
   static const String geography = '/dashboard/geography';
   static const String subscriptionPlans = '/dashboard/subscription-plans';
   static const String providerSubscriptions = '/dashboard/provider-subscriptions';

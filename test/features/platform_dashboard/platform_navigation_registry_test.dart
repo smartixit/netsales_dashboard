@@ -137,10 +137,16 @@ void main() {
         (page.middlewares ?? const <GetMiddleware>[])
             .whereType<PermissionGuardMiddleware>()
             .single
-            .requiredPermission,
-        AppPermissions.networksView,
+            .requiredRole,
+        AppRoles.superAdmin,
       );
     }
+    expect(
+      PlatformNavigationRegistry.destinations
+          .singleWhere((item) => item.id == 'network_pos_links')
+          .requiredRole,
+      AppRoles.superAdmin,
+    );
     expect(AppRoutes.networkDetail(73), '/dashboard/networks/73');
   });
 
@@ -161,6 +167,35 @@ void main() {
       );
     }
     expect(AppRoutes.posDetail(73), '/dashboard/pos/73');
+  });
+
+  test('platform network-POS relationship routes are bound and permission guarded', () {
+    final dashboardPage = AppPages.routes.singleWhere(
+      (page) => page.name == AppRoutes.dashboard,
+    );
+    final listPage = dashboardPage.children.singleWhere(
+      (page) => page.name == '/network-pos-links',
+    );
+    final detailPage = dashboardPage.children.singleWhere(
+      (page) => page.name == '/network-pos-links/:id',
+    );
+
+    expect(listPage.binding, isNotNull);
+    expect(detailPage.binding, isNotNull);
+    for (final page in [listPage, detailPage]) {
+      expect(
+        (page.middlewares ?? const <GetMiddleware>[])
+            .whereType<PermissionGuardMiddleware>()
+            .single
+            .requiredPermission,
+        AppPermissions.networksView,
+      );
+    }
+    expect(AppRoutes.networkPosLinkDetail(18), '/dashboard/network-pos-links/18');
+    expect(
+      PlatformNavigationRegistry.routeForId('network_pos_links'),
+      AppRoutes.networkPosLinks,
+    );
   });
 
   test('all registered destinations resolve to nested GetX routes', () {

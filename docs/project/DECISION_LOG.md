@@ -30,3 +30,14 @@
 - POS approval and rejection are exposed only to `SUPER_ADMIN`, because `PosController` explicitly rejects other roles even if they hold `pos.edit`. Both actions are shown only while the POS is `PENDING`.
 - POS KPI cards use `dashboard/overview.metrics.pos`; no client-side aggregation or financial calculations are allowed.
 - The POS resource does not provide wallet, membership, sales, debt, or subscription detail collections in this response. Those belong to subsequent features and must not be inferred.
+
+
+| LINK-001 | 2026-11-08 | Platform Network–POS relationship management is SUPER_ADMIN-only, matching NetworkPosPolicy and the API's global index scope. Deliver link listing, detail, creation, status update, and unlink using the existing API contract. Exclude tenant membership management from Platform Scope. | APPROVED |
+
+## LINK-001 — Platform Network–POS Relationships
+- The feature consumes `GET/POST /network-pos`, `GET/PUT/DELETE /network-pos/{id}`; it does not add backend endpoints.
+- `NetworkPosPolicy::before()` grants global access only to SUPER_ADMIN. Non-super-admin list results are restricted to network/POS memberships, so both directory and detail routes are role-guarded as SUPER_ADMIN.
+- Creation requires an active Network and active POS; Laravel validates this in `NetworkPosService::create()`. The server creates a missing POS wallet for the pair with `wallet_balance = 0.00`.
+- Status is a boolean, not a fabricated enum. Visual status is resolved through `EnumPresentationRegistry.resolveLinkStatus()`.
+- Unlink deletes only the NetworkPos relation; the inspected service does not delete the associated POS wallet. The confirmation must state this clearly.
+- Network/POS memberships are tenant operational concerns and are not exposed in this global platform feature.
