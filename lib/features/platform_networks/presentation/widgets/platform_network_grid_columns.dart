@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
+import 'package:netsales_dashboard/core/routing/app_routes.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
 import 'package:netsales_dashboard/features/platform_networks/domain/entities/platform_network_entity.dart';
 import 'package:netsales_dashboard/features/platform_networks/presentation/widgets/platform_network_status_badge.dart';
+import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_column.dart';
 import 'package:netsales_dashboard/widgets/images/custom_cached_image.dart';
 
@@ -91,6 +94,19 @@ abstract final class PlatformNetworkGridColumns {
       cellBuilder: (context, item, _) => Text(
         _formatDate(item.createdAt),
         style: AppTypography.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+      ),
+    ),
+    AppDataGridColumn<PlatformNetworkEntity>(
+      name: 'actions',
+      label: l10n.text('actions'),
+      width: 130,
+      allowSorting: false,
+      allowFiltering: false,
+      valueGetter: (item) => item.id,
+      cellBuilder: (context, item, _) => CustomButton.text(
+        text: l10n.text('view_details'),
+        size: AppButtonSize.small,
+        onPressed: () => Get.toNamed<void>(AppRoutes.networkDetail(item.id)),
       ),
     ),
   ];
