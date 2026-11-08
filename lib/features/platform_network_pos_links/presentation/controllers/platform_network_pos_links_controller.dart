@@ -15,6 +15,7 @@ import 'package:netsales_dashboard/features/platform_networks/domain/usecases/ge
 import 'package:netsales_dashboard/features/platform_pos/domain/entities/platform_pos_entity.dart';
 import 'package:netsales_dashboard/features/platform_pos/domain/usecases/get_platform_pos_list_use_case.dart';
 import 'package:netsales_dashboard/widgets/data_grid/adapters/net_sales_data_grid_source.dart';
+import 'package:netsales_dashboard/widgets/data_grid/adapters/app_data_grid_export_controller.dart';
 
 class PlatformNetworkPosLinksController extends GetxController {
   PlatformNetworkPosLinksController({
@@ -53,6 +54,9 @@ class PlatformNetworkPosLinksController extends GetxController {
   final isLoading = true.obs;
   final isLoadingMore = false.obs;
   final isLoadingOptions = false.obs;
+  final networkOptionsSearching = ValueNotifier<bool>(false);
+  final posOptionsSearching = ValueNotifier<bool>(false);
+  final exportController = AppDataGridExportController();
   final isMutating = false.obs;
   final errorMessage = ''.obs;
   final hasMore = false.obs;
@@ -147,6 +151,30 @@ class PlatformNetworkPosLinksController extends GetxController {
     load();
   }
 
+  Future<void> searchNetworkOptions(String query) async {
+    networkOptionsSearching.value = true;
+    try {
+      final response = await _getNetworks(search: query, perPage: 50);
+      if (response.success) {
+        networks.assignAll(response.data?.where((item) => item.status == 'ACTIVE').toList() ?? const <PlatformNetworkEntity>[]);
+      }
+    } finally {
+      networkOptionsSearching.value = false;
+    }
+  }
+
+  Future<void> searchPosOptions(String query) async {
+    posOptionsSearching.value = true;
+    try {
+      final response = await _getPos(search: query, perPage: 50);
+      if (response.success) {
+        pointsOfSale.assignAll(response.data?.where((item) => item.status == 'ACTIVE').toList() ?? const <PlatformPosEntity>[]);
+      }
+    } finally {
+      posOptionsSearching.value = false;
+    }
+  }
+
   Future<void> loadSelectionOptions() async {
     isLoadingOptions.value = true;
     try {
@@ -164,6 +192,8 @@ class PlatformNetworkPosLinksController extends GetxController {
               const <PlatformPosEntity>[],
         );
       }
+    } catch (error) {
+      errorMessage.value = error.toString();
     } finally {
       isLoadingOptions.value = false;
     }
@@ -219,6 +249,8 @@ class PlatformNetworkPosLinksController extends GetxController {
     searchController.dispose();
     selectedNetworkListenable.dispose();
     selectedPosListenable.dispose();
+    networkOptionsSearching.dispose();
+    posOptionsSearching.dispose();
     super.onClose();
   }
 }
