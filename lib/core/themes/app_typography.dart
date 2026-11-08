@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// ============================================================================
-/// نظام التيبوغرافي المركزي الموحد (Enterprise Desktop Design System Typography)
+/// نظام التيبوغرافي المركزي الموحد (Enterprise Design System Typography)
 /// ============================================================================
-/// مصمم ومخصص لمنصات سطح المكتب (Windows Desktop & Responsive Web).
-/// يعتمد على مقاييس دقيقة بوحدات البكسل المنطقية (Logical Pixels) لتوفير
-/// كثافة بصرية متوازنة (Enterprise Visual Density) تتوافق مع معايير Windows 11 وFluent Design.
-/// خالٍ تماماً من التمدد العشوائي (ScreenUtil) لضمان ثبات ووضوح الخطوط والأرقام على كافة الشاشات.
+/// مصمم وفق أعلى معايير أنظمة التصميم العالمية (Material 3, Apple HIG, Stripe).
+/// يمثل المصدر المركزي الوحيد والنهائي لكافة نصوص التطبيق بدون أي أرقام عشوائية.
 class AppTypography {
   AppTypography._();
 
-  /// اسم الخط الأساسي الموحد للنظام (IBM Plex Sans Arabic)
+  /// اسم الخط الأساسي الموحد للنظام
   static const String fontFamily = 'ibm';
 
   // ---------------------------------------------------------------------------
@@ -22,195 +21,159 @@ class AppTypography {
   static const FontWeight bold = FontWeight.w700;
   static const FontWeight extraBold = FontWeight.w800;
 
-  // ---------------------------------------------------------------------------
-  // ثوابت الأحجام لسطح المكتب (Desktop Logical Font Sizes in px)
-  // ---------------------------------------------------------------------------
-  static const double sizeDisplayLarge = 36.0;
-  static const double sizeDisplayMedium = 28.0;
-  static const double sizeDisplaySmall = 24.0;
-
-  static const double sizeHeadlineLarge = 22.0;
-  static const double sizeHeadlineMedium = 18.0;
-  static const double sizeHeadlineSmall = 16.0;
-
-  static const double sizeTitleLarge = 15.0;
-  static const double sizeTitleMedium = 14.0;
-  static const double sizeTitleSmall = 13.0;
-
-  static const double sizeBodyLarge = 14.0;
-  static const double sizeBodyMedium = 13.0;
-  static const double sizeBodySmall = 12.0;
-
-  static const double sizeButtonLarge = 14.0;
-  static const double sizeButtonMedium = 13.0;
-  static const double sizeButtonSmall = 12.0;
-
-  static const double sizeInputText = 13.0;
-  static const double sizeInputHint = 13.0;
-  static const double sizeInputLabel = 12.0;
-  static const double sizeInputError = 11.0;
-
-  static const double sizeCurrencyHero = 28.0;
-  static const double sizeCurrencyMedium = 16.0;
-  static const double sizeCurrencySymbol = 11.0;
-
-  static const double sizeChip = 12.0;
-  static const double sizeBadge = 11.0;
-  static const double sizeCaption = 11.0;
-
   // ===========================================================================
   // 1. شاشات العرض الكبرى (Display - Hero & Big Stats)
   // ===========================================================================
 
-  /// displayLarge (36px, Bold) - الإحصائيات الكبرى والترويسات البارزة
-  static TextStyle get displayLarge => const TextStyle(
+  /// displayLarge (57sp, Bold)
+  static TextStyle get displayLarge => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeDisplayLarge,
+    fontSize: 57.sp,
     fontWeight: bold,
-    letterSpacing: 0.0,
-    height: 1.2,
+    letterSpacing: -0.25.sp,
+    height: 1.15.h,
   );
 
-  /// displayMedium (28px, Bold) - العناوين العريضة للأقسام الرئيسية
-  static TextStyle get displayMedium => const TextStyle(
+  /// displayMedium (45sp, Bold)
+  static TextStyle get displayMedium => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeDisplayMedium,
+    fontSize: 45.sp,
     fontWeight: bold,
-    letterSpacing: 0.0,
-    height: 1.2,
+    letterSpacing: 0.sp,
+    height: 1.18.h,
   );
 
-  /// displaySmall (24px, Bold) - ترويسات بطاقات الـ Hero في لوحة التحكم
-  static TextStyle get displaySmall => const TextStyle(
+  /// displaySmall (36sp, Bold)
+  static TextStyle get displaySmall => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeDisplaySmall,
+    fontSize: 36.sp,
     fontWeight: bold,
-    letterSpacing: 0.0,
-    height: 1.25,
+    letterSpacing: 0.sp,
+    height: 1.22.h,
   );
 
   // ===========================================================================
   // 2. عناوين الشاشات والأقسام (Headline - Screen & Section Titles)
   // ===========================================================================
 
-  /// headlineLarge (22px, Bold) - عنوان الصفحة الرئيسي (Top Page Header)
-  static TextStyle get headlineLarge => const TextStyle(
+  /// headlineLarge (32sp, Bold)
+  static TextStyle get headlineLarge => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeHeadlineLarge,
+    fontSize: 32.sp,
     fontWeight: bold,
-    letterSpacing: 0.0,
-    height: 1.3,
+    letterSpacing: 0.sp,
+    height: 1.25.h,
   );
 
-  /// headlineMedium (18px, SemiBold) - عناوين الصناديق الحوارية وبطاقات العمليات
-  static TextStyle get headlineMedium => const TextStyle(
+  /// headlineMedium (28sp, SemiBold)
+  static TextStyle get headlineMedium => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeHeadlineMedium,
+    fontSize: 28.sp,
     fontWeight: semiBold,
-    letterSpacing: 0.0,
-    height: 1.3,
+    letterSpacing: 0.sp,
+    height: 1.28.h,
   );
 
-  /// headlineSmall (16px, SemiBold) - عناوين الأقسام الفرعية داخل النماذج والصفحات
-  static TextStyle get headlineSmall => const TextStyle(
+  /// headlineSmall (24sp, SemiBold)
+  static TextStyle get headlineSmall => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeHeadlineSmall,
+    fontSize: 24.sp,
     fontWeight: semiBold,
-    letterSpacing: 0.0,
-    height: 1.35,
+    letterSpacing: 0.sp,
+    height: 1.32.h,
   );
 
   // ===========================================================================
-  // 3. عناوين البطاقات والقوائم (Title - Cards, Lists, AppBar, Tables)
+  // 3. عناوين البطاقات والقوائم (Title - Cards, Lists, AppBar)
   // ===========================================================================
 
-  /// titleLarge (15px, Bold) - ترويسات الجداول واللوحات الجانبية
-  static TextStyle get titleLarge => const TextStyle(
+  /// titleLarge (20sp, Bold)
+  static TextStyle get titleLarge => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeTitleLarge,
+    fontSize: 20.sp,
     fontWeight: bold,
-    letterSpacing: 0.0,
-    height: 1.35,
+    letterSpacing: 0.sp,
+    height: 1.3.h,
   );
 
-  /// titleMedium (14px, SemiBold) - عناصر القائمة الجانبية (Sidebar) وعناوين البطاقات
-  static TextStyle get titleMedium => const TextStyle(
+  /// titleMedium (16sp, SemiBold)
+  static TextStyle get titleMedium => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeTitleMedium,
+    fontSize: 16.sp,
     fontWeight: semiBold,
-    letterSpacing: 0.0,
-    height: 1.35,
+    letterSpacing: 0.15.sp,
+    height: 1.35.h,
   );
 
-  /// titleSmall (13px, SemiBold) - ترويسات الحقول والمجموعات المدمجة
-  static TextStyle get titleSmall => const TextStyle(
+  /// titleSmall (14sp, SemiBold)
+  static TextStyle get titleSmall => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeTitleSmall,
+    fontSize: 14.sp,
     fontWeight: semiBold,
-    letterSpacing: 0.0,
-    height: 1.4,
+    letterSpacing: 0.1.sp,
+    height: 1.4.h,
   );
 
   // ===========================================================================
-  // 4. نصوص المحتوى والفقرات (Body - Paragraphs, Table Cells, Content)
+  // 4. نصوص المحتوى والفقرات (Body - Paragraphs & Content)
   // ===========================================================================
 
-  /// bodyLarge (14px, Regular) - النصوص التوضيحية والفقرات الموسعة
-  static TextStyle get bodyLarge => const TextStyle(
+  /// bodyLarge (16sp, Regular)
+  static TextStyle get bodyLarge => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeBodyLarge,
+    fontSize: 16.sp,
     fontWeight: regular,
-    letterSpacing: 0.0,
-    height: 1.5,
+    letterSpacing: 0.15.sp,
+    height: 1.5.h,
   );
 
-  /// bodyMedium (13px, Regular) - النص القياسي لبيئة ويندوز (خلايا الجداول والبيانات)
-  static TextStyle get bodyMedium => const TextStyle(
+  /// bodyMedium (14sp, Regular)
+  static TextStyle get bodyMedium => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeBodyMedium,
+    fontSize: 14.sp,
     fontWeight: regular,
-    letterSpacing: 0.0,
-    height: 1.45,
+    letterSpacing: 0.25.sp,
+    height: 1.45.h,
   );
 
-  /// bodySmall (12px, Regular) - النصوص الفرعية والملاحظات المساعدة
-  static TextStyle get bodySmall => const TextStyle(
+  /// bodySmall (12sp, Regular)
+  static TextStyle get bodySmall => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeBodySmall,
+    fontSize: 12.sp,
     fontWeight: regular,
-    letterSpacing: 0.0,
-    height: 1.4,
+    letterSpacing: 0.3.sp,
+    height: 1.4.h,
   );
 
   // ===========================================================================
   // 5. خطوط الأزرار المركزية (Button Tokens - Enterprise Hierarchy)
   // ===========================================================================
 
-  /// زر بحجم كبير (14px, Bold) - أزرار العمليات الرئيسية وشاشات الدخول
-  static TextStyle get buttonLarge => const TextStyle(
+  /// زر بحجم كبير (Large Button - Hero / CTAs / Auth)
+  static TextStyle get buttonLarge => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeButtonLarge,
+    fontSize: 16.sp,
     fontWeight: bold,
-    letterSpacing: 0.0,
-    height: 1.2,
+    letterSpacing: 0.2.sp,
+    height: 1.15.h,
   );
 
-  /// زر بحجم قياسي (13px, Bold) - أزرار النماذج والصناديق الحوارية المعتادة
-  static TextStyle get buttonMedium => const TextStyle(
+  /// زر بحجم قياسي (Medium Button - Standard / Dialogs / Forms)
+  static TextStyle get buttonMedium => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeButtonMedium,
+    fontSize: 14.sp,
     fontWeight: bold,
-    letterSpacing: 0.0,
-    height: 1.2,
+    letterSpacing: 0.1.sp,
+    height: 1.15.h,
   );
 
-  /// زر بحجم مدمج (12px, SemiBold) - أزرار الجداول المدمجة والأدوات السريعة
-  static TextStyle get buttonSmall => const TextStyle(
+  /// زر بحجم صغير (Small Button - Compact / Tables / Inline)
+  static TextStyle get buttonSmall => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeButtonSmall,
+    fontSize: 12.sp,
     fontWeight: semiBold,
-    letterSpacing: 0.0,
-    height: 1.2,
+    letterSpacing: 0.sp,
+    height: 1.15.h,
   );
 
   /// خط الزر التقليدي (للتوافقية العكسية)
@@ -229,102 +192,102 @@ class AppTypography {
   // 6. حقول الإدخال والنماذج (Input & Form Tokens)
   // ===========================================================================
 
-  /// النص المدخل داخل الحقل (13px, Medium)
-  static TextStyle get inputText => const TextStyle(
+  /// النص المدخل داخل الحقل
+  static TextStyle get inputText => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeInputText,
+    fontSize: 15.sp,
     fontWeight: medium,
-    letterSpacing: 0.0,
-    height: 1.3,
+    letterSpacing: 0.sp,
+    height: 1.3.h,
   );
 
-  /// نص التلميح داخل الحقل (13px, Regular)
-  static TextStyle get inputHint => const TextStyle(
+  /// نص التلميح داخل الحقل (Hint / Placeholder)
+  static TextStyle get inputHint => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeInputHint,
+    fontSize: 14.sp,
     fontWeight: regular,
-    letterSpacing: 0.0,
-    height: 1.3,
+    letterSpacing: 0.sp,
+    height: 1.3.h,
   );
 
-  /// عنوان الحقل العلوي (12px, SemiBold)
-  static TextStyle get inputLabel => const TextStyle(
+  /// عنوان الحقل العلوي (Label)
+  static TextStyle get inputLabel => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeInputLabel,
+    fontSize: 13.sp,
     fontWeight: semiBold,
-    letterSpacing: 0.0,
-    height: 1.3,
+    letterSpacing: 0.1.sp,
+    height: 1.3.h,
   );
 
-  /// رسالة خطأ التحقق (11px, Medium)
-  static TextStyle get inputError => const TextStyle(
+  /// رسالة خطأ التحقق (Validation Error)
+  static TextStyle get inputError => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeInputError,
+    fontSize: 12.sp,
     fontWeight: medium,
-    letterSpacing: 0.0,
-    height: 1.25,
+    letterSpacing: 0.sp,
+    height: 1.25.h,
   );
 
   // ===========================================================================
   // 7. المعاملات المالية والمبالغ (Financial & Currency Tokens)
   // ===========================================================================
 
-  /// رصيد المحفظة وإحصائيات الـ KPI الرئيسية (28px, ExtraBold)
-  static TextStyle get currencyHero => const TextStyle(
+  /// رصيد المحفظة الرئيسي الكبير
+  static TextStyle get currencyHero => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeCurrencyHero,
+    fontSize: 32.sp,
     fontWeight: extraBold,
-    letterSpacing: 0.0,
-    height: 1.15,
+    letterSpacing: -0.5.sp,
+    height: 1.1.h,
   );
 
-  /// مبالغ بنود الفواتير والجداول (16px, Bold)
-  static TextStyle get currencyMedium => const TextStyle(
+  /// أسعار الكروت وبنود الفواتير
+  static TextStyle get currencyMedium => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeCurrencyMedium,
+    fontSize: 18.sp,
     fontWeight: bold,
-    letterSpacing: 0.0,
-    height: 1.2,
+    letterSpacing: 0.sp,
+    height: 1.2.h,
   );
 
-  /// رمز العملة المصغر بجانب الرقم (11px, SemiBold)
-  static TextStyle get currencySymbol => const TextStyle(
+  /// رمز العملة المصغر بجانب الرقم
+  static TextStyle get currencySymbol => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeCurrencySymbol,
+    fontSize: 12.sp,
     fontWeight: semiBold,
-    letterSpacing: 0.0,
-    height: 1.2,
+    letterSpacing: 0.sp,
+    height: 1.2.h,
   );
 
   // ===========================================================================
   // 8. الوسوم والبادجات والملاحظات (Chips, Badges, & Metadata)
   // ===========================================================================
 
-  /// نصوص الشرائح والفلترة (12px, Medium)
-  static TextStyle get chipText => const TextStyle(
+  /// نصوص الشرائح والفلترة (Filter Chips)
+  static TextStyle get chipText => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeChip,
+    fontSize: 13.sp,
     fontWeight: medium,
-    letterSpacing: 0.0,
-    height: 1.2,
+    letterSpacing: 0.sp,
+    height: 1.2.h,
   );
 
-  /// شارات الحالة والوسوم الدلالية (11px, Bold)
-  static TextStyle get badgeText => const TextStyle(
+  /// شارات الحالة (Badges)
+  static TextStyle get badgeText => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeBadge,
+    fontSize: 11.sp,
     fontWeight: bold,
-    letterSpacing: 0.0,
-    height: 1.15,
+    letterSpacing: 0.2.sp,
+    height: 1.15.h,
   );
 
-  /// نصوص التواريخ والتوقيتات التوضيحية (11px, Medium)
-  static TextStyle get caption => const TextStyle(
+  /// نصوص التواريخ والتوقيتات التوضيحية (Captions)
+  static TextStyle get caption => TextStyle(
     fontFamily: fontFamily,
-    fontSize: sizeCaption,
+    fontSize: 12.sp,
     fontWeight: medium,
-    letterSpacing: 0.0,
-    height: 1.35,
+    letterSpacing: 0.2.sp,
+    height: 1.35.h,
   );
 
   // ===========================================================================
