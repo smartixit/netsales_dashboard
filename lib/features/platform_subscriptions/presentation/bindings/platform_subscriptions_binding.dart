@@ -3,7 +3,6 @@ import 'package:netsales_dashboard/features/platform_subscriptions/data/datasour
 import 'package:netsales_dashboard/features/platform_subscriptions/data/datasources/platform_subscriptions_remote_data_source_impl.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/data/repositories/platform_subscriptions_repository_impl.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/repositories/platform_subscriptions_repository.dart';
-import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/activate_queued_subscription_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/approve_subscription_request_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/delete_subscription_plan_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/extend_provider_subscription_use_case.dart';
@@ -55,9 +54,6 @@ class PlatformSubscriptionsBinding extends Bindings {
     if (!Get.isRegistered<ExtendProviderSubscriptionUseCase>()) {
       Get.lazyPut<ExtendProviderSubscriptionUseCase>(() => ExtendProviderSubscriptionUseCase(Get.find<PlatformSubscriptionsRepository>()), fenix: true);
     }
-    if (!Get.isRegistered<ActivateQueuedSubscriptionUseCase>()) {
-      Get.lazyPut<ActivateQueuedSubscriptionUseCase>(() => ActivateQueuedSubscriptionUseCase(Get.find<PlatformSubscriptionsRepository>()), fenix: true);
-    }
     if (!Get.isRegistered<PlatformSubscriptionsController>()) {
       Get.lazyPut<PlatformSubscriptionsController>(() => PlatformSubscriptionsController(
         getPlans: Get.find<GetSubscriptionPlansUseCase>(),
@@ -70,7 +66,6 @@ class PlatformSubscriptionsBinding extends Bindings {
         approveRequest: Get.find<ApproveSubscriptionRequestUseCase>(),
         rejectRequest: Get.find<RejectSubscriptionRequestUseCase>(),
         extendSubscription: Get.find<ExtendProviderSubscriptionUseCase>(),
-        activateQueued: Get.find<ActivateQueuedSubscriptionUseCase>(),
       ), fenix: true);
     }
   }
