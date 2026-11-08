@@ -81,8 +81,7 @@ class PlatformNetworksScreen extends GetView<PlatformNetworksController> {
                   return CustomEmptyState.search(
                     query: controller.searchQuery.value,
                     onClearSearch: () {
-                      controller.searchController.clear();
-                      controller.onSearchChanged('');
+                      controller.clearFilters();
                     },
                   );
                 case AppDataGridViewState.success:
