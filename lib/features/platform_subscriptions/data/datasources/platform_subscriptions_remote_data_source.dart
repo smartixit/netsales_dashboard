@@ -15,7 +15,6 @@ abstract interface class PlatformSubscriptionsRemoteDataSource {
   Future<ApiResponse<List<SubscriptionFeatureModel>>> getFeatures({String? search, String? status, String? cursor, int perPage = 50});
   Future<ApiResponse<List<ProviderSubscriptionModel>>> getProviderSubscriptions({int? networkId, int? planId, String? status, bool? activeOnly, String? cursor, int perPage = 20});
   Future<ApiResponse<ProviderSubscriptionModel>> getProviderSubscription(int id);
-  Future<ApiResponse<List<SubscriptionFeatureConsumptionModel>>> getConsumptions(int id);
   Future<ApiResponse<ProviderSubscriptionModel>> extendSubscription(int id, int additionalDays);
   Future<ApiResponse<List<SubscriptionRequestModel>>> getRequests({int? networkId, int? planId, String? status, String? paymentType, String? fromDate, String? toDate, String? search, String? cursor, int perPage = 20});
   Future<ApiResponse<SubscriptionRequestModel>> getRequest(int id);
