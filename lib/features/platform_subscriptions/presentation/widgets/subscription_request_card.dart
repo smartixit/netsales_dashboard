@@ -9,10 +9,11 @@ import 'package:netsales_dashboard/widgets/badges/custom_status_badge.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 
 class SubscriptionRequestCard extends StatelessWidget {
-  const SubscriptionRequestCard({required this.request, required this.l10n, required this.canReview, required this.onApprove, required this.onReject, super.key});
+  const SubscriptionRequestCard({required this.request, required this.l10n, required this.canApprove, required this.canReject, required this.onApprove, required this.onReject, super.key});
   final SubscriptionRequestEntity request;
   final AppLocalizations l10n;
-  final bool canReview;
+  final bool canApprove;
+  final bool canReject;
   final VoidCallback onApprove;
   final VoidCallback onReject;
 
@@ -42,11 +43,11 @@ class SubscriptionRequestCard extends StatelessWidget {
           SizedBox(height: AppSpacing.sm),
           Text('${l10n.text('rejection_reason')}: ${request.rejectionReason}', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.error)),
         ],
-        if (canReview && pending) ...[
+        if (pending && (canApprove || canReject)) ...[
           SizedBox(height: AppSpacing.md), Divider(color: colors.outlineVariant),
           Wrap(spacing: AppSpacing.sm, children: [
-            CustomButton.secondary(text: l10n.text('approve_request'), size: AppButtonSize.small, prefix: const Icon(Icons.check_rounded, size: 16), onPressed: onApprove),
-            CustomButton.text(text: l10n.text('reject_request'), size: AppButtonSize.small, variant: AppButtonVariant.danger, onPressed: onReject),
+            if (canApprove) CustomButton.secondary(text: l10n.text('approve_request'), size: AppButtonSize.small, prefix: const Icon(Icons.check_rounded, size: 16), onPressed: onApprove),
+            if (canReject) CustomButton.danger(text: l10n.text('reject_request'), size: AppButtonSize.small, onPressed: onReject),
           ]),
         ],
       ]),
