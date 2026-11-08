@@ -22,7 +22,7 @@ class PlatformUsersList extends StatelessWidget {
       if (!compact) _UsersTableHeader(l10n: l10n),
       Expanded(child: ListView.separated(
         itemCount: controller.users.length + (controller.hasMore ? 1 : 0),
-        separatorBuilder: (_, __) => Divider(height: 1, color: context.colors.outlineVariant),
+        separatorBuilder: (_, _) => Divider(height: 1, color: context.colors.outlineVariant),
         itemBuilder: (context, index) {
           if (index == controller.users.length) {
             return Padding(
