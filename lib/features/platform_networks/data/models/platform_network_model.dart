@@ -61,7 +61,7 @@ class PlatformNetworkModel extends PlatformNetworkEntity {
 
   static Map<String, dynamic>? _map(Object? value) {
     if (value is Map<String, dynamic>) return value;
-    if (value is Map) return Map<String, dynamic>.from(value);
+    if (value is Map<Object?, Object?>) return Map<String, dynamic>.from(value);
     return null;
   }
 
