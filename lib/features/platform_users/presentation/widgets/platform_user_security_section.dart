@@ -36,7 +36,7 @@ class PlatformUserSecuritySection extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(type.icon, color: context.colors.onSurfaceVariant),
                 title: Text(device.name, style: AppTypography.titleSmall),
-                subtitle: Text(type.label + ' · ' + (device.lastUsedAt?.toLocal().toString() ?? l10n.text('not_available'))),
+                subtitle: Text('${type.label} · ${device.lastUsedAt?.toLocal().toString() ?? l10n.text('not_available')}'),
                 trailing: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.end, children: [
                   CustomStatusBadge.fromPresentation(status, isCompact: true),
                   if (device.isPrimary) Text(l10n.text('primary_device'), style: AppTypography.caption.copyWith(color: context.colors.primary)),
@@ -58,7 +58,7 @@ class PlatformUserSecuritySection extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       leading: const Icon(Icons.devices_other_rounded),
                       title: Text(session.userAgent?.trim().isNotEmpty == true ? session.userAgent! : l10n.text('unknown_device'), maxLines: 2, overflow: TextOverflow.ellipsis, style: AppTypography.bodyMedium),
-                      subtitle: Text((session.ipAddress ?? l10n.text('not_available')) + ' · ' + (session.lastActivityAt?.toLocal().toString() ?? l10n.text('not_available'))),
+                      subtitle: Text('${session.ipAddress ?? l10n.text('not_available')} · ${session.lastActivityAt?.toLocal().toString() ?? l10n.text('not_available')}'),
                     )).toList())),
       if (detail.securityBans.isNotEmpty) ...[
         SizedBox(height: AppSpacing.md),
