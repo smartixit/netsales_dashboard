@@ -95,6 +95,8 @@ dependencies:
 
 dependency_overrides:
   archive: ^4.5.2
+  cnativeapi:
+    path: packages/desktop_windowing/third_party/cnativeapi
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,35 @@
 # NetSales Dashboard — Work Log
 
+## 2026-11-08 — Replace audioplayers with just_audio and vendor cnativeapi for offline Windows builds
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/desktop-windowing-foundation`  
+**Task Scope:** Windows Desktop Audio & CMake / Native Build Stabilization
+
+### Context & Root Cause
+- `audioplayers_windows` required downloading `Microsoft.Windows.ImplementationLibrary` via NuGet during CMake configuration. Because `api.nuget.org:443` was unreachable in the environment, the Windows build failed with a fatal CMake error.
+- The user requested replacing `audioplayers` with the latest stable version of `just_audio` while preserving project-specific custom audio assets (`assets/sounds/netsales_notification.wav` and `netsales_success.wav`).
+- Subsequent Windows native compilation revealed an upstream bug in `cnativeapi: 0.5.10` (used by `desktop_windowing`) where `NOMINMAX` caused `min`/`max` identifier lookup failures in `GdiplusTypes.h`.
+- CMake installation was attempting to write to `C:/Program Files/netsales` requiring administrative privileges.
+
+### Corrective Changes
+1. **Audio Stack Migration:**
+   - Removed `audioplayers: ^6.8.1` and its platform plugins.
+   - Added `just_audio: ^0.10.6` and `just_audio_windows: ^0.2.3`.
+   - Updated `lib/core/services/sound_service.dart` to use `just_audio` with normalized asset path resolution and playback error handling.
+2. **Vendored cnativeapi:**
+   - Vendored the patched `cnativeapi` into `packages/desktop_windowing/third_party/cnativeapi` with explicit `using std::min; using std::max;` guards prior to `<gdiplus.h>` inclusions.
+   - Registered `cnativeapi` in root `pubspec.yaml` and `packages/desktop_windowing/pubspec.yaml` via `dependency_overrides` to ensure hermetic, cache-independent builds across machines and CI.
+3. **CMake & NuGet Configuration:**
+   - Added project and windows-level `nuget.config` pointing to local packages cache and disabling unreachable remote feeds.
+   - Updated `windows/CMakeLists.txt` installation prefix logic to ensure bundle files install locally to `runner/Debug` rather than `C:/Program Files/netsales`.
+
+### Verification
+- `flutter analyze lib/`: **Passed with No issues found!** (120.2s).
+- `flutter build windows --debug`: **Passed with exit code 0** (`√ Built build\windows\x64\runner\Debug\NetSales.exe` in 64.9s).
+- Verified `NetSales.exe`, `just_audio_windows_plugin.dll`, and asset files correctly bundled.
+
+
 ## 2026-11-08 — CI #55 verification and analyzer follow-up
 
 **Repository:** `smartixit/netsales_dashboard`  

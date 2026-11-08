@@ -138,12 +138,11 @@ packages:
     source: hosted
     version: "1.1.2"
   cnativeapi:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: cnativeapi
-      sha256: c43703998995e132b0656d2b8a95ed2bedc6b22ccee2c827bcdc075e0330e319
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/desktop_windowing/third_party/cnativeapi"
+      relative: true
+    source: path
     version: "0.5.10"
   code_assets:
     dependency: transitive
