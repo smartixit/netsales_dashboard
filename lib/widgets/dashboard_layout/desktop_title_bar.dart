@@ -1,5 +1,6 @@
 import 'package:desktop_windowing/desktop_windowing.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
@@ -65,38 +66,47 @@ class DesktopTitleBar extends StatelessWidget implements PreferredSizeWidget {
         textDirection: TextDirection.ltr,
         child: Row(
           children: [
-            // ── Brand Icon & Window Title ──
-            AppSpacing.hMd,
-            leading ??
-                Image.asset(
-                  'assets/images/brand_icon.png',
-                  width: 17,
-                  height: 17,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, obj, e) => Icon(
-                    Icons.hub_rounded,
-                    size: 16,
-                    color: colors.primary,
+            // ── Comprehensive Draggable Area (Icon + Title + Central Region) ──
+            Expanded(
+              child: Listener(
+                behavior: HitTestBehavior.translucent,
+                onPointerDown: (event) {
+                  if (event.buttons == kPrimaryMouseButton) {
+                    windowing?.startDragging();
+                  }
+                },
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onDoubleTap: () => windowing?.toggleMaximize(),
+                  child: Row(
+                    children: [
+                      AppSpacing.hMd,
+                      leading ??
+                          Image.asset(
+                            'assets/images/brand_icon.png',
+                            width: 17,
+                            height: 17,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, obj, e) => Icon(
+                              Icons.hub_rounded,
+                              size: 16,
+                              color: colors.primary,
+                            ),
+                          ),
+                      AppSpacing.hSm,
+                      Text(
+                        title ?? 'NetSales Platform Dashboard',
+                        style: AppTypography.labelSmall.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11.5,
+                          color: fg,
+                          letterSpacing: 0.15,
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
                   ),
                 ),
-            AppSpacing.hSm,
-            Text(
-              title ?? 'NetSales Platform Dashboard',
-              style: AppTypography.labelSmall.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 11.5,
-                color: fg,
-                letterSpacing: 0.15,
-              ),
-            ),
-
-            // ── Central Draggable Region ──
-            Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanStart: (_) => windowing?.startDragging(),
-                onDoubleTap: () => windowing?.toggleMaximize(),
-                child: const SizedBox.expand(),
               ),
             ),
 

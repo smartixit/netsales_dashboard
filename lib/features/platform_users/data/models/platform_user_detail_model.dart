@@ -6,26 +6,16 @@ import 'package:netsales_dashboard/features/platform_users/domain/entities/platf
 /// نموذج UserResource التفصيلي، وهو نفسه كيان Domain دون تحويل إضافي.
 class PlatformUserDetailModel extends PlatformUserDetailEntity {
   const PlatformUserDetailModel({
-    required PlatformUserModel user,
-    required int roleId,
-    required bool twoFactorEnabled,
-    required bool mustChangePassword,
-    required int loginAttempts,
-    required DateTime? createdAt,
-    required DateTime? updatedAt,
-    required List<PlatformUserDeviceModel> devices,
-    required List<PlatformUserBanModel> securityBans,
-  }) : super(
-          user: user,
-          roleId: roleId,
-          twoFactorEnabled: twoFactorEnabled,
-          mustChangePassword: mustChangePassword,
-          loginAttempts: loginAttempts,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
-          devices: devices,
-          securityBans: securityBans,
-        );
+    required PlatformUserModel super.user,
+    required super.roleId,
+    required super.twoFactorEnabled,
+    required super.mustChangePassword,
+    required super.loginAttempts,
+    required super.createdAt,
+    required super.updatedAt,
+    required List<PlatformUserDeviceModel> super.devices,
+    required List<PlatformUserBanModel> super.securityBans,
+  });
 
   factory PlatformUserDetailModel.fromJson(Map<String, dynamic> json) {
     final rawDevices = json['devices'];
