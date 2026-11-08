@@ -144,6 +144,25 @@ void main() {
     expect(AppRoutes.networkDetail(73), '/dashboard/networks/73');
   });
 
+  test('platform POS list and detail routes are bound and permission guarded', () {
+    final dashboardPage = AppPages.routes.singleWhere((page) => page.name == AppRoutes.dashboard);
+    final listPage = dashboardPage.children.singleWhere((page) => page.name == '/pos');
+    final detailPage = dashboardPage.children.singleWhere((page) => page.name == '/pos/:id');
+
+    expect(listPage.binding, isNotNull);
+    expect(detailPage.binding, isNotNull);
+    for (final page in [listPage, detailPage]) {
+      expect(
+        (page.middlewares ?? const <GetMiddleware>[])
+            .whereType<PermissionGuardMiddleware>()
+            .single
+            .requiredPermission,
+        AppPermissions.posView,
+      );
+    }
+    expect(AppRoutes.posDetail(73), '/dashboard/pos/73');
+  });
+
   test('all registered destinations resolve to nested GetX routes', () {
     expect(PlatformNavigationRegistry.routeForId('overview'), AppRoutes.overview);
     for (final item in PlatformNavigationRegistry.destinations) {
