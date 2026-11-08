@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/controllers/platform_network_pos_links_controller.dart';
@@ -22,7 +23,7 @@ class PlatformNetworkPosLinkCreateDialog {
           controller.selectedPosListenable.value == null) {
         return;
       }
-      Navigator.of(Get.context!).pop(true);
+      Get.back<bool>(result: true);
     },
     content: _CreateContent(controller: controller, l10n: l10n),
   ).showDialog();
