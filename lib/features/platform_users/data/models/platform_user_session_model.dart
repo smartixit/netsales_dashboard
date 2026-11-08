@@ -1,39 +1,28 @@
-import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_session_entity.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_detail_entity.dart';
 
-/// نموذج جلسة المستخدم كما يصل من UserSessionResource في Laravel API.
-class PlatformUserSessionModel {
+/// نموذج الجلسة كما يصل من UserSessionResource في Laravel API.
+class PlatformUserSessionModel extends PlatformUserSessionEntity {
   const PlatformUserSessionModel({
-    required this.id,
-    required this.ipAddress,
-    required this.userAgent,
-    required this.lastActivityAt,
-    required this.expiresAt,
+    required super.id,
+    required super.ipAddress,
+    required super.userAgent,
+    required super.lastActivityAt,
+    required super.expiresAt,
   });
 
-  final int id;
-  final String? ipAddress;
-  final String? userAgent;
-  final String? lastActivityAt;
-  final String? expiresAt;
-
   factory PlatformUserSessionModel.fromJson(Map<String, dynamic> json) {
-    final rawId = json['session_id'];
     return PlatformUserSessionModel(
-      id: rawId is num ? rawId.toInt() : int.tryParse(rawId?.toString() ?? '') ?? 0,
+      id: _toInt(json['session_id']),
       ipAddress: json['ip_address']?.toString(),
       userAgent: json['user_agent']?.toString(),
-      lastActivityAt: json['last_activity_at']?.toString(),
-      expiresAt: json['expires_at']?.toString(),
+      lastActivityAt: _toDateTime(json['last_activity_at']),
+      expiresAt: _toDateTime(json['expires_at']),
     );
   }
 
-  PlatformUserSessionEntity toEntity() {
-    return PlatformUserSessionEntity(
-      id: id,
-      ipAddress: ipAddress,
-      userAgent: userAgent,
-      lastActivityAt: DateTime.tryParse(lastActivityAt ?? ''),
-      expiresAt: DateTime.tryParse(expiresAt ?? ''),
-    );
-  }
+  static int _toInt(dynamic value) =>
+      value is num ? value.toInt() : int.tryParse(value?.toString() ?? '') ?? 0;
+
+  static DateTime? _toDateTime(dynamic value) =>
+      value == null ? null : DateTime.tryParse(value.toString());
 }
