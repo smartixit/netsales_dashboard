@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:netsales_dashboard/core/constants/app_radius.dart';
+import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
@@ -13,7 +14,7 @@ class PlatformNetworkInformationSection extends StatelessWidget {
   });
 
   final PlatformNetworkEntity network;
-  final dynamic l10n;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
