@@ -27,9 +27,9 @@ class PlatformOverviewChartGrid extends StatelessWidget {
       return Wrap(spacing:AppSpacing.md,runSpacing:AppSpacing.md,children:[for(final item in definitions)SizedBox(width:width,child:item)]);
     });
   }
-  Widget _chart(String title,ChartFamily family,ChartType type,List<ChartDataPoint> points,String seriesName){
+  Widget _chart(BuildContext context,String title,ChartFamily family,ChartType type,List<ChartDataPoint> points,String seriesName){
     final series=ChartSeries(id:title,name:seriesName,data:points);
     final state=points.isEmpty?ChartState.empty:ChartState.data;
-    return ChartCard(title:title,description:AppLocalizations.of(Get.context!).text('server_aggregated_data'),height:230,state:state,chart:ChartRenderer(definition:ChartDefinition(family:family,type:type,series:[series],state:state)),series:[series]);
+    return ChartCard(title:title,description:AppLocalizations.of(context).text('server_aggregated_data'),height:230,state:state,chart:ChartRenderer(definition:ChartDefinition(family:family,type:type,series:[series],state:state)),series:[series]);
   }
 }

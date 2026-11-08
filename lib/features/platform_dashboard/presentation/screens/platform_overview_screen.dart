@@ -6,6 +6,7 @@ import 'package:netsales_dashboard/core/services/permission_service.dart';
 import 'package:netsales_dashboard/core/services/session_service.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/controllers/platform_dashboard_controller.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_dashboard_overview_entity.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/navigation/platform_navigation_registry.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/widgets/overview/platform_overview_chart_grid.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/widgets/overview/platform_recent_activity_section.dart';
@@ -62,7 +63,7 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
             _AttentionSection(controller:controller),
             if(data.recentActivity.isNotEmpty||controller.canViewAudit)...[
               AppSpacing.vXl,
-              PlatformRecentActivitySection(controller:controller),
+              const PlatformRecentActivitySection(),
             ],
           ],
         ]),
@@ -70,7 +71,7 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
     });
   }
 
-  List<DashboardMetricData> _metrics(AppLocalizations l10n,dynamic data){
+  List<DashboardMetricData> _metrics(AppLocalizations l10n,PlatformDashboardOverviewEntity data){
     final metrics=data.metrics;
     return [
       if(metrics.networks case final network?) DashboardMetricData(id:'active_networks',title:l10n.text('active_network_providers'),value:network.active.toString(),variant:DashboardMetricVariant.standard,icon:Icons.router_outlined,description:l10n.text('total')+': '+network.total.toString(),tone:DashboardMetricTone.success),
@@ -92,7 +93,7 @@ class _PeriodSelector extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     final l=AppLocalizations.of(context);
-    return Obx(()=>CustomSegmentedBar(selectedIndex:const ['7d','30d','90d','12m'].indexOf('30d')<0?0:const ['7d','30d','90d','12m'].indexOf(controller.selectedPeriod.value),onSegmentChanged:(i)=>controller.changePeriod(const ['7d','30d','90d','12m'][i]),items:[
+    return Obx(()=>CustomSegmentedBar(selectedIndex:const ['7d','30d','90d','12m'].indexOf(controller.selectedPeriod.value).clamp(0,3),onSegmentChanged:(i)=>controller.changePeriod(const ['7d','30d','90d','12m'][i]),items:[
       CustomSegmentItem(label:l.text('period_7d')),
       CustomSegmentItem(label:l.text('period_30d')),
       CustomSegmentItem(label:l.text('period_90d')),
