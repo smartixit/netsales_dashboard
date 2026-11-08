@@ -28,6 +28,10 @@ import 'package:netsales_dashboard/features/platform_networks/presentation/scree
 import 'package:netsales_dashboard/features/platform_pos/presentation/bindings/platform_pos_binding.dart';
 import 'package:netsales_dashboard/features/platform_pos/presentation/screens/platform_pos_screen.dart';
 import 'package:netsales_dashboard/features/platform_pos/presentation/screens/platform_pos_detail_screen.dart';
+import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/bindings/platform_network_pos_links_binding.dart';
+import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/bindings/platform_network_pos_link_detail_binding.dart';
+import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/screens/platform_network_pos_links_screen.dart';
+import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/screens/platform_network_pos_link_detail_screen.dart';
 import 'package:netsales_dashboard/features/splash/presentation/bindings/splash_binding.dart';
 import 'package:netsales_dashboard/features/splash/presentation/screens/splash_screen.dart';
 import 'package:netsales_dashboard/widgets/dashboard_metrics/showcase/dashboard_metrics_showcase_binding.dart';
@@ -87,6 +91,8 @@ abstract final class AppPages {
         GetPage<dynamic>(name: '/networks/:id', page: () => const PlatformNetworkDetailScreen(), binding: PlatformNetworksBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.networksView)], transition: Transition.fadeIn),
         GetPage<dynamic>(name: '/pos', page: () => const PlatformPosScreen(), binding: PlatformPosBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.posView)], transition: Transition.fadeIn),
         GetPage<dynamic>(name: '/pos/:id', page: () => const PlatformPosDetailScreen(), binding: PlatformPosBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.posView)], transition: Transition.fadeIn),
+        GetPage<dynamic>(name: '/network-pos-links', page: () => const PlatformNetworkPosLinksScreen(), binding: PlatformNetworkPosLinksBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.networksView)], transition: Transition.fadeIn),
+        GetPage<dynamic>(name: '/network-pos-links/:id', page: () => const PlatformNetworkPosLinkDetailScreen(), binding: PlatformNetworkPosLinkDetailBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.networksView)], transition: Transition.fadeIn),
         _module('/geography', 'geography', AppPermissions.geographyView),
         _module('/subscription-plans', 'subscription_plans', AppPermissions.subscriptionsView),
         _module('/provider-subscriptions', 'provider_subscriptions', AppPermissions.subscriptionsView),
