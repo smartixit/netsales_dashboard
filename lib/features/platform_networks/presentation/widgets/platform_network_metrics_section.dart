@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
-import 'package:netsales_dashboard/core/themes/app_breakpoints.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_dashboard_overview_entity.dart';
 import 'package:netsales_dashboard/widgets/dashboard_metrics/dashboard_metrics.dart';
 
@@ -36,7 +35,7 @@ class PlatformNetworkMetricsSection extends StatelessWidget {
 
     return DashboardMetricGrid(
       metrics: cards,
-      minimumCardWidth: AppBreakpoints.widthOf(context) >= AppBreakpoints.desktopMin ? 190 : 220,
+      minimumCardWidth: 190,
       maximumColumns: 6,
     );
   }
