@@ -25,11 +25,6 @@ const WindowingConfig desktopWindowingConfig = WindowingConfig(
       constraints: WindowConstraints(
         minimumSize: Size(900, 620),
       ),
-      resizable: false,
-      alwaysOnTop: false,
-      skipTaskbar: false,
-      frameless: true,
-      titleBarStyle: WindowTitleBarStyle.hidden,
       resizable: true,
       alwaysOnTop: false,
       skipTaskbar: false,
