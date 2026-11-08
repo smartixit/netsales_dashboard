@@ -33,10 +33,18 @@ class CustomStatusBanner extends StatelessWidget {
       CustomStatusBannerTone.danger => colors.error,
     };
     final background = switch (tone) {
-      CustomStatusBannerTone.info => colors.infoContainer.withValues(alpha: 0.18),
-      CustomStatusBannerTone.success => colors.successContainer.withValues(alpha: 0.18),
-      CustomStatusBannerTone.warning => colors.warningContainer.withValues(alpha: 0.2),
-      CustomStatusBannerTone.danger => colors.errorContainer.withValues(alpha: 0.18),
+      CustomStatusBannerTone.info => colors.infoContainer.withValues(
+        alpha: 0.18,
+      ),
+      CustomStatusBannerTone.success => colors.successContainer.withValues(
+        alpha: 0.18,
+      ),
+      CustomStatusBannerTone.warning => colors.warningContainer.withValues(
+        alpha: 0.2,
+      ),
+      CustomStatusBannerTone.danger => colors.errorContainer.withValues(
+        alpha: 0.18,
+      ),
     };
     return Container(
       padding: EdgeInsets.all(compact ? AppSpacing.md : AppSpacing.lg),
@@ -54,10 +62,20 @@ class CustomStatusBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: AppTypography.titleSmall.copyWith(color: colors.onSurface)),
+                Text(
+                  title,
+                  style: AppTypography.titleSmall.copyWith(
+                    color: colors.onSurface,
+                  ),
+                ),
                 if (message != null) ...[
                   AppSpacing.vXxs,
-                  Text(message!, style: AppTypography.bodySmall.copyWith(color: colors.onSurfaceVariant)),
+                  Text(
+                    message!,
+                    style: AppTypography.bodySmall.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
                 ],
               ],
             ),

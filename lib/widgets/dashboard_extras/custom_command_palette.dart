@@ -86,18 +86,25 @@ class _CommandPaletteBody extends StatelessWidget {
         AppSpacing.vMd,
         Obx(() {
           final term = query.value.trim().toLowerCase();
-          final filtered = items.where((item) =>
-            term.isEmpty ||
-            item.title.toLowerCase().contains(term) ||
-            item.subtitle.toLowerCase().contains(term) ||
-            item.keywords.any((word) => word.toLowerCase().contains(term))
-          ).toList(growable: false);
+          final filtered = items
+              .where(
+                (item) =>
+                    term.isEmpty ||
+                    item.title.toLowerCase().contains(term) ||
+                    item.subtitle.toLowerCase().contains(term) ||
+                    item.keywords.any(
+                      (word) => word.toLowerCase().contains(term),
+                    ),
+              )
+              .toList(growable: false);
           if (filtered.isEmpty) {
             return Padding(
               padding: EdgeInsets.all(AppSpacing.xl),
               child: Text(
                 AppLocalizations.of(context).text('no_results'),
-                style: AppTypography.bodyMedium.copyWith(color: colors.onSurfaceVariant),
+                style: AppTypography.bodyMedium.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
               ),
             );
           }
@@ -120,12 +127,26 @@ class _CommandPaletteBody extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(item.title, style: AppTypography.titleSmall.copyWith(color: colors.onSurface)),
-                            Text(item.subtitle, style: AppTypography.caption.copyWith(color: colors.onSurfaceVariant)),
+                            Text(
+                              item.title,
+                              style: AppTypography.titleSmall.copyWith(
+                                color: colors.onSurface,
+                              ),
+                            ),
+                            Text(
+                              item.subtitle,
+                              style: AppTypography.caption.copyWith(
+                                color: colors.onSurfaceVariant,
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                      Icon(Icons.north_west_rounded, size: 16, color: colors.onSurfaceVariant),
+                      Icon(
+                        Icons.north_west_rounded,
+                        size: 16,
+                        color: colors.onSurfaceVariant,
+                      ),
                     ],
                   ),
                 );

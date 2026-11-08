@@ -17,10 +17,12 @@ abstract final class AppRoutes {
   static const String pos = '/dashboard/pos';
   static String posDetail(int id) => '/dashboard/pos/$id';
   static const String networkPosLinks = '/dashboard/network-pos-links';
-  static String networkPosLinkDetail(int id) => '/dashboard/network-pos-links/$id';
+  static String networkPosLinkDetail(int id) =>
+      '/dashboard/network-pos-links/$id';
   static const String geography = '/dashboard/geography';
   static const String subscriptionPlans = '/dashboard/subscription-plans';
-  static const String providerSubscriptions = '/dashboard/provider-subscriptions';
+  static const String providerSubscriptions =
+      '/dashboard/provider-subscriptions';
   static const String subscriptionRequests = '/dashboard/subscription-requests';
   static const String sales = '/dashboard/sales';
   static const String networkWallets = '/dashboard/network-wallets';
@@ -30,7 +32,8 @@ abstract final class AppRoutes {
   static const String financialReports = '/dashboard/financial-reports';
   static const String supportTickets = '/dashboard/support-tickets';
   static const String notifications = '/dashboard/notifications';
-  static const String notificationManagement = '/dashboard/notification-management';
+  static const String notificationManagement =
+      '/dashboard/notification-management';
   static const String sessions = '/dashboard/sessions';
   static const String auditLogs = '/dashboard/audit-logs';
   static const String settings = '/dashboard/settings';

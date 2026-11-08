@@ -9,7 +9,11 @@ import 'package:netsales_dashboard/features/platform_users/domain/entities/platf
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 
 class PlatformUserDetailHeader extends StatelessWidget {
-  const PlatformUserDetailHeader({super.key, required this.user, required this.l10n});
+  const PlatformUserDetailHeader({
+    super.key,
+    required this.user,
+    required this.l10n,
+  });
   final PlatformUserEntity user;
   final AppLocalizations l10n;
 
@@ -22,13 +26,20 @@ class PlatformUserDetailHeader extends StatelessWidget {
         onPressed: () => Get.offNamed<void>(AppRoutes.users),
       ),
       SizedBox(width: AppSpacing.md),
-      Expanded(child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(l10n.text('user_details'), style: AppTypography.titleLarge),
-          Text(user.fullName, style: AppTypography.bodySmall.copyWith(color: context.colors.onSurfaceVariant)),
-        ],
-      )),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.text('user_details'), style: AppTypography.titleLarge),
+            Text(
+              user.fullName,
+              style: AppTypography.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
     ],
   );
 }

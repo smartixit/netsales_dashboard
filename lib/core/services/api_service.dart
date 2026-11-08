@@ -68,8 +68,11 @@ class ApiService {
         final client = HttpClient();
         client.idleTimeout = Duration.zero;
         if (allowBadCerts) {
-          client.badCertificateCallback =
-              (X509Certificate cert, String host, int port) => true;
+          client.badCertificateCallback = (
+            X509Certificate cert,
+            String host,
+            int port,
+          ) => true;
         }
         return client;
       };

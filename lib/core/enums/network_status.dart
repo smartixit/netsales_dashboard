@@ -1,7 +1,11 @@
 /// حالة مزود الشبكة كما تصل من API؛ لا تعتمد على طبقة Features خاصة بالمزوّد.
 enum NetworkStatus {
-  active('ACTIVE'), inactive('INACTIVE'), pending('PENDING'),
-  rejected('REJECTED'), banned('BANNED'), unknown('UNKNOWN');
+  active('ACTIVE'),
+  inactive('INACTIVE'),
+  pending('PENDING'),
+  rejected('REJECTED'),
+  banned('BANNED'),
+  unknown('UNKNOWN');
 
   const NetworkStatus(this.wireValue);
   final String wireValue;

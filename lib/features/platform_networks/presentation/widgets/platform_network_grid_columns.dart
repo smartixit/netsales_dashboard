@@ -34,12 +34,19 @@ abstract final class PlatformNetworkGridColumns {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTypography.titleSmall),
+                Text(
+                  item.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.titleSmall,
+                ),
                 Text(
                   item.uuid ?? 'ID #${item.id}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTypography.caption.copyWith(color: context.colors.onSurfaceVariant),
+                  style: AppTypography.caption.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -52,7 +59,11 @@ abstract final class PlatformNetworkGridColumns {
       label: l10n.text('network_owner'),
       width: 190,
       valueGetter: (item) => item.ownerName,
-      cellBuilder: (context, item, _) => Text(item.ownerName ?? '—', maxLines: 1, overflow: TextOverflow.ellipsis),
+      cellBuilder: (context, item, _) => Text(
+        item.ownerName ?? '—',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
     ),
     AppDataGridColumn<PlatformNetworkEntity>(
       name: 'phone',
@@ -60,7 +71,11 @@ abstract final class PlatformNetworkGridColumns {
       width: 150,
       allowFiltering: false,
       valueGetter: (item) => item.phoneNumber,
-      cellBuilder: (context, item, _) => Text(item.phoneNumber ?? '—', maxLines: 1, overflow: TextOverflow.ellipsis),
+      cellBuilder: (context, item, _) => Text(
+        item.phoneNumber ?? '—',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
     ),
     AppDataGridColumn<PlatformNetworkEntity>(
       name: 'location',
@@ -72,9 +87,20 @@ abstract final class PlatformNetworkGridColumns {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(item.governorateName ?? '—', maxLines: 1, overflow: TextOverflow.ellipsis),
+          Text(
+            item.governorateName ?? '—',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
           if (item.directorateName != null)
-            Text(item.directorateName!, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTypography.caption.copyWith(color: context.colors.onSurfaceVariant)),
+            Text(
+              item.directorateName!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTypography.caption.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
         ],
       ),
     ),
@@ -84,7 +110,10 @@ abstract final class PlatformNetworkGridColumns {
       width: 145,
       allowFiltering: false,
       valueGetter: (item) => item.status,
-      cellBuilder: (context, item, _) => PlatformNetworkStatusBadge(status: item.status, statusLabel: item.statusLabel),
+      cellBuilder: (context, item, _) => PlatformNetworkStatusBadge(
+        status: item.status,
+        statusLabel: item.statusLabel,
+      ),
     ),
     AppDataGridColumn<PlatformNetworkEntity>(
       name: 'created',
@@ -93,7 +122,9 @@ abstract final class PlatformNetworkGridColumns {
       valueGetter: (item) => item.createdAt?.toIso8601String(),
       cellBuilder: (context, item, _) => Text(
         _formatDate(item.createdAt),
-        style: AppTypography.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+        style: AppTypography.bodySmall.copyWith(
+          color: context.colors.onSurfaceVariant,
+        ),
       ),
     ),
     AppDataGridColumn<PlatformNetworkEntity>(
@@ -112,8 +143,14 @@ abstract final class PlatformNetworkGridColumns {
   ];
 
   static String _initials(String name) {
-    final words = name.trim().split(RegExp(r'\s+')).where((word) => word.isNotEmpty);
-    return words.take(2).map((word) => String.fromCharCode(word.runes.first)).join();
+    final words = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((word) => word.isNotEmpty);
+    return words
+        .take(2)
+        .map((word) => String.fromCharCode(word.runes.first))
+        .join();
   }
 
   static String _formatDate(DateTime? value) {

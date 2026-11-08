@@ -30,9 +30,8 @@ class PlatformNetworksBinding extends Bindings {
     }
     if (!Get.isRegistered<GetPlatformNetworksUseCase>()) {
       Get.lazyPut<GetPlatformNetworksUseCase>(
-        () => GetPlatformNetworksUseCase(
-          Get.find<PlatformNetworksRepository>(),
-        ),
+        () =>
+            GetPlatformNetworksUseCase(Get.find<PlatformNetworksRepository>()),
         fenix: true,
       );
     }

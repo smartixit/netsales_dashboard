@@ -11,9 +11,7 @@ class PlatformDashboardRepositoryImpl implements PlatformDashboardRepository {
   final PlatformDashboardRemoteDataSource _remote;
 
   @override
-  Future<PlatformDashboardOverviewEntity> getOverview({
-    String period = '30d',
-  }) {
+  Future<PlatformDashboardOverviewEntity> getOverview({String period = '30d'}) {
     return _remote.getOverview(period: period);
   }
 

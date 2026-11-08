@@ -36,19 +36,49 @@ class PlatformNetworkFilterBar extends StatelessWidget {
           runSpacing: AppSpacing.xs,
           children: [
             _Filter(label: l10n.text('all'), value: '', controller: controller),
-            _Filter(label: l10n.text('network_status_active'), value: 'ACTIVE', controller: controller),
-            _Filter(label: l10n.text('network_status_pending'), value: 'PENDING', controller: controller),
-            _Filter(label: l10n.text('network_status_inactive'), value: 'INACTIVE', controller: controller),
-            _Filter(label: l10n.text('network_status_rejected'), value: 'REJECTED', controller: controller),
-            _Filter(label: l10n.text('network_status_banned'), value: 'BANNED', controller: controller),
+            _Filter(
+              label: l10n.text('network_status_active'),
+              value: 'ACTIVE',
+              controller: controller,
+            ),
+            _Filter(
+              label: l10n.text('network_status_pending'),
+              value: 'PENDING',
+              controller: controller,
+            ),
+            _Filter(
+              label: l10n.text('network_status_inactive'),
+              value: 'INACTIVE',
+              controller: controller,
+            ),
+            _Filter(
+              label: l10n.text('network_status_rejected'),
+              value: 'REJECTED',
+              controller: controller,
+            ),
+            _Filter(
+              label: l10n.text('network_status_banned'),
+              value: 'BANNED',
+              controller: controller,
+            ),
           ],
         ),
       );
       return constraints.maxWidth >= 780
-          ? Row(children: [search, SizedBox(width: AppSpacing.md), Expanded(child: filters)])
+          ? Row(
+              children: [
+                search,
+                SizedBox(width: AppSpacing.md),
+                Expanded(child: filters),
+              ],
+            )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [search, SizedBox(height: AppSpacing.md), filters],
+              children: [
+                search,
+                SizedBox(height: AppSpacing.md),
+                filters,
+              ],
             );
     },
   );

@@ -15,35 +15,54 @@ import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/images/custom_cached_image.dart';
 
 class PlatformUsersList extends StatelessWidget {
-  const PlatformUsersList({super.key, required this.controller, required this.l10n});
+  const PlatformUsersList({
+    super.key,
+    required this.controller,
+    required this.l10n,
+  });
   final PlatformUsersController controller;
   final AppLocalizations l10n;
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(builder: (context, constraints) {
-    final compact = constraints.maxWidth < 650;
-    return Column(children: [
-      if (!compact) _UsersTableHeader(l10n: l10n),
-      Expanded(child: ListView.separated(
-        itemCount: controller.users.length + (controller.hasMore ? 1 : 0),
-        separatorBuilder: (_, _) => Divider(height: 1, color: context.colors.outlineVariant),
-        itemBuilder: (context, index) {
-          if (index == controller.users.length) {
-            return Padding(
-              padding: EdgeInsets.all(AppSpacing.md),
-              child: Center(child: CustomButton.secondary(
-                text: l10n.text('load_more'),
-                loading: controller.isLoadingMore.value,
-                onPressed: controller.isLoadingMore.value ? null : () => controller.loadUsers(append: true),
-              )),
-            );
-          }
-          final user = controller.users[index];
-          return InkWell(onTap: () => Get.toNamed<void>(AppRoutes.userDetail(user.id)), borderRadius: BorderRadius.circular(AppRadius.md), child: _UserRow(user: user, compact: compact));
-        },
-      )),
-    ]);
-  });
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final compact = constraints.maxWidth < 650;
+      return Column(
+        children: [
+          if (!compact) _UsersTableHeader(l10n: l10n),
+          Expanded(
+            child: ListView.separated(
+              itemCount: controller.users.length + (controller.hasMore ? 1 : 0),
+              separatorBuilder: (_, _) =>
+                  Divider(height: 1, color: context.colors.outlineVariant),
+              itemBuilder: (context, index) {
+                if (index == controller.users.length) {
+                  return Padding(
+                    padding: EdgeInsets.all(AppSpacing.md),
+                    child: Center(
+                      child: CustomButton.secondary(
+                        text: l10n.text('load_more'),
+                        loading: controller.isLoadingMore.value,
+                        onPressed: controller.isLoadingMore.value
+                            ? null
+                            : () => controller.loadUsers(append: true),
+                      ),
+                    ),
+                  );
+                }
+                final user = controller.users[index];
+                return InkWell(
+                  onTap: () => Get.toNamed<void>(AppRoutes.userDetail(user.id)),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  child: _UserRow(user: user, compact: compact),
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class _UsersTableHeader extends StatelessWidget {
@@ -51,15 +70,41 @@ class _UsersTableHeader extends StatelessWidget {
   final AppLocalizations l10n;
   @override
   Widget build(BuildContext context) => Container(
-    padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+    padding: EdgeInsets.symmetric(
+      horizontal: AppSpacing.md,
+      vertical: AppSpacing.md,
+    ),
     color: context.colors.surfaceContainerHigh,
-    child: Row(children: [
-      Expanded(flex: 3, child: Text(l10n.text('user_name'), style: AppTypography.labelLarge)),
-      Expanded(flex: 2, child: Text(l10n.text('user_phone'), style: AppTypography.labelLarge)),
-      Expanded(flex: 2, child: Text(l10n.text('user_role'), style: AppTypography.labelLarge)),
-      Expanded(flex: 1, child: Text(l10n.text('user_status'), style: AppTypography.labelLarge)),
-      Expanded(flex: 2, child: Text(l10n.text('user_last_login'), style: AppTypography.labelLarge)),
-    ]),
+    child: Row(
+      children: [
+        Expanded(
+          flex: 3,
+          child: Text(l10n.text('user_name'), style: AppTypography.labelLarge),
+        ),
+        Expanded(
+          flex: 2,
+          child: Text(l10n.text('user_phone'), style: AppTypography.labelLarge),
+        ),
+        Expanded(
+          flex: 2,
+          child: Text(l10n.text('user_role'), style: AppTypography.labelLarge),
+        ),
+        Expanded(
+          flex: 1,
+          child: Text(
+            l10n.text('user_status'),
+            style: AppTypography.labelLarge,
+          ),
+        ),
+        Expanded(
+          flex: 2,
+          child: Text(
+            l10n.text('user_last_login'),
+            style: AppTypography.labelLarge,
+          ),
+        ),
+      ],
+    ),
   );
 }
 
@@ -142,8 +187,14 @@ class _UserRow extends StatelessWidget {
                   spacing: AppSpacing.md,
                   runSpacing: AppSpacing.xs,
                   children: [
-                    _Meta(icon: Icons.phone_iphone_rounded, value: user.phoneNumber),
-                    _Meta(icon: Icons.badge_outlined, value: user.roleName ?? '—'),
+                    _Meta(
+                      icon: Icons.phone_iphone_rounded,
+                      value: user.phoneNumber,
+                    ),
+                    _Meta(
+                      icon: Icons.badge_outlined,
+                      value: user.roleName ?? '—',
+                    ),
                   ],
                 ),
               ],
@@ -187,8 +238,13 @@ class _UserRow extends StatelessWidget {
   }
 
   String _initials(String value) {
-    final words = value.trim().split(RegExp(r'\s+')).where((word) => word.isNotEmpty);
-    final parts = words.take(2).map((word) => String.fromCharCode(word.runes.first));
+    final words = value
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((word) => word.isNotEmpty);
+    final parts = words
+        .take(2)
+        .map((word) => String.fromCharCode(word.runes.first));
     return parts.join();
   }
 }
@@ -201,21 +257,21 @@ class _Meta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 15, color: context.colors.onSurfaceVariant),
-          SizedBox(width: AppSpacing.xs),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 220),
-            child: Text(
-              value,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTypography.bodySmall.copyWith(
-                color: context.colors.onSurfaceVariant,
-              ),
-            ),
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(icon, size: 15, color: context.colors.onSurfaceVariant),
+      SizedBox(width: AppSpacing.xs),
+      ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 220),
+        child: Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: AppTypography.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
           ),
-        ],
-      );
+        ),
+      ),
+    ],
+  );
 }

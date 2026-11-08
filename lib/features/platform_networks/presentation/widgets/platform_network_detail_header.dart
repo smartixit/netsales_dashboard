@@ -29,17 +29,33 @@ class PlatformNetworkDetailHeader extends StatelessWidget {
           CustomCachedImage.avatar(
             url: network.logo,
             radius: compact ? 25 : 30,
-            fallbackText: network.name.isEmpty ? '?' : network.name.characters.first,
+            fallbackText: network.name.isEmpty
+                ? '?'
+                : network.name.characters.first,
           ),
           SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(network.name, style: AppTypography.headlineSmall, maxLines: 1, overflow: TextOverflow.ellipsis),
-                Text(network.uuid ?? 'ID #${network.id}', style: AppTypography.bodySmall.copyWith(color: context.colors.onSurfaceVariant)),
+                Text(
+                  network.name,
+                  style: AppTypography.headlineSmall,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  network.uuid ?? 'ID #${network.id}',
+                  style: AppTypography.bodySmall.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
                 SizedBox(height: AppSpacing.xs),
-                PlatformNetworkStatusBadge(status: network.status, statusLabel: network.statusLabel, compact: false),
+                PlatformNetworkStatusBadge(
+                  status: network.status,
+                  statusLabel: network.statusLabel,
+                  compact: false,
+                ),
               ],
             ),
           ),
@@ -51,8 +67,21 @@ class PlatformNetworkDetailHeader extends StatelessWidget {
         onPressed: () => Get.offNamed<void>(AppRoutes.networks),
       );
       return compact
-          ? Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [back, SizedBox(height: AppSpacing.md), identity])
-          : Row(children: [Expanded(child: identity), SizedBox(width: AppSpacing.md), back]);
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                back,
+                SizedBox(height: AppSpacing.md),
+                identity,
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(child: identity),
+                SizedBox(width: AppSpacing.md),
+                back,
+              ],
+            );
     },
   );
 }

@@ -186,23 +186,19 @@ class _TrendLine extends StatelessWidget {
         Icon(icon, size: 17, color: color),
         Text(
           trend.valueLabel,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: color,
-            fontWeight: FontWeight.w700,
-          ),
+          style: Theme.of(context).textTheme.labelLarge
+              ?.copyWith(color: color, fontWeight: FontWeight.w700),
         ),
         Text(
           trend.comparisonLabel,
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall?.copyWith(color: tokens.mutedForeground),
+          style: Theme.of(context).textTheme.bodySmall
+              ?.copyWith(color: tokens.mutedForeground),
         ),
         if (trend.description != null)
           Text(
             trend.description!,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: tokens.mutedForeground),
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: tokens.mutedForeground),
           ),
       ],
     );
@@ -242,9 +238,8 @@ class _TargetProgress extends StatelessWidget {
             Expanded(
               child: Text(
                 target.label ?? 'Progress',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: tokens.mutedForeground),
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: tokens.mutedForeground),
               ),
             ),
             Text(
@@ -308,10 +303,8 @@ class _StatusCaption extends StatelessWidget {
           child: Text(
             label ?? '',
             softWrap: true,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(context).textTheme.labelMedium
+                ?.copyWith(color: color, fontWeight: FontWeight.w600),
           ),
         ),
       ],
@@ -349,9 +342,8 @@ class _SourceLine extends StatelessWidget {
                 : '${source.label} · ${source.updatedAtLabel} · ${source.freshnessLabel ?? ''}',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(
-              context,
-            ).textTheme.labelSmall?.copyWith(color: freshnessColor),
+            style: Theme.of(context).textTheme.labelSmall
+                ?.copyWith(color: freshnessColor),
           ),
         ),
         if (source.detail != null)

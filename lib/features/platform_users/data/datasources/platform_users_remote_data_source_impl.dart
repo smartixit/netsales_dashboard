@@ -38,8 +38,9 @@ class PlatformUsersRemoteDataSourceImpl
   Future<ApiResponse<PlatformUserDetailModel>> getUserDetail(int userId) {
     return _apiService.get<PlatformUserDetailModel>(
       ApiConstants.user(userId),
-      fromJson: (json) =>
-          PlatformUserDetailModel.fromJson(Map<String, dynamic>.from(json as Map)),
+      fromJson: (json) => PlatformUserDetailModel.fromJson(
+        Map<String, dynamic>.from(json as Map),
+      ),
     );
   }
 
@@ -49,8 +50,9 @@ class PlatformUsersRemoteDataSourceImpl
   ) {
     return _apiService.getList<PlatformUserSessionModel>(
       ApiConstants.securityUserSessions(userId),
-      fromJson: (json) =>
-          PlatformUserSessionModel.fromJson(Map<String, dynamic>.from(json as Map)),
+      fromJson: (json) => PlatformUserSessionModel.fromJson(
+        Map<String, dynamic>.from(json as Map),
+      ),
     );
   }
 }

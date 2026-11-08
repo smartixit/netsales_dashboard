@@ -14,7 +14,13 @@ class PlatformNavigationFooter extends StatelessWidget {
     final colors = context.colors;
     final l10n = AppLocalizations.of(context);
     if (collapsed) {
-      return Tooltip(message: l10n.text('application'), child: Icon(Icons.verified_user_outlined, color: colors.onSurfaceVariant));
+      return Tooltip(
+        message: l10n.text('application'),
+        child: Icon(
+          Icons.verified_user_outlined,
+          color: colors.onSurfaceVariant,
+        ),
+      );
     }
     return Container(
       padding: EdgeInsets.all(AppSpacing.md),
@@ -31,8 +37,18 @@ class PlatformNavigationFooter extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('NetSales Platform', style: AppTypography.labelMedium.copyWith(color: colors.onSurface)),
-                Text(l10n.text('secure_administration'), style: AppTypography.caption.copyWith(color: colors.onSurfaceVariant)),
+                Text(
+                  'NetSales Platform',
+                  style: AppTypography.labelMedium.copyWith(
+                    color: colors.onSurface,
+                  ),
+                ),
+                Text(
+                  l10n.text('secure_administration'),
+                  style: AppTypography.caption.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),

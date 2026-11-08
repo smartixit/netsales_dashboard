@@ -21,9 +21,7 @@ class PlatformNetworksRemoteDataSourceImpl
   }) {
     return _apiService.getList<PlatformNetworkModel>(
       ApiConstants.networks,
-      fromJson: (json) => PlatformNetworkModel.fromJson(
-        _asJsonMap(json),
-      ),
+      fromJson: (json) => PlatformNetworkModel.fromJson(_asJsonMap(json)),
       queryParameters: {
         if (search != null && search.trim().isNotEmpty) 'search': search.trim(),
         if (status != null && status.isNotEmpty) 'status': status,
@@ -37,9 +35,7 @@ class PlatformNetworksRemoteDataSourceImpl
   Future<ApiResponse<PlatformNetworkModel>> getNetwork(int networkId) {
     return _apiService.get<PlatformNetworkModel>(
       ApiConstants.network(networkId),
-      fromJson: (json) => PlatformNetworkModel.fromJson(
-        _asJsonMap(json),
-      ),
+      fromJson: (json) => PlatformNetworkModel.fromJson(_asJsonMap(json)),
     );
   }
 
@@ -51,9 +47,7 @@ class PlatformNetworksRemoteDataSourceImpl
     return _apiService.put<PlatformNetworkModel>(
       ApiConstants.network(networkId),
       data: data,
-      fromJson: (json) => PlatformNetworkModel.fromJson(
-        _asJsonMap(json),
-      ),
+      fromJson: (json) => PlatformNetworkModel.fromJson(_asJsonMap(json)),
     );
   }
 
@@ -73,7 +67,6 @@ class PlatformNetworksRemoteDataSourceImpl
     );
   }
 }
-
 
 Map<String, dynamic> _asJsonMap(Object? value) {
   if (value is Map<String, dynamic>) return value;

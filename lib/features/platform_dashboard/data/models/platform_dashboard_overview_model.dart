@@ -4,15 +4,15 @@ import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/p
 /// نموذج استجابة Dashboard؛ يرث الكيان الدوميني ولا ينشئ نسخة تحويل منفصلة.
 class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
   PlatformDashboardOverviewModel._(PlatformDashboardOverviewEntity entity)
-      : super(
-          generatedAt: entity.generatedAt,
-          timezone: entity.timezone,
-          period: entity.period,
-          metrics: entity.metrics,
-          charts: entity.charts,
-          attentionGroups: entity.attentionGroups,
-          recentActivity: entity.recentActivity,
-        );
+    : super(
+        generatedAt: entity.generatedAt,
+        timezone: entity.timezone,
+        period: entity.period,
+        metrics: entity.metrics,
+        charts: entity.charts,
+        attentionGroups: entity.attentionGroups,
+        recentActivity: entity.recentActivity,
+      );
 
   factory PlatformDashboardOverviewModel.fromJson(Map<String, dynamic> json) {
     return PlatformDashboardOverviewModel._(_parse(json));
@@ -49,18 +49,22 @@ class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
                 period: map['period']?.toString() ?? '',
                 value: _asInt(map['value']),
               );
-            }).toList(growable: false),
+            })
+            .toList(growable: false),
         providerDistribution: _asList(rawCharts['provider_distribution'])
             .map((item) {
               final map = _asMap(item);
               return PlatformProviderDistributionPointEntity(
                 entity: map['entity']?.toString() ?? '',
                 status: map['status']?.toString() ?? '',
-                statusLabel: map['status_label']?.toString() ??
-                    map['status']?.toString() ?? '',
+                statusLabel:
+                    map['status_label']?.toString() ??
+                    map['status']?.toString() ??
+                    '',
                 value: _asInt(map['value']),
               );
-            }).toList(growable: false),
+            })
+            .toList(growable: false),
         operationalActivity: _asList(rawCharts['operational_activity'])
             .map((item) {
               final map = _asMap(item);
@@ -68,31 +72,38 @@ class PlatformDashboardOverviewModel extends PlatformDashboardOverviewEntity {
                 date: map['date']?.toString() ?? '',
                 value: _asInt(map['value']),
               );
-            }).toList(growable: false),
+            })
+            .toList(growable: false),
       ),
-      attentionGroups: rawAttention.entries.map((entry) {
-        final group = _asMap(entry.value);
-        final items = _asList(group['items']).map((item) {
-          final map = _asMap(item);
-          return PlatformDashboardAttentionItemEntity(
-            id: _asInt(map['id']),
-            title: map['title']?.toString() ?? '',
-            subtitle: map['subtitle']?.toString() ?? '',
-            routeKey: map['route_key']?.toString() ?? '',
-            occurredAt: _dateTime(map['occurred_at']),
-            dueAt: _dateTime(map['due_at']),
-          );
-        }).toList(growable: false);
-        return PlatformDashboardAttentionGroupEntity(
-          key: entry.key,
-          count: _asInt(group['count']),
-          items: items,
-        );
-      }).toList(growable: false),
-      recentActivity: _asList(json['recent_activity']).map((item) {
-        final map = _asMap(item);
-        return PlatformActivityModel.fromJson(map);
-      }).toList(growable: false),
+      attentionGroups: rawAttention.entries
+          .map((entry) {
+            final group = _asMap(entry.value);
+            final items = _asList(group['items'])
+                .map((item) {
+                  final map = _asMap(item);
+                  return PlatformDashboardAttentionItemEntity(
+                    id: _asInt(map['id']),
+                    title: map['title']?.toString() ?? '',
+                    subtitle: map['subtitle']?.toString() ?? '',
+                    routeKey: map['route_key']?.toString() ?? '',
+                    occurredAt: _dateTime(map['occurred_at']),
+                    dueAt: _dateTime(map['due_at']),
+                  );
+                })
+                .toList(growable: false);
+            return PlatformDashboardAttentionGroupEntity(
+              key: entry.key,
+              count: _asInt(group['count']),
+              items: items,
+            );
+          })
+          .toList(growable: false),
+      recentActivity: _asList(json['recent_activity'])
+          .map((item) {
+            final map = _asMap(item);
+            return PlatformActivityModel.fromJson(map);
+          })
+          .toList(growable: false),
     );
   }
 

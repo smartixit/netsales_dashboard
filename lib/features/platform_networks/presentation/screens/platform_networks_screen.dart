@@ -37,7 +37,9 @@ class PlatformNetworksScreen extends GetView<PlatformNetworksController> {
                     text: l10n.text('refresh'),
                     prefix: const Icon(Icons.refresh_rounded, size: 18),
                     loading: controller.isRefreshing.value,
-                    onPressed: controller.isRefreshing.value ? null : controller.loadNetworks,
+                    onPressed: controller.isRefreshing.value
+                        ? null
+                        : controller.loadNetworks,
                   ),
                 ),
               ],
@@ -85,7 +87,10 @@ class PlatformNetworksScreen extends GetView<PlatformNetworksController> {
                     },
                   );
                 case AppDataGridViewState.success:
-                  return PlatformNetworksList(controller: controller, l10n: l10n);
+                  return PlatformNetworksList(
+                    controller: controller,
+                    l10n: l10n,
+                  );
               }
             }),
           ),

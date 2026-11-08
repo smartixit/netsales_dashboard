@@ -487,33 +487,76 @@ class EnumPresentationRegistry {
     };
   }
 
-
-  static EnumPresentation resolveNetworkStatus(NetworkStatus status, {String? serverLabel}) {
+  static EnumPresentation resolveNetworkStatus(
+    NetworkStatus status, {
+    String? serverLabel,
+  }) {
     final label = _effectiveLabel(serverLabel, switch (status) {
-      NetworkStatus.active => 'مفعّل', NetworkStatus.inactive => 'غير مفعّل',
-      NetworkStatus.pending => 'قيد الانتظار', NetworkStatus.rejected => 'مرفوض',
-      NetworkStatus.banned => 'محظور', NetworkStatus.unknown => 'حالة غير معروفة',
+      NetworkStatus.active => 'مفعّل',
+      NetworkStatus.inactive => 'غير مفعّل',
+      NetworkStatus.pending => 'قيد الانتظار',
+      NetworkStatus.rejected => 'مرفوض',
+      NetworkStatus.banned => 'محظور',
+      NetworkStatus.unknown => 'حالة غير معروفة',
     });
     return switch (status) {
-      NetworkStatus.active => EnumPresentation(label: label, tone: SemanticTone.success, icon: Icons.check_circle_rounded),
-      NetworkStatus.inactive => EnumPresentation(label: label, tone: SemanticTone.neutral, icon: Icons.pause_circle_rounded),
-      NetworkStatus.pending => EnumPresentation(label: label, tone: SemanticTone.warning, icon: Icons.hourglass_top_rounded),
-      NetworkStatus.rejected || NetworkStatus.banned => EnumPresentation(label: label, tone: SemanticTone.danger, icon: Icons.block_rounded),
+      NetworkStatus.active => EnumPresentation(
+        label: label,
+        tone: SemanticTone.success,
+        icon: Icons.check_circle_rounded,
+      ),
+      NetworkStatus.inactive => EnumPresentation(
+        label: label,
+        tone: SemanticTone.neutral,
+        icon: Icons.pause_circle_rounded,
+      ),
+      NetworkStatus.pending => EnumPresentation(
+        label: label,
+        tone: SemanticTone.warning,
+        icon: Icons.hourglass_top_rounded,
+      ),
+      NetworkStatus.rejected || NetworkStatus.banned => EnumPresentation(
+        label: label,
+        tone: SemanticTone.danger,
+        icon: Icons.block_rounded,
+      ),
       NetworkStatus.unknown => EnumPresentation.unknown(fallbackLabel: label),
     };
   }
 
-  static EnumPresentation resolvePosStatus(PosStatus status, {String? serverLabel}) {
+  static EnumPresentation resolvePosStatus(
+    PosStatus status, {
+    String? serverLabel,
+  }) {
     final label = _effectiveLabel(serverLabel, switch (status) {
-      PosStatus.active => 'مفعّل', PosStatus.inactive => 'غير مفعّل',
-      PosStatus.pending => 'قيد الانتظار', PosStatus.rejected => 'مرفوض',
-      PosStatus.banned => 'محظور', PosStatus.unknown => 'حالة غير معروفة',
+      PosStatus.active => 'مفعّل',
+      PosStatus.inactive => 'غير مفعّل',
+      PosStatus.pending => 'قيد الانتظار',
+      PosStatus.rejected => 'مرفوض',
+      PosStatus.banned => 'محظور',
+      PosStatus.unknown => 'حالة غير معروفة',
     });
     return switch (status) {
-      PosStatus.active => EnumPresentation(label: label, tone: SemanticTone.success, icon: Icons.check_circle_rounded),
-      PosStatus.inactive => EnumPresentation(label: label, tone: SemanticTone.neutral, icon: Icons.pause_circle_rounded),
-      PosStatus.pending => EnumPresentation(label: label, tone: SemanticTone.warning, icon: Icons.hourglass_top_rounded),
-      PosStatus.rejected || PosStatus.banned => EnumPresentation(label: label, tone: SemanticTone.danger, icon: Icons.block_rounded),
+      PosStatus.active => EnumPresentation(
+        label: label,
+        tone: SemanticTone.success,
+        icon: Icons.check_circle_rounded,
+      ),
+      PosStatus.inactive => EnumPresentation(
+        label: label,
+        tone: SemanticTone.neutral,
+        icon: Icons.pause_circle_rounded,
+      ),
+      PosStatus.pending => EnumPresentation(
+        label: label,
+        tone: SemanticTone.warning,
+        icon: Icons.hourglass_top_rounded,
+      ),
+      PosStatus.rejected || PosStatus.banned => EnumPresentation(
+        label: label,
+        tone: SemanticTone.danger,
+        icon: Icons.block_rounded,
+      ),
       PosStatus.unknown => EnumPresentation.unknown(fallbackLabel: label),
     };
   }

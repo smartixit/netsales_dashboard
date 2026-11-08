@@ -48,10 +48,7 @@ class PlatformNetworkDetailController extends GetxController {
     }
   }
 
-  Future<void> save({
-    required String name,
-    required String address,
-  }) async {
+  Future<void> save({required String name, required String address}) async {
     if (isSaving.value || network.value == null) return;
     isSaving.value = true;
     try {

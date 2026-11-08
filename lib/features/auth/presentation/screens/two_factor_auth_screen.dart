@@ -17,7 +17,8 @@ class TwoFactorAuthScreen extends GetView<TwoFactorAuthController> {
     return AuthScaffold(
       icon: Icons.phonelink_lock_rounded,
       title: 'تأكيد تسجيل الدخول',
-      subtitle: 'أدخل رمز التحقق المرسل إلى ${controller.maskedPhone} لتأكيد هويتك.',
+      subtitle:
+          'أدخل رمز التحقق المرسل إلى ${controller.maskedPhone} لتأكيد هويتك.',
       child: Form(
         key: controller.formKey,
         child: Column(
@@ -75,10 +76,7 @@ class TwoFactorAuthScreen extends GetView<TwoFactorAuthController> {
 }
 
 class _DeviceInfo extends StatelessWidget {
-  const _DeviceInfo({
-    required this.deviceName,
-    required this.initialMessage,
-  });
+  const _DeviceInfo({required this.deviceName, required this.initialMessage});
 
   final String deviceName;
   final String? initialMessage;
@@ -113,9 +111,8 @@ class _DeviceInfo extends StatelessWidget {
             AppSpacing.vSm,
             Text(
               initialMessage!,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: colors.onSurfaceVariant),
             ),
           ],
         ],

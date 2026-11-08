@@ -30,7 +30,12 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
     final user = SessionService.to.currentUser;
     final isNarrow = AppBreakpoints.widthOf(context) < AppBreakpoints.tabletMax;
     final destinations = <CommandPaletteItem>[
-      CommandPaletteItem(id: 'overview', title: l10n.text('overview'), subtitle: l10n.text('platform_summary'), icon: Icons.space_dashboard_outlined),
+      CommandPaletteItem(
+        id: 'overview',
+        title: l10n.text('overview'),
+        subtitle: l10n.text('platform_summary'),
+        icon: Icons.space_dashboard_outlined,
+      ),
       for (final item in PlatformNavigationRegistry.destinations)
         if (PlatformNavigationRegistry.canOpen(item))
           CommandPaletteItem(
@@ -60,7 +65,8 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
 
     return CallbackShortcuts(
       bindings: {
-        const SingleActivator(LogicalKeyboardKey.keyK, control: true): openPalette,
+        const SingleActivator(LogicalKeyboardKey.keyK, control: true):
+            openPalette,
         const SingleActivator(LogicalKeyboardKey.keyK, meta: true): openPalette,
       },
       child: Obx(() {
@@ -90,8 +96,10 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
           collapseSidebarTooltip: l10n.text('collapse_sidebar'),
           expandedGroupIds: controller.expandedGroups.toSet(),
           onGroupExpansionChanged: controller.toggleGroup,
-          sidebarHeaderBuilder: (collapsed) => PlatformSidebarBrand(collapsed: collapsed),
-          sidebarFooterBuilder: (collapsed) => PlatformNavigationFooter(collapsed: collapsed),
+          sidebarHeaderBuilder: (collapsed) =>
+              PlatformSidebarBrand(collapsed: collapsed),
+          sidebarFooterBuilder: (collapsed) =>
+              PlatformNavigationFooter(collapsed: collapsed),
           search: isNarrow
               ? CustomButton.icon(
                   icon: Icons.search_rounded,
@@ -125,8 +133,12 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
               : null,
           topbarActions: [
             CustomButton.icon(
-              icon: ThemeService.to.isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-              tooltip: l10n.text(ThemeService.to.isDarkMode ? 'light_mode' : 'dark_mode'),
+              icon: ThemeService.to.isDarkMode
+                  ? Icons.light_mode_outlined
+                  : Icons.dark_mode_outlined,
+              tooltip: l10n.text(
+                ThemeService.to.isDarkMode ? 'light_mode' : 'dark_mode',
+              ),
               onPressed: ThemeService.to.toggleTheme,
               foregroundColor: colors.onSurfaceVariant,
               backgroundColor: colors.surfaceContainerLow,
@@ -172,8 +184,17 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
             ),
           ],
           breadcrumbs: [
-            DashboardBreadcrumb(label: l10n.text('overview'), id: 'overview', enabled: selectedId != 'overview'),
-            if (selectedId != 'overview') DashboardBreadcrumb(label: selectedLabel, id: selectedId, enabled: false),
+            DashboardBreadcrumb(
+              label: l10n.text('overview'),
+              id: 'overview',
+              enabled: selectedId != 'overview',
+            ),
+            if (selectedId != 'overview')
+              DashboardBreadcrumb(
+                label: selectedLabel,
+                id: selectedId,
+                enabled: false,
+              ),
           ],
           onBreadcrumbTap: (id) {
             final route = PlatformNavigationRegistry.routeForId(id);
@@ -184,21 +205,31 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
           },
           pageHeader: DashboardPageHeaderData(
             title: selectedLabel,
-            description: selectedId == 'overview' ? l10n.text('platform_summary') : null,
-            icon: selectedId == 'overview' ? Icons.space_dashboard_rounded : Icons.dashboard_outlined,
+            description: selectedId == 'overview'
+                ? l10n.text('platform_summary')
+                : null,
+            icon: selectedId == 'overview'
+                ? Icons.space_dashboard_rounded
+                : Icons.dashboard_outlined,
           ),
-          child: GetRouterOutlet(anchorRoute: AppRoutes.dashboard, initialRoute: AppRoutes.overview),
+          child: GetRouterOutlet(
+            anchorRoute: AppRoutes.dashboard,
+            initialRoute: AppRoutes.overview,
+          ),
         );
       }),
     );
   }
 
   String _selectedId(String route) {
-    if (route.endsWith('/overview') || route == AppRoutes.dashboard) return 'overview';
+    if (route.endsWith('/overview') || route == AppRoutes.dashboard)
+      return 'overview';
     if (route.endsWith('/account')) return 'account';
-    if (route.startsWith(AppRoutes.networks) && route != AppRoutes.networks) return 'networks';
+    if (route.startsWith(AppRoutes.networks) && route != AppRoutes.networks)
+      return 'networks';
     for (final destination in PlatformNavigationRegistry.destinations) {
-      if (route == destination.route || route.endsWith(destination.route)) return destination.id;
+      if (route == destination.route || route.endsWith(destination.route))
+        return destination.id;
     }
     return 'overview';
   }
@@ -206,7 +237,8 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
   String _labelForId(BuildContext context, String id) {
     if (id == 'overview') return AppLocalizations.of(context).text('overview');
     if (id == 'account') return AppLocalizations.of(context).text('profile');
-    final destination = PlatformNavigationRegistry.destinations.firstWhereOrNull((item) => item.id == id);
+    final destination = PlatformNavigationRegistry.destinations
+        .firstWhereOrNull((item) => item.id == id);
     return AppLocalizations.of(context).text(destination?.labelKey ?? id);
   }
 }

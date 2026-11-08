@@ -22,49 +22,38 @@ class PlatformPosBinding extends Bindings {
     }
     if (!Get.isRegistered<PlatformPosRepository>()) {
       Get.lazyPut<PlatformPosRepository>(
-        () => PlatformPosRepositoryImpl(
-          Get.find<PlatformPosRemoteDataSource>(),
-        ),
+        () =>
+            PlatformPosRepositoryImpl(Get.find<PlatformPosRemoteDataSource>()),
         fenix: true,
       );
     }
     if (!Get.isRegistered<GetPlatformPosListUseCase>()) {
       Get.lazyPut<GetPlatformPosListUseCase>(
-        () => GetPlatformPosListUseCase(
-          Get.find<PlatformPosRepository>(),
-        ),
+        () => GetPlatformPosListUseCase(Get.find<PlatformPosRepository>()),
         fenix: true,
       );
     }
     if (!Get.isRegistered<GetPlatformPosDetailUseCase>()) {
       Get.lazyPut<GetPlatformPosDetailUseCase>(
-        () => GetPlatformPosDetailUseCase(
-          Get.find<PlatformPosRepository>(),
-        ),
+        () => GetPlatformPosDetailUseCase(Get.find<PlatformPosRepository>()),
         fenix: true,
       );
     }
     if (!Get.isRegistered<ApprovePlatformPosUseCase>()) {
       Get.lazyPut<ApprovePlatformPosUseCase>(
-        () => ApprovePlatformPosUseCase(
-          Get.find<PlatformPosRepository>(),
-        ),
+        () => ApprovePlatformPosUseCase(Get.find<PlatformPosRepository>()),
         fenix: true,
       );
     }
     if (!Get.isRegistered<RejectPlatformPosUseCase>()) {
       Get.lazyPut<RejectPlatformPosUseCase>(
-        () => RejectPlatformPosUseCase(
-          Get.find<PlatformPosRepository>(),
-        ),
+        () => RejectPlatformPosUseCase(Get.find<PlatformPosRepository>()),
         fenix: true,
       );
     }
     if (!Get.isRegistered<UpdatePlatformPosUseCase>()) {
       Get.lazyPut<UpdatePlatformPosUseCase>(
-        () => UpdatePlatformPosUseCase(
-          Get.find<PlatformPosRepository>(),
-        ),
+        () => UpdatePlatformPosUseCase(Get.find<PlatformPosRepository>()),
         fenix: true,
       );
     }

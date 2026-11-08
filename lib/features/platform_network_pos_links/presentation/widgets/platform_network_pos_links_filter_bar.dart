@@ -35,9 +35,21 @@ class PlatformNetworkPosLinksFilterBar extends StatelessWidget {
           spacing: AppSpacing.xs,
           runSpacing: AppSpacing.xs,
           children: [
-            _StatusFilter(controller: controller, value: '', label: l10n.text('all')),
-            _StatusFilter(controller: controller, value: 'true', label: l10n.text('link_status_active')),
-            _StatusFilter(controller: controller, value: 'false', label: l10n.text('link_status_inactive')),
+            _StatusFilter(
+              controller: controller,
+              value: '',
+              label: l10n.text('all'),
+            ),
+            _StatusFilter(
+              controller: controller,
+              value: 'true',
+              label: l10n.text('link_status_active'),
+            ),
+            _StatusFilter(
+              controller: controller,
+              value: 'false',
+              label: l10n.text('link_status_inactive'),
+            ),
           ],
         ),
       );
@@ -51,7 +63,11 @@ class PlatformNetworkPosLinksFilterBar extends StatelessWidget {
             )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [search, SizedBox(height: AppSpacing.sm), filters],
+              children: [
+                search,
+                SizedBox(height: AppSpacing.sm),
+                filters,
+              ],
             );
     },
   );

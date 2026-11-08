@@ -41,17 +41,39 @@ class CustomProfileMenu extends StatelessWidget {
     final colors = context.colors;
     final entries = <CustomPopupEntry<CustomProfileAction>>[
       CustomPopupSectionHeader<CustomProfileAction>(title: role),
-      CustomPopupItem<CustomProfileAction>(value: CustomProfileAction.profile, label: profileLabel, icon: Icons.person_outline_rounded),
-      if (showSecurity) CustomPopupItem<CustomProfileAction>(value: CustomProfileAction.security, label: securityLabel, icon: Icons.shield_outlined),
-      if (showDevices) CustomPopupItem<CustomProfileAction>(value: CustomProfileAction.devices, label: devicesLabel, icon: Icons.devices_outlined),
+      CustomPopupItem<CustomProfileAction>(
+        value: CustomProfileAction.profile,
+        label: profileLabel,
+        icon: Icons.person_outline_rounded,
+      ),
+      if (showSecurity)
+        CustomPopupItem<CustomProfileAction>(
+          value: CustomProfileAction.security,
+          label: securityLabel,
+          icon: Icons.shield_outlined,
+        ),
+      if (showDevices)
+        CustomPopupItem<CustomProfileAction>(
+          value: CustomProfileAction.devices,
+          label: devicesLabel,
+          icon: Icons.devices_outlined,
+        ),
       const CustomPopupDivider<CustomProfileAction>(),
-      CustomPopupItem<CustomProfileAction>(value: CustomProfileAction.logout, label: logoutLabel, icon: Icons.logout_rounded, isDestructive: true),
+      CustomPopupItem<CustomProfileAction>(
+        value: CustomProfileAction.logout,
+        label: logoutLabel,
+        icon: Icons.logout_rounded,
+        isDestructive: true,
+      ),
     ];
     return CustomPopupMenu<CustomProfileAction>(
       items: entries,
       onSelected: onSelected,
       trigger: Container(
-        padding: EdgeInsets.symmetric(horizontal: compact ? AppSpacing.xs : AppSpacing.sm, vertical: AppSpacing.xs),
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? AppSpacing.xs : AppSpacing.sm,
+          vertical: AppSpacing.xs,
+        ),
         decoration: BoxDecoration(
           color: colors.surfaceContainerLow,
           borderRadius: AppRadius.fullRadius,
@@ -63,9 +85,16 @@ class CustomProfileMenu extends StatelessWidget {
             CircleAvatar(
               radius: 16,
               backgroundColor: colors.primaryContainer,
-              backgroundImage: avatarUrl == null || avatarUrl!.isEmpty ? null : NetworkImage(avatarUrl!),
+              backgroundImage: avatarUrl == null || avatarUrl!.isEmpty
+                  ? null
+                  : NetworkImage(avatarUrl!),
               child: avatarUrl == null || avatarUrl!.isEmpty
-                  ? Text(initials ?? (name.isEmpty ? '?' : name.characters.first), style: AppTypography.labelMedium.copyWith(color: colors.onPrimaryContainer))
+                  ? Text(
+                      initials ?? (name.isEmpty ? '?' : name.characters.first),
+                      style: AppTypography.labelMedium.copyWith(
+                        color: colors.onPrimaryContainer,
+                      ),
+                    )
                   : null,
             ),
             if (!compact) ...[
@@ -76,8 +105,22 @@ class CustomProfileMenu extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTypography.labelMedium.copyWith(color: colors.onSurface)),
-                    Text(role, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTypography.caption.copyWith(color: colors.onSurfaceVariant)),
+                    Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.labelMedium.copyWith(
+                        color: colors.onSurface,
+                      ),
+                    ),
+                    Text(
+                      role,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.caption.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
                   ],
                 ),
               ),

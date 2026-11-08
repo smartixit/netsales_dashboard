@@ -69,9 +69,8 @@ class PlatformNetworkPosLinkCard extends StatelessWidget {
         ),
         CustomButton.text(
           text: l10n.text('view_details'),
-          onPressed: () => Get.toNamed<void>(
-            AppRoutes.networkPosLinkDetail(item.id),
-          ),
+          onPressed: () =>
+              Get.toNamed<void>(AppRoutes.networkPosLinkDetail(item.id)),
         ),
       ],
     ),

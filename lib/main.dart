@@ -199,13 +199,17 @@ class MyApp extends StatelessWidget {
               if (routing != null) {
                 unawaited(windowing.applyRoute(routing.current));
                 if (Get.isRegistered<PlatformDashboardController>()) {
-                  Get.find<PlatformDashboardController>().setActiveRoute(routing.current);
+                  Get.find<PlatformDashboardController>().setActiveRoute(
+                    routing.current,
+                  );
                 }
               }
             },
             unknownRoute: GetPage(
               name: AppRoutes.notFound,
-              page: () => const Scaffold(body: Center(child: Text('الصفحة غير موجودة'))),
+              page: () => const Scaffold(
+                body: Center(child: Text('الصفحة غير موجودة')),
+              ),
             ),
             defaultTransition: Transition.fadeIn,
             transitionDuration: AppMotion.page,

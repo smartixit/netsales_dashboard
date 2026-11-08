@@ -57,7 +57,9 @@ class PlatformNetworkPosLinksScreen
                     loading: controller.isLoading.value,
                     onPressed: controller.isLoading.value
                         ? null
-                        : () => controller.loadSelectionOptions().then((_) => controller.load()),
+                        : () => controller.loadSelectionOptions().then(
+                            (_) => controller.load(),
+                          ),
                   ),
                 ),
               ],
@@ -68,15 +70,21 @@ class PlatformNetworkPosLinksScreen
           SizedBox(height: AppSpacing.md),
           Expanded(
             child: Obx(() {
-              final state = controller.isLoading.value && controller.links.isEmpty
+              final state =
+                  controller.isLoading.value && controller.links.isEmpty
                   ? AppDataGridViewState.loading
-                  : controller.errorMessage.value.isNotEmpty && controller.links.isEmpty
+                  : controller.errorMessage.value.isNotEmpty &&
+                        controller.links.isEmpty
                   ? AppDataGridViewState.error
                   : controller.links.isEmpty
                   ? AppDataGridViewState.empty
                   : AppDataGridViewState.success;
               if (state == AppDataGridViewState.loading) {
-                return const CustomSkeletonGrid(count: 6, crossAxisCount: 1, itemHeight: 76);
+                return const CustomSkeletonGrid(
+                  count: 6,
+                  crossAxisCount: 1,
+                  itemHeight: 76,
+                );
               }
               if (state == AppDataGridViewState.error) {
                 return CustomErrorState.boxed(
@@ -93,7 +101,9 @@ class PlatformNetworkPosLinksScreen
                   subtitle: l10n.text('network_pos_links_empty_description'),
                   icon: Icons.link_off_rounded,
                   badgeText: l10n.text('network_pos_links'),
-                  actionLabel: canCreate ? l10n.text('create_network_pos_link') : null,
+                  actionLabel: canCreate
+                      ? l10n.text('create_network_pos_link')
+                      : null,
                   onAction: canCreate ? () => _create(l10n) : null,
                 );
               }
@@ -126,7 +136,8 @@ class PlatformNetworkPosLinksScreen
                 errorMessage: controller.errorMessage.value,
                 emptyTitle: l10n.text('network_pos_links_empty'),
                 emptyMessage: l10n.text('network_pos_links_empty_description'),
-                mobileItemBuilder: (context, item) => PlatformNetworkPosLinkCard(item: item, l10n: l10n),
+                mobileItemBuilder: (context, item) =>
+                    PlatformNetworkPosLinkCard(item: item, l10n: l10n),
               );
             }),
           ),
@@ -151,14 +162,21 @@ class PlatformNetworkPosLinksScreen
     );
     if (result != true) return;
     try {
-      await CustomAnimationOverlay.showLoading(message: l10n.text('creating_link'));
+      await CustomAnimationOverlay.showLoading(
+        message: l10n.text('creating_link'),
+      );
       await controller.create();
       if (CustomAnimationOverlay.isShowing) await CustomAnimationOverlay.hide();
-      await CustomAnimationOverlay.showSuccess(message: l10n.text('network_pos_link_created'));
+      await CustomAnimationOverlay.showSuccess(
+        message: l10n.text('network_pos_link_created'),
+      );
     } catch (error) {
       if (CustomAnimationOverlay.isShowing) await CustomAnimationOverlay.hide();
-      CustomSnackbar.show(title: l10n.text('error'), message: error.toString(), type: SnackType.error);
+      CustomSnackbar.show(
+        title: l10n.text('error'),
+        message: error.toString(),
+        type: SnackType.error,
+      );
     }
   }
 }
-

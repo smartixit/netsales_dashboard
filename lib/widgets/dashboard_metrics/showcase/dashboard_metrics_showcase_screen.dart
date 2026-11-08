@@ -300,8 +300,7 @@ class _DashboardMetricsShowcaseContent extends StatelessWidget {
                           _VariantShowcaseSection(
                             eyebrow: 'VARIANT 01 / STANDARD',
                             title: 'القيمة الأساسية',
-                            description:
-                                'قيمة واضحة مع وصف وسياق ومصدر تحديث، دون افتراض معنى إيجابي أو سلبي للرقم.',
+                            description: 'قيمة واضحة مع وصف وسياق ومصدر تحديث، دون افتراض معنى إيجابي أو سلبي للرقم.',
                             icon: Icons.numbers_rounded,
                             metrics: _metricExamples
                                 .where(
@@ -315,8 +314,7 @@ class _DashboardMetricsShowcaseContent extends StatelessWidget {
                           _VariantShowcaseSection(
                             eyebrow: 'VARIANT 02 / TREND',
                             title: 'الاتجاه والتغير',
-                            description:
-                                'عرض اتجاه التغير وتفسيره الدلالي مع سجل مصغر؛ الانخفاض قد يكون جيدًا والارتفاع قد يكون خطرًا.',
+                            description: 'عرض اتجاه التغير وتفسيره الدلالي مع سجل مصغر؛ الانخفاض قد يكون جيدًا والارتفاع قد يكون خطرًا.',
                             icon: Icons.trending_up_rounded,
                             metrics: _metricExamples
                                 .where(
@@ -330,8 +328,7 @@ class _DashboardMetricsShowcaseContent extends StatelessWidget {
                           _VariantShowcaseSection(
                             eyebrow: 'VARIANT 03 / STATUS',
                             title: 'الحالة التشغيلية',
-                            description:
-                                'إبراز الحالة الحالية بلون دلالي ورسالة واضحة وحالة حداثة مصدر البيانات.',
+                            description: 'إبراز الحالة الحالية بلون دلالي ورسالة واضحة وحالة حداثة مصدر البيانات.',
                             icon: Icons.monitor_heart_outlined,
                             metrics: _metricExamples
                                 .where(
@@ -345,8 +342,7 @@ class _DashboardMetricsShowcaseContent extends StatelessWidget {
                           _VariantShowcaseSection(
                             eyebrow: 'VARIANT 04 / TARGET',
                             title: 'الهدف والحدود',
-                            description:
-                                'تقدم وحدود مرئية؛ جميع النسب والمواضع والتفسيرات تأتي جاهزة من المضيف.',
+                            description: 'تقدم وحدود مرئية؛ جميع النسب والمواضع والتفسيرات تأتي جاهزة من المضيف.',
                             icon: Icons.track_changes_rounded,
                             metrics: _metricExamples
                                 .where(
@@ -360,8 +356,7 @@ class _DashboardMetricsShowcaseContent extends StatelessWidget {
                           const _SectionHeading(
                             eyebrow: 'SEMANTIC LANGUAGE',
                             title: 'الألوان والدلالات',
-                            description:
-                                'اللون يعبّر عن تفسير المؤشر الذي يحدده مصدر البيانات، وليس عن اتجاه الزيادة أو النقصان وحده.',
+                            description: 'اللون يعبّر عن تفسير المؤشر الذي يحدده مصدر البيانات، وليس عن اتجاه الزيادة أو النقصان وحده.',
                             icon: Icons.palette_outlined,
                           ),
                           SizedBox(height: AppSpacing.lg),
@@ -370,8 +365,7 @@ class _DashboardMetricsShowcaseContent extends StatelessWidget {
                           const _SectionHeading(
                             eyebrow: 'COMPONENT STATES',
                             title: 'حالات المكوّن',
-                            description:
-                                'معاينة التحميل والفراغ والخطأ، بما في ذلك رسالة إعادة المحاولة.',
+                            description: 'معاينة التحميل والفراغ والخطأ، بما في ذلك رسالة إعادة المحاولة.',
                             icon: Icons.layers_outlined,
                           ),
                           SizedBox(height: AppSpacing.lg),
@@ -464,9 +458,8 @@ class _ShowcaseHeroCard extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 760),
             child: Text(
               'مساحة مخصصة لتقييم مظهر بطاقات KPI وسلوكها قبل اعتمادها في شاشات NetSales Dashboard التشغيلية والمالية.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: foreground.withValues(alpha: 0.92),
-              ),
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: foreground.withValues(alpha: 0.92)),
             ),
           ),
           SizedBox(height: AppSpacing.lg),
@@ -516,10 +509,8 @@ class _HeroPill extends StatelessWidget {
           ],
           Text(
             label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: foreground,
-              fontWeight: FontWeight.w700,
-            ),
+            style: Theme.of(context).textTheme.labelSmall
+                ?.copyWith(color: foreground, fontWeight: FontWeight.w700),
           ),
         ],
       ),
@@ -613,9 +604,8 @@ class _PreviewControlsPanel extends StatelessWidget {
           SizedBox(height: AppSpacing.md),
           Text(
             'التغيير محلي داخل شاشة المعرض فقط، ولا يغيّر إعداد المظهر المحفوظ للتطبيق.',
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant),
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: colors.onSurfaceVariant),
           ),
         ],
       ),
@@ -755,9 +745,8 @@ class _SectionHeading extends StatelessWidget {
               const SizedBox(height: 3),
               Text(
                 description,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant),
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: colors.onSurfaceVariant),
               ),
             ],
           ),
@@ -914,9 +903,8 @@ class _PreviewNotes extends StatelessWidget {
                   'المعروض بيانات تجريبية ثابتة، وليس أرقامًا فعلية من NetSales. '
                   'المعاينة الحالية: $themeLabel / $directionLabel. '
                   'لا تُنفذ الشاشة حسابات مالية أو تجارية ولا تتصل بالـ API.',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: colors.onSurfaceVariant),
                 ),
               ],
             ),

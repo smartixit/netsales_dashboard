@@ -20,7 +20,11 @@ class PlatformUserDetailScreen extends GetView<PlatformUserDetailController> {
       padding: EdgeInsets.all(AppSpacing.lg),
       child: Obx(() {
         if (controller.isLoading.value) {
-          return const CustomSkeletonGrid(count: 4, crossAxisCount: 1, itemHeight: 112);
+          return const CustomSkeletonGrid(
+            count: 4,
+            crossAxisCount: 1,
+            itemHeight: 112,
+          );
         }
         final detail = controller.detail.value;
         if (detail == null) {

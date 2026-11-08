@@ -104,7 +104,13 @@ class CustomNotificationCenter extends StatelessWidget {
                   border: Border.all(color: colors.surface, width: 1.5),
                 ),
                 alignment: Alignment.center,
-                child: Text(count > 99 ? '99+' : '$count', style: AppTypography.caption.copyWith(color: colors.onError, fontSize: 9)),
+                child: Text(
+                  count > 99 ? '99+' : '$count',
+                  style: AppTypography.caption.copyWith(
+                    color: colors.onError,
+                    fontSize: 9,
+                  ),
+                ),
               ),
             ),
         ],
@@ -142,9 +148,20 @@ class _NotificationPanel extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(child: Text(l10n.isArabic ? 'غير المقروءة' : 'Unread', style: AppTypography.labelLarge.copyWith(color: colors.onSurfaceVariant))),
+            Expanded(
+              child: Text(
+                l10n.isArabic ? 'غير المقروءة' : 'Unread',
+                style: AppTypography.labelLarge.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+              ),
+            ),
             if (unreadCount > 0)
-              CustomButton.text(text: l10n.text('mark_all_read'), size: AppButtonSize.small, onPressed: onMarkAllRead),
+              CustomButton.text(
+                text: l10n.text('mark_all_read'),
+                size: AppButtonSize.small,
+                onPressed: onMarkAllRead,
+              ),
           ],
         ),
         AppSpacing.vSm,
@@ -167,7 +184,10 @@ class _NotificationPanel extends StatelessWidget {
             variant: ErrorStateVariant.compact,
           )
         else if (items.isEmpty)
-          CustomEmptyState.compact(title: l10n.text('notifications_empty'), icon: Icons.notifications_off_outlined)
+          CustomEmptyState.compact(
+            title: l10n.text('notifications_empty'),
+            icon: Icons.notifications_off_outlined,
+          )
         else
           ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 390),
@@ -179,28 +199,64 @@ class _NotificationPanel extends StatelessWidget {
                 final item = items[index];
                 final time = item.createdAt == null
                     ? '—'
-                    : DateFormat.MMMd(l10n.isArabic ? 'ar' : 'en').add_Hm().format(item.createdAt!);
+                    : DateFormat.MMMd(l10n.isArabic ? 'ar' : 'en')
+                          .add_Hm()
+                          .format(item.createdAt!);
                 return Container(
                   padding: EdgeInsets.all(AppSpacing.sm),
                   decoration: BoxDecoration(
-                    color: item.isRead ? colors.surface : colors.primaryContainer.withValues(alpha: 0.16),
+                    color: item.isRead
+                        ? colors.surface
+                        : colors.primaryContainer.withValues(alpha: 0.16),
                     borderRadius: AppRadius.mdRadius,
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(item.isRead ? Icons.notifications_none_rounded : Icons.notifications_active_outlined, color: item.isRead ? colors.onSurfaceVariant : colors.primary),
+                      Icon(
+                        item.isRead
+                            ? Icons.notifications_none_rounded
+                            : Icons.notifications_active_outlined,
+                        color: item.isRead
+                            ? colors.onSurfaceVariant
+                            : colors.primary,
+                      ),
                       AppSpacing.hSm,
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(item.title, style: AppTypography.titleSmall.copyWith(color: colors.onSurface)),
+                            Text(
+                              item.title,
+                              style: AppTypography.titleSmall.copyWith(
+                                color: colors.onSurface,
+                              ),
+                            ),
                             AppSpacing.vXxs,
-                            Text(item.message, style: AppTypography.bodySmall.copyWith(color: colors.onSurfaceVariant), maxLines: 3, overflow: TextOverflow.ellipsis),
-                            if (item.typeLabel != null) ...[AppSpacing.vXxs, Text(item.typeLabel!, style: AppTypography.caption.copyWith(color: colors.onSurfaceVariant))],
+                            Text(
+                              item.message,
+                              style: AppTypography.bodySmall.copyWith(
+                                color: colors.onSurfaceVariant,
+                              ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (item.typeLabel != null) ...[
+                              AppSpacing.vXxs,
+                              Text(
+                                item.typeLabel!,
+                                style: AppTypography.caption.copyWith(
+                                  color: colors.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
                             AppSpacing.vXs,
-                            Text(time, style: AppTypography.caption.copyWith(color: colors.onSurfaceVariant)),
+                            Text(
+                              time,
+                              style: AppTypography.caption.copyWith(
+                                color: colors.onSurfaceVariant,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -219,7 +275,12 @@ class _NotificationPanel extends StatelessWidget {
             ),
           ),
         AppSpacing.vMd,
-        CustomButton.outline(text: l10n.text('view_all'), onPressed: onViewAll, width: double.infinity, size: AppButtonSize.small),
+        CustomButton.outline(
+          text: l10n.text('view_all'),
+          onPressed: onViewAll,
+          width: double.infinity,
+          size: AppButtonSize.small,
+        ),
       ],
     );
   }

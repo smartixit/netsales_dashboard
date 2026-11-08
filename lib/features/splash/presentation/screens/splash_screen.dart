@@ -52,8 +52,8 @@ class SplashScreen extends GetView<SplashController> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color:
-                              const Color(0xFF10B981).withValues(alpha: 0.16),
+                          color: const Color(0xFF10B981)
+                              .withValues(alpha: 0.16),
                           blurRadius: 90,
                           spreadRadius: 25,
                         ),
@@ -83,10 +83,11 @@ class SplashScreen extends GetView<SplashController> {
                       ),
                       AppSpacing.vMd,
                       Text(
-                        'المنصة السحابية الموحدة لإدارة الأعمال والعمليات',
+                        'المنصة الموحدة لحوكمة عمليات الشبكات ونقاط البيع',
                         textAlign: TextAlign.center,
                         style: AppTypography.bodySmall.copyWith(
-                          color: const Color(0xFFA7F3D0).withValues(alpha: 0.82),
+                          color: const Color(0xFFA7F3D0)
+                              .withValues(alpha: 0.82),
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.1,

@@ -159,7 +159,10 @@ class PlatformNetworkPosLinksController extends GetxController {
       final response = await _getNetworks(search: query, perPage: 50);
       if (generation != _networkSearchGeneration) return;
       if (response.success) {
-        networks.assignAll(response.data?.where((item) => item.status == 'ACTIVE').toList() ?? const <PlatformNetworkEntity>[]);
+        networks.assignAll(
+          response.data?.where((item) => item.status == 'ACTIVE').toList() ??
+              const <PlatformNetworkEntity>[],
+        );
       }
     } finally {
       if (generation == _networkSearchGeneration) {
@@ -175,7 +178,10 @@ class PlatformNetworkPosLinksController extends GetxController {
       final response = await _getPos(search: query, perPage: 50);
       if (generation != _posSearchGeneration) return;
       if (response.success) {
-        pointsOfSale.assignAll(response.data?.where((item) => item.status == 'ACTIVE').toList() ?? const <PlatformPosEntity>[]);
+        pointsOfSale.assignAll(
+          response.data?.where((item) => item.status == 'ACTIVE').toList() ??
+              const <PlatformPosEntity>[],
+        );
       }
     } finally {
       if (generation == _posSearchGeneration) {
@@ -190,7 +196,9 @@ class PlatformNetworkPosLinksController extends GetxController {
       final networkResponse = await _getNetworks(perPage: 50);
       if (networkResponse.success) {
         networks.assignAll(
-          networkResponse.data?.where((item) => item.status == 'ACTIVE').toList() ??
+          networkResponse.data
+                  ?.where((item) => item.status == 'ACTIVE')
+                  .toList() ??
               const <PlatformNetworkEntity>[],
         );
       }

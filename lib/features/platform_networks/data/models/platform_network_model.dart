@@ -38,7 +38,8 @@ class PlatformNetworkModel extends PlatformNetworkEntity {
       uuid: json['network_uuid']?.toString(),
       name: json['network_name']?.toString() ?? '',
       logo: json['network_profile_logo']?.toString(),
-      ownerName: json['network_holder_name']?.toString() ??
+      ownerName:
+          json['network_holder_name']?.toString() ??
           owner?['user_full_name']?.toString(),
       phoneNumber: json['network_phone_number']?.toString(),
       email: json['network_email']?.toString(),

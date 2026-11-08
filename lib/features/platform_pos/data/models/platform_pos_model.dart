@@ -38,7 +38,8 @@ class PlatformPosModel extends PlatformPosEntity {
       uuid: json['pos_uuid']?.toString(),
       name: json['pos_name']?.toString() ?? '',
       logo: json['pos_profile_logo']?.toString(),
-      ownerName: json['pos_holder_name']?.toString() ??
+      ownerName:
+          json['pos_holder_name']?.toString() ??
           owner?['user_full_name']?.toString(),
       phoneNumber: json['pos_phone_number']?.toString(),
       email: json['pos_email']?.toString(),

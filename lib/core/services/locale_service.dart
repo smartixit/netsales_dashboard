@@ -5,7 +5,8 @@ import 'package:netsales_dashboard/core/services/storage_service.dart';
 class LocaleService extends GetxService {
   LocaleService._();
   static final LocaleService instance = LocaleService._();
-  static LocaleService get to => Get.isRegistered<LocaleService>() ? Get.find<LocaleService>() : instance;
+  static LocaleService get to =>
+      Get.isRegistered<LocaleService>() ? Get.find<LocaleService>() : instance;
   final Rx<Locale> _locale = const Locale('ar').obs;
   Locale get locale => _locale.value;
   bool get isArabic => _locale.value.languageCode == 'ar';

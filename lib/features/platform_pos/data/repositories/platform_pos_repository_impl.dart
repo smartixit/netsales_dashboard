@@ -77,7 +77,10 @@ class PlatformPosRepositoryImpl implements PlatformPosRepository {
   }
 
   @override
-  Future<PlatformPosEntity> rejectPos(int posId, {required String reason}) async {
+  Future<PlatformPosEntity> rejectPos(
+    int posId, {
+    required String reason,
+  }) async {
     final response = await _remoteDataSource.rejectPos(posId, reason: reason);
     if (!response.success || response.data == null) {
       throw Exception(response.message);

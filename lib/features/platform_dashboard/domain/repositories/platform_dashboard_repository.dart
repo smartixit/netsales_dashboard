@@ -4,7 +4,9 @@ import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/p
 
 abstract interface class PlatformDashboardRepository {
   Future<PlatformDashboardOverviewEntity> getOverview({String period = '30d'});
-  Future<List<PlatformNotificationEntity>> getUnreadNotifications({int limit = 6});
+  Future<List<PlatformNotificationEntity>> getUnreadNotifications({
+    int limit = 6,
+  });
   Future<int> getUnreadNotificationCount();
   Future<void> markNotificationRead(int notificationId);
   Future<void> markAllNotificationsRead();

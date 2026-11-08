@@ -4,7 +4,9 @@ import 'package:netsales_dashboard/features/platform_dashboard/data/models/platf
 
 abstract interface class PlatformDashboardRemoteDataSource {
   Future<PlatformDashboardOverviewModel> getOverview({required String period});
-  Future<List<PlatformNotificationModel>> getUnreadNotifications({required int limit});
+  Future<List<PlatformNotificationModel>> getUnreadNotifications({
+    required int limit,
+  });
   Future<int> getUnreadNotificationCount();
   Future<void> markNotificationRead(int notificationId);
   Future<void> markAllNotificationsRead();

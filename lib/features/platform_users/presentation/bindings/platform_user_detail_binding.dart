@@ -32,14 +32,10 @@ class PlatformUserDetailBinding extends Bindings {
       );
     }
     Get.lazyPut<GetPlatformUserDetailUseCase>(
-      () => GetPlatformUserDetailUseCase(
-        Get.find<PlatformUsersRepository>(),
-      ),
+      () => GetPlatformUserDetailUseCase(Get.find<PlatformUsersRepository>()),
     );
     Get.lazyPut<GetPlatformUserSessionsUseCase>(
-      () => GetPlatformUserSessionsUseCase(
-        Get.find<PlatformUsersRepository>(),
-      ),
+      () => GetPlatformUserSessionsUseCase(Get.find<PlatformUsersRepository>()),
     );
     Get.lazyPut<PlatformUserDetailController>(
       () => PlatformUserDetailController(

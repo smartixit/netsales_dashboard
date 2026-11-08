@@ -71,9 +71,11 @@ class PlatformPosController extends GetxController {
       );
       if (generation != _generation) return;
       if (!response.success || response.data == null) {
-        throw Exception(response.message.isNotEmpty
-            ? response.message
-            : 'تعذر تحميل نقاط البيع.');
+        throw Exception(
+          response.message.isNotEmpty
+              ? response.message
+              : 'تعذر تحميل نقاط البيع.',
+        );
       }
       if (append) {
         items.addAll(response.data!);
@@ -90,7 +92,8 @@ class PlatformPosController extends GetxController {
     } catch (error) {
       if (generation != _generation) return;
       errorMessage.value = error.toString();
-      if (!append && items.isEmpty) viewState.value = AppDataGridViewState.error;
+      if (!append && items.isEmpty)
+        viewState.value = AppDataGridViewState.error;
     } finally {
       if (generation == _generation) {
         isLoadingMore.value = false;

@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:netsales_dashboard/core/constants/app_radius.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
-import 'package:netsales_dashboard/core/themes/app_gradients.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
 import 'package:netsales_dashboard/core/themes/app_breakpoints.dart';
+import 'package:netsales_dashboard/features/auth/presentation/widgets/login_brand_panel.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_theme_toggle_button.dart';
 import 'package:netsales_dashboard/widgets/dashboard_layout/desktop_title_bar.dart';
 
-/// Shared visual frame for the Dashboard authentication journeys.
+/// الهيكل التفاعلي المشترك لواجهات الدخول في بيئة Windows Desktop
 ///
-/// The form remains purpose-specific; this widget only provides the responsive
-/// brand/form composition and the common visual hierarchy.
+/// يوفر تقسيماً متجاوباً وفاخراً:
+/// - لوحة الهوية المؤسسية (Brand Panel) للشاشات الكبيرة ومتوسطة الحجم.
+/// - حاوية النموذج المركزية مع شريط العنوان المكتبي وزر تبديل السمة (Light/Dark).
 class AuthScaffold extends StatelessWidget {
   const AuthScaffold({
     super.key,
@@ -47,9 +48,9 @@ class AuthScaffold extends StatelessWidget {
                   if (showBrandPanel) {
                     return Row(
                       children: [
-                        const Expanded(flex: 5, child: _AuthBrandPanel()),
+                        const Expanded(flex: 5, child: LoginBrandPanel()),
                         Expanded(
-                          flex: 7,
+                          flex: 6,
                           child: _buildForm(context, compactBrand: false),
                         ),
                       ],
@@ -66,16 +67,13 @@ class AuthScaffold extends StatelessWidget {
     );
   }
 
-  Widget _buildForm(
-    BuildContext context, {
-    required bool compactBrand,
-  }) {
+  Widget _buildForm(BuildContext context, {required bool compactBrand}) {
     final colors = context.colors;
 
     return SingleChildScrollView(
       padding: EdgeInsetsDirectional.fromSTEB(
         AppSpacing.xxl,
-        compactBrand ? AppSpacing.xl : AppSpacing.xxxl,
+        compactBrand ? AppSpacing.xl : AppSpacing.xxl,
         AppSpacing.xxl,
         AppSpacing.xxl,
       ),
@@ -87,29 +85,46 @@ class AuthScaffold extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [CustomThemeToggleButton()],
+              // ── Top Controls Bar ──
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (compactBrand)
+                    const _CompactBrandHeader()
+                  else
+                    const SizedBox.shrink(),
+                  const CustomThemeToggleButton(),
+                ],
               ),
-              if (compactBrand) ...[
-                const _CompactBrandHeader(),
-                AppSpacing.vXxl,
-              ],
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: colors.primaryContainer.withValues(alpha: 0.55),
-                  borderRadius: BorderRadius.circular(AppRadius.lg),
-                ),
-                child: Padding(
+
+              AppSpacing.vXl,
+
+              // ── Header Icon Badge ──
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Container(
                   padding: EdgeInsets.all(AppSpacing.md),
-                  child: Icon(icon, size: 26, color: colors.primary),
+                  decoration: BoxDecoration(
+                    color: colors.primaryContainer.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                    border: Border.all(
+                      color: colors.primary.withValues(alpha: 0.15),
+                      width: 1,
+                    ),
+                  ),
+                  child: Icon(icon, size: 24, color: colors.primary),
                 ),
               ),
+
               AppSpacing.vLg,
+
+              // ── Title & Subtitle ──
               Text(
                 title,
-                style: AppTypography.headlineSmall.copyWith(
+                style: AppTypography.headlineMedium.copyWith(
                   color: colors.onSurface,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.3,
                 ),
                 textAlign: TextAlign.start,
               ),
@@ -122,141 +137,25 @@ class AuthScaffold extends StatelessWidget {
                 ),
                 textAlign: TextAlign.start,
               ),
-              AppSpacing.vXxl,
+
+              AppSpacing.vXl,
+
+              // ── Form Child ──
               child,
-              if (footer != null) ...[
-                AppSpacing.vXxl,
-                footer!,
-              ],
+
+              if (footer != null) ...[AppSpacing.vXxl, footer!],
+
               AppSpacing.vXxl,
+
+              // ── Platform Copyright Footer ──
               Text(
-                '© 2026 NetSales Platform',
-                style: AppTypography.labelSmall.copyWith(
-                  color: colors.onSurfaceVariant,
+                '© 2026 منصة NetSales • كافة الحقوق محفوظة',
+                style: AppTypography.badgeText.copyWith(
+                  color: colors.onSurfaceVariant.withValues(alpha: 0.8),
                 ),
                 textAlign: TextAlign.center,
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AuthBrandPanel extends StatelessWidget {
-  const _AuthBrandPanel();
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: AppGradients.entityEmerald(context),
-      ),
-      child: Stack(
-        children: [
-          PositionedDirectional(
-            top: -100,
-            end: -110,
-            child: _BrandOrb(size: 330),
-          ),
-          PositionedDirectional(
-            bottom: -150,
-            start: -120,
-            child: _BrandOrb(size: 390),
-          ),
-          SingleChildScrollView(
-            padding: EdgeInsets.all(AppSpacing.xxxl),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 560),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const _BrandIdentity(onDark: true),
-                    SizedBox(height: AppSpacing.section),
-                    Text(
-                      'إدارة أكثر وضوحاً.\nوقرارات أكثر ثقة.',
-                      style: AppTypography.headlineLarge.copyWith(
-                        color: Colors.white,
-                        height: 1.35,
-                      ),
-                    ),
-                    AppSpacing.vLg,
-                    Text(
-                      'مساحة موحدة لإدارة منصة NetSales ومتابعة عملياتها '
-                      'العالمية من مكان واحد.',
-                      style: AppTypography.bodyLarge.copyWith(
-                        color: Colors.white.withValues(alpha: 0.78),
-                        height: 1.8,
-                      ),
-                    ),
-                    AppSpacing.vXxl,
-                    Container(
-                      padding: EdgeInsets.all(AppSpacing.lg),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(AppRadius.xl),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.15),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.verified_user_outlined,
-                            color: colors.tertiaryFixed,
-                            size: 24,
-                          ),
-                          AppSpacing.hMd,
-                          Expanded(
-                            child: Text(
-                              'وصول آمن وصلاحيات تُدار من الخادم',
-                              style: AppTypography.titleSmall.copyWith(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: AppSpacing.section),
-                    Text(
-                      'NETSALES  •  PLATFORM CONTROL',
-                      style: AppTypography.labelSmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.58),
-                        letterSpacing: 1.1,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BrandOrb extends StatelessWidget {
-  const _BrandOrb({required this.size});
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.055),
-            width: 1.2,
           ),
         ),
       ),
@@ -272,59 +171,41 @@ class _CompactBrandHeader extends StatelessWidget {
     final colors = context.colors;
 
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(AppRadius.md),
+        Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: colors.primaryContainer.withValues(alpha: 0.6),
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          padding: const EdgeInsets.all(6),
           child: Image.asset(
             'assets/images/brand_icon.png',
-            width: 48,
-            height: 48,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: colors.primaryContainer,
-                borderRadius: BorderRadius.circular(AppRadius.md),
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) =>
+                Icon(Icons.hub_rounded, color: colors.primary, size: 20),
+          ),
+        ),
+        AppSpacing.hSm,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'NetSales',
+              style: AppTypography.titleMedium.copyWith(
+                fontWeight: FontWeight.w900,
+                color: colors.onSurface,
               ),
-              child: Icon(Icons.hub_rounded, color: colors.primary),
             ),
-          ),
-        ),
-        AppSpacing.hMd,
-        const Expanded(child: _BrandIdentity(onDark: false)),
-      ],
-    );
-  }
-}
-
-class _BrandIdentity extends StatelessWidget {
-  const _BrandIdentity({required this.onDark});
-
-  final bool onDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final foreground = onDark ? Colors.white : context.colors.onSurface;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'NetSales',
-          style: AppTypography.titleLarge.copyWith(
-            color: foreground,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        AppSpacing.vXxs,
-        Text(
-          'منصة إدارة الأعمال',
-          style: AppTypography.labelMedium.copyWith(
-            color: onDark
-                ? Colors.white.withValues(alpha: 0.68)
-                : context.colors.onSurfaceVariant,
-          ),
+            Text(
+              'منصة إدارة العمليات',
+              style: AppTypography.badgeText.copyWith(
+                color: colors.onSurfaceVariant,
+              ),
+            ),
+          ],
         ),
       ],
     );

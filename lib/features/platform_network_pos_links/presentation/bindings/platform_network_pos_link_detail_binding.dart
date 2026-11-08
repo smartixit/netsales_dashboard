@@ -5,7 +5,8 @@ import 'package:netsales_dashboard/features/platform_network_pos_links/domain/us
 import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/bindings/platform_network_pos_links_binding.dart';
 import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/controllers/platform_network_pos_link_detail_controller.dart';
 
-class PlatformNetworkPosLinkDetailBinding extends PlatformNetworkPosLinksBinding {
+class PlatformNetworkPosLinkDetailBinding
+    extends PlatformNetworkPosLinksBinding {
   @override
   void dependencies() {
     super.dependencies();

@@ -196,7 +196,9 @@ class PlatformDashboardController extends GetxController {
     } catch (error) {
       await loadNotifications();
       CustomSnackbar.show(
-        title: isArabic ? 'تعذر تحديث الإشعار' : 'Unable to update notification',
+        title: isArabic
+            ? 'تعذر تحديث الإشعار'
+            : 'Unable to update notification',
         message: error.toString(),
         type: SnackType.error,
       );
@@ -227,7 +229,9 @@ class PlatformDashboardController extends GetxController {
     } catch (error) {
       await loadNotifications();
       CustomSnackbar.show(
-        title: isArabic ? 'تعذر تحديث الإشعارات' : 'Unable to update notifications',
+        title: isArabic
+            ? 'تعذر تحديث الإشعارات'
+            : 'Unable to update notifications',
         message: error.toString(),
         type: SnackType.error,
       );
@@ -292,10 +296,11 @@ class PlatformDashboardController extends GetxController {
           (item) => ActivityTimelineItem(
             id: item.id.toString(),
             title: item.action,
-            description: item.contextLabel ??
+            description:
+                item.contextLabel ??
                 '${item.module} • ${item.entityType}${item.entityId == null ? '' : ' #${item.entityId}'}',
-            timestamp: item.timestamp?.toLocal().toString().substring(0, 16) ??
-                '—',
+            timestamp:
+                item.timestamp?.toLocal().toString().substring(0, 16) ?? '—',
             actor: item.actorName,
             icon: Icons.history_rounded,
           ),

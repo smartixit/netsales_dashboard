@@ -6,7 +6,12 @@ import 'package:netsales_dashboard/core/themes/app_typography.dart';
 
 @immutable
 class DashboardPageHeaderData {
-  const DashboardPageHeaderData({required this.title, this.description, this.icon, this.actions = const []});
+  const DashboardPageHeaderData({
+    required this.title,
+    this.description,
+    this.icon,
+    this.actions = const [],
+  });
   final String title;
   final String? description;
   final IconData? icon;
@@ -30,7 +35,10 @@ class DashboardPageHeader extends StatelessWidget {
               Container(
                 width: 44,
                 height: 44,
-                decoration: BoxDecoration(color: colors.primaryContainer, borderRadius: AppRadius.mdRadius),
+                decoration: BoxDecoration(
+                  color: colors.primaryContainer,
+                  borderRadius: AppRadius.mdRadius,
+                ),
                 alignment: Alignment.center,
                 child: Icon(data.icon, color: colors.onPrimaryContainer),
               ),
@@ -40,10 +48,20 @@ class DashboardPageHeader extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(data.title, style: AppTypography.headlineSmall.copyWith(color: colors.onSurface)),
+                  Text(
+                    data.title,
+                    style: AppTypography.headlineSmall.copyWith(
+                      color: colors.onSurface,
+                    ),
+                  ),
                   if (data.description != null) ...[
                     AppSpacing.vXxs,
-                    Text(data.description!, style: AppTypography.bodyMedium.copyWith(color: colors.onSurfaceVariant)),
+                    Text(
+                      data.description!,
+                      style: AppTypography.bodyMedium.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
                   ],
                 ],
               ),
@@ -54,11 +72,27 @@ class DashboardPageHeader extends StatelessWidget {
         if (compact) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [heading, AppSpacing.vMd, Wrap(spacing: AppSpacing.sm, runSpacing: AppSpacing.sm, children: data.actions)],
+            children: [
+              heading,
+              AppSpacing.vMd,
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: data.actions,
+              ),
+            ],
           );
         }
         return Row(
-          children: [Expanded(child: heading), AppSpacing.hMd, Wrap(spacing: AppSpacing.sm, runSpacing: AppSpacing.sm, children: data.actions)],
+          children: [
+            Expanded(child: heading),
+            AppSpacing.hMd,
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: data.actions,
+            ),
+          ],
         );
       },
     );

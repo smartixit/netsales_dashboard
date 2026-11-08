@@ -63,7 +63,11 @@ class CustomFilterBar extends StatelessWidget {
           ],
         ),
         if (actions.isNotEmpty)
-          Wrap(spacing: AppSpacing.xs, runSpacing: AppSpacing.xs, children: actions),
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            children: actions,
+          ),
       ],
     );
   }

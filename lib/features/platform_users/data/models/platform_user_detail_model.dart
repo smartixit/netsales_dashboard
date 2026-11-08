@@ -21,25 +21,25 @@ class PlatformUserDetailModel extends PlatformUserDetailEntity {
     final rawDevices = json['devices'];
     final devices = rawDevices is List
         ? rawDevices
-            .whereType<Map<Object?, Object?>>()
-            .map(
-              (item) => PlatformUserDeviceModel.fromJson(
-                Map<String, dynamic>.from(item),
-              ),
-            )
-            .toList(growable: false)
+              .whereType<Map<Object?, Object?>>()
+              .map(
+                (item) => PlatformUserDeviceModel.fromJson(
+                  Map<String, dynamic>.from(item),
+                ),
+              )
+              .toList(growable: false)
         : const <PlatformUserDeviceModel>[];
 
     final rawBans = json['security_bans'];
     final bans = rawBans is List
         ? rawBans
-            .whereType<Map<Object?, Object?>>()
-            .map(
-              (item) => PlatformUserBanModel.fromJson(
-                Map<String, dynamic>.from(item),
-              ),
-            )
-            .toList(growable: false)
+              .whereType<Map<Object?, Object?>>()
+              .map(
+                (item) => PlatformUserBanModel.fromJson(
+                  Map<String, dynamic>.from(item),
+                ),
+              )
+              .toList(growable: false)
         : const <PlatformUserBanModel>[];
 
     return PlatformUserDetailModel(

@@ -4,6 +4,7 @@ import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/themes/app_motion.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
+
 import '../models/dashboard_navigation_item.dart';
 import '../theme/dashboard_layout_theme.dart';
 
@@ -37,13 +38,25 @@ class DashboardSidebar extends StatelessWidget {
       color: theme.sidebarBackground,
       child: Column(
         children: [
-          if (header != null) Padding(padding: EdgeInsets.all(theme.sidebarPadding), child: header),
+          if (header != null)
+            Padding(
+              padding: EdgeInsets.all(theme.sidebarPadding),
+              child: header,
+            ),
           Expanded(
             child: ListView(
-              padding: EdgeInsetsDirectional.symmetric(horizontal: theme.sidebarPadding, vertical: AppSpacing.sm),
+              padding: EdgeInsetsDirectional.symmetric(
+                horizontal: theme.sidebarPadding,
+                vertical: AppSpacing.sm,
+              ),
               children: [
                 for (final item in navigation.items)
-                  _NavigationTile(item: item, collapsed: collapsed, selectedNavigationId: selectedNavigationId, onSelected: onNavigationSelected),
+                  _NavigationTile(
+                    item: item,
+                    collapsed: collapsed,
+                    selectedNavigationId: selectedNavigationId,
+                    onSelected: onNavigationSelected,
+                  ),
                 for (final group in navigation.groups) ...[
                   AppSpacing.vSm,
                   if (!collapsed)
@@ -55,8 +68,14 @@ class DashboardSidebar extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                       foregroundColor: theme.sidebarMuted,
                       borderRadius: AppRadius.sm,
-                      padding: EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-                      onPressed: group.id == null || onGroupExpansionChanged == null ? null : () => onGroupExpansionChanged!(group.id!),
+                      padding: EdgeInsetsDirectional.symmetric(
+                        horizontal: AppSpacing.sm,
+                        vertical: AppSpacing.xs,
+                      ),
+                      onPressed:
+                          group.id == null || onGroupExpansionChanged == null
+                          ? null
+                          : () => onGroupExpansionChanged!(group.id!),
                       child: Row(
                         children: [
                           Expanded(
@@ -64,11 +83,17 @@ class DashboardSidebar extends StatelessWidget {
                               group.label.toUpperCase(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: AppTypography.labelSmall.copyWith(color: theme.sidebarMuted, fontWeight: FontWeight.w700, letterSpacing: 0.6),
+                              style: AppTypography.labelSmall.copyWith(
+                                color: theme.sidebarMuted,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.6,
+                              ),
                             ),
                           ),
                           Icon(
-                            expandedGroupIds.contains(group.id) ? Icons.expand_less_rounded : Icons.expand_more_rounded,
+                            expandedGroupIds.contains(group.id)
+                                ? Icons.expand_less_rounded
+                                : Icons.expand_more_rounded,
                             size: 18,
                             color: theme.sidebarMuted,
                           ),
@@ -77,14 +102,21 @@ class DashboardSidebar extends StatelessWidget {
                     )
                   else
                     Divider(height: AppSpacing.md, color: theme.border),
-                  if (collapsed || group.id == null || expandedGroupIds.contains(group.id))
+                  if (collapsed ||
+                      group.id == null ||
+                      expandedGroupIds.contains(group.id))
                     AnimatedSize(
                       duration: AppMotion.normal,
                       curve: AppMotion.standard,
                       child: Column(
                         children: [
                           for (final item in group.items)
-                            _NavigationTile(item: item, collapsed: collapsed, selectedNavigationId: selectedNavigationId, onSelected: onNavigationSelected),
+                            _NavigationTile(
+                              item: item,
+                              collapsed: collapsed,
+                              selectedNavigationId: selectedNavigationId,
+                              onSelected: onNavigationSelected,
+                            ),
                         ],
                       ),
                     ),
@@ -92,7 +124,11 @@ class DashboardSidebar extends StatelessWidget {
               ],
             ),
           ),
-          if (footer != null) Padding(padding: EdgeInsets.all(theme.sidebarPadding), child: footer),
+          if (footer != null)
+            Padding(
+              padding: EdgeInsets.all(theme.sidebarPadding),
+              child: footer,
+            ),
         ],
       ),
     );
@@ -124,8 +160,14 @@ class _NavigationTile extends StatelessWidget {
     final selected = _containsSelected(item);
     final color = selected
         ? theme.sidebarSelectedForeground
-        : item.enabled ? theme.sidebarForeground : theme.sidebarMuted;
-    final icon = Icon(selected ? (item.selectedIcon ?? item.icon) : item.icon, size: 20, color: color);
+        : item.enabled
+        ? theme.sidebarForeground
+        : theme.sidebarMuted;
+    final icon = Icon(
+      selected ? (item.selectedIcon ?? item.icon) : item.icon,
+      size: 20,
+      color: color,
+    );
 
     if (item.hasChildren && !collapsed) {
       return Padding(
@@ -137,22 +179,40 @@ class _NavigationTile extends StatelessWidget {
               size: AppButtonSize.medium,
               width: double.infinity,
               enableScaleAnimation: false,
-              backgroundColor: selected ? theme.sidebarSelectedBackground : Colors.transparent,
+              backgroundColor: selected
+                  ? theme.sidebarSelectedBackground
+                  : Colors.transparent,
               foregroundColor: color,
               borderRadius: theme.itemRadius,
-              padding: EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
+              padding: EdgeInsetsDirectional.symmetric(
+                horizontal: AppSpacing.sm,
+                vertical: AppSpacing.sm,
+              ),
               onPressed: () => onSelected(item.id),
               child: Row(
                 children: [
                   icon,
                   AppSpacing.hSm,
-                  Expanded(child: Text(item.label, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTypography.bodyMedium.copyWith(color: color))),
+                  Expanded(
+                    child: Text(
+                      item.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.bodyMedium.copyWith(color: color),
+                    ),
+                  ),
                   if (item.badge != null) _Badge(label: item.badge!),
                 ],
               ),
             ),
             for (final child in item.children)
-              _NavigationTile(item: child, collapsed: false, selectedNavigationId: selectedNavigationId, onSelected: onSelected, depth: depth + 1),
+              _NavigationTile(
+                item: child,
+                collapsed: false,
+                selectedNavigationId: selectedNavigationId,
+                onSelected: onSelected,
+                depth: depth + 1,
+              ),
           ],
         ),
       );
@@ -165,20 +225,26 @@ class _NavigationTile extends StatelessWidget {
         child: Stack(
           children: [
             CustomButton(
-          variant: AppButtonVariant.custom,
-          size: AppButtonSize.medium,
-          width: double.infinity,
-          enableScaleAnimation: false,
-          backgroundColor: selected ? theme.sidebarSelectedBackground : Colors.transparent,
-          foregroundColor: color,
-          borderRadius: theme.itemRadius,
-          padding: EdgeInsetsDirectional.symmetric(
-            horizontal: collapsed ? AppSpacing.zero : AppSpacing.sm + depth * AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          onPressed: item.enabled ? () => onSelected(item.id) : null,
+              variant: AppButtonVariant.custom,
+              size: AppButtonSize.medium,
+              width: double.infinity,
+              enableScaleAnimation: false,
+              backgroundColor: selected
+                  ? theme.sidebarSelectedBackground
+                  : Colors.transparent,
+              foregroundColor: color,
+              borderRadius: theme.itemRadius,
+              padding: EdgeInsetsDirectional.symmetric(
+                horizontal: collapsed
+                    ? AppSpacing.zero
+                    : AppSpacing.sm + depth * AppSpacing.md,
+                vertical: AppSpacing.sm,
+              ),
+              onPressed: item.enabled ? () => onSelected(item.id) : null,
               child: Row(
-                mainAxisAlignment: collapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
+                mainAxisAlignment: collapsed
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.start,
                 children: [
                   icon,
                   if (!collapsed) ...[
@@ -190,7 +256,9 @@ class _NavigationTile extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: AppTypography.bodyMedium.copyWith(
                           color: color,
-                          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                          fontWeight: selected
+                              ? FontWeight.w700
+                              : FontWeight.w500,
                         ),
                       ),
                     ),
@@ -231,9 +299,21 @@ class _Badge extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = DashboardLayoutTheme.of(context);
     return Container(
-      padding: EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.xs, vertical: AppSpacing.xxs),
-      decoration: BoxDecoration(color: theme.badgeBackground, borderRadius: AppRadius.fullRadius),
-      child: Text(label, style: AppTypography.labelSmall.copyWith(color: theme.badgeForeground, fontWeight: FontWeight.w700)),
+      padding: EdgeInsetsDirectional.symmetric(
+        horizontal: AppSpacing.xs,
+        vertical: AppSpacing.xxs,
+      ),
+      decoration: BoxDecoration(
+        color: theme.badgeBackground,
+        borderRadius: AppRadius.fullRadius,
+      ),
+      child: Text(
+        label,
+        style: AppTypography.labelSmall.copyWith(
+          color: theme.badgeForeground,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
     );
   }
 }

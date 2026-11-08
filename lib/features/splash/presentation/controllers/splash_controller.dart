@@ -22,8 +22,7 @@ class SplashController extends GetxController {
 
   static const Duration minSplashDuration = AppMotion.splashMinimum;
 
-  final RxString statusMessage =
-      'تهيئة النواة السحابية والتحقق من البيئة...'.obs;
+  final RxString statusMessage = 'تهيئة بيئة العمل والتحقق من النظام...'.obs;
   final RxDouble progress = 0.18.obs;
 
   bool _isDisposed = false;
@@ -44,13 +43,13 @@ class SplashController extends GetxController {
     try {
       final stopwatch = Stopwatch()..start();
 
-      _updatePhase('تهيئة النواة السحابية والتحقق من البيئة...', 0.22);
+      _updatePhase('تهيئة بيئة العمل والتحقق من النظام...', 0.22);
       final initFuture = initializeAppUseCase();
 
       await Future<void>.delayed(const Duration(milliseconds: 550));
       if (_isDisposed) return;
 
-      _updatePhase('فحص حزم التشفير وتكامل الجلسة الآمنة...', 0.58);
+      _updatePhase('مزامنة الجلسة وإعدادات الأمان...', 0.58);
       await initFuture;
       if (_isDisposed) return;
 
@@ -84,14 +83,12 @@ class SplashController extends GetxController {
         message: cleanMessage,
         type: SnackType.error,
       );
-      log(
-        '[SplashController] Startup failed: $error',
-        stackTrace: stackTrace,
-      );
+      log('[SplashController] Startup failed: $error', stackTrace: stackTrace);
       if (!_isDisposed) {
         if (Get.isRegistered<DesktopWindowingController>()) {
-          await Get.find<DesktopWindowingController>()
-              .applyRoute(AppRoutes.login);
+          await Get.find<DesktopWindowingController>().applyRoute(
+            AppRoutes.login,
+          );
         }
         if (!_isDisposed) {
           unawaited(Get.offNamed<void>(AppRoutes.login));

@@ -23,6 +23,9 @@ class LoginController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isPasswordVisible = false.obs;
   final RxBool canCheckBiometrics = false.obs;
+  final RxBool isCapsLockOn = false.obs;
+  final RxString hardwareDeviceName = ''.obs;
+  final RxString hardwareDeviceType = ''.obs;
 
   @override
   void onInit() {
@@ -34,7 +37,29 @@ class LoginController extends GetxController {
         phoneController.text = prefilledPhone;
       }
     }
-    _initBiometricsAndSavedCredentials();
+    _initDeviceAndCredentials();
+  }
+
+  /// تهيئة معلومات العتاد والاعتمادات المحفوظة
+  Future<void> _initDeviceAndCredentials() async {
+    // 1. استخراج معلومات وهوية الجهاز بأمان
+    try {
+      final device = DeviceService.to;
+      hardwareDeviceName.value = device.deviceName;
+      hardwareDeviceType.value = device.deviceType;
+    } catch (_) {
+      // تجاهل الخطأ في بيئات الاختبار بدون تعطيل التدفق
+    }
+
+    // 2. فحص دعم المقاييس الحيوية واستعادة الاعتمادات المحفوظة
+    await _initBiometricsAndSavedCredentials();
+  }
+
+  /// تحديث حالة Caps Lock من أحداث لوحة المفاتيح
+  void updateCapsLock(bool isOn) {
+    if (isCapsLockOn.value != isOn) {
+      isCapsLockOn.value = isOn;
+    }
   }
 
   /// فحص دعم المقاييس الحيوية واستعادة الاعتمادات المحفوظة بأمان
@@ -82,8 +107,7 @@ class LoginController extends GetxController {
       } else {
         CustomSnackbar.show(
           title: 'المقاييس الحيوية مؤكدة',
-          message:
-              'يرجى إدخال كلمة المرور لتسجيل الدخول أول مرة وحفظ الاعتمادات بأمان.',
+          message: 'يرجى إدخال كلمة المرور لتسجيل الدخول أول مرة وحفظ الاعتمادات بأمان.',
           type: SnackType.info,
         );
       }
@@ -159,8 +183,7 @@ class LoginController extends GetxController {
         await CustomAnimationOverlay.hide();
         CustomSnackbar.show(
           title: 'تغيير كلمة المرور إلزامي',
-          message:
-              'تم الدخول بكلمة مرور مؤقتة، يرجى تعيين كلمة مرور جديدة لحسابك للمتابعة.',
+          message: 'تم الدخول بكلمة مرور مؤقتة، يرجى تعيين كلمة مرور جديدة لحسابك للمتابعة.',
           type: SnackType.warning,
         );
         await Get.offAllNamed<void>(

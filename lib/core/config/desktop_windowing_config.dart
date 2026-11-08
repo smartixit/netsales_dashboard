@@ -22,9 +22,7 @@ const WindowingConfig desktopWindowingConfig = WindowingConfig(
     'authentication': WindowProfile(
       id: 'authentication',
       size: Size(1040, 720),
-      constraints: WindowConstraints(
-        minimumSize: Size(900, 620),
-      ),
+      constraints: WindowConstraints(minimumSize: Size(900, 620)),
       resizable: true,
       alwaysOnTop: false,
       skipTaskbar: false,
@@ -34,9 +32,7 @@ const WindowingConfig desktopWindowingConfig = WindowingConfig(
     'dashboard': WindowProfile(
       id: 'dashboard',
       size: Size(1440, 900),
-      constraints: WindowConstraints(
-        minimumSize: Size(1120, 720),
-      ),
+      constraints: WindowConstraints(minimumSize: Size(1120, 720)),
       positionPolicy: WindowPositionPolicy.preserve,
       resizable: true,
       alwaysOnTop: false,

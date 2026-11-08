@@ -12,7 +12,9 @@ import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_column
 import 'package:netsales_dashboard/widgets/images/custom_cached_image.dart';
 
 abstract final class PlatformPosGridColumns {
-  static List<AppDataGridColumn<PlatformPosEntity>> build(AppLocalizations l10n) => [
+  static List<AppDataGridColumn<PlatformPosEntity>> build(
+    AppLocalizations l10n,
+  ) => [
     AppDataGridColumn<PlatformPosEntity>(
       name: 'pos',
       label: l10n.text('pos_name'),
@@ -32,9 +34,20 @@ abstract final class PlatformPosGridColumns {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTypography.titleSmall),
-                Text(item.uuid ?? 'ID #${item.id}', maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: AppTypography.caption.copyWith(color: context.colors.onSurfaceVariant)),
+                Text(
+                  item.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.titleSmall,
+                ),
+                Text(
+                  item.uuid ?? 'ID #${item.id}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.caption.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),
@@ -46,7 +59,11 @@ abstract final class PlatformPosGridColumns {
       label: l10n.text('pos_owner'),
       width: 190,
       valueGetter: (item) => item.ownerName,
-      cellBuilder: (context, item, _) => Text(item.ownerName ?? '—', maxLines: 1, overflow: TextOverflow.ellipsis),
+      cellBuilder: (context, item, _) => Text(
+        item.ownerName ?? '—',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
     ),
     AppDataGridColumn<PlatformPosEntity>(
       name: 'phone',
@@ -54,7 +71,11 @@ abstract final class PlatformPosGridColumns {
       width: 150,
       allowFiltering: false,
       valueGetter: (item) => item.phoneNumber,
-      cellBuilder: (context, item, _) => Text(item.phoneNumber ?? '—', maxLines: 1, overflow: TextOverflow.ellipsis),
+      cellBuilder: (context, item, _) => Text(
+        item.phoneNumber ?? '—',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
     ),
     AppDataGridColumn<PlatformPosEntity>(
       name: 'location',
@@ -66,10 +87,20 @@ abstract final class PlatformPosGridColumns {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(item.governorateName ?? '—', maxLines: 1, overflow: TextOverflow.ellipsis),
+          Text(
+            item.governorateName ?? '—',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
           if (item.directorateName != null)
-            Text(item.directorateName!, maxLines: 1, overflow: TextOverflow.ellipsis,
-              style: AppTypography.caption.copyWith(color: context.colors.onSurfaceVariant)),
+            Text(
+              item.directorateName!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTypography.caption.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
         ],
       ),
     ),
@@ -79,7 +110,10 @@ abstract final class PlatformPosGridColumns {
       width: 145,
       allowFiltering: false,
       valueGetter: (item) => item.status,
-      cellBuilder: (context, item, _) => PlatformPosStatusBadge(status: item.status, statusLabel: item.statusLabel),
+      cellBuilder: (context, item, _) => PlatformPosStatusBadge(
+        status: item.status,
+        statusLabel: item.statusLabel,
+      ),
     ),
     AppDataGridColumn<PlatformPosEntity>(
       name: 'created',
@@ -87,8 +121,12 @@ abstract final class PlatformPosGridColumns {
       width: 150,
       allowFiltering: false,
       valueGetter: (item) => item.createdAt?.toIso8601String(),
-      cellBuilder: (context, item, _) => Text(_date(item.createdAt),
-        style: AppTypography.bodySmall.copyWith(color: context.colors.onSurfaceVariant)),
+      cellBuilder: (context, item, _) => Text(
+        _date(item.createdAt),
+        style: AppTypography.bodySmall.copyWith(
+          color: context.colors.onSurfaceVariant,
+        ),
+      ),
     ),
     AppDataGridColumn<PlatformPosEntity>(
       name: 'actions',
@@ -106,8 +144,14 @@ abstract final class PlatformPosGridColumns {
   ];
 
   static String _initials(String name) {
-    final words = name.trim().split(RegExp(r'\s+')).where((word) => word.isNotEmpty);
-    return words.take(2).map((word) => String.fromCharCode(word.runes.first)).join();
+    final words = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((word) => word.isNotEmpty);
+    return words
+        .take(2)
+        .map((word) => String.fromCharCode(word.runes.first))
+        .join();
   }
 
   static String _date(DateTime? value) {

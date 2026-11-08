@@ -5,14 +5,17 @@ import 'package:netsales_dashboard/features/platform_dashboard/data/models/platf
 import 'package:netsales_dashboard/features/platform_dashboard/data/models/platform_dashboard_overview_model.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/data/models/platform_notification_model.dart';
 
-class PlatformDashboardRemoteDataSourceImpl implements PlatformDashboardRemoteDataSource {
+class PlatformDashboardRemoteDataSourceImpl
+    implements PlatformDashboardRemoteDataSource {
   PlatformDashboardRemoteDataSourceImpl({ApiService? apiService})
-      : _api = apiService ?? ApiService.instance;
+    : _api = apiService ?? ApiService.instance;
 
   final ApiService _api;
 
   @override
-  Future<PlatformDashboardOverviewModel> getOverview({required String period}) async {
+  Future<PlatformDashboardOverviewModel> getOverview({
+    required String period,
+  }) async {
     final response = await _api.get<PlatformDashboardOverviewModel>(
       ApiConstants.dashboardOverview,
       queryParameters: {'period': period},
@@ -31,15 +34,23 @@ class PlatformDashboardRemoteDataSourceImpl implements PlatformDashboardRemoteDa
   }
 
   @override
-  Future<List<PlatformNotificationModel>> getUnreadNotifications({required int limit}) async {
+  Future<List<PlatformNotificationModel>> getUnreadNotifications({
+    required int limit,
+  }) async {
     final response = await _api.getList<PlatformNotificationModel>(
       ApiConstants.notificationsMy,
-      fromJson: (json) => PlatformNotificationModel.fromJson(Map<String, dynamic>.from(json as Map)),
+      fromJson: (json) => PlatformNotificationModel.fromJson(
+        Map<String, dynamic>.from(json as Map),
+      ),
       queryParameters: const {'is_read': false},
       perPage: limit,
     );
     if (!response.success) {
-      throw Exception(response.message.isEmpty ? 'Unable to load notifications.' : response.message);
+      throw Exception(
+        response.message.isEmpty
+            ? 'Unable to load notifications.'
+            : response.message,
+      );
     }
     return response.data ?? const <PlatformNotificationModel>[];
   }
@@ -51,13 +62,19 @@ class PlatformDashboardRemoteDataSourceImpl implements PlatformDashboardRemoteDa
       fromJson: (json) {
         if (json is Map) {
           final value = json['unread_count'];
-          return value is int ? value : int.tryParse(value?.toString() ?? '') ?? 0;
+          return value is int
+              ? value
+              : int.tryParse(value?.toString() ?? '') ?? 0;
         }
         return 0;
       },
     );
     if (!response.success || response.data == null) {
-      throw Exception(response.message.isEmpty ? 'Unable to load notification count.' : response.message);
+      throw Exception(
+        response.message.isEmpty
+            ? 'Unable to load notification count.'
+            : response.message,
+      );
     }
     return response.data!;
   }
@@ -68,27 +85,45 @@ class PlatformDashboardRemoteDataSourceImpl implements PlatformDashboardRemoteDa
       ApiConstants.notificationMarkAsRead(notificationId),
     );
     if (!response.success) {
-      throw Exception(response.message.isEmpty ? 'Unable to mark notification as read.' : response.message);
+      throw Exception(
+        response.message.isEmpty
+            ? 'Unable to mark notification as read.'
+            : response.message,
+      );
     }
   }
 
   @override
   Future<void> markAllNotificationsRead() async {
-    final response = await _api.post<dynamic>(ApiConstants.notificationsMarkAllRead);
+    final response = await _api.post<dynamic>(
+      ApiConstants.notificationsMarkAllRead,
+    );
     if (!response.success) {
-      throw Exception(response.message.isEmpty ? 'Unable to mark notifications as read.' : response.message);
+      throw Exception(
+        response.message.isEmpty
+            ? 'Unable to mark notifications as read.'
+            : response.message,
+      );
     }
   }
 
   @override
-  Future<List<PlatformActivityModel>> getRecentActivity({required int limit}) async {
+  Future<List<PlatformActivityModel>> getRecentActivity({
+    required int limit,
+  }) async {
     final response = await _api.getList<PlatformActivityModel>(
       ApiConstants.systemLogs,
-      fromJson: (json) => PlatformActivityModel.fromJson(Map<String, dynamic>.from(json as Map)),
+      fromJson: (json) => PlatformActivityModel.fromJson(
+        Map<String, dynamic>.from(json as Map),
+      ),
       perPage: limit,
     );
     if (!response.success) {
-      throw Exception(response.message.isEmpty ? 'Unable to load activity.' : response.message);
+      throw Exception(
+        response.message.isEmpty
+            ? 'Unable to load activity.'
+            : response.message,
+      );
     }
     return response.data ?? const <PlatformActivityModel>[];
   }

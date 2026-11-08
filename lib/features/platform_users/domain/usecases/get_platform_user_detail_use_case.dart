@@ -4,5 +4,6 @@ import 'package:netsales_dashboard/features/platform_users/domain/repositories/p
 class GetPlatformUserDetailUseCase {
   const GetPlatformUserDetailUseCase(this._repository);
   final PlatformUsersRepository _repository;
-  Future<PlatformUserDetailEntity?> call(int id) => _repository.getUserDetail(id);
+  Future<PlatformUserDetailEntity?> call(int id) =>
+      _repository.getUserDetail(id);
 }

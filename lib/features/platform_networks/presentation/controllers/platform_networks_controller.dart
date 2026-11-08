@@ -12,9 +12,7 @@ import 'package:netsales_dashboard/features/platform_networks/domain/usecases/ge
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_state.dart';
 
 class PlatformNetworksController extends GetxController {
-  PlatformNetworksController({
-    required this._getNetworks,
-  });
+  PlatformNetworksController({required this._getNetworks});
 
   final GetPlatformNetworksUseCase _getNetworks;
 
@@ -30,7 +28,8 @@ class PlatformNetworksController extends GetxController {
   final isRefreshing = false.obs;
   final errorMessage = ''.obs;
   late final NetSalesDataGridSource<PlatformNetworkEntity> gridSource;
-  final AppDataGridExportController exportController = AppDataGridExportController();
+  final AppDataGridExportController exportController =
+      AppDataGridExportController();
 
   Timer? _searchDebounce;
   int _requestGeneration = 0;
@@ -74,9 +73,11 @@ class PlatformNetworksController extends GetxController {
       );
       if (generation != _requestGeneration) return;
       if (!response.success || response.data == null) {
-        throw Exception(response.message.isNotEmpty
-            ? response.message
-            : 'تعذر تحميل قائمة الشبكات.');
+        throw Exception(
+          response.message.isNotEmpty
+              ? response.message
+              : 'تعذر تحميل قائمة الشبكات.',
+        );
       }
       if (append) {
         networks.addAll(response.data!);

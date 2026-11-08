@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/themes/app_breakpoints.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
+
 import '../config/dashboard_layout_config.dart';
 import '../models/dashboard_breadcrumb.dart';
 import '../models/dashboard_navigation_item.dart';
@@ -14,16 +15,31 @@ import '../../desktop_title_bar.dart';
 
 class DashboardShell extends StatelessWidget {
   const DashboardShell({
-    required this.child, required this.navigation, required this.selectedNavigationId,
-    required this.onNavigationSelected, this.config = const DashboardLayoutConfig(),
-    this.sidebarHeader, this.sidebarFooter, this.topbarLeading, this.search,
-    this.notifications, this.topbarActions, this.profile, this.onProfileTap,
-    this.breadcrumbs = const [], this.onBreadcrumbTap, this.pageHeader,
-    this.sidebarCollapsed, this.onSidebarCollapsedChanged,
-    this.sidebarHeaderBuilder, this.sidebarFooterBuilder,
+    required this.child,
+    required this.navigation,
+    required this.selectedNavigationId,
+    required this.onNavigationSelected,
+    this.config = const DashboardLayoutConfig(),
+    this.sidebarHeader,
+    this.sidebarFooter,
+    this.topbarLeading,
+    this.search,
+    this.notifications,
+    this.topbarActions,
+    this.profile,
+    this.onProfileTap,
+    this.breadcrumbs = const [],
+    this.onBreadcrumbTap,
+    this.pageHeader,
+    this.sidebarCollapsed,
+    this.onSidebarCollapsedChanged,
+    this.sidebarHeaderBuilder,
+    this.sidebarFooterBuilder,
     this.expandSidebarTooltip = 'Expand navigation',
     this.collapseSidebarTooltip = 'Collapse navigation',
-    this.expandedGroupIds = const {}, this.onGroupExpansionChanged, this.content,
+    this.expandedGroupIds = const {},
+    this.onGroupExpansionChanged,
+    this.content,
     super.key,
   });
   final Widget child;
@@ -42,6 +58,7 @@ class DashboardShell extends StatelessWidget {
   final List<DashboardBreadcrumb> breadcrumbs;
   final ValueChanged<String>? onBreadcrumbTap;
   final DashboardPageHeaderData? pageHeader;
+
   /// Null keeps the responsive default; a value represents an explicit user override.
   final bool? sidebarCollapsed;
   final ValueChanged<bool>? onSidebarCollapsedChanged;
@@ -57,7 +74,9 @@ class DashboardShell extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final compact = constraints.maxWidth < config.mobileBreakpoint;
-      final autoCollapse = constraints.maxWidth < AppBreakpoints.desktopMax || config.initiallyCollapsed;
+      final autoCollapse =
+          constraints.maxWidth < AppBreakpoints.desktopMax ||
+          config.initiallyCollapsed;
       final effectiveCollapsed = !compact && (sidebarCollapsed ?? autoCollapse);
       final theme = DashboardLayoutTheme.of(context);
       final sidebar = DashboardSidebar(
@@ -66,14 +85,23 @@ class DashboardShell extends StatelessWidget {
         onNavigationSelected: onNavigationSelected,
         collapsed: compact ? false : effectiveCollapsed,
         onCollapsedChanged: onSidebarCollapsedChanged,
-        header: sidebarHeaderBuilder?.call(compact ? false : effectiveCollapsed) ?? sidebarHeader,
-        footer: sidebarFooterBuilder?.call(compact ? false : effectiveCollapsed) ?? sidebarFooter,
+        header:
+            sidebarHeaderBuilder?.call(compact ? false : effectiveCollapsed) ??
+            sidebarHeader,
+        footer:
+            sidebarFooterBuilder?.call(compact ? false : effectiveCollapsed) ??
+            sidebarFooter,
         expandedGroupIds: expandedGroupIds,
         onGroupExpansionChanged: onGroupExpansionChanged,
       );
       return Scaffold(
         backgroundColor: theme.contentBackground,
-        drawer: compact ? Drawer(width: config.expandedSidebarWidth, child: SafeArea(child: sidebar)) : null,
+        drawer: compact
+            ? Drawer(
+                width: config.expandedSidebarWidth,
+                child: SafeArea(child: sidebar),
+              )
+            : null,
         body: SafeArea(
           child: Column(
             children: [
@@ -85,7 +113,9 @@ class DashboardShell extends StatelessWidget {
                       AnimatedContainer(
                         duration: theme.motionDuration,
                         curve: theme.motionCurve,
-                        width: effectiveCollapsed ? config.collapsedSidebarWidth : config.expandedSidebarWidth,
+                        width: effectiveCollapsed
+                            ? config.collapsedSidebarWidth
+                            : config.expandedSidebarWidth,
                         child: sidebar,
                       ),
                     Expanded(
@@ -97,20 +127,29 @@ class DashboardShell extends StatelessWidget {
                                 ? Builder(
                                     builder: (context) => CustomButton.icon(
                                       icon: Icons.menu_rounded,
-                                      tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-                                      onPressed: () => Scaffold.of(context).openDrawer(),
+                                      tooltip: MaterialLocalizations.of(context)
+                                          .openAppDrawerTooltip,
+                                      onPressed: () =>
+                                          Scaffold.of(context).openDrawer(),
                                       dimension: 40,
                                     ),
                                   )
                                 : topbarLeading ??
-                                    (onSidebarCollapsedChanged == null
-                                        ? null
-                                        : CustomButton.icon(
-                                            icon: effectiveCollapsed ? Icons.menu_open_rounded : Icons.menu_rounded,
-                                            tooltip: effectiveCollapsed ? expandSidebarTooltip : collapseSidebarTooltip,
-                                            onPressed: () => onSidebarCollapsedChanged!(!effectiveCollapsed),
-                                            dimension: 40,
-                                          )),
+                                      (onSidebarCollapsedChanged == null
+                                          ? null
+                                          : CustomButton.icon(
+                                              icon: effectiveCollapsed
+                                                  ? Icons.menu_open_rounded
+                                                  : Icons.menu_rounded,
+                                              tooltip: effectiveCollapsed
+                                                  ? expandSidebarTooltip
+                                                  : collapseSidebarTooltip,
+                                              onPressed: () =>
+                                                  onSidebarCollapsedChanged!(
+                                                    !effectiveCollapsed,
+                                                  ),
+                                              dimension: 40,
+                                            )),
                             search: search,
                             notifications: notifications,
                             actions: topbarActions,
@@ -119,21 +158,35 @@ class DashboardShell extends StatelessWidget {
                           ),
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsets.all(config.contentPadding ?? AppBreakpoints.screenMargin(context)),
+                              padding: EdgeInsets.all(
+                                config.contentPadding ??
+                                    AppBreakpoints.screenMargin(context),
+                              ),
                               child: Align(
                                 alignment: AlignmentDirectional.topCenter,
                                 child: ConstrainedBox(
-                                  constraints: BoxConstraints(maxWidth: config.maxContentWidth ?? AppBreakpoints.maxDashboardContentWidth),
+                                  constraints: BoxConstraints(
+                                    maxWidth:
+                                        config.maxContentWidth ??
+                                        AppBreakpoints.maxDashboardContentWidth,
+                                  ),
                                   child: SizedBox(
                                     width: double.infinity,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
                                       children: [
-                                        if (config.showBreadcrumbs && breadcrumbs.isNotEmpty)
-                                          _BreadcrumbRow(breadcrumbs: breadcrumbs, onTap: onBreadcrumbTap),
+                                        if (config.showBreadcrumbs &&
+                                            breadcrumbs.isNotEmpty)
+                                          _BreadcrumbRow(
+                                            breadcrumbs: breadcrumbs,
+                                            onTap: onBreadcrumbTap,
+                                          ),
                                         if (pageHeader != null) ...[
                                           AppSpacing.vMd,
-                                          DashboardPageHeader(data: pageHeader!),
+                                          DashboardPageHeader(
+                                            data: pageHeader!,
+                                          ),
                                           AppSpacing.vXl,
                                         ],
                                         Expanded(child: content ?? child),
@@ -174,23 +227,34 @@ class _BreadcrumbRow extends StatelessWidget {
         for (var index = 0; index < breadcrumbs.length; index++) ...[
           if (index > 0)
             Icon(
-              Directionality.of(context) == TextDirection.rtl ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+              Directionality.of(context) == TextDirection.rtl
+                  ? Icons.chevron_left_rounded
+                  : Icons.chevron_right_rounded,
               size: 16,
               color: scheme.onSurfaceVariant,
             ),
           CustomButton.text(
-            onPressed: breadcrumbs[index].enabled && breadcrumbs[index].id != null && onTap != null
+            onPressed:
+                breadcrumbs[index].enabled &&
+                    breadcrumbs[index].id != null &&
+                    onTap != null
                 ? () => onTap!(breadcrumbs[index].id!)
                 : null,
             size: AppButtonSize.small,
             enableScaleAnimation: false,
             padding: EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-            foregroundColor: index == breadcrumbs.length - 1 ? scheme.onSurface : scheme.onSurfaceVariant,
+            foregroundColor: index == breadcrumbs.length - 1
+                ? scheme.onSurface
+                : scheme.onSurfaceVariant,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (breadcrumbs[index].icon != null) ...[
-                  Icon(breadcrumbs[index].icon, size: 14, color: scheme.onSurfaceVariant),
+                  Icon(
+                    breadcrumbs[index].icon,
+                    size: 14,
+                    color: scheme.onSurfaceVariant,
+                  ),
                   AppSpacing.hXxs,
                 ],
                 Text(breadcrumbs[index].label),

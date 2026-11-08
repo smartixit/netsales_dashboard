@@ -54,7 +54,8 @@ class PlatformNetworkPosLinkGridColumns {
     AppDataGridColumn(
       name: 'created_at',
       label: l10n.text('created_at'),
-      valueGetter: (row) => row.createdAt?.toLocal().toString().split('.').first ?? '—',
+      valueGetter: (row) =>
+          row.createdAt?.toLocal().toString().split('.').first ?? '—',
       width: 180,
       allowFiltering: false,
     ),
@@ -68,7 +69,8 @@ class PlatformNetworkPosLinkGridColumns {
       cellBuilder: (context, row, value) => CustomButton.text(
         text: l10n.text('view_details'),
         size: AppButtonSize.small,
-        onPressed: () => Get.toNamed<void>(AppRoutes.networkPosLinkDetail(row.id)),
+        onPressed: () =>
+            Get.toNamed<void>(AppRoutes.networkPosLinkDetail(row.id)),
       ),
     ),
   ];

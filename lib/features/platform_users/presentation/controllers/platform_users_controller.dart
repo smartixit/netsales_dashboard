@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_entity.dart';
@@ -48,7 +49,11 @@ class PlatformUsersController extends GetxController {
       );
       if (generation != _requestGeneration) return;
       if (!response.success || response.data == null) {
-        throw Exception(response.message.isNotEmpty ? response.message : 'تعذر تحميل قائمة المستخدمين.');
+        throw Exception(
+          response.message.isNotEmpty
+              ? response.message
+              : 'تعذر تحميل قائمة المستخدمين.',
+        );
       }
       if (append) {
         users.addAll(response.data!);
@@ -56,11 +61,14 @@ class PlatformUsersController extends GetxController {
         users.assignAll(response.data!);
       }
       nextCursor.value = response.nextCursor;
-      viewState.value = users.isEmpty ? AppDataGridViewState.empty : AppDataGridViewState.success;
+      viewState.value = users.isEmpty
+          ? AppDataGridViewState.empty
+          : AppDataGridViewState.success;
     } catch (error) {
       if (generation != _requestGeneration) return;
       errorMessage.value = error.toString();
-      if (!append || users.isEmpty) viewState.value = AppDataGridViewState.error;
+      if (!append || users.isEmpty)
+        viewState.value = AppDataGridViewState.error;
     } finally {
       if (generation == _requestGeneration) isLoadingMore.value = false;
     }

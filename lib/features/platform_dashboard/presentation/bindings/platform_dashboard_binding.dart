@@ -101,8 +101,7 @@ class PlatformDashboardBinding extends Bindings {
         getNotifications: Get.find<GetPlatformNotificationsUseCase>(),
         getNotificationCount: Get.find<GetNotificationCountUseCase>(),
         markNotificationRead: Get.find<MarkNotificationReadUseCase>(),
-        markAllNotificationsRead:
-            Get.find<MarkAllNotificationsReadUseCase>(),
+        markAllNotificationsRead: Get.find<MarkAllNotificationsReadUseCase>(),
       ),
     );
   }

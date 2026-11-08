@@ -53,10 +53,7 @@ class PlatformNetworksRepositoryImpl implements PlatformNetworksRepository {
   }) async {
     final response = await _remoteDataSource.updateNetwork(
       networkId,
-      data: <String, dynamic>{
-        'network_name': name,
-        'network_address': address,
-      },
+      data: <String, dynamic>{'network_name': name, 'network_address': address},
     );
     if (!response.success || response.data == null) {
       throw Exception(response.message);

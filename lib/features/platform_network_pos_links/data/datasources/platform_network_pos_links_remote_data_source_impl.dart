@@ -51,8 +51,7 @@ class PlatformNetworkPosLinksRemoteDataSourceImpl
       'pos_id': posId,
       'status': true,
     },
-    fromJson: (json) =>
-        PlatformNetworkPosLinkModel.fromJson(_asJsonMap(json)),
+    fromJson: (json) => PlatformNetworkPosLinkModel.fromJson(_asJsonMap(json)),
   );
 
   @override
@@ -62,8 +61,7 @@ class PlatformNetworkPosLinksRemoteDataSourceImpl
   }) => _apiService.put<PlatformNetworkPosLinkModel>(
     ApiConstants.networkPosItem(linkId),
     data: <String, dynamic>{'status': isActive},
-    fromJson: (json) =>
-        PlatformNetworkPosLinkModel.fromJson(_asJsonMap(json)),
+    fromJson: (json) => PlatformNetworkPosLinkModel.fromJson(_asJsonMap(json)),
   );
 
   @override

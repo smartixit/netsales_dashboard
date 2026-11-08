@@ -4,5 +4,6 @@ import 'package:netsales_dashboard/features/platform_users/domain/repositories/p
 class GetPlatformUserSessionsUseCase {
   const GetPlatformUserSessionsUseCase(this._repository);
   final PlatformUsersRepository _repository;
-  Future<List<PlatformUserSessionEntity>> call(int id) => _repository.getUserSessions(id);
+  Future<List<PlatformUserSessionEntity>> call(int id) =>
+      _repository.getUserSessions(id);
 }

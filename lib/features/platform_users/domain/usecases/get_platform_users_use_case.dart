@@ -7,8 +7,14 @@ class GetPlatformUsersUseCase {
   final PlatformUsersRepository _repository;
 
   Future<ApiResponse<List<PlatformUserEntity>>> call({
-    String? search, String? status, String? cursor, int perPage = 20,
+    String? search,
+    String? status,
+    String? cursor,
+    int perPage = 20,
   }) => _repository.getUsers(
-    search: search, status: status, cursor: cursor, perPage: perPage,
+    search: search,
+    status: status,
+    cursor: cursor,
+    perPage: perPage,
   );
 }

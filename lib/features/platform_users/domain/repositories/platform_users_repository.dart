@@ -4,7 +4,10 @@ import 'package:netsales_dashboard/features/platform_users/domain/entities/platf
 
 abstract interface class PlatformUsersRepository {
   Future<ApiResponse<List<PlatformUserEntity>>> getUsers({
-    String? search, String? status, String? cursor, int perPage,
+    String? search,
+    String? status,
+    String? cursor,
+    int perPage,
   });
   Future<PlatformUserDetailEntity?> getUserDetail(int id);
   Future<List<PlatformUserSessionEntity>> getUserSessions(int id);

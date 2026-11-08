@@ -5,7 +5,13 @@ import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
 
 class CustomSectionHeader extends StatelessWidget {
-  const CustomSectionHeader({super.key, required this.title, this.description, this.action, this.leading});
+  const CustomSectionHeader({
+    super.key,
+    required this.title,
+    this.description,
+    this.action,
+    this.leading,
+  });
   final String title;
   final String? description;
   final Widget? action;
@@ -21,7 +27,10 @@ class CustomSectionHeader extends StatelessWidget {
       runSpacing: AppSpacing.xs,
       children: [
         ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 180, maxWidth: AppBreakpoints.maxContentWidth),
+          constraints: const BoxConstraints(
+            minWidth: 180,
+            maxWidth: AppBreakpoints.maxContentWidth,
+          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -31,10 +40,20 @@ class CustomSectionHeader extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: AppTypography.titleMedium.copyWith(color: colors.onSurface)),
+                    Text(
+                      title,
+                      style: AppTypography.titleMedium.copyWith(
+                        color: colors.onSurface,
+                      ),
+                    ),
                     if (description != null) ...[
                       AppSpacing.vXxs,
-                      Text(description!, style: AppTypography.bodySmall.copyWith(color: colors.onSurfaceVariant)),
+                      Text(
+                        description!,
+                        style: AppTypography.bodySmall.copyWith(
+                          color: colors.onSurfaceVariant,
+                        ),
+                      ),
                     ],
                   ],
                 ),

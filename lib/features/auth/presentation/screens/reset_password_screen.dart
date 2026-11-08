@@ -22,8 +22,8 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
       title: isDirectReset
           ? 'تعيين كلمة مرور جديدة'
           : controller.isForced
-              ? 'تغيير كلمة المرور مطلوب'
-              : 'تغيير كلمة المرور',
+          ? 'تغيير كلمة المرور مطلوب'
+          : 'تغيير كلمة المرور',
       subtitle: isDirectReset
           ? 'اختر كلمة مرور جديدة لحماية حسابك.'
           : 'استخدم كلمة مرور قوية لمتابعة الوصول إلى مساحة المنصة.',
@@ -34,8 +34,7 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
           children: [
             if (controller.isForced)
               const _PasswordNotice(
-                text:
-                    'يتطلب حسابك تغيير كلمة المرور الحالية قبل متابعة استخدام المنصة.',
+                text: 'يتطلب حسابك تغيير كلمة المرور الحالية قبل متابعة استخدام المنصة.',
               ),
             if (!isDirectReset) ...[
               CustomPasswordField(
@@ -79,8 +78,8 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
               text: isDirectReset
                   ? 'العودة'
                   : controller.isForced
-                      ? 'تسجيل الخروج'
-                      : 'إلغاء',
+                  ? 'تسجيل الخروج'
+                  : 'إلغاء',
               onPressed: controller.abortOrLogout,
             ),
           ],
@@ -112,10 +111,7 @@ class _PasswordNotice extends StatelessWidget {
           Icon(Icons.info_outline_rounded, color: colors.warning),
           AppSpacing.hSm,
           Expanded(
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
+            child: Text(text, style: Theme.of(context).textTheme.bodySmall),
           ),
         ],
       ),

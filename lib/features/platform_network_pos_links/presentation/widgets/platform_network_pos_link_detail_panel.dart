@@ -36,17 +36,15 @@ class PlatformNetworkPosLinkDetailPanel extends StatelessWidget {
       SizedBox(height: AppSpacing.sm),
       Text(
         '${l10n.text('link_reference')}: #${link.id}',
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
+        style: Theme.of(context).textTheme.bodySmall
+            ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
       if (link.createdAt != null) ...[
         SizedBox(height: AppSpacing.xs),
         Text(
           '${l10n.text('created_at')}: ${link.createdAt!.toLocal()}',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+          style: Theme.of(context).textTheme.bodySmall
+              ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
       ],
       SizedBox(height: AppSpacing.lg),
@@ -62,9 +60,18 @@ class PlatformNetworkPosLinkDetailPanel extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.text('network_name'), style: Theme.of(context).textTheme.bodySmall),
-                Text(link.networkName ?? '—', style: Theme.of(context).textTheme.titleMedium),
-                Text(link.networkUuid ?? 'ID #${link.networkId}', style: Theme.of(context).textTheme.bodySmall),
+                Text(
+                  l10n.text('network_name'),
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                Text(
+                  link.networkName ?? '—',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Text(
+                  link.networkUuid ?? 'ID #${link.networkId}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
               ],
             ),
           ),
@@ -72,7 +79,13 @@ class PlatformNetworkPosLinkDetailPanel extends StatelessWidget {
       ),
       Padding(
         padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
-        child: Center(child: Icon(Icons.link_rounded, size: 28, color: Theme.of(context).colorScheme.primary)),
+        child: Center(
+          child: Icon(
+            Icons.link_rounded,
+            size: 28,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
       ),
       Row(
         children: [
@@ -86,9 +99,18 @@ class PlatformNetworkPosLinkDetailPanel extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.text('pos_name'), style: Theme.of(context).textTheme.bodySmall),
-                Text(link.posName ?? '—', style: Theme.of(context).textTheme.titleMedium),
-                Text(link.posPhoneNumber ?? link.posUuid ?? '—', style: Theme.of(context).textTheme.bodySmall),
+                Text(
+                  l10n.text('pos_name'),
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                Text(
+                  link.posName ?? '—',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Text(
+                  link.posPhoneNumber ?? link.posUuid ?? '—',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
               ],
             ),
           ),

@@ -58,7 +58,9 @@ class PlatformPosDetailController extends GetxController {
     final governorateId = current.governorateId;
     final directorateId = current.directorateId;
     if (governorateId == null || directorateId == null) {
-      throw Exception('لا يمكن تعديل نقطة البيع قبل توفر بيانات المحافظة والمديرية.');
+      throw Exception(
+        'لا يمكن تعديل نقطة البيع قبل توفر بيانات المحافظة والمديرية.',
+      );
     }
     isSaving.value = true;
     try {

@@ -23,31 +23,74 @@ class PlatformPosScreen extends GetView<PlatformPosController> {
     final dashboard = Get.find<PlatformDashboardController>();
     return Padding(
       padding: EdgeInsets.all(AppSpacing.lg),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        DashboardPageHeader(data: DashboardPageHeaderData(
-          title: l10n.text('pos'), description: l10n.text('platform_pos_description'), icon: Icons.storefront_rounded,
-          actions: [Obx(() => CustomButton.secondary(text: l10n.text('refresh'), prefix: const Icon(Icons.refresh_rounded, size: 18), loading: controller.isRefreshing.value, onPressed: controller.isRefreshing.value ? null : controller.load))],
-        )),
-        SizedBox(height: AppSpacing.lg),
-        Obx(() => PlatformPosMetricsSection(metrics: dashboard.overview.value?.metrics.pos, l10n: l10n)),
-        SizedBox(height: AppSpacing.lg),
-        PlatformPosFilterBar(controller: controller, l10n: l10n),
-        SizedBox(height: AppSpacing.md),
-        Expanded(child: Obx(() {
-          switch (controller.viewState.value) {
-            case AppDataGridViewState.loading:
-              return const CustomSkeletonGrid(count: 6, crossAxisCount: 1, itemHeight: 84);
-            case AppDataGridViewState.error:
-              return CustomErrorState.boxed(title: l10n.text('pos_load_error'), subtitle: controller.errorMessage.value, icon: Icons.cloud_off_rounded, onRetry: controller.load, retryLabel: l10n.text('refresh'));
-            case AppDataGridViewState.empty:
-              return CustomEmptyState.boxed(title: l10n.text('pos_empty'), subtitle: l10n.text('pos_empty_description'), icon: Icons.storefront_outlined, badgeText: l10n.text('pos'));
-            case AppDataGridViewState.noResults:
-              return CustomEmptyState.search(query: controller.searchQuery.value, onClearSearch: controller.clearFilters);
-            case AppDataGridViewState.success:
-              return PlatformPosList(controller: controller, l10n: l10n);
-          }
-        })),
-      ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          DashboardPageHeader(
+            data: DashboardPageHeaderData(
+              title: l10n.text('pos'),
+              description: l10n.text('platform_pos_description'),
+              icon: Icons.storefront_rounded,
+              actions: [
+                Obx(
+                  () => CustomButton.secondary(
+                    text: l10n.text('refresh'),
+                    prefix: const Icon(Icons.refresh_rounded, size: 18),
+                    loading: controller.isRefreshing.value,
+                    onPressed: controller.isRefreshing.value
+                        ? null
+                        : controller.load,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppSpacing.lg),
+          Obx(
+            () => PlatformPosMetricsSection(
+              metrics: dashboard.overview.value?.metrics.pos,
+              l10n: l10n,
+            ),
+          ),
+          SizedBox(height: AppSpacing.lg),
+          PlatformPosFilterBar(controller: controller, l10n: l10n),
+          SizedBox(height: AppSpacing.md),
+          Expanded(
+            child: Obx(() {
+              switch (controller.viewState.value) {
+                case AppDataGridViewState.loading:
+                  return const CustomSkeletonGrid(
+                    count: 6,
+                    crossAxisCount: 1,
+                    itemHeight: 84,
+                  );
+                case AppDataGridViewState.error:
+                  return CustomErrorState.boxed(
+                    title: l10n.text('pos_load_error'),
+                    subtitle: controller.errorMessage.value,
+                    icon: Icons.cloud_off_rounded,
+                    onRetry: controller.load,
+                    retryLabel: l10n.text('refresh'),
+                  );
+                case AppDataGridViewState.empty:
+                  return CustomEmptyState.boxed(
+                    title: l10n.text('pos_empty'),
+                    subtitle: l10n.text('pos_empty_description'),
+                    icon: Icons.storefront_outlined,
+                    badgeText: l10n.text('pos'),
+                  );
+                case AppDataGridViewState.noResults:
+                  return CustomEmptyState.search(
+                    query: controller.searchQuery.value,
+                    onClearSearch: controller.clearFilters,
+                  );
+                case AppDataGridViewState.success:
+                  return PlatformPosList(controller: controller, l10n: l10n);
+              }
+            }),
+          ),
+        ],
+      ),
     );
   }
 }

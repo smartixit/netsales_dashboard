@@ -15,7 +15,8 @@ import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_text_field.dart';
 import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
 
-class PlatformNetworkDetailScreen extends GetView<PlatformNetworkDetailController> {
+class PlatformNetworkDetailScreen
+    extends GetView<PlatformNetworkDetailController> {
   const PlatformNetworkDetailScreen({super.key});
 
   @override
@@ -25,7 +26,11 @@ class PlatformNetworkDetailScreen extends GetView<PlatformNetworkDetailControlle
       padding: EdgeInsets.all(AppSpacing.lg),
       child: Obx(() {
         if (controller.isLoading.value) {
-          return const CustomSkeletonGrid(count: 4, crossAxisCount: 1, itemHeight: 100);
+          return const CustomSkeletonGrid(
+            count: 4,
+            crossAxisCount: 1,
+            itemHeight: 100,
+          );
         }
         final network = controller.network.value;
         if (network == null) {
@@ -39,8 +44,12 @@ class PlatformNetworkDetailScreen extends GetView<PlatformNetworkDetailControlle
         }
 
         final canEdit = PermissionService.to.can(AppPermissions.networksEdit);
-        final canApprove = PermissionService.to.can(AppPermissions.networksApprove);
-        final canReject = PermissionService.to.can(AppPermissions.networksReject);
+        final canApprove = PermissionService.to.can(
+          AppPermissions.networksApprove,
+        );
+        final canReject = PermissionService.to.can(
+          AppPermissions.networksReject,
+        );
         final isPending = network.status == 'PENDING';
 
         return Column(
@@ -58,21 +67,30 @@ class PlatformNetworkDetailScreen extends GetView<PlatformNetworkDetailControlle
                     CustomButton.secondary(
                       text: l10n.text('edit_network'),
                       prefix: const Icon(Icons.edit_outlined, size: 18),
-                      onPressed: () => _edit(context, l10n, network.name, network.address ?? ''),
+                      onPressed: () => _edit(
+                        context,
+                        l10n,
+                        network.name,
+                        network.address ?? '',
+                      ),
                     ),
                   if (canApprove && isPending)
                     CustomButton.primary(
                       text: l10n.text('approve_network'),
                       prefix: const Icon(Icons.check_rounded, size: 18),
                       loading: controller.isApproving.value,
-                      onPressed: controller.isApproving.value ? null : () => _approve(context, l10n),
+                      onPressed: controller.isApproving.value
+                          ? null
+                          : () => _approve(context, l10n),
                     ),
                   if (canReject && isPending)
                     CustomButton.danger(
                       text: l10n.text('reject_network'),
                       prefix: const Icon(Icons.close_rounded, size: 18),
                       loading: controller.isRejecting.value,
-                      onPressed: controller.isRejecting.value ? null : () => _reject(context, l10n),
+                      onPressed: controller.isRejecting.value
+                          ? null
+                          : () => _reject(context, l10n),
                     ),
                 ],
               ),
@@ -80,7 +98,10 @@ class PlatformNetworkDetailScreen extends GetView<PlatformNetworkDetailControlle
             SizedBox(height: AppSpacing.md),
             Expanded(
               child: SingleChildScrollView(
-                child: PlatformNetworkInformationSection(network: network, l10n: l10n),
+                child: PlatformNetworkInformationSection(
+                  network: network,
+                  l10n: l10n,
+                ),
               ),
             ),
           ],
@@ -103,9 +124,17 @@ class PlatformNetworkDetailScreen extends GetView<PlatformNetworkDetailControlle
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CustomTextField(controller: name, label: l10n.text('network_name'), isRequired: true),
+          CustomTextField(
+            controller: name,
+            label: l10n.text('network_name'),
+            isRequired: true,
+          ),
           SizedBox(height: AppSpacing.md),
-          CustomTextField(controller: address, label: l10n.text('network_address'), isRequired: false),
+          CustomTextField(
+            controller: address,
+            label: l10n.text('network_address'),
+            isRequired: false,
+          ),
         ],
       ),
       confirmLabel: l10n.text('save_changes'),
@@ -113,11 +142,20 @@ class PlatformNetworkDetailScreen extends GetView<PlatformNetworkDetailControlle
     );
     if (confirmed == true) {
       try {
-        if (name.text.trim().isEmpty) throw Exception(l10n.text('network_name_required'));
+        if (name.text.trim().isEmpty)
+          throw Exception(l10n.text('network_name_required'));
         await controller.save(name: name.text, address: address.text);
-        CustomSnackbar.show(title: l10n.text('success'), message: l10n.text('network_updated'), type: SnackType.success);
+        CustomSnackbar.show(
+          title: l10n.text('success'),
+          message: l10n.text('network_updated'),
+          type: SnackType.success,
+        );
       } catch (error) {
-        CustomSnackbar.show(title: l10n.text('error'), message: error.toString(), type: SnackType.error);
+        CustomSnackbar.show(
+          title: l10n.text('error'),
+          message: error.toString(),
+          type: SnackType.error,
+        );
       }
     }
     name.dispose();
@@ -134,9 +172,17 @@ class PlatformNetworkDetailScreen extends GetView<PlatformNetworkDetailControlle
     if (confirmed != true) return;
     try {
       await controller.approve();
-      CustomSnackbar.show(title: l10n.text('success'), message: l10n.text('network_approved'), type: SnackType.success);
+      CustomSnackbar.show(
+        title: l10n.text('success'),
+        message: l10n.text('network_approved'),
+        type: SnackType.success,
+      );
     } catch (error) {
-      CustomSnackbar.show(title: l10n.text('error'), message: error.toString(), type: SnackType.error);
+      CustomSnackbar.show(
+        title: l10n.text('error'),
+        message: error.toString(),
+        type: SnackType.error,
+      );
     }
   }
 
@@ -157,11 +203,20 @@ class PlatformNetworkDetailScreen extends GetView<PlatformNetworkDetailControlle
     );
     if (confirmed == true) {
       try {
-        if (reason.text.trim().length < 3) throw Exception(l10n.text('rejection_reason_required'));
+        if (reason.text.trim().length < 3)
+          throw Exception(l10n.text('rejection_reason_required'));
         await controller.reject(reason.text);
-        CustomSnackbar.show(title: l10n.text('success'), message: l10n.text('network_rejected'), type: SnackType.success);
+        CustomSnackbar.show(
+          title: l10n.text('success'),
+          message: l10n.text('network_rejected'),
+          type: SnackType.success,
+        );
       } catch (error) {
-        CustomSnackbar.show(title: l10n.text('error'), message: error.toString(), type: SnackType.error);
+        CustomSnackbar.show(
+          title: l10n.text('error'),
+          message: error.toString(),
+          type: SnackType.error,
+        );
       }
     }
     reason.dispose();

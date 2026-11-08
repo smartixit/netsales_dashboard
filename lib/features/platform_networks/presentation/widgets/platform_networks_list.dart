@@ -26,62 +26,65 @@ class PlatformNetworksList extends StatelessWidget {
   final AppLocalizations l10n;
 
   @override
-  Widget build(BuildContext context) => Obx(() => LayoutBuilder(
-    builder: (context, constraints) {
-      if (constraints.maxWidth >= 760) {
-        return AppDataGrid<PlatformNetworkEntity>(
-          source: controller.gridSource,
-          features: const AppDataGridFeatures(
-            dataMode: AppDataGridDataMode.remote,
-            allowSorting: false,
-            allowFiltering: false,
-            allowSelection: false,
-            allowMultiSelection: false,
-            allowColumnDragging: true,
-            allowColumnResizing: true,
-            rowHeight: 66,
-            headerRowHeight: 54,
-          ),
-          viewState: controller.viewState.value,
-          pagination: AppDataGridPagination.cursorBased(
-            hasPrevious: false,
-            hasNext: controller.hasMore,
-            onPrevious: () async {},
-            onNext: () => controller.loadNetworks(append: true),
-            pageLabel: l10n.text('network_page_label'),
-            isLoading: controller.isLoadingMore.value,
-          ),
-          exportController: controller.exportController,
-          exportFileName: 'NetSales_Networks',
-          onRetry: controller.loadNetworks,
-          errorTitle: l10n.text('networks_load_error'),
-          errorMessage: controller.errorMessage.value,
-          emptyTitle: l10n.text('networks_empty'),
-          emptyMessage: l10n.text('networks_empty_description'),
-          mobileItemBuilder: (context, item) => _NetworkCard(item: item, l10n: l10n),
-        );
-      }
+  Widget build(BuildContext context) => Obx(
+    () => LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth >= 760) {
+          return AppDataGrid<PlatformNetworkEntity>(
+            source: controller.gridSource,
+            features: const AppDataGridFeatures(
+              dataMode: AppDataGridDataMode.remote,
+              allowSorting: false,
+              allowFiltering: false,
+              allowSelection: false,
+              allowMultiSelection: false,
+              allowColumnDragging: true,
+              allowColumnResizing: true,
+              rowHeight: 66,
+              headerRowHeight: 54,
+            ),
+            viewState: controller.viewState.value,
+            pagination: AppDataGridPagination.cursorBased(
+              hasPrevious: false,
+              hasNext: controller.hasMore,
+              onPrevious: () async {},
+              onNext: () => controller.loadNetworks(append: true),
+              pageLabel: l10n.text('network_page_label'),
+              isLoading: controller.isLoadingMore.value,
+            ),
+            exportController: controller.exportController,
+            exportFileName: 'NetSales_Networks',
+            onRetry: controller.loadNetworks,
+            errorTitle: l10n.text('networks_load_error'),
+            errorMessage: controller.errorMessage.value,
+            emptyTitle: l10n.text('networks_empty'),
+            emptyMessage: l10n.text('networks_empty_description'),
+            mobileItemBuilder: (context, item) =>
+                _NetworkCard(item: item, l10n: l10n),
+          );
+        }
 
-      return ListView.separated(
-        itemCount: controller.networks.length + (controller.hasMore ? 1 : 0),
-        separatorBuilder: (_, _) => SizedBox(height: AppSpacing.sm),
-        itemBuilder: (context, index) {
-          if (index == controller.networks.length) {
-            return Center(
-              child: CustomButton.secondary(
-                text: l10n.text('load_more'),
-                loading: controller.isLoadingMore.value,
-                onPressed: controller.isLoadingMore.value
-                    ? null
-                    : () => controller.loadNetworks(append: true),
-              ),
-            );
-          }
-          return _NetworkCard(item: controller.networks[index], l10n: l10n);
-        },
-      );
-    },
-  ));
+        return ListView.separated(
+          itemCount: controller.networks.length + (controller.hasMore ? 1 : 0),
+          separatorBuilder: (_, _) => SizedBox(height: AppSpacing.sm),
+          itemBuilder: (context, index) {
+            if (index == controller.networks.length) {
+              return Center(
+                child: CustomButton.secondary(
+                  text: l10n.text('load_more'),
+                  loading: controller.isLoadingMore.value,
+                  onPressed: controller.isLoadingMore.value
+                      ? null
+                      : () => controller.loadNetworks(append: true),
+                ),
+              );
+            }
+            return _NetworkCard(item: controller.networks[index], l10n: l10n);
+          },
+        );
+      },
+    ),
+  );
 }
 
 class _NetworkCard extends StatelessWidget {
@@ -107,7 +110,9 @@ class _NetworkCard extends StatelessWidget {
                 CustomCachedImage.avatar(
                   url: item.logo,
                   radius: 23,
-                  fallbackText: item.name.isEmpty ? '?' : item.name.characters.first,
+                  fallbackText: item.name.isEmpty
+                      ? '?'
+                      : item.name.characters.first,
                 ),
                 SizedBox(width: AppSpacing.sm),
                 Expanded(
@@ -118,19 +123,25 @@ class _NetworkCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                PlatformNetworkStatusBadge(status: item.status, statusLabel: item.statusLabel),
+                PlatformNetworkStatusBadge(
+                  status: item.status,
+                  statusLabel: item.statusLabel,
+                ),
               ],
             ),
             SizedBox(height: AppSpacing.sm),
             Text(item.ownerName ?? '—', style: AppTypography.bodyMedium),
             Text(
               item.phoneNumber ?? '—',
-              style: AppTypography.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: AppTypography.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
             SizedBox(height: AppSpacing.sm),
             CustomButton.text(
               text: l10n.text('view_details'),
-              onPressed: () => Get.toNamed<void>(AppRoutes.networkDetail(item.id)),
+              onPressed: () =>
+                  Get.toNamed<void>(AppRoutes.networkDetail(item.id)),
             ),
           ],
         ),

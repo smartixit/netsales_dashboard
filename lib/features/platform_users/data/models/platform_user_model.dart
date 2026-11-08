@@ -28,7 +28,8 @@ class PlatformUserModel extends PlatformUserEntity {
       profileImage: json['user_profile_logo']?.toString(),
       status: json['status']?.toString() ?? 'UNKNOWN',
       statusLabel: json['status_label']?.toString(),
-      roleName: role['role_name']?.toString() ??
+      roleName:
+          role['role_name']?.toString() ??
           role['role_key_label']?.toString() ??
           role['role_key']?.toString(),
       lastLoginAt: _toDateTime(json['last_login_at']),

@@ -23,9 +23,7 @@ class AuthSuccessScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: colors.surface,
       body: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: AppGradients.surfaceMesh(context),
-        ),
+        decoration: BoxDecoration(gradient: AppGradients.surfaceMesh(context)),
         child: Center(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(AppSpacing.xxl),

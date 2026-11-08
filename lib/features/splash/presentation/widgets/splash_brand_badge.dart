@@ -12,51 +12,51 @@ class SplashBrandBadge extends StatelessWidget {
     final colors = context.colors;
 
     return Container(
-      width: 84,
-      height: 84,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadius.xxl),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: 0.18),
-            Colors.white.withValues(alpha: 0.05),
-          ],
-        ),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.24),
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF10B981).withValues(alpha: 0.28),
-            blurRadius: 32,
-            spreadRadius: -2,
-            offset: const Offset(0, 8),
+          width: 84,
+          height: 84,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppRadius.xxl),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withValues(alpha: 0.18),
+                Colors.white.withValues(alpha: 0.05),
+              ],
+            ),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.24),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF10B981).withValues(alpha: 0.28),
+                blurRadius: 32,
+                spreadRadius: -2,
+                offset: const Offset(0, 8),
+              ),
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.35),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
           ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.35),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
+          padding: const EdgeInsets.all(12),
+          child: Center(
+            child: Image.asset(
+              'assets/images/brand_icon.png',
+              width: 58,
+              height: 58,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => Icon(
+                Icons.hub_rounded,
+                size: 48,
+                color: colors.tertiaryFixed,
+              ),
+            ),
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Center(
-        child: Image.asset(
-          'assets/images/brand_icon.png',
-          width: 58,
-          height: 58,
-          fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) => Icon(
-            Icons.hub_rounded,
-            size: 48,
-            color: colors.tertiaryFixed,
-          ),
-        ),
-      ),
-    )
+        )
         .animate()
         .scale(
           duration: 500.ms,
@@ -72,4 +72,3 @@ class SplashBrandBadge extends StatelessWidget {
         );
   }
 }
-

@@ -71,10 +71,7 @@ class SplashProgressBar extends StatelessWidget {
                   return currentChild ?? const SizedBox.shrink();
                 },
                 transitionBuilder: (child, animation) {
-                  return FadeTransition(
-                    opacity: animation,
-                    child: child,
-                  );
+                  return FadeTransition(opacity: animation, child: child);
                 },
                 child: Text(
                   message,
@@ -97,4 +94,3 @@ class SplashProgressBar extends StatelessWidget {
     );
   }
 }
-

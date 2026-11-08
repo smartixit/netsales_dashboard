@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -23,8 +24,9 @@ class SoundService {
     double volume = 1.0,
   }) async {
     try {
-      final assetKey =
-          soundPath.startsWith('assets/') ? soundPath : 'assets/$soundPath';
+      final assetKey = soundPath.startsWith('assets/')
+          ? soundPath
+          : 'assets/$soundPath';
       if (_player.playing) {
         await _player.stop();
       }

@@ -52,7 +52,9 @@ class CustomActivityTimeline extends StatelessWidget {
       children: [
         for (var index = 0; index < items.length; index++)
           Padding(
-            padding: EdgeInsets.only(bottom: index == items.length - 1 ? 0 : AppSpacing.md),
+            padding: EdgeInsets.only(
+              bottom: index == items.length - 1 ? 0 : AppSpacing.md,
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -66,10 +68,18 @@ class CustomActivityTimeline extends StatelessWidget {
                         borderRadius: AppRadius.mdRadius,
                       ),
                       alignment: Alignment.center,
-                      child: Icon(items[index].icon, size: 18, color: items[index].tone ?? colors.primary),
+                      child: Icon(
+                        items[index].icon,
+                        size: 18,
+                        color: items[index].tone ?? colors.primary,
+                      ),
                     ),
                     if (index != items.length - 1)
-                      Container(width: 1, height: compact ? 24 : 32, color: colors.outlineVariant),
+                      Container(
+                        width: 1,
+                        height: compact ? 24 : 32,
+                        color: colors.outlineVariant,
+                      ),
                   ],
                 ),
                 AppSpacing.hMd,
@@ -77,18 +87,40 @@ class CustomActivityTimeline extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(items[index].title, style: AppTypography.titleSmall.copyWith(color: colors.onSurface)),
+                      Text(
+                        items[index].title,
+                        style: AppTypography.titleSmall.copyWith(
+                          color: colors.onSurface,
+                        ),
+                      ),
                       AppSpacing.vXxs,
-                      Text(items[index].description, style: AppTypography.bodySmall.copyWith(color: colors.onSurfaceVariant)),
+                      Text(
+                        items[index].description,
+                        style: AppTypography.bodySmall.copyWith(
+                          color: colors.onSurfaceVariant,
+                        ),
+                      ),
                       if (items[index].actor != null) ...[
                         AppSpacing.vXxs,
-                        Text(items[index].actor!, style: AppTypography.caption.copyWith(color: colors.onSurfaceVariant)),
+                        Text(
+                          items[index].actor!,
+                          style: AppTypography.caption.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
                       ],
                     ],
                   ),
                 ),
                 AppSpacing.hSm,
-                Text(items[index].timestamp, maxLines: 2, textAlign: TextAlign.end, style: AppTypography.caption.copyWith(color: colors.onSurfaceVariant)),
+                Text(
+                  items[index].timestamp,
+                  maxLines: 2,
+                  textAlign: TextAlign.end,
+                  style: AppTypography.caption.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),

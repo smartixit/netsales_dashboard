@@ -15,8 +15,7 @@ class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
     return AuthScaffold(
       icon: Icons.key_rounded,
       title: 'استعادة كلمة المرور',
-      subtitle:
-          'أدخل رقم الهاتف المرتبط بحسابك، وسنرسل إليه رمز تحقق لإكمال الاستعادة.',
+      subtitle: 'أدخل رقم الهاتف المرتبط بحسابك، وسنرسل إليه رمز تحقق لإكمال الاستعادة.',
       child: Form(
         key: controller.formKey,
         child: Column(
@@ -27,9 +26,7 @@ class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
               label: 'رقم الهاتف المسجل',
               hint: '77XXXXXXX',
               autofocus: true,
-              validator: FormValidators.phoneValidator(
-                fieldName: 'رقم الهاتف',
-              ),
+              validator: FormValidators.phoneValidator(fieldName: 'رقم الهاتف'),
             ),
             AppSpacing.vXxl,
             Obx(
