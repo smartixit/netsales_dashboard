@@ -39,7 +39,7 @@ class PlatformUsersList extends StatelessWidget {
             );
           }
           final user = controller.users[index];
-          return InkWell(onTap: () => Get.toNamed(AppRoutes.userDetail(user.id)), borderRadius: BorderRadius.circular(AppRadius.md), child: _UserRow(user: user, compact: compact));
+          return InkWell(onTap: () => Get.toNamed<void>(AppRoutes.userDetail(user.id)), borderRadius: BorderRadius.circular(AppRadius.md), child: _UserRow(user: user, compact: compact));
         },
       )),
     ]);

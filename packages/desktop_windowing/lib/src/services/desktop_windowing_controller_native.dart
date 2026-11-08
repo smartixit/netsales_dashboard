@@ -389,13 +389,22 @@ class DesktopWindowingController {
     window.isVisibleInTaskbar = !profile.skipTaskbar;
 
     if (profile.frameless) {
-      window.titleBarStyle = TitleBarStyle.hidden;
-      window.setFrameless(true);
+      if (window.titleBarStyle != TitleBarStyle.hidden) {
+        window.titleBarStyle = TitleBarStyle.hidden;
+      }
+      if (!window.isFrameless) {
+        window.setFrameless(true);
+      }
     } else {
-      window.setFrameless(false);
-      window.titleBarStyle = profile.titleBarStyle == WindowTitleBarStyle.hidden
+      if (window.isFrameless) {
+        window.setFrameless(false);
+      }
+      final targetStyle = profile.titleBarStyle == WindowTitleBarStyle.hidden
           ? TitleBarStyle.hidden
           : TitleBarStyle.normal;
+      if (window.titleBarStyle != targetStyle) {
+        window.titleBarStyle = targetStyle;
+      }
     }
   }
 

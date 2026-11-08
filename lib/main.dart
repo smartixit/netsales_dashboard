@@ -196,10 +196,14 @@ class MyApp extends StatelessWidget {
             getPages: AppPages.routes,
             routingCallback: (routing) {
               if (routing != null) {
-                unawaited(windowing.applyRoute(routing.current));
-                if (Get.isRegistered<PlatformDashboardController>()) {
-                  Get.find<PlatformDashboardController>().setActiveRoute(routing.current);
-                }
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Timer.run(() {
+                    unawaited(windowing.applyRoute(routing.current));
+                    if (Get.isRegistered<PlatformDashboardController>()) {
+                      Get.find<PlatformDashboardController>().setActiveRoute(routing.current);
+                    }
+                  });
+                });
               }
             },
             unknownRoute: GetPage(

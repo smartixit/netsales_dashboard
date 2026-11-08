@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/exceptions/app_exception.dart';
 import 'package:netsales_dashboard/core/routing/app_routes.dart';
@@ -70,7 +71,11 @@ class SplashController extends GetxController {
       if (_isDisposed) return;
 
       log('[SplashController] Startup complete. Navigating to: $destination');
-      await Get.offNamed<void>(destination);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!_isDisposed) {
+          unawaited(Get.offNamed<void>(destination));
+        }
+      });
     } catch (error, stackTrace) {
       final cleanMessage = AppException.sanitizeMessage(error);
       CustomSnackbar.show(
@@ -83,7 +88,11 @@ class SplashController extends GetxController {
         stackTrace: stackTrace,
       );
       if (!_isDisposed) {
-        await Get.offNamed<void>(AppRoutes.login);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!_isDisposed) {
+            unawaited(Get.offNamed<void>(AppRoutes.login));
+          }
+        });
       }
     }
   }

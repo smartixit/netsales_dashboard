@@ -19,7 +19,7 @@ class PlatformUserDetailHeader extends StatelessWidget {
       CustomButton.secondary(
         text: l10n.text('back_to_users'),
         prefix: const Icon(Icons.arrow_back_rounded, size: 18),
-        onPressed: () => Get.offNamed(AppRoutes.users),
+        onPressed: () => Get.offNamed<void>(AppRoutes.users),
       ),
       SizedBox(width: AppSpacing.md),
       Expanded(child: Column(
