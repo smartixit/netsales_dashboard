@@ -6,7 +6,6 @@ import 'package:netsales_dashboard/features/platform_subscriptions/domain/entiti
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_feature_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_features_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_request_entity.dart';
-import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/activate_queued_subscription_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/approve_subscription_request_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/extend_provider_subscription_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_provider_subscriptions_use_case.dart';
@@ -29,7 +28,6 @@ class PlatformSubscriptionsController extends GetxController {
     required ApproveSubscriptionRequestUseCase approveRequest,
     required RejectSubscriptionRequestUseCase rejectRequest,
     required ExtendProviderSubscriptionUseCase extendSubscription,
-    required ActivateQueuedSubscriptionUseCase activateQueued,
   }) : _getPlans = getPlans,
        _getFeatures = getFeatures,
        _getSubscriptions = getSubscriptions,
@@ -40,7 +38,7 @@ class PlatformSubscriptionsController extends GetxController {
        _approveRequest = approveRequest,
        _rejectRequest = rejectRequest,
        _extendSubscription = extendSubscription,
-       _activateQueued = activateQueued;
+;
 
   final GetSubscriptionPlansUseCase _getPlans;
   final GetSubscriptionFeaturesUseCase _getFeatures;
@@ -52,7 +50,6 @@ class PlatformSubscriptionsController extends GetxController {
   final ApproveSubscriptionRequestUseCase _approveRequest;
   final RejectSubscriptionRequestUseCase _rejectRequest;
   final ExtendProviderSubscriptionUseCase _extendSubscription;
-  final ActivateQueuedSubscriptionUseCase _activateQueued;
 
   static const int pageSize = 20;
   final plans = <SubscriptionPlanEntity>[].obs;
@@ -213,12 +210,6 @@ class PlatformSubscriptionsController extends GetxController {
     if (days == null || days < 1 || days > 3650) throw Exception('أدخل عدد أيام من 1 إلى 3650.');
     isMutating.value = true;
     try { await _extendSubscription(subscription.id, days); await loadSubscriptions(); }
-    finally { isMutating.value = false; }
-  }
-
-  Future<void> activateQueued(int networkId) async {
-    isMutating.value = true;
-    try { await _activateQueued(networkId); await loadSubscriptions(); }
     finally { isMutating.value = false; }
   }
 
