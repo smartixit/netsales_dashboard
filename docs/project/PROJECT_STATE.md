@@ -117,3 +117,21 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - No edit, reset-password, session-termination, ban/unban, or delete controls are exposed yet; those operations require their own fully implemented, permission-aware workflows.
 - API dependency: PR #7 (`netsales_api`) scopes device/security-ban relationships to `auth.view` and removes FCM registration tokens from device resources. Merge this API hardening before relying on the detail screen's security boundary.
 - Validation: source and model/route tests committed; current-head CI, full tests, and Windows compile are pending. No rendered visual QA is claimed.
+
+
+## Platform Networks Management — Initial Delivery (2026-11-08)
+
+**Branch:** `feat/platform-networks-management`
+
+- Added the Platform Networks feature using the existing Laravel NetworkResource and network-management routes.
+- Added Domain entity, Data model inheriting that entity, a separate `PlatformNetworksRemoteDataSource` contract and `PlatformNetworksRemoteDataSourceImpl`, repository contract/implementation, and dedicated Use Cases.
+- Added GetX controllers and Bindings for the directory and detail routes.
+- The directory uses server-side search, status filtering, cursor pagination, responsive mobile cards, the shared Syncfusion DataGrid, and the existing export adapter for loaded rows.
+- Network status KPIs are read from the existing permission-aware `dashboard/overview` response; no client-side totals or financial values are calculated.
+- Detail view supports server-backed information editing, approval, and rejection with a required reason. Buttons are shown only when the corresponding `networks.*` permission is present; Laravel remains the security authority.
+- Added Arabic/English localization and route/model tests.
+- Unsupported provider/POS counts, financial metrics, network activity timeline, and create form are not fabricated; they remain outside this initial delivery until their exact data contracts and complete workflows are integrated.
+
+### Verification boundary
+- Source and tests are committed on the feature branch. The GitHub Actions workflow is configured to run the full analyzer, full Flutter tests, and Windows Debug build on the pull request.
+- No local Flutter execution or rendered Windows/Web visual QA is claimed from this execution context.
