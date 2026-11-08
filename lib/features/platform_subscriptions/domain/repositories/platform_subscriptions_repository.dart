@@ -26,7 +26,6 @@ abstract interface class PlatformSubscriptionsRepository {
   Future<ProviderSubscriptionEntity> getProviderSubscription(int id);
   Future<List<SubscriptionFeatureConsumptionEntity>> getConsumptions(int id);
   Future<ProviderSubscriptionEntity> extendSubscription(int id, int additionalDays);
-  Future<ProviderSubscriptionEntity> activateQueuedSubscription(int networkId);
 
   Future<ApiResponse<List<SubscriptionRequestEntity>>> getRequests({
     int? networkId, int? planId, String? status, String? paymentType,
