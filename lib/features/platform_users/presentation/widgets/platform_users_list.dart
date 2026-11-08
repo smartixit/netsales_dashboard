@@ -184,7 +184,7 @@ class _UserRow extends StatelessWidget {
   }
 
   String _initials(String value) {
-    final words = value.trim().split(RegExp(r'\\s+')).where((word) => word.isNotEmpty);
+    final words = value.trim().split(RegExp(r'\s+')).where((word) => word.isNotEmpty);
     final parts = words.take(2).map((word) => String.fromCharCode(word.runes.first));
     return parts.join();
   }
