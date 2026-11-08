@@ -22,6 +22,9 @@ import 'package:netsales_dashboard/features/platform_users/presentation/bindings
 import 'package:netsales_dashboard/features/platform_users/presentation/bindings/platform_user_detail_binding.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/screens/platform_users_screen.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/screens/platform_user_detail_screen.dart';
+import 'package:netsales_dashboard/features/platform_networks/presentation/bindings/platform_networks_binding.dart';
+import 'package:netsales_dashboard/features/platform_networks/presentation/screens/platform_networks_screen.dart';
+import 'package:netsales_dashboard/features/platform_networks/presentation/screens/platform_network_detail_screen.dart';
 import 'package:netsales_dashboard/features/splash/presentation/bindings/splash_binding.dart';
 import 'package:netsales_dashboard/features/splash/presentation/screens/splash_screen.dart';
 import 'package:netsales_dashboard/widgets/dashboard_metrics/showcase/dashboard_metrics_showcase_binding.dart';
@@ -77,7 +80,8 @@ abstract final class AppPages {
         GetPage<dynamic>(name: '/users', page: () => const PlatformUsersScreen(), binding: PlatformUsersBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.usersView)], transition: Transition.fadeIn),
         GetPage<dynamic>(name: '/users/:id', page: () => const PlatformUserDetailScreen(), binding: PlatformUserDetailBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.usersView)], transition: Transition.fadeIn),
         _module('/roles', 'roles', AppPermissions.rolesView),
-        _module('/networks', 'networks', AppPermissions.networksView),
+        GetPage<dynamic>(name: '/networks', page: () => const PlatformNetworksScreen(), binding: PlatformNetworksBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.networksView)], transition: Transition.fadeIn),
+        GetPage<dynamic>(name: '/networks/:id', page: () => const PlatformNetworkDetailScreen(), binding: PlatformNetworksBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.networksView)], transition: Transition.fadeIn),
         _module('/pos', 'pos', AppPermissions.posView),
         _module('/geography', 'geography', AppPermissions.geographyView),
         _module('/subscription-plans', 'subscription_plans', AppPermissions.subscriptionsView),
