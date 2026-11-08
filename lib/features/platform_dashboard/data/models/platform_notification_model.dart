@@ -1,24 +1,16 @@
 import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_notification_entity.dart';
 
-/// نموذج الإشعار كما يصل من NotificationResource.
-class PlatformNotificationModel {
+/// نموذج الإشعار؛ يرث كيان Domain مباشرة.
+class PlatformNotificationModel extends PlatformNotificationEntity {
   const PlatformNotificationModel({
-    required this.id,
-    required this.title,
-    required this.message,
-    required this.isRead,
-    required this.type,
-    required this.typeLabel,
-    required this.createdAt,
+    required super.id,
+    required super.title,
+    required super.message,
+    required super.isRead,
+    super.type,
+    super.typeLabel,
+    super.createdAt,
   });
-
-  final int id;
-  final String title;
-  final String message;
-  final bool isRead;
-  final String? type;
-  final String? typeLabel;
-  final String? createdAt;
 
   factory PlatformNotificationModel.fromJson(Map<String, dynamic> json) {
     return PlatformNotificationModel(
@@ -28,22 +20,13 @@ class PlatformNotificationModel {
       isRead: json['is_read'] == true || json['is_read'] == 1,
       type: json['notification_type']?.toString(),
       typeLabel: json['notification_type_label']?.toString(),
-      createdAt: json['created_at']?.toString(),
-    );
-  }
-
-  PlatformNotificationEntity toEntity() {
-    return PlatformNotificationEntity(
-      id: id,
-      title: title,
-      message: message,
-      isRead: isRead,
-      type: type,
-      typeLabel: typeLabel,
-      createdAt: DateTime.tryParse(createdAt ?? ''),
+      createdAt: _toDateTime(json['created_at']),
     );
   }
 
   static int _toInt(dynamic value) =>
       value is num ? value.toInt() : int.tryParse(value?.toString() ?? '') ?? 0;
+
+  static DateTime? _toDateTime(dynamic value) =>
+      value == null ? null : DateTime.tryParse(value.toString());
 }
