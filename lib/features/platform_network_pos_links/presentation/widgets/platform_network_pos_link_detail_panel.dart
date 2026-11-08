@@ -33,6 +33,22 @@ class PlatformNetworkPosLinkDetailPanel extends StatelessWidget {
           ),
         ],
       ),
+      SizedBox(height: AppSpacing.sm),
+      Text(
+        '${l10n.text('link_reference')}: #${link.id}',
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+      ),
+      if (link.createdAt != null) ...[
+        SizedBox(height: AppSpacing.xs),
+        Text(
+          '${l10n.text('created_at')}: ${link.createdAt!.toLocal()}',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
       SizedBox(height: AppSpacing.lg),
       Row(
         children: [
