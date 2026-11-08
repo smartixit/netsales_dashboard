@@ -51,6 +51,8 @@ class _CreateContent extends StatelessWidget {
         prefixIcon: Icons.router_outlined,
         isRequired: true,
         valueListenable: controller.selectedNetworkListenable,
+        onRemoteSearch: controller.searchNetworkOptions,
+        isSearchingListenable: controller.networkOptionsSearching,
         items: controller.networks
             .map(
               (network) => DropdownItem<int>(
@@ -74,6 +76,8 @@ class _CreateContent extends StatelessWidget {
         prefixIcon: Icons.storefront_outlined,
         isRequired: true,
         valueListenable: controller.selectedPosListenable,
+        onRemoteSearch: controller.searchPosOptions,
+        isSearchingListenable: controller.posOptionsSearching,
         items: controller.pointsOfSale
             .map(
               (pos) => DropdownItem<int>(
