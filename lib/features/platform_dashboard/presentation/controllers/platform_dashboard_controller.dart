@@ -17,6 +17,7 @@ import 'package:netsales_dashboard/widgets/dashboard_extras/custom_notification_
 import 'package:netsales_dashboard/widgets/data_grid/adapters/net_sales_data_grid_source.dart';
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_column.dart';
 import 'package:netsales_dashboard/widgets/dialogs/custom_dialog.dart';
+import 'package:netsales_dashboard/widgets/dialogs/custom_animation_overlay.dart';
 import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
 
 class PlatformDashboardController extends GetxController {
@@ -144,24 +145,56 @@ class PlatformDashboardController extends GetxController {
   }
 
   Future<void> markRead(int id) async {
+    final arabic = LocaleService.to.isArabic;
     try {
+      await CustomAnimationOverlay.showLoading(
+        message: arabic ? 'جارٍ تحديث الإشعار...' : 'Updating notification...',
+      );
       await markNotificationRead(id);
       notifications.removeWhere((item) => item.id == id);
       unreadCount.value = unreadCount.value > 0 ? unreadCount.value - 1 : 0;
       _syncNotificationItems();
-    } catch (_) {
+      await CustomAnimationOverlay.showSuccess(
+        message: arabic ? 'تم تحديد الإشعار كمقروء' : 'Notification marked as read',
+      );
+    } catch (error) {
       await loadNotifications();
+      CustomSnackbar.show(
+        title: arabic ? 'تعذر تحديث الإشعار' : 'Unable to update notification',
+        message: error.toString(),
+        type: SnackType.error,
+      );
+    } finally {
+      if (CustomAnimationOverlay.isShowing) {
+        await CustomAnimationOverlay.hide();
+      }
     }
   }
 
   Future<void> markAllRead() async {
+    final arabic = LocaleService.to.isArabic;
     try {
+      await CustomAnimationOverlay.showLoading(
+        message: arabic ? 'جارٍ تحديث الإشعارات...' : 'Updating notifications...',
+      );
       await markAllNotificationsRead();
       notifications.clear();
       notificationItems.clear();
       unreadCount.value = 0;
-    } catch (_) {
+      await CustomAnimationOverlay.showSuccess(
+        message: arabic ? 'تم تحديد جميع الإشعارات كمقروءة' : 'All notifications marked as read',
+      );
+    } catch (error) {
       await loadNotifications();
+      CustomSnackbar.show(
+        title: arabic ? 'تعذر تحديث الإشعارات' : 'Unable to update notifications',
+        message: error.toString(),
+        type: SnackType.error,
+      );
+    } finally {
+      if (CustomAnimationOverlay.isShowing) {
+        await CustomAnimationOverlay.hide();
+      }
     }
   }
 
@@ -174,15 +207,26 @@ class PlatformDashboardController extends GetxController {
       cancelLabel: arabic ? 'إلغاء' : 'Cancel',
     );
     if (confirmed != true) return;
+    final arabic = LocaleService.to.isArabic;
     try {
+      await CustomAnimationOverlay.showLoading(
+        message: arabic ? 'جارٍ إنهاء الجلسة...' : 'Ending session...',
+      );
       await logoutUseCase.execute();
+      await CustomAnimationOverlay.showSuccess(
+        message: arabic ? 'تم تسجيل الخروج بنجاح' : 'You have signed out successfully',
+      );
       await Get.offAllNamed<void>(AppRoutes.login);
     } catch (error) {
       CustomSnackbar.show(
-        title: LocaleService.to.isArabic ? 'تعذر تسجيل الخروج' : 'Unable to sign out',
+        title: arabic ? 'تعذر تسجيل الخروج' : 'Unable to sign out',
         message: error.toString(),
         type: SnackType.error,
       );
+    } finally {
+      if (CustomAnimationOverlay.isShowing) {
+        await CustomAnimationOverlay.hide();
+      }
     }
   }
 

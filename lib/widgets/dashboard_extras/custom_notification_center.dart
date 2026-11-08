@@ -7,7 +7,8 @@ import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
-import 'package:netsales_dashboard/widgets/dashboard_extras/custom_status_banner.dart';
+import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
+import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_card.dart';
 import 'package:netsales_dashboard/widgets/dialogs/custom_dialog.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_empty_state.dart';
 
@@ -148,13 +149,22 @@ class _NotificationPanel extends StatelessWidget {
         ),
         AppSpacing.vSm,
         if (isLoading)
-          const LinearProgressIndicator()
+          Column(
+            children: [
+              for (var index = 0; index < 3; index++) ...[
+                const CustomSkeletonCard(height: 68),
+                if (index < 2) AppSpacing.vSm,
+              ],
+            ],
+          )
         else if (hasError)
-          CustomStatusBanner(
+          CustomErrorState(
             title: l10n.text('network_error'),
-            action: CustomButton.text(text: l10n.text('refresh'), onPressed: onRefresh),
-            tone: CustomStatusBannerTone.danger,
-            compact: true,
+            subtitle: l10n.text('network_error'),
+            retryLabel: l10n.text('refresh'),
+            onRetry: onRefresh,
+            type: ErrorStateType.connection,
+            variant: ErrorStateVariant.compact,
           )
         else if (items.isEmpty)
           CustomEmptyState.compact(title: l10n.text('notifications_empty'), icon: Icons.notifications_off_outlined)
