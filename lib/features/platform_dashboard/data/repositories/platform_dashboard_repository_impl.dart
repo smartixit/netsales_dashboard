@@ -4,7 +4,7 @@ import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/p
 import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_notification_entity.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/repositories/platform_dashboard_repository.dart';
 
-/// يحول نماذج Data إلى كيانات Domain قبل إعادتها إلى حالات الاستخدام.
+/// يعيد نماذج Data مباشرة لأنها ترث كيانات Domain المطابقة.
 class PlatformDashboardRepositoryImpl implements PlatformDashboardRepository {
   const PlatformDashboardRepositoryImpl(this._remote);
 
@@ -13,17 +13,15 @@ class PlatformDashboardRepositoryImpl implements PlatformDashboardRepository {
   @override
   Future<PlatformDashboardOverviewEntity> getOverview({
     String period = '30d',
-  }) async {
-    final model = await _remote.getOverview(period: period);
-    return model.toEntity();
+  }) {
+    return _remote.getOverview(period: period);
   }
 
   @override
   Future<List<PlatformNotificationEntity>> getUnreadNotifications({
     int limit = 6,
   }) async {
-    final models = await _remote.getUnreadNotifications(limit: limit);
-    return models.map((model) => model.toEntity()).toList(growable: false);
+    return _remote.getUnreadNotifications(limit: limit);
   }
 
   @override
@@ -45,7 +43,6 @@ class PlatformDashboardRepositoryImpl implements PlatformDashboardRepository {
   Future<List<PlatformActivityEntity>> getRecentActivity({
     int limit = 6,
   }) async {
-    final models = await _remote.getRecentActivity(limit: limit);
-    return models.map((model) => model.toEntity()).toList(growable: false);
+    return _remote.getRecentActivity(limit: limit);
   }
 }
