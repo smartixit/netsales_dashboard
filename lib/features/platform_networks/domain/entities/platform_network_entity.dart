@@ -19,6 +19,7 @@ class PlatformNetworkEntity {
     this.approvedAt,
     this.rejectedAt,
     this.rejectionReason,
+    this.statusLabel,
     this.createdAt,
     this.updatedAt,
   });
