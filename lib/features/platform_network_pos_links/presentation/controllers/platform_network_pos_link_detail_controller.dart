@@ -6,12 +6,10 @@ import 'package:netsales_dashboard/features/platform_network_pos_links/domain/us
 
 class PlatformNetworkPosLinkDetailController extends GetxController {
   PlatformNetworkPosLinkDetailController({
-    required GetPlatformNetworkPosLinkDetailUseCase getLink,
-    required UpdatePlatformNetworkPosLinkStatusUseCase updateStatus,
-    required DeletePlatformNetworkPosLinkUseCase deleteLink,
-  }) : _getLink = getLink,
-       _updateStatus = updateStatus,
-       _deleteLink = deleteLink;
+    required this._getLink,
+    required this._updateStatus,
+    required this._deleteLink,
+  });
 
   final GetPlatformNetworkPosLinkDetailUseCase _getLink;
   final UpdatePlatformNetworkPosLinkStatusUseCase _updateStatus;

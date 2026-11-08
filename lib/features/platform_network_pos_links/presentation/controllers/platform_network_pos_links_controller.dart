@@ -19,18 +19,13 @@ import 'package:netsales_dashboard/widgets/data_grid/adapters/app_data_grid_expo
 
 class PlatformNetworkPosLinksController extends GetxController {
   PlatformNetworkPosLinksController({
-    required GetPlatformNetworkPosLinksUseCase getLinks,
-    required CreatePlatformNetworkPosLinkUseCase createLink,
-    required UpdatePlatformNetworkPosLinkStatusUseCase updateStatus,
-    required DeletePlatformNetworkPosLinkUseCase deleteLink,
-    required GetPlatformNetworksUseCase getNetworks,
-    required GetPlatformPosListUseCase getPos,
-  }) : _getLinks = getLinks,
-       _createLink = createLink,
-       _updateStatus = updateStatus,
-       _deleteLink = deleteLink,
-       _getNetworks = getNetworks,
-       _getPos = getPos;
+    required this._getLinks,
+    required this._createLink,
+    required this._updateStatus,
+    required this._deleteLink,
+    required this._getNetworks,
+    required this._getPos,
+  });
 
   final GetPlatformNetworkPosLinksUseCase _getLinks;
   final CreatePlatformNetworkPosLinkUseCase _createLink;

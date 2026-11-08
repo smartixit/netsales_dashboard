@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/controllers/platform_network_pos_links_controller.dart';
-import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/dialogs/custom_dialog.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_dropdown.dart';
 import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';

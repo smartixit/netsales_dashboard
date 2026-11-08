@@ -10,7 +10,7 @@ import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/dialogs/custom_animation_overlay.dart';
 import 'package:netsales_dashboard/widgets/dialogs/custom_dialog.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
-import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_feed.dart';
+import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
 import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
 import 'package:netsales_dashboard/widgets/dashboard_layout/src/widgets/dashboard_page_header.dart';
 
@@ -26,7 +26,7 @@ class PlatformNetworkPosLinkDetailScreen
       padding: EdgeInsets.all(AppSpacing.lg),
       child: Obx(() {
         final link = controller.link.value;
-        if (controller.isLoading.value) return const CustomSkeletonFeed(count: 3);
+        if (controller.isLoading.value) return const CustomSkeletonGrid(count: 3,);
         if (link == null) {
           return CustomErrorState.boxed(
             title: l10n.text('network_pos_link_detail_error'),
@@ -104,7 +104,7 @@ class PlatformNetworkPosLinkDetailScreen
     ).showDialog();
     if (accepted != true) return;
     final removed = await _runMutation(l10n, controller.unlink, l10n.text('network_pos_link_removed'));
-    if (removed) Get.offNamed<void>(AppRoutes.networkPosLinks);
+    if (removed) await Get.offNamed<void>(AppRoutes.networkPosLinks);
   }
 
   Future<bool> _runMutation(

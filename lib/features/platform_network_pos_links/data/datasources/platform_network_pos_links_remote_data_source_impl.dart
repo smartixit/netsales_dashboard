@@ -24,8 +24,8 @@ class PlatformNetworkPosLinksRemoteDataSourceImpl
     fromJson: (json) => PlatformNetworkPosLinkModel.fromJson(_asJsonMap(json)),
     queryParameters: {
       if (search != null && search.trim().isNotEmpty) 'search': search.trim(),
-      if (networkId != null) 'network_id': networkId,
-      if (posId != null) 'pos_id': posId,
+      'network_id': ?networkId,
+      'pos_id': ?posId,
       if (status != null && status.isNotEmpty) 'status': status,
     },
     cursor: cursor,
