@@ -19,7 +19,6 @@ import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_text_field.dart';
 import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
-import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart' show SnackType;
 
 enum SubscriptionWorkspaceSection { plans, subscriptions, requests }
 
@@ -154,7 +153,16 @@ class PlatformSubscriptionsScreen extends GetView<PlatformSubscriptionsControlle
           itemBuilder: (context, index) {
             if (index == controller.subscriptions.length) return Center(child: CustomButton.outline(text: l10n.text('load_more'), loading: controller.subscriptionsLoading.value, onPressed: controller.subscriptionsLoading.value ? null : () => controller.loadSubscriptions(append: true)));
             final item = controller.subscriptions[index];
-            return ProviderSubscriptionCard(subscription: item, l10n: l10n, canEdit: canEdit, onExtend: () => _extend(context, l10n, item));
+            return ProviderSubscriptionCard(
+              subscription: item,
+              l10n: l10n,
+              canEdit: canEdit,
+              consumptions: controller.consumptionsBySubscription[item.id],
+              isLoadingConsumptions: controller.loadingConsumptionIds.contains(item.id),
+              onExpand: (expanded) { if (expanded) controller.loadConsumptions(item.id); },
+              onExtend: () => _extend(context, l10n, item),
+              onActivateQueued: () => _activateQueued(context, l10n, item),
+            );
           },
         );
       }),
@@ -273,6 +281,23 @@ class PlatformSubscriptionsScreen extends GetView<PlatformSubscriptionsControlle
     if (accepted != true) return;
     try { await controller.reject(request); CustomSnackbar.show(title: l10n.text('success'), message: l10n.text('subscription_request_rejected'), type: SnackType.success); }
     catch (e) { CustomSnackbar.show(title: l10n.text('error'), message: e.toString(), type: SnackType.error); }
+  }
+
+  Future<void> _activateQueued(BuildContext context, AppLocalizations l10n, ProviderSubscriptionEntity item) async {
+    final accepted = await CustomDialog.confirmation(
+      title: l10n.text('activate_queued_subscription'),
+      message: l10n.text('activate_queued_subscription_confirmation'),
+      confirmLabel: l10n.text('confirm'),
+      cancelLabel: l10n.text('cancel'),
+      onConfirm: () => Get.back<bool>(result: true),
+    ).showDialog(context);
+    if (accepted != true) return;
+    try {
+      await controller.activateQueued(item.networkId);
+      CustomSnackbar.show(title: l10n.text('success'), message: l10n.text('queued_subscription_activated'), type: SnackType.success);
+    } catch (error) {
+      CustomSnackbar.show(title: l10n.text('error'), message: error.toString(), type: SnackType.error);
+    }
   }
 
   Future<void> _extend(BuildContext context, AppLocalizations l10n, ProviderSubscriptionEntity item) async {
