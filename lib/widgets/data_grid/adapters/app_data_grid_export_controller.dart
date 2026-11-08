@@ -54,8 +54,10 @@ class AppDataGridExportController({IFileExportService? fileExportService})
     bool canRepeatHeaders = true,
   }) async {
     final state = gridKey.currentState;
-    if (state == null)
+    if (state == null) {
       return FileExportResult.failure('DataGrid is not mounted.');
+    }
+
     try {
       final document = state.exportToPdfDocument(
         rows: rows,
@@ -67,7 +69,8 @@ class AppDataGridExportController({IFileExportService? fileExportService})
       );
       final bytes = await document.save();
       document.dispose();
-      return FileExportService.instance.saveFile(
+
+      return await _fileExportService.saveFile(
         bytes: Uint8List.fromList(bytes),
         fileName: fileName,
         extension: 'pdf',
