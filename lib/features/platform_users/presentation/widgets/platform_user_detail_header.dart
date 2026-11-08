@@ -16,7 +16,7 @@ class PlatformUserDetailHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
     children: [
-      CustomButton.tertiary(
+      CustomButton.secondary(
         text: l10n.text('back_to_users'),
         prefix: const Icon(Icons.arrow_back_rounded, size: 18),
         onPressed: () => Get.offNamed(AppRoutes.users),
