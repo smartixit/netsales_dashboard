@@ -10,6 +10,7 @@ import '../theme/dashboard_layout_theme.dart';
 import '../widgets/dashboard_page_header.dart';
 import '../widgets/dashboard_sidebar.dart';
 import '../widgets/dashboard_topbar.dart';
+import '../../desktop_title_bar.dart';
 
 class DashboardShell extends StatelessWidget {
   const DashboardShell({
@@ -74,69 +75,76 @@ class DashboardShell extends StatelessWidget {
         backgroundColor: theme.contentBackground,
         drawer: compact ? Drawer(width: config.expandedSidebarWidth, child: SafeArea(child: sidebar)) : null,
         body: SafeArea(
-          child: Row(
+          child: Column(
             children: [
-              if (!compact)
-                AnimatedContainer(
-                  duration: theme.motionDuration,
-                  curve: theme.motionCurve,
-                  width: effectiveCollapsed ? config.collapsedSidebarWidth : config.expandedSidebarWidth,
-                  child: sidebar,
-                ),
+              DesktopTitleBar(backgroundColor: theme.topbarBackground),
               Expanded(
-                child: Column(
+                child: Row(
                   children: [
-                    DashboardTopbar(
-                      height: config.topbarHeight,
-                      leading: compact
-                          ? Builder(
-                              builder: (context) => CustomButton.icon(
-                                icon: Icons.menu_rounded,
-                                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-                                onPressed: () => Scaffold.of(context).openDrawer(),
-                                dimension: 40,
-                              ),
-                            )
-                          : topbarLeading ??
-                              (onSidebarCollapsedChanged == null
-                                  ? null
-                                  : CustomButton.icon(
-                                      icon: effectiveCollapsed ? Icons.menu_open_rounded : Icons.menu_rounded,
-                                      tooltip: effectiveCollapsed ? expandSidebarTooltip : collapseSidebarTooltip,
-                                      onPressed: () => onSidebarCollapsedChanged!(!effectiveCollapsed),
-                                      dimension: 40,
-                                    )),
-                      search: search,
-                      notifications: notifications,
-                      actions: topbarActions,
-                      profile: profile,
-                      onProfileTap: onProfileTap,
-                    ),
+                    if (!compact)
+                      AnimatedContainer(
+                        duration: theme.motionDuration,
+                        curve: theme.motionCurve,
+                        width: effectiveCollapsed ? config.collapsedSidebarWidth : config.expandedSidebarWidth,
+                        child: sidebar,
+                      ),
                     Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.all(config.contentPadding ?? AppBreakpoints.screenMargin(context)),
-                        child: Align(
-                          alignment: AlignmentDirectional.topCenter,
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: config.maxContentWidth ?? AppBreakpoints.maxDashboardContentWidth),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  if (config.showBreadcrumbs && breadcrumbs.isNotEmpty)
-                                    _BreadcrumbRow(breadcrumbs: breadcrumbs, onTap: onBreadcrumbTap),
-                                  if (pageHeader != null) ...[
-                                    AppSpacing.vMd,
-                                    DashboardPageHeader(data: pageHeader!),
-                                    AppSpacing.vXl,
-                                  ],
-                                  Expanded(child: content ?? child),
-                                ],
+                      child: Column(
+                        children: [
+                          DashboardTopbar(
+                            height: config.topbarHeight,
+                            leading: compact
+                                ? Builder(
+                                    builder: (context) => CustomButton.icon(
+                                      icon: Icons.menu_rounded,
+                                      tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+                                      onPressed: () => Scaffold.of(context).openDrawer(),
+                                      dimension: 40,
+                                    ),
+                                  )
+                                : topbarLeading ??
+                                    (onSidebarCollapsedChanged == null
+                                        ? null
+                                        : CustomButton.icon(
+                                            icon: effectiveCollapsed ? Icons.menu_open_rounded : Icons.menu_rounded,
+                                            tooltip: effectiveCollapsed ? expandSidebarTooltip : collapseSidebarTooltip,
+                                            onPressed: () => onSidebarCollapsedChanged!(!effectiveCollapsed),
+                                            dimension: 40,
+                                          )),
+                            search: search,
+                            notifications: notifications,
+                            actions: topbarActions,
+                            profile: profile,
+                            onProfileTap: onProfileTap,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.all(config.contentPadding ?? AppBreakpoints.screenMargin(context)),
+                              child: Align(
+                                alignment: AlignmentDirectional.topCenter,
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(maxWidth: config.maxContentWidth ?? AppBreakpoints.maxDashboardContentWidth),
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        if (config.showBreadcrumbs && breadcrumbs.isNotEmpty)
+                                          _BreadcrumbRow(breadcrumbs: breadcrumbs, onTap: onBreadcrumbTap),
+                                        if (pageHeader != null) ...[
+                                          AppSpacing.vMd,
+                                          DashboardPageHeader(data: pageHeader!),
+                                          AppSpacing.vXl,
+                                        ],
+                                        Expanded(child: content ?? child),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ],

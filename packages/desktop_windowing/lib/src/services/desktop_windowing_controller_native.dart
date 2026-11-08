@@ -102,6 +102,7 @@ class DesktopWindowingController {
     );
 
     _applyConstraints(initialProfile, workArea);
+    _applyInitialWindowChrome(initialProfile);
     _applyProfilePresentation(initialProfile);
     window.bounds = bounds.toNative();
     _activeProfileId = initialProfile.id;
@@ -196,7 +197,7 @@ class DesktopWindowingController {
     _pendingProfileId = profileId;
 
     if (!config.animation.enabled) {
-      window.bounds = target.toNative();
+      await _safeSetBounds(target);
       _applyConstraints(profile, workArea);
       _applyProfilePresentation(profile);
       _activeProfileId = profileId;
@@ -212,11 +213,20 @@ class DesktopWindowingController {
     return _animateBounds(current, target, profileId);
   }
 
+  Future<void> _safeSetBounds(Rect bounds) async {
+    final window = _window;
+    if (window == null) return;
+    if (SchedulerBinding.instance.schedulerPhase != SchedulerPhase.idle) {
+      await SchedulerBinding.instance.endOfFrame;
+    }
+    window.bounds = bounds.toNative();
+  }
+
   Future<WindowOperationResult> _animateBounds(
     Rect start,
     Rect target,
     String profileId,
-  ) {
+  ) async {
     final window = _window!;
     final completer = Completer<WindowOperationResult>();
     _transitionCompleter = completer;
@@ -226,13 +236,24 @@ class DesktopWindowingController {
     _transitionDuration = config.animation.duration;
 
     // animateBounds returns false on platforms without native frame animation.
-    // In that case the one package-owned ticker performs a controlled fallback.
     _nativeAnimation =
         config.animation.preferNative && window.animateBounds(target.toNative());
 
     if (!_nativeAnimation) {
-      window.bounds = start.toNative();
+      // Platforms without native OS window animation (Windows/Linux) must not
+      // attempt frame-by-frame bounds manipulation via a Flutter Ticker, because
+      // SetWindowPos dispatches Win32 messages re-entrantly into Flutter's WndProc
+      // during transientCallbacks, triggering scheduler assertion failures.
+      await _safeSetBounds(target);
+      final profile = config.profiles[profileId];
+      if (profile != null) {
+        _applyConstraints(profile, _workAreaFor(target));
+        _applyProfilePresentation(profile);
+      }
+      _finishTransition(WindowOperationStatus.completed);
+      return completer.future;
     }
+
     _ticker.start();
     return completer.future;
   }
@@ -255,26 +276,12 @@ class DesktopWindowingController {
       if (_nearlyEqual(actual, target)) {
         _finishTransition(WindowOperationStatus.completed);
       } else if (elapsed >= elapsedLimit) {
-        window.bounds = target.toNative();
         _finishTransition(WindowOperationStatus.completed);
       }
       return;
     }
 
-    final progress = (elapsed.inMicroseconds /
-            _transitionDuration.inMicroseconds)
-        .clamp(0.0, 1.0)
-        .toDouble();
-    final easedProgress = config.animation.curve.transform(progress);
-    final nextBounds = Rect.lerp(start, target, easedProgress) ?? target;
-
-    _lastExpectedBounds = nextBounds;
-    window.bounds = nextBounds.toNative();
-
-    if (progress >= 1) {
-      window.bounds = target.toNative();
-      _finishTransition(WindowOperationStatus.completed);
-    }
+    _finishTransition(WindowOperationStatus.completed);
   }
 
   void _handleWindowEvent(WindowEvent event) {
@@ -380,6 +387,20 @@ class DesktopWindowingController {
     window.isResizable = profile.resizable && config.resizable;
   }
 
+  void _applyInitialWindowChrome(WindowProfile profile) {
+    final window = _window;
+    if (window == null) return;
+    if (profile.frameless) {
+      window.titleBarStyle = TitleBarStyle.hidden;
+      window.setFrameless(true);
+    } else {
+      window.setFrameless(false);
+      window.titleBarStyle = profile.titleBarStyle == WindowTitleBarStyle.hidden
+          ? TitleBarStyle.hidden
+          : TitleBarStyle.normal;
+    }
+  }
+
   void _applyProfilePresentation(WindowProfile profile) {
     final window = _window;
     if (window == null) return;
@@ -387,25 +408,6 @@ class DesktopWindowingController {
     window.isResizable = profile.resizable && config.resizable;
     window.isAlwaysOnTop = profile.alwaysOnTop;
     window.isVisibleInTaskbar = !profile.skipTaskbar;
-
-    if (profile.frameless) {
-      if (window.titleBarStyle != TitleBarStyle.hidden) {
-        window.titleBarStyle = TitleBarStyle.hidden;
-      }
-      if (!window.isFrameless) {
-        window.setFrameless(true);
-      }
-    } else {
-      if (window.isFrameless) {
-        window.setFrameless(false);
-      }
-      final targetStyle = profile.titleBarStyle == WindowTitleBarStyle.hidden
-          ? TitleBarStyle.hidden
-          : TitleBarStyle.normal;
-      if (window.titleBarStyle != targetStyle) {
-        window.titleBarStyle = targetStyle;
-      }
-    }
   }
 
   Rect _workAreaFor(Rect currentBounds) {
@@ -445,11 +447,27 @@ class DesktopWindowingController {
     ).toDouble();
   }
 
+  bool get isMaximized => _window?.isMaximized ?? false;
+
   void maximize() => _window?.maximize();
 
   void minimize() => _window?.minimize();
 
   void restore() => _window?.restore();
+
+  void toggleMaximize() {
+    final window = _window;
+    if (window == null) return;
+    if (window.isMaximized) {
+      window.restore();
+    } else {
+      window.maximize();
+    }
+  }
+
+  void startDragging() => _window?.startDragging();
+
+  void close() => _window?.close();
 
   void setFullscreen(bool enabled) {
     final window = _window;

@@ -36,11 +36,19 @@ class DesktopWindowingController {
         status: WindowOperationStatus.unsupportedPlatform,
       );
 
+  bool get isMaximized => false;
+
   void maximize() {}
 
   void minimize() {}
 
   void restore() {}
+
+  void toggleMaximize() {}
+
+  void startDragging() {}
+
+  void close() {}
 
   void setFullscreen(bool enabled) {}
 

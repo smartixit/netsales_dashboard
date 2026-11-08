@@ -28,8 +28,8 @@ const WindowingConfig desktopWindowingConfig = WindowingConfig(
       resizable: true,
       alwaysOnTop: false,
       skipTaskbar: false,
-      frameless: false,
-      titleBarStyle: WindowTitleBarStyle.normal,
+      frameless: true,
+      titleBarStyle: WindowTitleBarStyle.hidden,
     ),
     'dashboard': WindowProfile(
       id: 'dashboard',
@@ -41,8 +41,8 @@ const WindowingConfig desktopWindowingConfig = WindowingConfig(
       resizable: true,
       alwaysOnTop: false,
       skipTaskbar: false,
-      frameless: false,
-      titleBarStyle: WindowTitleBarStyle.normal,
+      frameless: true,
+      titleBarStyle: WindowTitleBarStyle.hidden,
     ),
   },
   routeProfiles: {
@@ -82,10 +82,7 @@ const WindowingConfig desktopWindowingConfig = WindowingConfig(
     '/dev/data-grid': 'dashboard',
   },
   animation: WindowAnimationConfig(
-    enabled: true,
-    preferNative: true,
-    duration: Duration(milliseconds: 220),
-    curve: Curves.easeInOutCubic,
+    enabled: false,
   ),
   hideUntilReady: true,
   resizable: true,

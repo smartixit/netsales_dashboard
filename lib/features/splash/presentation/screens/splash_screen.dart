@@ -81,7 +81,7 @@ class SplashScreen extends GetView<SplashController> {
                           letterSpacing: -0.6,
                         ),
                       ),
-                      AppSpacing.vXs,
+                      AppSpacing.vMd,
                       Text(
                         'المنصة السحابية الموحدة لإدارة الأعمال والعمليات',
                         textAlign: TextAlign.center,

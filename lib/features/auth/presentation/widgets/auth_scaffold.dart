@@ -6,6 +6,7 @@ import 'package:netsales_dashboard/core/themes/app_gradients.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
 import 'package:netsales_dashboard/core/themes/app_breakpoints.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_theme_toggle_button.dart';
+import 'package:netsales_dashboard/widgets/dashboard_layout/desktop_title_bar.dart';
 
 /// Shared visual frame for the Dashboard authentication journeys.
 ///
@@ -34,25 +35,32 @@ class AuthScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: colors.surface,
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final showBrandPanel =
-                constraints.maxWidth >= AppBreakpoints.tabletMax;
+        child: Column(
+          children: [
+            const DesktopTitleBar(),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final showBrandPanel =
+                      constraints.maxWidth >= AppBreakpoints.tabletMax;
 
-            if (showBrandPanel) {
-              return Row(
-                children: [
-                  const Expanded(flex: 5, child: _AuthBrandPanel()),
-                  Expanded(
-                    flex: 7,
-                    child: _buildForm(context, compactBrand: false),
-                  ),
-                ],
-              );
-            }
+                  if (showBrandPanel) {
+                    return Row(
+                      children: [
+                        const Expanded(flex: 5, child: _AuthBrandPanel()),
+                        Expanded(
+                          flex: 7,
+                          child: _buildForm(context, compactBrand: false),
+                        ),
+                      ],
+                    );
+                  }
 
-            return _buildForm(context, compactBrand: true);
-          },
+                  return _buildForm(context, compactBrand: true);
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

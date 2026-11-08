@@ -155,6 +155,7 @@ void main() async {
   final windowing = DesktopWindowingController(config: desktopWindowingConfig);
   try {
     await windowing.initialize();
+    Get.put<DesktopWindowingController>(windowing, permanent: true);
   } catch (error, stackTrace) {
     log('Desktop window initialization failed: $error', stackTrace: stackTrace);
   }
@@ -196,14 +197,10 @@ class MyApp extends StatelessWidget {
             getPages: AppPages.routes,
             routingCallback: (routing) {
               if (routing != null) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  Timer.run(() {
-                    unawaited(windowing.applyRoute(routing.current));
-                    if (Get.isRegistered<PlatformDashboardController>()) {
-                      Get.find<PlatformDashboardController>().setActiveRoute(routing.current);
-                    }
-                  });
-                });
+                unawaited(windowing.applyRoute(routing.current));
+                if (Get.isRegistered<PlatformDashboardController>()) {
+                  Get.find<PlatformDashboardController>().setActiveRoute(routing.current);
+                }
               }
             },
             unknownRoute: GetPage(
