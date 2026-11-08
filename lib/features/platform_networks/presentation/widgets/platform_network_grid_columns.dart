@@ -96,7 +96,7 @@ abstract final class PlatformNetworkGridColumns {
   ];
 
   static String _initials(String name) {
-    final words = name.trim().split(RegExp(r'\\s+')).where((word) => word.isNotEmpty);
+    final words = name.trim().split(RegExp(r'\s+')).where((word) => word.isNotEmpty);
     return words.take(2).map((word) => String.fromCharCode(word.runes.first)).join();
   }
 
