@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 
 void main() {
   testWidgets('localization resolves Arabic and English labels from active locale', (tester) async {
-    await tester.pumpWidget(const MaterialApp(
-      locale: Locale('ar'),
-      supportedLocales: [Locale('ar'), Locale('en')],
-      home: _LocalizedProbe(),
-    ));
+    Widget app(Locale locale) => MaterialApp(
+      locale: locale,
+      supportedLocales: const [Locale('ar'), Locale('en')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      home: const _LocalizedProbe(),
+    );
+    await tester.pumpWidget(app(const Locale('ar')));
     expect(find.text('نظرة عامة'), findsOneWidget);
-    await tester.pumpWidget(const MaterialApp(
-      locale: Locale('en'),
-      supportedLocales: [Locale('ar'), Locale('en')],
-      home: _LocalizedProbe(),
-    ));
+    await tester.pumpWidget(app(const Locale('en')));
     expect(find.text('Overview'), findsOneWidget);
   });
 }

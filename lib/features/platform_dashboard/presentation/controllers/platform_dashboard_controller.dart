@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/routing/app_routes.dart';
 import 'package:netsales_dashboard/core/services/permission_service.dart';
 import 'package:netsales_dashboard/core/services/locale_service.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/presentation/navigation/platform_navigation_registry.dart';
 import 'package:netsales_dashboard/features/auth/domain/usecases/logout_use_case.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_activity_entity.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_notification_entity.dart';
@@ -64,7 +65,15 @@ class PlatformDashboardController extends GetxController {
     refreshHeaderData();
   }
 
-  void setActiveRoute(String route) => activeRoute.value = route;
+  void setActiveRoute(String route) {
+    activeRoute.value = route;
+    for (final destination in PlatformNavigationRegistry.destinations) {
+      if (destination.route == route && destination.groupKey != null) {
+        expandedGroups.add(destination.groupKey!);
+        break;
+      }
+    }
+  }
 
   void _syncNotificationItems() {
     notificationItems.assignAll(
@@ -167,7 +176,7 @@ class PlatformDashboardController extends GetxController {
     if (confirmed != true) return;
     try {
       await logoutUseCase.execute();
-      Get.offAllNamed<void>(AppRoutes.login);
+      await Get.offAllNamed<void>(AppRoutes.login);
     } catch (error) {
       CustomSnackbar.show(
         title: LocaleService.to.isArabic ? 'تعذر تسجيل الخروج' : 'Unable to sign out',

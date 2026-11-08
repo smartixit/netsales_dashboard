@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:netsales_dashboard/widgets/dashboard_layout/dashboard_layout.dart';
 
 void main() {
   final navigation = DashboardNavigationSection(
-    items: [
-      DashboardNavigationItem(
-        id: 'home',
-        label: 'Home',
-        icon: Icons.home_outlined,
-      ),
-    ],
+    items: [DashboardNavigationItem(id: 'home', label: 'Home', icon: Icons.home_outlined)],
+  );
+
+  Widget buildApp(Widget home) => ScreenUtilInit(
+    designSize: const Size(1440, 900),
+    minTextAdapt: true,
+    splitScreenMode: true,
+    builder: (_, child) => MaterialApp(home: child),
+    child: home,
   );
 
   testWidgets('renders content and selected navigation item', (tester) async {
@@ -18,19 +21,15 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: DashboardShell(
-          navigation: navigation,
-          selectedNavigationId: 'home',
-          onNavigationSelected: (_) {},
-          sidebarHeader: const Text('Brand'),
-          child: const Text('Dashboard content'),
-        ),
+    await tester.pumpWidget(buildApp(
+      DashboardShell(
+        navigation: navigation,
+        selectedNavigationId: 'home',
+        onNavigationSelected: (_) {},
+        sidebarHeader: const Text('Brand'),
+        child: const Text('Dashboard content'),
       ),
-    );
-
+    ));
     expect(find.text('Dashboard content'), findsOneWidget);
     expect(find.text('Home'), findsOneWidget);
     expect(find.text('Brand'), findsOneWidget);
@@ -41,18 +40,14 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: DashboardShell(
-          navigation: navigation,
-          selectedNavigationId: 'home',
-          onNavigationSelected: (_) {},
-          child: const Text('Compact content'),
-        ),
+    await tester.pumpWidget(buildApp(
+      DashboardShell(
+        navigation: navigation,
+        selectedNavigationId: 'home',
+        onNavigationSelected: (_) {},
+        child: const Text('Compact content'),
       ),
-    );
-
+    ));
     expect(find.text('Compact content'), findsOneWidget);
     expect(find.byIcon(Icons.menu_rounded), findsOneWidget);
   });

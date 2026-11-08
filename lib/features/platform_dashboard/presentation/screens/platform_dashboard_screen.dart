@@ -19,7 +19,6 @@ import 'package:netsales_dashboard/widgets/dashboard_extras/custom_command_palet
 import 'package:netsales_dashboard/widgets/dashboard_extras/custom_notification_center.dart';
 import 'package:netsales_dashboard/widgets/dashboard_extras/custom_profile_menu.dart';
 import 'package:netsales_dashboard/widgets/dashboard_layout/dashboard_layout.dart';
-import 'package:netsales_dashboard/widgets/dashboard_layout/src/models/dashboard_breadcrumb.dart';
 
 class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
   const PlatformDashboardScreen({super.key});
@@ -77,7 +76,6 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
             mobileBreakpoint: 900,
             showBreadcrumbs: true,
           ),
-          child: const GetRouterOutlet(anchorRoute: AppRoutes.dashboard, initialRoute: AppRoutes.overview),
           navigation: navigation,
           selectedNavigationId: selectedId,
           onNavigationSelected: (id) {
@@ -196,6 +194,7 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
             description: selectedId == 'overview' ? l10n.text('platform_summary') : null,
             icon: selectedId == 'overview' ? Icons.space_dashboard_rounded : Icons.dashboard_outlined,
           ),
+          child: GetRouterOutlet(anchorRoute: AppRoutes.dashboard, initialRoute: AppRoutes.overview),
         );
       }),
     );

@@ -21,7 +21,7 @@ class LocaleService extends GetxService {
     final next = Locale(code);
     if (_locale.value == next) return;
     _locale.value = next;
-    Get.updateLocale(next);
+    await Get.updateLocale(next);
     await StorageService.instance.saveLocale(code);
   }
 

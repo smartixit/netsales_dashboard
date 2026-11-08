@@ -51,14 +51,15 @@ class CustomFilterBar extends StatelessWidget {
                 ),
               ),
             ...filters,
-            if (dateRangeSelector != null) dateRangeSelector!,
-            if (onClear != null)
-              CustomButton.text(
-                text: clearLabel,
-                onPressed: onClear,
-                size: AppButtonSize.small,
-                prefix: const Icon(Icons.filter_alt_off_outlined, size: 18),
-              ),
+            ?dateRangeSelector,
+            ?(onClear == null
+                ? null
+                : CustomButton.text(
+                    text: clearLabel,
+                    onPressed: onClear,
+                    size: AppButtonSize.small,
+                    prefix: const Icon(Icons.filter_alt_off_outlined, size: 18),
+                  )),
           ],
         ),
         if (actions.isNotEmpty)

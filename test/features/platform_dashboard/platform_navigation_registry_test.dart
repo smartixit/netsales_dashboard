@@ -16,7 +16,7 @@ void main() {
   });
   tearDown(() async {
     permissions.clear();
-    await Get.reset();
+    Get.reset();
     Get.testMode = false;
   });
 

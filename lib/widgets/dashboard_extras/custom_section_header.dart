@@ -25,7 +25,8 @@ class CustomSectionHeader extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (leading != null) ...[leading!, AppSpacing.hSm],
+              ?leading,
+              ?(leading == null ? null : AppSpacing.hSm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +42,7 @@ class CustomSectionHeader extends StatelessWidget {
             ],
           ),
         ),
-        if (action != null) action!,
+        ?action,
       ],
     );
   }
