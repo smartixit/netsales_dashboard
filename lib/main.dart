@@ -19,6 +19,8 @@ import 'package:netsales_dashboard/core/routing/app_routes.dart';
 import 'package:netsales_dashboard/core/services/app_crypto_service.dart';
 import 'package:netsales_dashboard/core/services/device_service.dart';
 import 'package:netsales_dashboard/core/services/internet_connection_service.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/presentation/controllers/platform_dashboard_controller.dart';
+import 'package:netsales_dashboard/core/services/locale_service.dart';
 import 'package:netsales_dashboard/core/services/permission_service.dart';
 import 'package:netsales_dashboard/core/services/public_settings_service.dart';
 import 'package:netsales_dashboard/core/services/push_notification_service.dart';
@@ -124,6 +126,8 @@ void main() async {
   // 2. تهيئة خدمات المظهر والهوية والصلاحيات الفورية
   await ThemeService.instance.init();
   Get.put<ThemeService>(ThemeService.instance, permanent: true);
+  await LocaleService.instance.init();
+  Get.put<LocaleService>(LocaleService.instance, permanent: true);
 
   Get.put<PermissionService>(PermissionService.instance, permanent: true);
   await SessionService.instance.init();
@@ -173,6 +177,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeService = ThemeService.to;
+    final localeService = LocaleService.to;
 
     return ScreenUtilInit(
       designSize: const Size(375, 812),
@@ -185,12 +190,16 @@ class MyApp extends StatelessWidget {
             theme: AppThemes.light,
             darkTheme: AppThemes.dark,
             themeMode: themeService.themeMode,
+            locale: localeService.locale,
             initialBinding: InitialBinding(),
             initialRoute: AppPages.initial,
             getPages: AppPages.routes,
             routingCallback: (routing) {
               if (routing != null) {
                 unawaited(windowing.applyRoute(routing.current));
+                if (Get.isRegistered<PlatformDashboardController>()) {
+                  Get.find<PlatformDashboardController>().setActiveRoute(routing.current);
+                }
               }
             },
             unknownRoute: GetPage(
@@ -199,7 +208,6 @@ class MyApp extends StatelessWidget {
             ),
             defaultTransition: Transition.fadeIn,
             transitionDuration: AppMotion.page,
-            locale: const Locale('ar'),
             supportedLocales: const [Locale('en'), Locale('ar')],
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,
@@ -207,7 +215,6 @@ class MyApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
               FormBuilderLocalizations.delegate,
             ],
-            textDirection: TextDirection.rtl,
             builder: (ctx, appChild) {
               final mediaQuery = MediaQuery.of(ctx);
               // تحديد نطاق أمان لحجم الخط بين 85% كحد أدنى و115% كحد أقصى

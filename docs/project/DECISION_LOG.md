@@ -22,3 +22,16 @@ Dashboard-specific decisions are maintained here. Shared product/API/financial d
 ## DASH-003 — Project Memory Boundaries
 - **Status:** APPROVED
 - **Decision:** Dashboard implementation state and history stay in this repository. The Laravel API repository remains authoritative for shared API and business contracts. No API files are changed by this task.
+
+| DASH-004 | 2026-11-08 | Build one persistent nested Platform Dashboard shell with a single permission-driven navigation registry; keep all module routes inside that shell and use canonical Laravel role/permission assignments. | APPROVED |
+| DASH-005 | 2026-11-08 | Do not fabricate dashboard aggregates or financial figures. Keep KPI values neutral and chart states empty until the API exposes a verified dashboard overview contract. | APPROVED |
+| DASH-006 | 2026-11-08 | Keep global navigation/action search local to the authorized route registry until an entity-search API contract is available. | APPROVED |
+
+## DASH-004 — Platform Main Layout
+- **Decision:** One persistent shell owns Sidebar, Topbar, Page Header, and nested route outlet. A single Navigation Registry filters destinations using PermissionService; child route middleware repeats the client-side UX check.
+- **Role source:** API RolePermissionSeeder is canonical. ACCOUNTANT support-ticket visibility is retained because the seeder grants `support.view`.
+- **Boundary:** Client navigation checks do not replace Laravel authorization. Backup and scheduled-task items are restricted to SUPER_ADMIN in the UI because dedicated permission keys are absent; API-side authorization remains to be verified.
+
+## DASH-005 — Overview Data Integrity
+- **Decision:** No local calculation of authoritative balances, financial totals, or server-owned KPI values. No placeholder chart series or simulated activity records.
+- **Current blocker:** API routes reference a DashboardController for `GET /api/v1/dashboard/overview`, but no such controller exists in the current API source tree. The Overview therefore displays neutral unavailable KPI values and empty chart states until a real contract is implemented.

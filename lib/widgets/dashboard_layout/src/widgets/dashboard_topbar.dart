@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:netsales_dashboard/core/constants/app_radius.dart';
+import 'package:netsales_dashboard/core/constants/app_spacing.dart';
+import 'package:netsales_dashboard/core/themes/app_typography.dart';
+import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import '../models/dashboard_user_profile.dart';
 import '../theme/dashboard_layout_theme.dart';
 
@@ -14,7 +17,6 @@ class DashboardTopbar extends StatelessWidget {
     this.onProfileTap,
     super.key,
   });
-
   final double height;
   final Widget? leading;
   final Widget? search;
@@ -29,41 +31,45 @@ class DashboardTopbar extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Container(
       height: height,
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
+      padding: EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.lg),
       decoration: BoxDecoration(
         color: layoutTheme.topbarBackground,
         border: Border(bottom: BorderSide(color: layoutTheme.border)),
       ),
       child: Row(
         children: [
-          if (leading != null) ...[leading!, const SizedBox(width: 12)],
-          if (search != null) Expanded(child: search!) else const Spacer(),
-          ?notifications,
+          if (leading != null) ...[leading!, AppSpacing.hMd],
+          if (search != null)
+            Expanded(child: Align(alignment: AlignmentDirectional.centerStart, child: search!))
+          else
+            const Spacer(),
+          if (notifications != null) ...[notifications!, AppSpacing.hSm],
           ...?actions,
           if (profile != null) ...[
-            const SizedBox(width: 12),
-            InkWell(
-              onTap: onProfileTap,
-              borderRadius: BorderRadius.circular(24),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            AppSpacing.hMd,
+            Tooltip(
+              message: profile!.name,
+              child: CustomButton(
+                variant: AppButtonVariant.custom,
+                size: AppButtonSize.small,
+                shape: AppButtonShape.pill,
+                borderRadius: AppRadius.full,
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+                backgroundColor: Colors.transparent,
+                foregroundColor: scheme.onSurface,
+                onPressed: onProfileTap,
                 child: Row(
                   children: [
                     CircleAvatar(
                       radius: 17,
                       backgroundColor: scheme.primaryContainer,
-                      backgroundImage: profile!.avatarUrl == null
-                          ? null
-                          : NetworkImage(profile!.avatarUrl!),
-                      child: profile!.avatarUrl != null
-                          ? null
-                          : Text(
-                              profile!.initials ??
-                                  (profile!.name.isEmpty ? '?' : profile!.name.substring(0, 1)),
-                              style: TextStyle(color: scheme.onPrimaryContainer),
-                            ),
+                      backgroundImage: profile!.avatarUrl == null ? null : NetworkImage(profile!.avatarUrl!),
+                      child: profile!.avatarUrl != null ? null : Text(
+                        profile!.initials ?? (profile!.name.isEmpty ? '?' : profile!.name.characters.first),
+                        style: AppTypography.labelMedium.copyWith(color: scheme.onPrimaryContainer),
+                      ),
                     ),
-                    const SizedBox(width: 9),
+                    AppSpacing.hSm,
                     ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 160),
                       child: Column(
@@ -72,18 +78,12 @@ class DashboardTopbar extends StatelessWidget {
                         children: [
                           Text(profile!.name, maxLines: 1, overflow: TextOverflow.ellipsis),
                           if (profile!.subtitle != null)
-                            Text(
-                              profile!.subtitle!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: scheme.onSurfaceVariant,
-                                  ),
-                            ),
+                            Text(profile!.subtitle!, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTypography.caption.copyWith(color: scheme.onSurfaceVariant)),
                         ],
                       ),
                     ),
-                    const Icon(Icons.keyboard_arrow_down_rounded, size: 18),
+                    AppSpacing.hXs,
+                    Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: scheme.onSurfaceVariant),
                   ],
                 ),
               ),

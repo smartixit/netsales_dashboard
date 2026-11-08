@@ -160,3 +160,33 @@
 - CI package tests passed. Full Dashboard analysis exposed both pre-existing cross-repository issues and presentation issues now corrected in the follow-up update.
 - The CI workflow has not yet been rerun against the follow-up source update. Full tests and Windows compile remain blocked until the complete analyzer is clean.
 - No rendered visual QA is claimed. The authenticated route uses a temporary, explicit handoff screen until the actual Platform Dashboard home feature is implemented.
+
+## 2026-11-08 — Platform Main Layout and Overview foundation
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/platform-main-layout`  
+**Base:** `94be488f753823fde78492ebe537fb6998e8d50b`  
+**API reference:** `smartixit/netsales_api` main (read-only inspection; no API changes)
+
+### Implemented
+- Added the Platform Dashboard feature with Data/Domain/Presentation separation, notification and audit-log remote data sources, repository contract/implementation, typed models/entities, use cases, and `PlatformDashboardBinding`.
+- Replaced the authenticated temporary handoff with a persistent `DashboardShell` and nested GetX `GetRouterOutlet` routes. Route-state synchronization is connected to the app routing callback so back/forward navigation updates the selected destination and page header.
+- Reworked the shared Dashboard Layout sidebar into permission-filtered groups with expandable headings, collapsed icon-only navigation, active-state treatment, tooltips, and the shared `CustomButton` system. The shell, sidebar, topbar, and page header now use the app design tokens rather than raw Flutter button widgets.
+- Added responsive shell behavior: expanded sidebar on wide desktop, automatic collapse below the desktop breakpoint, and a drawer below 900 dp. Compact search/profile controls are used below the tablet breakpoint. Nested dashboard routes share the dashboard window profile.
+- Added one permission-aware Navigation Registry for `SUPER_ADMIN`, `SUPPORT_AGENT`, and `ACCOUNTANT`, with route-level permission middleware. The registry follows the API RolePermissionSeeder; ACCOUNTANT sees support tickets because the API grants `support.view`. Backups and scheduled tasks are restricted to SUPER_ADMIN in the client because no dedicated permission keys exist.
+- Added Arabic/English locale persistence and removed forced global RTL direction so Flutter resolves RTL/LTR from the selected locale. Existing ThemeService remains the source for Light/Dark mode.
+- Added Overview composition: personalized greeting/date, permission-filtered quick navigation, KPI cards using `DashboardMetrics`, three Syncfusion chart surfaces, recent activity timeline, audit DataGrid, and a needs-attention section.
+- Added reusable widgets: Command Palette (Ctrl/Cmd+K), Notification Center, Section Header, Filter Bar, Date Range Selector with presets, Activity Timeline, Profile Menu, Shortcut Hint, and Status Banner. Existing Empty/Error/Skeleton/Offline feedback components are reused.
+- Wired notifications to existing API endpoints (list, unread count, mark one read, mark all read) and recent audit activity to the existing system-log endpoint, subject to permissions.
+- Added tests for role-aware navigation, nested route registration, and Arabic/English localization.
+
+### Data/API boundary and known integration blocker
+- API routes register `GET /api/v1/dashboard/overview`, but the referenced `DashboardController` is absent from the current API repository tree. No fabricated metrics, chart series, attention items, or financial values are supplied. KPI values remain neutral placeholders and chart cards remain in empty state until the server-side aggregation contract/controller exists.
+- Global search currently covers authorized navigation destinations/actions only. Entity search is not claimed because no global entity-search API contract was identified.
+- Backup/scheduled-task navigation is UI-restricted to SUPER_ADMIN; API-side authorization for those endpoints still requires independent verification. Laravel remains the security authority.
+- Non-overview module destinations are route placeholders only; their feature screens are not falsely marked as delivered by this Main Layout task.
+
+### Verification status
+- Feature source and tests are committed; current-HEAD GitHub Actions is the required executable verification.
+- No local Flutter SDK execution, interactive Windows runtime, or browser visual session was available in this GitHub-only execution context. CI and visual QA are pending; neither is claimed as passed.
+- No Laravel API files or financial/business logic were modified.

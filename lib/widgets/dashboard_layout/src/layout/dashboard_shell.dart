@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:netsales_dashboard/core/constants/app_spacing.dart';
+import 'package:netsales_dashboard/core/themes/app_breakpoints.dart';
+import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 
 import '../config/dashboard_layout_config.dart';
 import '../models/dashboard_breadcrumb.dart';
@@ -34,7 +37,6 @@ class DashboardShell extends StatelessWidget {
     this.content,
     super.key,
   });
-
   final Widget child;
   final DashboardNavigationSection navigation;
   final String? selectedNavigationId;
@@ -62,12 +64,14 @@ class DashboardShell extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isCompact = constraints.maxWidth < config.mobileBreakpoint;
+        final autoCollapse = constraints.maxWidth < AppBreakpoints.desktopMax;
+        final effectiveCollapsed = !isCompact && (sidebarCollapsed || autoCollapse);
         final theme = DashboardLayoutTheme.of(context);
         final sidebar = DashboardSidebar(
           navigation: navigation,
           selectedNavigationId: selectedNavigationId,
           onNavigationSelected: onNavigationSelected,
-          collapsed: sidebarCollapsed,
+          collapsed: isCompact ? false : effectiveCollapsed,
           onCollapsedChanged: onSidebarCollapsedChanged,
           header: sidebarHeader,
           footer: sidebarFooter,
@@ -77,10 +81,7 @@ class DashboardShell extends StatelessWidget {
         return Scaffold(
           backgroundColor: theme.contentBackground,
           drawer: isCompact
-              ? Drawer(
-                  width: config.expandedSidebarWidth,
-                  child: SafeArea(child: sidebar),
-                )
+              ? Drawer(width: config.expandedSidebarWidth, child: SafeArea(child: sidebar))
               : null,
           body: SafeArea(
             child: Row(
@@ -89,9 +90,7 @@ class DashboardShell extends StatelessWidget {
                   AnimatedContainer(
                     duration: theme.motionDuration,
                     curve: theme.motionCurve,
-                    width: sidebarCollapsed
-                        ? config.collapsedSidebarWidth
-                        : config.expandedSidebarWidth,
+                    width: effectiveCollapsed ? config.collapsedSidebarWidth : config.expandedSidebarWidth,
                     child: sidebar,
                   ),
                 Expanded(
@@ -101,24 +100,24 @@ class DashboardShell extends StatelessWidget {
                         height: config.topbarHeight,
                         leading: isCompact
                             ? Builder(
-                                builder: (context) => IconButton(
+                                builder: (context) => CustomButton.icon(
+                                  icon: Icons.menu_rounded,
                                   tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
                                   onPressed: () => Scaffold.of(context).openDrawer(),
-                                  icon: const Icon(Icons.menu_rounded),
+                                  dimension: 40,
                                 ),
                               )
-                            : topbarLeading ??
-                                (onSidebarCollapsedChanged == null
-                                    ? null
-                                    : IconButton(
-                                        tooltip: sidebarCollapsed
-                                            ? 'Expand navigation'
-                                            : 'Collapse navigation',
-                                        onPressed: () => onSidebarCollapsedChanged!(!sidebarCollapsed),
-                                        icon: Icon(sidebarCollapsed
-                                            ? Icons.menu_open_rounded
-                                            : Icons.menu_rounded),
-                                      )),
+                            : autoCollapse
+                                ? null
+                                : topbarLeading ??
+                                    (onSidebarCollapsedChanged == null
+                                        ? null
+                                        : CustomButton.icon(
+                                            icon: effectiveCollapsed ? Icons.menu_open_rounded : Icons.menu_rounded,
+                                            tooltip: effectiveCollapsed ? 'Expand navigation' : 'Collapse navigation',
+                                            onPressed: () => onSidebarCollapsedChanged!(!sidebarCollapsed),
+                                            dimension: 40,
+                                          )),
                         search: search,
                         notifications: notifications,
                         actions: topbarActions,
@@ -127,26 +126,23 @@ class DashboardShell extends StatelessWidget {
                       ),
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: EdgeInsets.all(config.contentPadding ?? theme.contentPadding),
+                          padding: EdgeInsets.all(config.contentPadding ?? AppBreakpoints.screenMargin(context)),
                           child: Align(
                             alignment: AlignmentDirectional.topCenter,
                             child: ConstrainedBox(
                               constraints: BoxConstraints(
-                                maxWidth: config.maxContentWidth ?? double.infinity,
+                                maxWidth: config.maxContentWidth ?? AppBreakpoints.maxDashboardContentWidth,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   if (config.showBreadcrumbs && breadcrumbs.isNotEmpty)
-                                    _BreadcrumbRow(
-                                      breadcrumbs: breadcrumbs,
-                                      onTap: onBreadcrumbTap,
-                                    ),
+                                    _BreadcrumbRow(breadcrumbs: breadcrumbs, onTap: onBreadcrumbTap),
                                   if (pageHeader != null) ...[
-                                    const SizedBox(height: 12),
+                                    AppSpacing.vMd,
                                     DashboardPageHeader(data: pageHeader!),
+                                    AppSpacing.vXl,
                                   ],
-                                  if (pageHeader != null) const SizedBox(height: 20),
                                   content ?? child,
                                 ],
                               ),
@@ -168,53 +164,41 @@ class DashboardShell extends StatelessWidget {
 
 class _BreadcrumbRow extends StatelessWidget {
   const _BreadcrumbRow({required this.breadcrumbs, this.onTap});
-
   final List<DashboardBreadcrumb> breadcrumbs;
   final ValueChanged<String>? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final style = Theme.of(context).textTheme.bodySmall;
     final scheme = Theme.of(context).colorScheme;
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 8,
+      spacing: AppSpacing.xs,
+      runSpacing: AppSpacing.xxs,
       children: [
         for (var index = 0; index < breadcrumbs.length; index++) ...[
           if (index > 0)
             Icon(
-              Directionality.of(context) == TextDirection.rtl
-                  ? Icons.chevron_left_rounded
-                  : Icons.chevron_right_rounded,
+              Directionality.of(context) == TextDirection.rtl ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
               size: 16,
               color: scheme.onSurfaceVariant,
             ),
-          InkWell(
-            onTap: breadcrumbs[index].enabled && breadcrumbs[index].id != null && onTap != null
+          CustomButton.text(
+            onPressed: breadcrumbs[index].enabled && breadcrumbs[index].id != null && onTap != null
                 ? () => onTap!(breadcrumbs[index].id!)
                 : null,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (breadcrumbs[index].icon != null) ...[
-                    Icon(breadcrumbs[index].icon, size: 14, color: scheme.onSurfaceVariant),
-                    const SizedBox(width: 4),
-                  ],
-                  Text(
-                    breadcrumbs[index].label,
-                    style: style?.copyWith(
-                      color: index == breadcrumbs.length - 1
-                          ? scheme.onSurface
-                          : scheme.onSurfaceVariant,
-                      fontWeight: index == breadcrumbs.length - 1
-                          ? FontWeight.w600
-                          : FontWeight.normal,
-                    ),
-                  ),
+            size: AppButtonSize.small,
+            enableScaleAnimation: false,
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.xxs),
+            foregroundColor: index == breadcrumbs.length - 1 ? scheme.onSurface : scheme.onSurfaceVariant,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (breadcrumbs[index].icon != null) ...[
+                  Icon(breadcrumbs[index].icon, size: 14, color: scheme.onSurfaceVariant),
+                  AppSpacing.hXxs,
                 ],
-              ),
+                Text(breadcrumbs[index].label),
+              ],
             ),
           ),
         ],

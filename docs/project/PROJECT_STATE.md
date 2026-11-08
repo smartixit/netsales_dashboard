@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-11-08  
 **Repository:** `smartixit/netsales_dashboard`  
-**Working branch:** `feat/desktop-windowing-foundation`  
+**Working branch:** `feat/platform-main-layout`  
 **Authentication UI delivery baseline:** `ce9bc0ee1b167c21ee74ffdd2f7614d18a60e97a`
 
 ## Current work
@@ -51,3 +51,23 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 2. Diagnose any remaining analyzer/test/build failures from their full logs and repair root causes in a coherent batch.
 3. Perform Windows visual validation of Splash → Login → recovery/OTP/2FA/reset → authenticated handoff, including resize/transition interruption, plus responsive Web, Light/Dark, RTL and keyboard/pointer checks.
 4. Implement the actual Platform Dashboard home feature as its own authorized delivery, then replace the temporary authenticated handoff route.
+
+## Platform Main Layout delivery (2026-11-08)
+
+### Implemented in source; CI/visual validation pending
+- Persistent nested Platform Dashboard shell with Sidebar, Topbar, Page Header, and one route outlet.
+- Permission-driven navigation for SUPER_ADMIN, SUPPORT_AGENT, and ACCOUNTANT, matching the API permission seed assignments. ACCOUNTANT support-ticket visibility follows its actual `support.view` permission.
+- Expand/collapse sidebar, automatic collapse below desktop breakpoint, responsive drawer below 900 dp, compact topbar on narrow screens, persisted Arabic/English locale, RTL/LTR from active locale, and existing Light/Dark ThemeService.
+- Platform Overview composes Dashboard Metrics, Syncfusion chart cards, recent activity timeline, and audit DataGrid. KPI cards show neutral unavailable values and charts remain empty until server aggregate data exists.
+- Notifications and audit records use existing API endpoints through typed repository/use-case layers.
+- Shared command palette, notification center, section header, filter bar, date range selector, activity timeline, profile menu, shortcut hint, and status banner components are added.
+
+### Known integration boundaries
+- `GET /api/v1/dashboard/overview` is registered in API routes but the referenced DashboardController is absent from the current API source tree. Aggregate KPIs, trend series, distribution data, and attention queues remain unavailable. No fake data is used and no API changes were made.
+- Global search indexes permitted routes/actions only; entity search awaits a server contract.
+- Backups and scheduled tasks are client-visible only to SUPER_ADMIN because dedicated permission keys are absent; API-side authorization must be verified.
+- Other module destinations are route placeholders pending their feature-specific delivery.
+
+### Pending validation
+- CI for current feature branch HEAD: full analysis, tests, Windows Debug build.
+- Visual and interaction QA on Windows and responsive Web: resizing/transitions, focus/hover, keyboard/mouse, RTL/LTR, Light/Dark, and minimum 1120×720 window behavior.

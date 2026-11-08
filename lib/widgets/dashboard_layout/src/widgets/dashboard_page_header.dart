@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:netsales_dashboard/core/constants/app_radius.dart';
+import 'package:netsales_dashboard/core/constants/app_spacing.dart';
+import 'package:netsales_dashboard/core/themes/app_colors.dart';
+import 'package:netsales_dashboard/core/themes/app_typography.dart';
 
 @immutable
 class DashboardPageHeaderData {
-  const DashboardPageHeaderData({
-    required this.title,
-    this.description,
-    this.icon,
-    this.actions = const [],
-  });
-
+  const DashboardPageHeaderData({required this.title, this.description, this.icon, this.actions = const []});
   final String title;
   final String? description;
   final IconData? icon;
@@ -17,42 +15,52 @@ class DashboardPageHeaderData {
 
 class DashboardPageHeader extends StatelessWidget {
   const DashboardPageHeader({required this.data, super.key});
-
   final DashboardPageHeaderData data;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (data.icon != null) ...[
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(data.icon, color: theme.colorScheme.onPrimaryContainer),
-          ),
-          const SizedBox(width: 14),
-        ],
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(data.title, style: theme.textTheme.headlineSmall),
-              if (data.description != null) ...[
-                const SizedBox(height: 4),
-                Text(data.description!, style: theme.textTheme.bodyMedium),
-              ],
+    final colors = context.colors;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < 680;
+        final heading = Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (data.icon != null) ...[
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(color: colors.primaryContainer, borderRadius: AppRadius.mdRadius),
+                alignment: Alignment.center,
+                child: Icon(data.icon, color: colors.onPrimaryContainer),
+              ),
+              AppSpacing.hMd,
             ],
-          ),
-        ),
-        if (data.actions.isNotEmpty)
-          Wrap(spacing: 8, runSpacing: 8, children: data.actions),
-      ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(data.title, style: AppTypography.headlineSmall.copyWith(color: colors.onSurface)),
+                  if (data.description != null) ...[
+                    AppSpacing.vXxs,
+                    Text(data.description!, style: AppTypography.bodyMedium.copyWith(color: colors.onSurfaceVariant)),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        );
+        if (data.actions.isEmpty) return heading;
+        if (compact) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [heading, AppSpacing.vMd, Wrap(spacing: AppSpacing.sm, runSpacing: AppSpacing.sm, children: data.actions)],
+          );
+        }
+        return Row(
+          children: [Expanded(child: heading), AppSpacing.hMd, Wrap(spacing: AppSpacing.sm, runSpacing: AppSpacing.sm, children: data.actions)],
+        );
+      },
     );
   }
 }
