@@ -45,6 +45,12 @@ class PlatformNetworksController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    gridSource = NetSalesDataGridSource<PlatformNetworkEntity>(
+      items: const <PlatformNetworkEntity>[],
+      columns: PlatformNetworkGridColumns.build(
+        AppLocalizations(LocaleService.to.locale),
+      ),
+    );
     loadNetworks();
   }
 
