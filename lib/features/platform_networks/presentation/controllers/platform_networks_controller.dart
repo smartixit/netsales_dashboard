@@ -2,7 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:netsales_dashboard/core/localization/app_localizations.dart';
+import 'package:netsales_dashboard/core/services/locale_service.dart';
 import 'package:netsales_dashboard/features/platform_networks/domain/entities/platform_network_entity.dart';
+import 'package:netsales_dashboard/features/platform_networks/presentation/widgets/platform_network_grid_columns.dart';
+import 'package:netsales_dashboard/widgets/data_grid/adapters/app_data_grid_export_controller.dart';
+import 'package:netsales_dashboard/widgets/data_grid/adapters/net_sales_data_grid_source.dart';
 import 'package:netsales_dashboard/features/platform_networks/domain/usecases/approve_platform_network_use_case.dart';
 import 'package:netsales_dashboard/features/platform_networks/domain/usecases/get_platform_networks_use_case.dart';
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_state.dart';
@@ -29,6 +34,8 @@ class PlatformNetworksController extends GetxController {
   final isRefreshing = false.obs;
   final errorMessage = ''.obs;
   final isApproving = <int>{}.obs;
+  late final NetSalesDataGridSource<PlatformNetworkEntity> gridSource;
+  final AppDataGridExportController exportController = AppDataGridExportController();
 
   Timer? _searchDebounce;
   int _requestGeneration = 0;
@@ -75,6 +82,7 @@ class PlatformNetworksController extends GetxController {
       } else {
         networks.assignAll(response.data!);
       }
+      gridSource.replaceRows(networks.toList(growable: false));
       nextCursor.value = response.nextCursor;
       viewState.value = networks.isEmpty
           ? AppDataGridViewState.empty
