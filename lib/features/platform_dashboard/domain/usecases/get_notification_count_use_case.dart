@@ -2,6 +2,10 @@ import 'package:netsales_dashboard/features/platform_dashboard/domain/repositori
 
 class GetNotificationCountUseCase {
   const GetNotificationCountUseCase(this._repository);
+
   final PlatformDashboardRepository _repository;
-  Future<int> call() => _repository.getUnreadNotificationCount();
+
+  Future<int> execute() => _repository.getUnreadNotificationCount();
+
+  Future<int> call() => execute();
 }
