@@ -16,7 +16,6 @@ class ProviderSubscriptionCard extends StatelessWidget {
     required this.isLoadingConsumptions,
     required this.onExpand,
     required this.onExtend,
-    required this.onActivateQueued,
     super.key,
   });
 
@@ -27,7 +26,6 @@ class ProviderSubscriptionCard extends StatelessWidget {
   final bool isLoadingConsumptions;
   final ValueChanged<bool> onExpand;
   final VoidCallback onExtend;
-  final VoidCallback onActivateQueued;
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +70,6 @@ class ProviderSubscriptionCard extends StatelessWidget {
             Divider(color: colors.outlineVariant),
             Row(children: [
               Expanded(child: Text(l10n.text('subscription_feature_consumption'), style: Theme.of(context).textTheme.titleSmall)),
-              if (canEdit && subscription.status == 'QUEUED')
-                CustomButton.secondary(text: l10n.text('activate_queued_subscription'), size: AppButtonSize.small, onPressed: onActivateQueued),
               if (canEdit)
                 CustomButton.text(text: l10n.text('extend'), size: AppButtonSize.small, onPressed: onExtend),
             ]),
