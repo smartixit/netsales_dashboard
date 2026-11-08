@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:desktop_windowing/desktop_windowing.dart';
+import 'package:desktop_windowing/desktop_windowing.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/exceptions/app_exception.dart';
 import 'package:netsales_dashboard/core/routing/app_routes.dart';
