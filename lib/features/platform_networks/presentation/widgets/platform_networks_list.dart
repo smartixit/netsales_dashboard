@@ -33,6 +33,7 @@ class PlatformNetworksList extends StatelessWidget {
           source: controller.gridSource,
           features: const AppDataGridFeatures(
             dataMode: AppDataGridDataMode.remote,
+            allowSorting: false,
             allowFiltering: false,
             allowSelection: false,
             allowMultiSelection: false,
