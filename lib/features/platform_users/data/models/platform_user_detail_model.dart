@@ -1,6 +1,9 @@
+import 'package:netsales_dashboard/features/platform_users/data/models/platform_user_ban_model.dart';
+import 'package:netsales_dashboard/features/platform_users/data/models/platform_user_device_model.dart';
 import 'package:netsales_dashboard/features/platform_users/data/models/platform_user_model.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_detail_entity.dart';
 
+/// نموذج استجابة تفاصيل المستخدم كما يعيدها UserResource في Laravel.
 class PlatformUserDetailModel {
   const PlatformUserDetailModel({
     required this.user,
@@ -13,6 +16,7 @@ class PlatformUserDetailModel {
     required this.devices,
     required this.securityBans,
   });
+
   final PlatformUserModel user;
   final int roleId;
   final bool twoFactorEnabled;
@@ -20,23 +24,36 @@ class PlatformUserDetailModel {
   final int loginAttempts;
   final String? createdAt;
   final String? updatedAt;
-  final List<PlatformUserDeviceEntity> devices;
-  final List<PlatformUserBanEntity> securityBans;
+  final List<PlatformUserDeviceModel> devices;
+  final List<PlatformUserBanModel> securityBans;
 
   factory PlatformUserDetailModel.fromJson(Map<String, dynamic> json) {
-    final role = json['role'] is Map ? Map<String, dynamic>.from(json['role'] as Map) : <String, dynamic>{};
+    final role = json['role'] is Map
+        ? Map<String, dynamic>.from(json['role'] as Map)
+        : <String, dynamic>{};
     final devices = json['devices'] is List
-        ? (json['devices'] as List).whereType<Map>().map((e) => _device(Map<String, dynamic>.from(e))).toList()
-        : <PlatformUserDeviceEntity>[];
+        ? (json['devices'] as List)
+            .whereType<Map>()
+            .map((item) => PlatformUserDeviceModel.fromJson(
+                  Map<String, dynamic>.from(item),
+                ))
+            .toList(growable: false)
+        : const <PlatformUserDeviceModel>[];
     final bans = json['security_bans'] is List
-        ? (json['security_bans'] as List).whereType<Map>().map((e) => _ban(Map<String, dynamic>.from(e))).toList()
-        : <PlatformUserBanEntity>[];
+        ? (json['security_bans'] as List)
+            .whereType<Map>()
+            .map((item) => PlatformUserBanModel.fromJson(
+                  Map<String, dynamic>.from(item),
+                ))
+            .toList(growable: false)
+        : const <PlatformUserBanModel>[];
+
     return PlatformUserDetailModel(
       user: PlatformUserModel.fromJson({...json, 'role': role}),
-      roleId: _int(json['role_id']),
-      twoFactorEnabled: json['user_2fa_enabled'] == true || json['user_2fa_enabled'] == 1,
-      mustChangePassword: json['must_change_password'] == true || json['must_change_password'] == 1,
-      loginAttempts: _int(json['user_login_attempts']),
+      roleId: _toInt(json['role_id']),
+      twoFactorEnabled: _toBool(json['user_2fa_enabled']),
+      mustChangePassword: _toBool(json['must_change_password']),
+      loginAttempts: _toInt(json['user_login_attempts']),
       createdAt: json['created_at']?.toString(),
       updatedAt: json['updated_at']?.toString(),
       devices: devices,
@@ -44,62 +61,24 @@ class PlatformUserDetailModel {
     );
   }
 
-  PlatformUserDetailEntity toEntity() => PlatformUserDetailEntity(
-    user: user.toEntity(),
-    roleId: roleId,
-    twoFactorEnabled: twoFactorEnabled,
-    mustChangePassword: mustChangePassword,
-    loginAttempts: loginAttempts,
-    createdAt: DateTime.tryParse(createdAt ?? ''),
-    updatedAt: DateTime.tryParse(updatedAt ?? ''),
-    devices: devices,
-    securityBans: securityBans,
-  );
+  PlatformUserDetailEntity toEntity() {
+    return PlatformUserDetailEntity(
+      user: user.toEntity(),
+      roleId: roleId,
+      twoFactorEnabled: twoFactorEnabled,
+      mustChangePassword: mustChangePassword,
+      loginAttempts: loginAttempts,
+      createdAt: DateTime.tryParse(createdAt ?? ''),
+      updatedAt: DateTime.tryParse(updatedAt ?? ''),
+      devices: devices.map((model) => model.toEntity()).toList(growable: false),
+      securityBans:
+          securityBans.map((model) => model.toEntity()).toList(growable: false),
+    );
+  }
 
-  static PlatformUserDeviceEntity _device(Map<String, dynamic> json) => PlatformUserDeviceEntity(
-    id: _int(json['device_id']),
-    name: json['device_name']?.toString() ?? '',
-    type: json['device_type']?.toString() ?? 'UNKNOWN',
-    typeLabel: json['device_type_label']?.toString(),
-    status: json['status']?.toString() ?? 'UNKNOWN',
-    statusLabel: json['status_label']?.toString(),
-    isPrimary: json['is_primary'] == true || json['is_primary'] == 1,
-    lastUsedAt: DateTime.tryParse(json['last_used_at']?.toString() ?? ''),
-  );
+  static int _toInt(dynamic value) =>
+      value is num ? value.toInt() : int.tryParse(value?.toString() ?? '') ?? 0;
 
-  static PlatformUserBanEntity _ban(Map<String, dynamic> json) => PlatformUserBanEntity(
-    id: _int(json['ban_id']),
-    type: json['ban_type']?.toString() ?? 'UNKNOWN',
-    typeLabel: json['ban_type_label']?.toString(),
-    reason: json['ban_reason']?.toString(),
-    startedAt: DateTime.tryParse(json['start_at']?.toString() ?? ''),
-    endsAt: DateTime.tryParse(json['end_at']?.toString() ?? ''),
-  );
-
-  static int _int(dynamic value) => value is num ? value.toInt() : int.tryParse(value?.toString() ?? '') ?? 0;
-}
-
-class PlatformUserSessionModel {
-  const PlatformUserSessionModel({required this.id, required this.ipAddress, required this.userAgent, required this.lastActivityAt, required this.expiresAt});
-  final int id;
-  final String? ipAddress;
-  final String? userAgent;
-  final String? lastActivityAt;
-  final String? expiresAt;
-
-  factory PlatformUserSessionModel.fromJson(Map<String, dynamic> json) => PlatformUserSessionModel(
-    id: PlatformUserDetailModel._int(json['session_id']),
-    ipAddress: json['ip_address']?.toString(),
-    userAgent: json['user_agent']?.toString(),
-    lastActivityAt: json['last_activity_at']?.toString(),
-    expiresAt: json['expires_at']?.toString(),
-  );
-
-  PlatformUserSessionEntity toEntity() => PlatformUserSessionEntity(
-    id: id,
-    ipAddress: ipAddress,
-    userAgent: userAgent,
-    lastActivityAt: DateTime.tryParse(lastActivityAt ?? ''),
-    expiresAt: DateTime.tryParse(expiresAt ?? ''),
-  );
+  static bool _toBool(dynamic value) =>
+      value == true || value == 1 || value?.toString() == '1';
 }
