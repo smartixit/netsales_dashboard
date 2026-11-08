@@ -37,6 +37,7 @@ class PlatformUsersController extends GetxController {
     if (append) {
       isLoadingMore.value = true;
     } else {
+      isLoadingMore.value = false;
       viewState.value = AppDataGridViewState.loading;
       errorMessage.value = '';
       nextCursor.value = null;
