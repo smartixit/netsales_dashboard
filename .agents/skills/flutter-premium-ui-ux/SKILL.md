@@ -2,13 +2,13 @@
 name: flutter-premium-ui-ux
 description: >-
   Enterprise visual design, deliberate information architecture, distinct screen composition,
-  and proportionate visual QA verification across mobile and tablet form factors for NetSales Flutter screens.
+  and proportionate visual QA verification across mobile and tablet desktop window sizes and responsive Web viewports for NetSales Flutter screens.
 ---
 
 # Skill: NetSales Premium UI/UX Engineering & Screen Composition
 
 ## Purpose
-Enforces the **NetSales Permanent Premium UI/UX Engineering Standard**. Guides agents in designing, structuring, and verifying enterprise-grade, visually polished, and responsive screens across mobile and tablet form factors before marking UI work complete.
+Enforces the **NetSales Permanent Premium UI/UX Engineering Standard**. Guides agents in designing, structuring, and verifying enterprise-grade, visually polished, and responsive screens across Windows/Linux/macOS desktop windows and responsive Web viewports before marking UI work complete.
 
 ---
 
@@ -47,15 +47,13 @@ Before assembling any widget tree:
 
 ---
 
-## 4. Responsive Form Factor Adaptation
-- Evaluate the best composition for:
-  - Small phones (< 360dp)
-  - Standard phones (< 600dp)
-  - Tablet portrait & landscape (≥ 600dp)
-- On mobile, prioritize focused content, efficient navigation, and a clear primary action.
-- On tablets, use the available width intelligently through suitable multi-column layouts, side panels, navigation rails, or split views where justified.
-- Constrain content width using `AppBreakpoints.maxContentWidth`. Never stretch narrow mobile lists across wide tablet displays.
-- Always reuse `AppBreakpoints` (`mobileSmallMax: 360`, `mobileMax: 600`, `tabletMax: 900`, `desktopMax: 1240`).
+## 4. Desktop Window and Web Adaptation
+- Evaluate compact laptop windows, standard desktop windows, maximized windows, and ultra-wide displays.
+- Base composition on actual available constraints, not monitor dimensions or fixed screen assumptions.
+- Keep data grids readable with deliberate minimum widths, horizontal scrolling, column visibility, and responsive toolbars.
+- Use desktop pointer hover/focus affordances and complete keyboard navigation; do not make hover the only way to access an action.
+- Web adapts to viewport changes and must not attempt native browser window resizing.
+- Preserve layout state and controllers during window resizing; avoid rebuilding feature state when only constraints change.
 
 ---
 
@@ -79,7 +77,7 @@ Every data-driven screen must implement:
 ## 7. Proportionate Visual QA Gate
 Before reporting any UI feature complete:
 1. **Targeted Verification:** Visual verification must specifically cover the actual screens affected by the UI task.
-2. **Representative Viewports:** Test at representative phone and tablet sizes using widget tests or rendered inspection.
+2. **Representative Viewports:** Test compact, standard, and wide desktop window sizes plus responsive Web viewports using widget tests or rendered inspection.
 3. **Theme Coverage:** Verify both Light and Dark theme palettes.
 4. **No Unrendered Claims:** Inspect rendered output when the environment allows it; never claim visual verification without real rendered evidence.
 5. **Quality Standard:** Confirm zero layout overflows (`RenderFlex overflowed`) and responsive user feedback.

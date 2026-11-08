@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:ffi';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -92,7 +90,7 @@ class AppCryptoService {
     if (_isInitialized) return;
 
     try {
-      _sodium = await SodiumInit.init(_loadPlatformDynamicLibrary);
+      _sodium = await SodiumInit.init();
       _isInitialized = true;
       log(
         '🔒 [Crypto] libsodium initialized successfully (version: ${_sodium?.version})',
@@ -104,38 +102,6 @@ class AppCryptoService {
       log('❌ [Crypto] Failed to initialize libsodium: $e\n$stack');
       _isInitialized = false;
     }
-  }
-
-  /// تحميل المكتبة الديناميكية حسب نظام التشغيل
-  static DynamicLibrary _loadPlatformDynamicLibrary() {
-    if (Platform.isAndroid || Platform.isLinux) {
-      return DynamicLibrary.open('libsodium.so');
-    }
-
-    if (Platform.isIOS || Platform.isMacOS) {
-      return DynamicLibrary.process();
-    }
-
-    if (Platform.isWindows) {
-      final candidates = [
-        'libsodium.dll',
-        'sodium.dll',
-        r'C:\php\libsodium.dll',
-        'libsodium-23.dll',
-      ];
-
-      for (final candidate in candidates) {
-        try {
-          return DynamicLibrary.open(candidate);
-        } catch (_) {}
-      }
-
-      return DynamicLibrary.open('libsodium.dll');
-    }
-
-    throw UnsupportedError(
-      'نظام التشغيل الحالي غير مدعوم لمكتبة التشفير libsodium.',
-    );
   }
 
   /// ==========================================================================

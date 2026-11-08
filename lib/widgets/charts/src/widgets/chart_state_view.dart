@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:netsales/widgets/buttons/custom_button.dart';
+import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 
 import '../enums/chart_state.dart';
 import '../theme/charts_theme.dart';

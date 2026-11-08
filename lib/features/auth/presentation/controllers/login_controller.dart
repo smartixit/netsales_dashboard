@@ -6,7 +6,6 @@ import 'package:netsales_dashboard/core/services/credential_service.dart';
 import 'package:netsales_dashboard/core/services/device_service.dart';
 import 'package:netsales_dashboard/core/services/push_notification_service.dart';
 import 'package:netsales_dashboard/features/auth/domain/usecases/login_use_case.dart';
-import 'package:netsales_dashboard/features/auth/presentation/widgets/register/pending_support_dialog_content.dart';
 import 'package:netsales_dashboard/widgets/dialogs/custom_animation_overlay.dart';
 import 'package:netsales_dashboard/widgets/dialogs/custom_dialog.dart';
 import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
@@ -28,6 +27,13 @@ class LoginController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    final arguments = Get.arguments;
+    if (arguments is Map) {
+      final prefilledPhone = arguments['phone']?.toString();
+      if (prefilledPhone != null && prefilledPhone.isNotEmpty) {
+        phoneController.text = prefilledPhone;
+      }
+    }
     _initBiometricsAndSavedCredentials();
   }
 
@@ -212,25 +218,17 @@ class LoginController extends GetxController {
 
   /// عرض حوار المراجعة والاعتماد المخصص مع قنوات الدعم الفني المباشرة
   Future<void> _showPendingSupportDialog(String message) async {
-    await CustomDialog.show(
-      type: DialogType.pending,
+    await CustomDialog.showPending(
       title: 'طلبكم قيد المراجعة والاعتماد',
-      content: PendingSupportDialogContent(
-        message: message,
-        phone: phoneController.text.trim(),
-      ),
-      cancelLabel: 'إغلاق',
+      message: message,
+      confirmLabel: 'إغلاق',
+      canPop: true,
     );
   }
 
   /// التوجيه لصفحة استعادة كلمة المرور
   void goToForgotPassword() {
     Get.toNamed<void>(AppRoutes.forgotPassword);
-  }
-
-  /// التوجيه لصفحة اختيار نوع الحساب الجديد
-  void goToRegister() {
-    Get.offNamed<void>(AppRoutes.welcome);
   }
 
   @override

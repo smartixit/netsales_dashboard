@@ -187,10 +187,6 @@ class SessionService extends GetxService {
       await PushNotificationService.to.clearFcmToken();
     }
 
-    if (Get.isRegistered<WorkspaceService>()) {
-      await WorkspaceService.to.setActiveWorkspace(AppWorkspace.unsupported);
-    }
-
     log('🚪 [SessionService] Session terminated.');
   }
 }

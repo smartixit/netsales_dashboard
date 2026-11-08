@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as sf;
-import 'package:netsales/widgets/charts/charting.dart';
+import 'package:netsales_dashboard/widgets/charts/charting.dart';
 
 void main() {
   testWidgets('maps trendlines and axis plot bands to Syncfusion', (

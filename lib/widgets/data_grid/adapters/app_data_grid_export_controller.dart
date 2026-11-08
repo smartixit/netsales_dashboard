@@ -7,6 +7,12 @@ import 'package:syncfusion_flutter_datagrid_export/export.dart';
 
 /// Exports rows currently loaded into the widget. Full server result exports belong in Laravel.
 class AppDataGridExportController {
+  AppDataGridExportController({
+    IFileExportService? fileExportService,
+  }) : _fileExportService =
+           fileExportService ?? FileExportService.instance;
+
+  final IFileExportService _fileExportService;
   final GlobalKey<SfDataGridState> gridKey = GlobalKey<SfDataGridState>();
 
   Future<FileExportResult> exportExcel({
@@ -17,8 +23,9 @@ class AppDataGridExportController {
     bool exportStackedHeaders = true,
   }) async {
     final state = gridKey.currentState;
-    if (state == null)
+    if (state == null) {
       return FileExportResult.failure('DataGrid is not mounted.');
+    }
     try {
       final workbook = state.exportToExcelWorkbook(
         rows: rows,
@@ -28,7 +35,7 @@ class AppDataGridExportController {
       );
       final bytes = workbook.saveAsStream();
       workbook.dispose();
-      return FileExportService.instance.saveFile(
+      return await _fileExportService.saveFile(
         bytes: Uint8List.fromList(bytes),
         fileName: fileName,
         extension: 'xlsx',
@@ -50,8 +57,10 @@ class AppDataGridExportController {
     bool canRepeatHeaders = true,
   }) async {
     final state = gridKey.currentState;
-    if (state == null)
+    if (state == null) {
       return FileExportResult.failure('DataGrid is not mounted.');
+    }
+
     try {
       final document = state.exportToPdfDocument(
         rows: rows,
@@ -63,7 +72,8 @@ class AppDataGridExportController {
       );
       final bytes = await document.save();
       document.dispose();
-      return FileExportService.instance.saveFile(
+
+      return await _fileExportService.saveFile(
         bytes: Uint8List.fromList(bytes),
         fileName: fileName,
         extension: 'pdf',

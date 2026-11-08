@@ -1,16 +1,18 @@
-# NetSales (Flutter) — Project Documentation & Canonical Authority
+# NetSales Dashboard — Project Documentation & Canonical Authority
 
-## 1. Canonical Project Memory Location
-The authoritative canonical project memory, architecture definitions, API contracts, financial invariants, and append-only decision log reside in the primary API repository:
-
-👉 **`netsales_api/docs/project/`**
-
-Do not maintain competing, uncoordinated copies of shared specifications.
+## 1. Authority Boundaries
+- Shared product scope, API contracts, RBAC, financial invariants, and backend state remain canonical in `netsales_api/docs/project/`.
+- Dashboard-specific architecture, decisions, project state, and work history are maintained locally in this repository.
+- Do not write Dashboard-specific decisions or work logs into `netsales_api`.
 
 ---
 
 ## 2. Local Documentation Index
-- **[shared-contract-reference.md](./shared-contract-reference.md):** Maps local Flutter architecture and feature implementations to their canonical backend API resources, Enums, and financial rules.
+- **[PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md):** Independent Dashboard purpose, roles, platforms, and scope.
+- **[PROJECT_STATE.md](./PROJECT_STATE.md):** Current Dashboard implementation state and blockers.
+- **[DECISION_LOG.md](./DECISION_LOG.md):** Dashboard-specific approved/proposed decisions.
+- **[WORK_LOG.md](./WORK_LOG.md):** Dashboard execution history.
+- **[shared-contract-reference.md](./shared-contract-reference.md):** Maps Dashboard integration to canonical Laravel API contracts.
 - **[AGENTS.md](../../AGENTS.md):** Permanent constitutional rules and invariants for Flutter development.
 - **[.agents/rules/](../../.agents/rules/):** Modular rules governing GetX state management, theme preservation, and security boundaries.
 

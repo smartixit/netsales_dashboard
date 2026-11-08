@@ -11,6 +11,7 @@ import 'package:netsales_dashboard/widgets/interactions/custom_interactive_bounc
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/images/custom_cached_image.dart';
 import 'package:netsales_dashboard/widgets/sheets/custom_bottom_sheet.dart';
+import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_shimmer.dart';
 
 /// أنماط عرض منتقي الصور الموحد
 enum ImagePickerVariant {

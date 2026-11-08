@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:netsales/widgets/data_grid/adapters/net_sales_data_grid_source.dart';
-import 'package:netsales/widgets/data_grid/models/app_data_grid_column.dart';
-import 'package:netsales/widgets/data_grid/models/app_data_grid_features.dart';
+import 'package:netsales_dashboard/widgets/data_grid/adapters/net_sales_data_grid_source.dart';
+import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_column.dart';
+import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_features.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:netsales/widgets/data_grid/models/app_data_grid_pagination.dart';
+import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_pagination.dart';
 
 class _GridRecord {
   const _GridRecord(this.id, this.name);

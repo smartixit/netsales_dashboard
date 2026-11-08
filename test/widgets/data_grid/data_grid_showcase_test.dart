@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:netsales/widgets/data_grid/showcase/data_grid_showcase_binding.dart';
-import 'package:netsales/widgets/data_grid/showcase/data_grid_showcase_screen.dart';
+import 'package:netsales_dashboard/widgets/data_grid/showcase/data_grid_showcase_binding.dart';
+import 'package:netsales_dashboard/widgets/data_grid/showcase/data_grid_showcase_screen.dart';
 
 void main() {
   setUp(() => Get.testMode = true);

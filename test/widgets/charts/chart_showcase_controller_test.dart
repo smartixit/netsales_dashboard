@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:netsales/widgets/charts/showcase/charts_showcase_controller.dart';
+import 'package:netsales_dashboard/widgets/charts/showcase/charts_showcase_controller.dart';
 
 void main() {
   group('ChartsShowcaseController labels', () {

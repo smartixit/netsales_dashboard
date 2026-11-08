@@ -5,6 +5,8 @@ import 'package:netsales_dashboard/core/enums/invoice_payment_status.dart';
 import 'package:netsales_dashboard/core/enums/linking_challenge_status.dart';
 import 'package:netsales_dashboard/core/enums/provider_subscription_status.dart';
 import 'package:netsales_dashboard/core/enums/request_status.dart';
+import 'package:netsales_dashboard/core/enums/network_status.dart';
+import 'package:netsales_dashboard/core/enums/pos_status.dart';
 import 'package:netsales_dashboard/core/enums/role_key.dart';
 import 'package:netsales_dashboard/core/enums/role_scope.dart';
 import 'package:netsales_dashboard/core/enums/sale_type.dart';
@@ -482,6 +484,37 @@ class EnumPresentationRegistry {
         icon: Icons.help_outline_rounded,
         isKnown: false,
       ),
+    };
+  }
+
+
+  static EnumPresentation resolveNetworkStatus(NetworkStatus status, {String? serverLabel}) {
+    final label = _effectiveLabel(serverLabel, switch (status) {
+      NetworkStatus.active => 'مفعّل', NetworkStatus.inactive => 'غير مفعّل',
+      NetworkStatus.pending => 'قيد الانتظار', NetworkStatus.rejected => 'مرفوض',
+      NetworkStatus.banned => 'محظور', NetworkStatus.unknown => 'حالة غير معروفة',
+    });
+    return switch (status) {
+      NetworkStatus.active => EnumPresentation(label: label, tone: SemanticTone.success, icon: Icons.check_circle_rounded),
+      NetworkStatus.inactive => EnumPresentation(label: label, tone: SemanticTone.neutral, icon: Icons.pause_circle_rounded),
+      NetworkStatus.pending => EnumPresentation(label: label, tone: SemanticTone.warning, icon: Icons.hourglass_top_rounded),
+      NetworkStatus.rejected || NetworkStatus.banned => EnumPresentation(label: label, tone: SemanticTone.danger, icon: Icons.block_rounded),
+      NetworkStatus.unknown => EnumPresentation.unknown(fallbackLabel: label),
+    };
+  }
+
+  static EnumPresentation resolvePosStatus(PosStatus status, {String? serverLabel}) {
+    final label = _effectiveLabel(serverLabel, switch (status) {
+      PosStatus.active => 'مفعّل', PosStatus.inactive => 'غير مفعّل',
+      PosStatus.pending => 'قيد الانتظار', PosStatus.rejected => 'مرفوض',
+      PosStatus.banned => 'محظور', PosStatus.unknown => 'حالة غير معروفة',
+    });
+    return switch (status) {
+      PosStatus.active => EnumPresentation(label: label, tone: SemanticTone.success, icon: Icons.check_circle_rounded),
+      PosStatus.inactive => EnumPresentation(label: label, tone: SemanticTone.neutral, icon: Icons.pause_circle_rounded),
+      PosStatus.pending => EnumPresentation(label: label, tone: SemanticTone.warning, icon: Icons.hourglass_top_rounded),
+      PosStatus.rejected || PosStatus.banned => EnumPresentation(label: label, tone: SemanticTone.danger, icon: Icons.block_rounded),
+      PosStatus.unknown => EnumPresentation.unknown(fallbackLabel: label),
     };
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:netsales/widgets/dashboard_metrics/dashboard_metrics.dart';
+import 'package:netsales_dashboard/widgets/dashboard_metrics/dashboard_metrics.dart';
 
 void main() {
   final metric = DashboardMetricData(

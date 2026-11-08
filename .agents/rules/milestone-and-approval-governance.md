@@ -10,9 +10,10 @@ description: Mandatory milestone approval discipline and cross-repository govern
 - Do not start Milestone 2 (Shell Navigation & Workspace Isolation) or subsequent feature milestones without explicit instruction.
 
 ## 2. Shared Project Memory Authority
-- The canonical project specifications, decision register, and state snapshot reside in `netsales_api/docs/project/`.
-- Flutter local governance is documented in `netsales/docs/project/` and links directly to canonical API project documents.
-- Always review `docs/project/PROJECT_STATE.md` and `docs/project/DECISION_LOG.md` before starting any implementation turn.
+- Shared product/API specifications remain canonical in `netsales_api/docs/project/`.
+- Dashboard-specific project overview, state, decisions, and work history reside in this repository's `docs/project/`.
+- The original `netsales` repository is a source reference for inherited components only.
+- Always review this repository's `docs/project/PROJECT_STATE.md` and `docs/project/DECISION_LOG.md`, plus the shared API contract references, before implementation.
 
 ## 3. Work Logging and Diff Verification
 - Keep git changes scoped exclusively to the authorized task.

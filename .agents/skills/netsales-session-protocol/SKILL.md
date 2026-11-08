@@ -15,7 +15,7 @@ Establishes an accurate, authoritative understanding of the current NetSales pro
 
 ## 1. Mandatory Dynamic Governance Inventory Reading Procedure
 
-Before modifying any project files, running mutating commands, or performing implementation tasks, every new Antigravity task and conversation must complete this mandatory reading procedure across BOTH repositories (`netsales` and `netsales_api`):
+Before modifying any project files, running mutating commands, or performing implementation tasks, every new Antigravity task and conversation must complete this mandatory reading procedure across the active Dashboard repository (`netsales_dashboard`) and the shared API repository (`netsales_api`). The original `netsales` repository is a component-source reference only.
 
 1. **Discover Dynamic Inventory:**
    - Scan both repositories dynamically to discover all files across:
@@ -50,7 +50,8 @@ Before modifying any project files, running mutating commands, or performing imp
 ## 2. 10-Step Mandatory Initialization Procedure
 
 1. **Read Root Governance:**
-   - In Flutter: Read [`netsales/AGENTS.md`](file:///d:/Smartix/NetSales/netsales/AGENTS.md).
+   - In Dashboard: Read this repository's `AGENTS.md` and all local rules/skills/docs.
+   - Treat `netsales` as an inherited-component reference only; do not apply its mobile workspace exclusions to Dashboard scope.
    - In Laravel API: Read [`netsales_api/AGENTS.md`](file:///d:/Smartix/NetSales/netsales_api/AGENTS.md).
 2. **Review Applicable Invariant Rules:**
    - Read `.agents/rules/product-invariants.md`.
@@ -59,18 +60,21 @@ Before modifying any project files, running mutating commands, or performing imp
    - Read `.agents/rules/milestone-and-approval-governance.md`.
    - Read `.agents/rules/flutter-architecture-and-getx.md` & `.agents/rules/flutter-ui-ux-engineering-standard.md` (Frontend) / `laravel-architecture-and-services.md` (Backend).
 3. **Read Current Project Snapshot:**
-   - Read [`docs/project/PROJECT_STATE.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/PROJECT_STATE.md).
+   - Dashboard: Read this repository's `docs/project/PROJECT_STATE.md`.
+   - Shared API: Read [`docs/project/PROJECT_STATE.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/PROJECT_STATE.md) only for shared contract/backend state.
    - Identify the current authorized milestone and active limitations.
 4. **Inspect Decision Register:**
-   - Review recent entries in [`docs/project/DECISION_LOG.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/DECISION_LOG.md).
+   - Dashboard: Review this repository's `docs/project/DECISION_LOG.md`.
+   - Shared API: Review the API decision log for shared backend decisions only.
    - Note which decisions are `APPROVED` vs `PROPOSED`.
 5. **Inspect Recent Execution History:**
-   - Read the latest entries in [`docs/project/WORK_LOG.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/WORK_LOG.md).
+   - Dashboard: Read this repository's `docs/project/WORK_LOG.md`.
+   - Read the API work log only when a shared API change is in scope.
 6. **Verify Working Tree Status:**
    - Run `git status --short` in both repositories.
    - Confirm HEAD commits match the documented baseline.
 7. **Read Domain & Architecture Documentation:**
-   - Read [`shared-contract-reference.md`](file:///d:/Smartix/NetSales/netsales/docs/project/shared-contract-reference.md).
+   - Read this repository's `docs/project/shared-contract-reference.md` and the relevant canonical API contract documents.
    - For backend integration: Read [`API_CONTRACTS.md`](file:///d:/Smartix/NetSales/netsales_api/docs/project/API_CONTRACTS.md).
 8. **Load Domain-Specific Engineering Skill:**
    - Frontend: Activate `flutter-feature-engineering`.

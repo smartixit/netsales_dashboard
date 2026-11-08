@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:desktop_windowing/desktop_windowing.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/bindings/initial_binding.dart';
 import 'package:netsales_dashboard/core/constants/app_constants.dart';
+import 'package:netsales_dashboard/core/config/desktop_windowing_config.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/exceptions/app_exception.dart';
 import 'package:netsales_dashboard/core/routing/app_pages.dart';
@@ -21,9 +23,6 @@ import 'package:netsales_dashboard/core/services/permission_service.dart';
 import 'package:netsales_dashboard/core/services/public_settings_service.dart';
 import 'package:netsales_dashboard/core/services/push_notification_service.dart';
 import 'package:netsales_dashboard/core/services/session_service.dart';
-import 'package:netsales_dashboard/core/services/workspace_service.dart';
-import 'package:netsales_dashboard/core/services/integration_gate_service.dart';
-import 'package:netsales_dashboard/core/services/sms_retriever_service.dart';
 import 'package:netsales_dashboard/core/services/storage_service.dart';
 import 'package:netsales_dashboard/core/services/theme_service.dart';
 import 'package:netsales_dashboard/core/themes/app_motion.dart';
@@ -31,7 +30,6 @@ import 'package:netsales_dashboard/core/utils/system_ui_style_resolver.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_themes.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
-import 'package:netsales_dashboard/widgets/feedback/custom_not_found.dart';
 import 'package:netsales_dashboard/widgets/dialogs/custom_animation_overlay.dart';
 import 'package:netsales_dashboard/widgets/interactions/custome_theme_switcher.dart';
 import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
@@ -130,13 +128,6 @@ void main() async {
   Get.put<PermissionService>(PermissionService.instance, permanent: true);
   await SessionService.instance.init();
   Get.put<SessionService>(SessionService.instance, permanent: true);
-  await WorkspaceService.instance.init();
-  Get.put<WorkspaceService>(WorkspaceService.instance, permanent: true);
-  Get.put<IntegrationGateService>(
-    IntegrationGateService.instance,
-    permanent: true,
-  );
-
   // 3. تسجيل الخدمات العامة الدائمة في حاوية GetX لضمان استقرار التبعيات
   Get.put<DeviceService>(DeviceService.instance, permanent: true);
   Get.put<AppCryptoService>(AppCryptoService.instance, permanent: true);
@@ -153,27 +144,31 @@ void main() async {
     permanent: true,
   );
 
-  // 4. تهيئة استرجاع بصمة التطبيق لنظام أندرويد في الخلفية دون تعطيل
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-    unawaited(SmsRetrieverService.instance.initSignature());
+  // Desktop Dashboard windows are not orientation-locked. Mobile system UI
+  // configuration is intentionally not applied to this standalone app.
+
+  // Configure the desktop window before the first visible Flutter frame.
+  final windowing = DesktopWindowingController(config: desktopWindowingConfig);
+  try {
+    await windowing.initialize();
+  } catch (error, stackTrace) {
+    log('Desktop window initialization failed: $error', stackTrace: stackTrace);
   }
 
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitDown,
-    DeviceOrientation.portraitUp,
-  ]);
-
-  // Edge-to-Edge (Android 15+ standard) — Guaranteed modern system bars
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    unawaited(windowing.show());
+  });
 
   // 5. إطلاق الواجهة الرئيسية فوراً (Instant Native Splash Dismissal & Fast First Frame)
   // ملاحظة: الخدمات الثقيلة (Firebase/FCM, Libsodium, DeviceInfo, Ping) تُهيأ
   // بالتوازي وبشكل غير حاجب داخل SplashController أثناء دوران شاشة الإقلاع الأنيقة.
-  runApp(const MyApp());
+  runApp(MyApp(windowing: windowing));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.windowing});
+
+  final DesktopWindowingController windowing;
 
   @override
   Widget build(BuildContext context) {
@@ -193,9 +188,14 @@ class MyApp extends StatelessWidget {
             initialBinding: InitialBinding(),
             initialRoute: AppPages.initial,
             getPages: AppPages.routes,
+            routingCallback: (routing) {
+              if (routing != null) {
+                unawaited(windowing.applyRoute(routing.current));
+              }
+            },
             unknownRoute: GetPage(
               name: AppRoutes.notFound,
-              page: () => const CustomNotFound(),
+              page: () => const Scaffold(body: Center(child: Text('الصفحة غير موجودة'))),
             ),
             defaultTransition: Transition.fadeIn,
             transitionDuration: AppMotion.page,
