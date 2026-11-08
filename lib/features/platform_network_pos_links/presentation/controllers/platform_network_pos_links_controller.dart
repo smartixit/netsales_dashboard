@@ -150,19 +150,17 @@ class PlatformNetworkPosLinksController extends GetxController {
   Future<void> loadSelectionOptions() async {
     isLoadingOptions.value = true;
     try {
-      final results = await Future.wait([
-        _getNetworks(perPage: 100),
-        _getPos(perPage: 100),
-      ]);
-      if (results[0].success) {
+      final networkResponse = await _getNetworks(perPage: 50);
+      if (networkResponse.success) {
         networks.assignAll(
-          results[0].data?.where((item) => item.status == 'ACTIVE').toList() ??
+          networkResponse.data?.where((item) => item.status == 'ACTIVE').toList() ??
               const <PlatformNetworkEntity>[],
         );
       }
-      if (results[1].success) {
+      final posResponse = await _getPos(perPage: 50);
+      if (posResponse.success) {
         pointsOfSale.assignAll(
-          results[1].data?.where((item) => item.status == 'ACTIVE').toList() ??
+          posResponse.data?.where((item) => item.status == 'ACTIVE').toList() ??
               const <PlatformPosEntity>[],
         );
       }
