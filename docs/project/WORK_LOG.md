@@ -1,5 +1,21 @@
 # NetSales Dashboard — Work Log
 
+## 2026-11-08 — Windows Desktop Typography Scale Refactoring
+
+**Repository:** `smartixit/netsales_dashboard`  
+**File Modified:** `lib/core/themes/app_typography.dart`
+
+### Implemented
+- Refactored all typography tokens in `AppTypography` to match Windows Desktop enterprise information density and Fluent Design / Material 3 Desktop specifications.
+- Completely eliminated `flutter_screenutil` (`.sp`, `.h`) dependencies from typography to prevent unnatural font enlargement and vertical line-height distortion when resizing or maximizing desktop windows.
+- Adopted crisp logical pixel sizes (`sizeDisplayLarge: 36`, `sizeHeadlineLarge: 22`, `sizeHeadlineMedium: 18`, `sizeTitleMedium: 14`, `sizeBodyMedium: 13`, `sizeBodySmall: 12`, `sizeButtonLarge: 14`, `sizeButtonMedium: 13`, `sizeInputText: 13`, `sizeCurrencyHero: 28`, `sizeBadge: 11`).
+- Normalized `letterSpacing: 0.0` for Arabic cursive text to maintain proper ligatures and glyph connections in IBM Plex Sans Arabic.
+- Standardized proportional unitless `height` multipliers (`1.2` - `1.5`) across all text styles.
+
+### Verification
+- `flutter analyze lib/`: Passed with 0 errors and 0 warnings (ran in 28.7s).
+- `dart format lib/core/themes/app_typography.dart`: Clean.
+
 ## 2026-11-08 — Platform User Detail Screen
 
 **Repository:** `smartixit/netsales_dashboard`  
