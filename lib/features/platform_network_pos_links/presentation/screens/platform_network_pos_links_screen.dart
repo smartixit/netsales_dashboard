@@ -115,10 +115,7 @@ class PlatformNetworkPosLinksScreen
                   headerRowHeight: 54,
                 ),
                 viewState: state,
-                searchController: controller.searchController,
-                searchHint: l10n.text('search_network_pos_links_hint'),
-                onSearchChanged: controller.onSearchChanged,
-                onClearSearch: controller.clearSearch,
+                exportController: controller.exportController,
                 pagination: AppDataGridPagination.cursorBased(
                   hasPrevious: false,
                   hasNext: controller.hasMore.value,
