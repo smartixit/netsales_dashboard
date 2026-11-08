@@ -68,5 +68,5 @@
 - Approval/rejection actions are restricted to SUPER_ADMIN and pending POS records; rejection reason is validated before calling the server.
 
 ### Boundaries
-- POS creation/editing, memberships, POS wallets, sales, debts, and network linking are deliberately not included in this first increment.
+- POS creation, memberships, POS wallets, sales, debts, and network linking are deliberately not included in this first increment. Supported name/email/address editing is included.
 - No local analyzer/test/build or rendered visual QA is claimed.
