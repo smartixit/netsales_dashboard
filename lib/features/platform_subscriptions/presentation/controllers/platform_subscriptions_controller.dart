@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:netsales_dashboard/core/models/api_response.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/provider_subscription_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_plan_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_request_entity.dart';
@@ -68,7 +67,6 @@ class PlatformSubscriptionsController extends GetxController {
   final subscriptionStatus = ''.obs;
   final requestStatus = 'PENDING'.obs;
   final planSearchController = TextEditingController();
-  final subscriptionSearchController = TextEditingController();
   final requestSearchController = TextEditingController();
   final planNameController = TextEditingController();
   final planPriceController = TextEditingController();
@@ -79,7 +77,6 @@ class PlatformSubscriptionsController extends GetxController {
   final reviewNoteController = TextEditingController();
   final extensionDaysController = TextEditingController(text: '30');
   Timer? _planDebounce;
-  Timer? _subscriptionDebounce;
   Timer? _requestDebounce;
   int _planGeneration = 0;
   int _subscriptionGeneration = 0;
@@ -100,7 +97,8 @@ class PlatformSubscriptionsController extends GetxController {
   Future<void> loadPlans({bool append = false}) async {
     if (append && (!hasMorePlans || plansLoading.value)) return;
     final generation = ++_planGeneration;
-    if (!append) { plansLoading.value = true; plansError.value = ''; planCursor.value = null; }
+    plansLoading.value = true;
+    if (!append) { plansError.value = ''; planCursor.value = null; }
     try {
       final r = await _getPlans(search: planSearchController.text, status: planStatus.value, cursor: append ? planCursor.value : null, perPage: pageSize);
       if (generation != _planGeneration) return;
@@ -114,7 +112,8 @@ class PlatformSubscriptionsController extends GetxController {
   Future<void> loadSubscriptions({bool append = false}) async {
     if (append && (!hasMoreSubscriptions || subscriptionsLoading.value)) return;
     final generation = ++_subscriptionGeneration;
-    if (!append) { subscriptionsLoading.value = true; subscriptionsError.value = ''; subscriptionCursor.value = null; }
+    subscriptionsLoading.value = true;
+    if (!append) { subscriptionsError.value = ''; subscriptionCursor.value = null; }
     try {
       final r = await _getSubscriptions(status: subscriptionStatus.value, cursor: append ? subscriptionCursor.value : null, perPage: pageSize);
       if (generation != _subscriptionGeneration) return;
@@ -128,7 +127,8 @@ class PlatformSubscriptionsController extends GetxController {
   Future<void> loadRequests({bool append = false}) async {
     if (append && (!hasMoreRequests || requestsLoading.value)) return;
     final generation = ++_requestGeneration;
-    if (!append) { requestsLoading.value = true; requestsError.value = ''; requestCursor.value = null; }
+    requestsLoading.value = true;
+    if (!append) { requestsError.value = ''; requestCursor.value = null; }
     try {
       final r = await _getRequests(status: requestStatus.value, search: requestSearchController.text, cursor: append ? requestCursor.value : null, perPage: pageSize);
       if (generation != _requestGeneration) return;
@@ -140,7 +140,6 @@ class PlatformSubscriptionsController extends GetxController {
   }
 
   void onPlanSearchChanged(String _) { _planDebounce?.cancel(); _planDebounce = Timer(const Duration(milliseconds: 400), loadPlans); }
-  void onSubscriptionSearchChanged(String _) { _subscriptionDebounce?.cancel(); _subscriptionDebounce = Timer(const Duration(milliseconds: 400), loadSubscriptions); }
   void onRequestSearchChanged(String _) { _requestDebounce?.cancel(); _requestDebounce = Timer(const Duration(milliseconds: 400), loadRequests); }
 
   Future<void> savePlan({int? id}) async {
@@ -219,8 +218,8 @@ class PlatformSubscriptionsController extends GetxController {
   @override
   void onClose() {
     _planGeneration++; _subscriptionGeneration++; _requestGeneration++;
-    _planDebounce?.cancel(); _subscriptionDebounce?.cancel(); _requestDebounce?.cancel();
-    for (final c in [planSearchController, subscriptionSearchController, requestSearchController, planNameController, planPriceController, planDiscountController, planValidityController, planDescriptionController, rejectReasonController, reviewNoteController, extensionDaysController]) { c.dispose(); }
+    _planDebounce?.cancel(); _requestDebounce?.cancel();
+    for (final c in [planSearchController, requestSearchController, planNameController, planPriceController, planDiscountController, planValidityController, planDescriptionController, rejectReasonController, reviewNoteController, extensionDaysController]) { c.dispose(); }
     super.onClose();
   }
 }
