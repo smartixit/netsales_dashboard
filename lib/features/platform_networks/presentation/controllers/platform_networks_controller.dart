@@ -86,7 +86,9 @@ class PlatformNetworksController extends GetxController {
       gridSource.replaceRows(networks.toList(growable: false));
       nextCursor.value = response.nextCursor;
       viewState.value = networks.isEmpty
-          ? AppDataGridViewState.empty
+          ? (searchQuery.value.isNotEmpty || selectedStatus.value.isNotEmpty
+                ? AppDataGridViewState.noResults
+                : AppDataGridViewState.empty)
           : AppDataGridViewState.success;
     } catch (error) {
       if (generation != _requestGeneration) return;
@@ -109,6 +111,14 @@ class PlatformNetworksController extends GetxController {
       const Duration(milliseconds: 400),
       () => loadNetworks(),
     );
+  }
+
+  void clearFilters() {
+    _searchDebounce?.cancel();
+    searchController.clear();
+    searchQuery.value = '';
+    selectedStatus.value = '';
+    loadNetworks();
   }
 
   void setStatus(String status) {
