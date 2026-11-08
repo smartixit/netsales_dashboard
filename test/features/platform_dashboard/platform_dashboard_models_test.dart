@@ -115,7 +115,7 @@ void main() {
       'entity_id': 12,
       'user': {'user_full_name': 'Platform Admin'},
       'log_date': '2026-11-08T10:00:00Z',
-    }).toEntity();
+    });
 
     expect(entity, isA<PlatformActivityEntity>());
     expect(entity.id, 8);
