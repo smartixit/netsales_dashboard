@@ -9,14 +9,18 @@ import 'package:netsales_dashboard/features/platform_users/presentation/controll
 class PlatformUsersBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<PlatformUsersRemoteDataSource>(
-      PlatformUsersRemoteDataSourceImpl.new,
-    );
-    Get.lazyPut<PlatformUsersRepository>(
-      () => PlatformUsersRepositoryImpl(
-        Get.find<PlatformUsersRemoteDataSource>(),
-      ),
-    );
+    if (!Get.isRegistered<PlatformUsersRemoteDataSource>()) {
+      Get.lazyPut<PlatformUsersRemoteDataSource>(
+        PlatformUsersRemoteDataSourceImpl.new,
+      );
+    }
+    if (!Get.isRegistered<PlatformUsersRepository>()) {
+      Get.lazyPut<PlatformUsersRepository>(
+        () => PlatformUsersRepositoryImpl(
+          Get.find<PlatformUsersRemoteDataSource>(),
+        ),
+      );
+    }
     Get.lazyPut<GetPlatformUsersUseCase>(
       () => GetPlatformUsersUseCase(Get.find<PlatformUsersRepository>()),
     );
