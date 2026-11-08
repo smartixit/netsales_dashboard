@@ -9,12 +9,16 @@ import 'package:netsales_dashboard/features/platform_network_pos_links/domain/us
 import 'package:netsales_dashboard/features/platform_network_pos_links/domain/usecases/get_platform_network_pos_link_detail_use_case.dart';
 import 'package:netsales_dashboard/features/platform_network_pos_links/domain/usecases/update_platform_network_pos_link_status_use_case.dart';
 import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/controllers/platform_network_pos_links_controller.dart';
+import 'package:netsales_dashboard/features/platform_networks/presentation/bindings/platform_networks_binding.dart';
+import 'package:netsales_dashboard/features/platform_pos/presentation/bindings/platform_pos_binding.dart';
 import 'package:netsales_dashboard/features/platform_networks/domain/usecases/get_platform_networks_use_case.dart';
 import 'package:netsales_dashboard/features/platform_pos/domain/usecases/get_platform_pos_list_use_case.dart';
 
 class PlatformNetworkPosLinksBinding extends Bindings {
   @override
   void dependencies() {
+    PlatformNetworksBinding().dependencies();
+    PlatformPosBinding().dependencies();
     if (!Get.isRegistered<PlatformNetworkPosLinksRemoteDataSource>()) {
       Get.lazyPut<PlatformNetworkPosLinksRemoteDataSource>(
         PlatformNetworkPosLinksRemoteDataSourceImpl.new,
