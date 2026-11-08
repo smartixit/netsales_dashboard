@@ -116,8 +116,12 @@ class PlatformSubscriptionsController extends GetxController {
   }
 
   Future<void> loadFeatureCatalog() async {
-    final response = await _getFeatures(status: '1', perPage: 100);
-    if (response.success) featureCatalog.assignAll(response.data ?? const <SubscriptionFeatureEntity>[]);
+    try {
+      final response = await _getFeatures(status: '1', perPage: 100);
+      if (response.success) featureCatalog.assignAll(response.data ?? const <SubscriptionFeatureEntity>[]);
+    } catch (_) {
+      featureCatalog.clear();
+    }
   }
 
   Future<void> loadSubscriptions({bool append = false}) async {
@@ -219,7 +223,7 @@ class PlatformSubscriptionsController extends GetxController {
     planDiscountController.text = plan?.discount ?? '0';
     planValidityController.text = (plan?.validityDays ?? 30).toString();
     planDescriptionController.text = plan?.description ?? '';
-    selectedFeatureIds.assignAll((plan?.planFeatures ?? const []).map((feature) => feature.featureId));
+    selectedFeatureIds.assignAll((plan?.planFeatures ?? const []).where((feature) => feature.isActive).map((feature) => feature.featureId));
     for (final controller in featureLimitControllers.values) { controller.dispose(); }
     featureLimitControllers.clear();
     for (final feature in plan?.planFeatures ?? const []) {
