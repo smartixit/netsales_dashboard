@@ -68,6 +68,17 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - Backups and scheduled tasks are client-visible only to SUPER_ADMIN because dedicated permission keys are absent; API-side authorization must be verified.
 - Other module destinations are route placeholders pending their feature-specific delivery.
 
-### Pending validation
-- CI for current feature branch HEAD: full analysis, tests, Windows Debug build.
-- Visual and interaction QA on Windows and responsive Web: resizing/transitions, focus/hover, keyboard/mouse, RTL/LTR, Light/Dark, and minimum 1120×720 window behavior.
+### CI verification — exact HEAD 35a913eb3cf1dead647d58075a1f89f0bd0cfba8
+- Run [#42491537717](https://github.com/smartixit/netsales_dashboard/actions/runs/42491537717) completed with **success** on the exact current branch HEAD.
+- Desktop windowing package analysis and tests passed.
+- Full Dashboard `flutter analyze` passed.
+- Focused Splash/Authentication analysis passed.
+- Full Flutter test suite passed.
+- Windows Debug compilation passed.
+- The earlier duplicate-local and unawaited-future analyzer diagnostics in `PlatformDashboardController` were corrected in the verified HEAD.
+
+### Remaining validation and delivery boundaries
+- Live rendered Windows/Web visual QA remains outstanding: resize/transition behavior, focus/hover, keyboard/mouse, RTL/LTR, Light/Dark, and minimum 1120×720 window behavior. No visual pass is claimed.
+- `GET /api/v1/dashboard/overview` remains unavailable for aggregate data because the referenced DashboardController is absent from current API source. No fake KPI, chart, attention, or financial values are supplied.
+- Non-overview module destinations remain route placeholders pending their separately scoped feature delivery.
+- Pull Request [#2](https://github.com/smartixit/netsales_dashboard/pull/2) is open and has not been merged.

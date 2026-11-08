@@ -190,3 +190,84 @@
 - Feature source and tests are committed; current-HEAD GitHub Actions is the required executable verification.
 - No local Flutter SDK execution, interactive Windows runtime, or browser visual session was available in this GitHub-only execution context. CI and visual QA are pending; neither is claimed as passed.
 - No Laravel API files or financial/business logic were modified.
+
+## 2026-11-08 — Platform Main Layout CI remediation and verification
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/platform-main-layout`  
+**Verified HEAD:** `35a913eb3cf1dead647d58075a1f89f0bd0cfba8`  
+**Pull Request:** [#2](https://github.com/smartixit/netsales_dashboard/pull/2)  
+**CI run:** [#42491537717](https://github.com/smartixit/netsales_dashboard/actions/runs/42491537717)
+
+### Analyzer remediation
+- Removed the duplicate local `arabic` declaration in `PlatformDashboardController.logout()`.
+- Marked the intentionally fire-and-forget initial header refresh with `unawaited(refreshHeaderData())` and imported `dart:async`, resolving the analyzer's unawaited-future diagnostic without changing the asynchronous loading behavior.
+
+### Verified CI outcomes on the exact HEAD
+- Desktop windowing package analysis: **passed**.
+- Desktop windowing package tests: **passed**.
+- Full Dashboard `flutter analyze`: **passed**.
+- Focused Splash/Authentication analysis: **passed**.
+- Full Flutter test suite: **passed**.
+- Windows Debug compilation: **passed**.
+- Workflow run conclusion: **success**.
+
+### Delivery boundary
+- PR #2 is open and not merged.
+- No Laravel API source or database changes were made.
+- Live rendered Windows/Web visual QA has not been performed and is not claimed.
+- The dashboard aggregate endpoint remains blocked by the missing server-side DashboardController/verified aggregate response contract. No fake KPI, chart, attention, or financial values were introduced.
+- Non-overview module destinations remain route placeholders pending their separately scoped feature delivery.
+
+### Files changed in the PR
+- `docs/project/DECISION_LOG.md`
+- `docs/project/PROJECT_STATE.md`
+- `docs/project/WORK_LOG.md`
+- `lib/core/config/desktop_windowing_config.dart`
+- `lib/core/localization/app_localizations.dart`
+- `lib/core/routing/app_pages.dart`
+- `lib/core/routing/app_routes.dart`
+- `lib/core/services/locale_service.dart`
+- `lib/core/themes/app_breakpoints.dart`
+- `lib/features/platform_dashboard/data/datasources/platform_dashboard_remote_data_source.dart`
+- `lib/features/platform_dashboard/data/datasources/platform_dashboard_remote_data_source_impl.dart`
+- `lib/features/platform_dashboard/data/models/platform_activity_model.dart`
+- `lib/features/platform_dashboard/data/models/platform_notification_model.dart`
+- `lib/features/platform_dashboard/data/repositories/platform_dashboard_repository_impl.dart`
+- `lib/features/platform_dashboard/domain/entities/platform_activity_entity.dart`
+- `lib/features/platform_dashboard/domain/entities/platform_notification_entity.dart`
+- `lib/features/platform_dashboard/domain/repositories/platform_dashboard_repository.dart`
+- `lib/features/platform_dashboard/domain/usecases/get_notification_count_use_case.dart`
+- `lib/features/platform_dashboard/domain/usecases/get_platform_notifications_use_case.dart`
+- `lib/features/platform_dashboard/domain/usecases/get_recent_platform_activity_use_case.dart`
+- `lib/features/platform_dashboard/domain/usecases/mark_all_notifications_read_use_case.dart`
+- `lib/features/platform_dashboard/domain/usecases/mark_notification_read_use_case.dart`
+- `lib/features/platform_dashboard/presentation/bindings/platform_dashboard_binding.dart`
+- `lib/features/platform_dashboard/presentation/controllers/platform_dashboard_controller.dart`
+- `lib/features/platform_dashboard/presentation/navigation/platform_navigation_registry.dart`
+- `lib/features/platform_dashboard/presentation/screens/platform_dashboard_screen.dart`
+- `lib/features/platform_dashboard/presentation/screens/platform_module_placeholder_screen.dart`
+- `lib/features/platform_dashboard/presentation/screens/platform_overview_screen.dart`
+- `lib/features/platform_dashboard/presentation/widgets/overview/platform_overview_chart_grid.dart`
+- `lib/features/platform_dashboard/presentation/widgets/overview/platform_recent_activity_section.dart`
+- `lib/features/platform_dashboard/presentation/widgets/overview/platform_welcome_panel.dart`
+- `lib/features/platform_dashboard/presentation/widgets/platform_navigation_footer.dart`
+- `lib/features/platform_dashboard/presentation/widgets/platform_sidebar_brand.dart`
+- `lib/main.dart`
+- `lib/widgets/dashboard_extras/custom_activity_timeline.dart`
+- `lib/widgets/dashboard_extras/custom_command_palette.dart`
+- `lib/widgets/dashboard_extras/custom_date_range_selector.dart`
+- `lib/widgets/dashboard_extras/custom_filter_bar.dart`
+- `lib/widgets/dashboard_extras/custom_notification_center.dart`
+- `lib/widgets/dashboard_extras/custom_profile_menu.dart`
+- `lib/widgets/dashboard_extras/custom_section_header.dart`
+- `lib/widgets/dashboard_extras/custom_shortcut_hint.dart`
+- `lib/widgets/dashboard_extras/custom_status_banner.dart`
+- `lib/widgets/dashboard_extras/dashboard_extras.dart`
+- `lib/widgets/dashboard_layout/src/layout/dashboard_shell.dart`
+- `lib/widgets/dashboard_layout/src/widgets/dashboard_page_header.dart`
+- `lib/widgets/dashboard_layout/src/widgets/dashboard_sidebar.dart`
+- `lib/widgets/dashboard_layout/src/widgets/dashboard_topbar.dart`
+- `test/core/localization/app_localizations_test.dart`
+- `test/features/platform_dashboard/platform_navigation_registry_test.dart`
+- `test/widgets/dashboard_layout/dashboard_layout_test.dart`
