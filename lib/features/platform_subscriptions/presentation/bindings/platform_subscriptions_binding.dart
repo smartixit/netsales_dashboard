@@ -9,6 +9,7 @@ import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecas
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/extend_provider_subscription_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_provider_subscriptions_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_plans_use_case.dart';
+import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_features_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_requests_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/reject_subscription_request_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/save_subscription_plan_use_case.dart';
@@ -26,6 +27,9 @@ class PlatformSubscriptionsBinding extends Bindings {
     }
     if (!Get.isRegistered<GetSubscriptionPlansUseCase>()) {
       Get.lazyPut<GetSubscriptionPlansUseCase>(() => GetSubscriptionPlansUseCase(Get.find<PlatformSubscriptionsRepository>()), fenix: true);
+    }
+    if (!Get.isRegistered<GetSubscriptionFeaturesUseCase>()) {
+      Get.lazyPut<GetSubscriptionFeaturesUseCase>(() => GetSubscriptionFeaturesUseCase(Get.find<PlatformSubscriptionsRepository>()), fenix: true);
     }
     if (!Get.isRegistered<GetProviderSubscriptionsUseCase>()) {
       Get.lazyPut<GetProviderSubscriptionsUseCase>(() => GetProviderSubscriptionsUseCase(Get.find<PlatformSubscriptionsRepository>()), fenix: true);
@@ -57,6 +61,7 @@ class PlatformSubscriptionsBinding extends Bindings {
     if (!Get.isRegistered<PlatformSubscriptionsController>()) {
       Get.lazyPut<PlatformSubscriptionsController>(() => PlatformSubscriptionsController(
         getPlans: Get.find<GetSubscriptionPlansUseCase>(),
+        getFeatures: Get.find<GetSubscriptionFeaturesUseCase>(),
         getSubscriptions: Get.find<GetProviderSubscriptionsUseCase>(),
         getRequests: Get.find<GetSubscriptionRequestsUseCase>(),
         savePlan: Get.find<SaveSubscriptionPlanUseCase>(),
