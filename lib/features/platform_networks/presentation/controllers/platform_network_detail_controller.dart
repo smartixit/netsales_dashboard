@@ -60,10 +60,8 @@ class PlatformNetworkDetailController extends GetxController {
     try {
       final updated = await _updateNetwork(
         networkId,
-        data: <String, dynamic>{
-          'network_name': name.trim(),
-          'network_address': address.trim().isEmpty ? null : address.trim(),
-        },
+        name: name.trim(),
+        address: address.trim().isEmpty ? null : address.trim(),
       );
       network.value = updated;
     } finally {
