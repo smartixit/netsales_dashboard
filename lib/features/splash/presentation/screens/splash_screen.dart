@@ -1,84 +1,112 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:netsales_dashboard/core/constants/app_radius.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
-import 'package:netsales_dashboard/core/themes/app_colors.dart';
-import 'package:netsales_dashboard/core/themes/app_gradients.dart';
-import 'package:netsales_dashboard/core/themes/app_motion.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
 import 'package:netsales_dashboard/features/splash/presentation/controllers/splash_controller.dart';
+import 'package:netsales_dashboard/features/splash/presentation/widgets/splash_brand_badge.dart';
+import 'package:netsales_dashboard/features/splash/presentation/widgets/splash_footer_watermark.dart';
+import 'package:netsales_dashboard/features/splash/presentation/widgets/splash_progress_bar.dart';
 
-/// Lightweight startup surface; all startup decisions remain in SplashController.
+/// Ultra-luxurious frameless startup surface for the NetSales Platform Dashboard.
 class SplashScreen extends GetView<SplashController> {
   const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
     return Scaffold(
-      body: DecoratedBox(
+      backgroundColor: const Color(0xFF031610),
+      body: Container(
         decoration: BoxDecoration(
-          gradient: AppGradients.entityEmerald(context),
+          borderRadius: BorderRadius.circular(AppRadius.xxl),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.12),
+            width: 1.2,
+          ),
+          gradient: const RadialGradient(
+            center: Alignment(0.0, -0.45),
+            radius: 1.15,
+            colors: [
+              Color(0xFF0D5442),
+              Color(0xFF063528),
+              Color(0xFF031C15),
+              Color(0xFF02120D),
+            ],
+            stops: [0.0, 0.40, 0.75, 1.0],
+          ),
         ),
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.all(AppSpacing.xxl),
-            child: TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0.0, end: 1.0),
-              duration: AppMotion.duration(context, AppMotion.normal),
-              curve: AppMotion.decelerate,
-              builder: (context, opacity, child) => Opacity(
-                opacity: opacity,
-                child: child,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadius.xxl - 1),
+          child: Stack(
+            children: [
+              // ── Atmospheric Ambient Radial Glow Behind Brand Badge ──
+              Positioned(
+                top: 30,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Container(
+                    width: 220,
+                    height: 140,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              const Color(0xFF10B981).withValues(alpha: 0.16),
+                          blurRadius: 90,
+                          spreadRadius: 25,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    'assets/images/brand_icon.png',
-                    width: 76,
-                    height: 76,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) => Icon(
-                      Icons.hub_rounded,
-                      size: 72,
-                      color: colors.tertiaryFixed,
-                    ),
+
+              // ── Center Content: Brand, Title, Fluid Progress ──
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SplashBrandBadge(),
+                      AppSpacing.vLg,
+                      Text(
+                        'NetSales',
+                        style: AppTypography.headlineLarge.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 30,
+                          letterSpacing: -0.6,
+                        ),
+                      ),
+                      AppSpacing.vXs,
+                      Text(
+                        'المنصة السحابية الموحدة لإدارة الأعمال والعمليات',
+                        textAlign: TextAlign.center,
+                        style: AppTypography.bodySmall.copyWith(
+                          color: const Color(0xFFA7F3D0).withValues(alpha: 0.82),
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.1,
+                        ),
+                      ),
+                      AppSpacing.vXl,
+                      const SplashProgressBar(),
+                    ],
                   ),
-                  AppSpacing.vLg,
-                  Text(
-                    'NetSales',
-                    style: AppTypography.headlineMedium.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  AppSpacing.vXs,
-                  Text(
-                    'منصة إدارة الأعمال',
-                    style: AppTypography.bodyMedium.copyWith(
-                      color: Colors.white.withValues(alpha: 0.76),
-                    ),
-                  ),
-                  AppSpacing.vXxl,
-                  SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.4,
-                      color: colors.tertiaryFixed,
-                    ),
-                  ),
-                  AppSpacing.vMd,
-                  Text(
-                    'جارٍ تهيئة المنصة والتحقق من الجلسة',
-                    style: AppTypography.labelSmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.68),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+
+              // ── Window Footer Metadata ──
+              const Positioned(
+                bottom: 8,
+                left: 0,
+                right: 0,
+                child: SplashFooterWatermark(),
+              ),
+            ],
           ),
         ),
       ),

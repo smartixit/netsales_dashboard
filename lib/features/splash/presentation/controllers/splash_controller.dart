@@ -21,6 +21,10 @@ class SplashController extends GetxController {
 
   static const Duration minSplashDuration = AppMotion.splashMinimum;
 
+  final RxString statusMessage =
+      'تهيئة النواة السحابية والتحقق من البيئة...'.obs;
+  final RxDouble progress = 0.18.obs;
+
   bool _isDisposed = false;
 
   @override
@@ -29,10 +33,28 @@ class SplashController extends GetxController {
     _bootstrapApp();
   }
 
+  void _updatePhase(String message, double targetProgress) {
+    if (_isDisposed) return;
+    statusMessage.value = message;
+    progress.value = targetProgress;
+  }
+
   Future<void> _bootstrapApp() async {
     try {
       final stopwatch = Stopwatch()..start();
-      await initializeAppUseCase();
+
+      _updatePhase('تهيئة النواة السحابية والتحقق من البيئة...', 0.22);
+      final initFuture = initializeAppUseCase();
+
+      await Future<void>.delayed(const Duration(milliseconds: 550));
+      if (_isDisposed) return;
+
+      _updatePhase('فحص حزم التشفير وتكامل الجلسة الآمنة...', 0.58);
+      await initFuture;
+      if (_isDisposed) return;
+
+      _updatePhase('التحقق من هوية المنصة وسياسات الوصول...', 0.85);
+      final destinationFuture = determineBootDestinationUseCase();
 
       final elapsed = stopwatch.elapsed;
       if (elapsed < minSplashDuration) {
@@ -40,7 +62,11 @@ class SplashController extends GetxController {
       }
       if (_isDisposed) return;
 
-      final destination = await determineBootDestinationUseCase();
+      final destination = await destinationFuture;
+      if (_isDisposed) return;
+
+      _updatePhase('اكتملت الجاهزية — جاري فتح المنصة...', 1.0);
+      await Future<void>.delayed(const Duration(milliseconds: 200));
       if (_isDisposed) return;
 
       log('[SplashController] Startup complete. Navigating to: $destination');

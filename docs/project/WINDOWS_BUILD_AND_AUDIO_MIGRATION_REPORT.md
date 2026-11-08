@@ -146,3 +146,4 @@ endif()
    - `just_audio_windows_plugin.dll` (ملحق مشغل الصوت).
    - `flutter_windows.dll` و `local_auth_windows_plugin.dll` وبقية الملحقات.
    - `data/flutter_assets/assets/sounds/` بكافة الأصوات الخاصة بالمشروع (`netsales_notification.wav` و `netsales_success.wav`).
+

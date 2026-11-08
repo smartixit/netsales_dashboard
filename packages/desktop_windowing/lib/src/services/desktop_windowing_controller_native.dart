@@ -4,7 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:nativeapi/nativeapi.dart' show DisplayManager;
+import 'package:nativeapi/nativeapi.dart' show DisplayManager, TitleBarStyle;
 import 'package:window_manager/window_manager.dart';
 
 import '../config/window_profile.dart';
@@ -102,6 +102,7 @@ class DesktopWindowingController {
     );
 
     _applyConstraints(initialProfile, workArea);
+    _applyProfilePresentation(initialProfile);
     window.bounds = bounds.toNative();
     _activeProfileId = initialProfile.id;
     _applyInitialPresentationState(initialProfile.initialState);
@@ -184,6 +185,7 @@ class DesktopWindowingController {
 
     if (_nearlyEqual(current, target)) {
       _applyConstraints(profile, workArea);
+      _applyProfilePresentation(profile);
       _activeProfileId = profileId;
       return WindowOperationResult(
         status: WindowOperationStatus.unchanged,
@@ -196,6 +198,7 @@ class DesktopWindowingController {
     if (!config.animation.enabled) {
       window.bounds = target.toNative();
       _applyConstraints(profile, workArea);
+      _applyProfilePresentation(profile);
       _activeProfileId = profileId;
       _pendingProfileId = null;
       return WindowOperationResult(
@@ -205,6 +208,7 @@ class DesktopWindowingController {
     }
 
     _applyTransitionConstraints(current, target, workArea);
+    _applyProfilePresentation(profile);
     return _animateBounds(current, target, profileId);
   }
 
@@ -307,6 +311,7 @@ class DesktopWindowingController {
       final window = _window;
       if (profile != null && window != null) {
         _applyConstraints(profile, _workAreaFor(window.bounds.toRect()));
+        _applyProfilePresentation(profile);
       }
     }
   }
@@ -351,7 +356,7 @@ class DesktopWindowingController {
       math.min(maximum.width, workArea.width).toDouble(),
       math.min(maximum.height, workArea.height).toDouble(),
     ).toNative();
-    window.isResizable = config.resizable;
+    window.isResizable = false;
   }
 
   void _applyConstraints(WindowProfile profile, Rect workArea) {
@@ -372,7 +377,25 @@ class DesktopWindowingController {
     );
     window.minimumSize = minSize.toNative();
     window.maximumSize = maxSize.toNative();
-    window.isResizable = config.resizable;
+    window.isResizable = profile.resizable && config.resizable;
+  }
+
+  void _applyProfilePresentation(WindowProfile profile) {
+    final window = _window;
+    if (window == null) return;
+
+    window.isResizable = profile.resizable && config.resizable;
+    window.isAlwaysOnTop = profile.alwaysOnTop;
+    window.isVisibleInTaskbar = !profile.skipTaskbar;
+
+    if (profile.frameless) {
+      window.setFrameless(true);
+    } else {
+      window.setFrameless(false);
+      window.titleBarStyle = profile.titleBarStyle == WindowTitleBarStyle.hidden
+          ? TitleBarStyle.hidden
+          : TitleBarStyle.normal;
+    }
   }
 
   Rect _workAreaFor(Rect currentBounds) {

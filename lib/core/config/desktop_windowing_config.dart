@@ -8,11 +8,16 @@ const WindowingConfig desktopWindowingConfig = WindowingConfig(
   profiles: {
     'splash': WindowProfile(
       id: 'splash',
-      size: Size(520, 360),
+      size: Size(540, 380),
       constraints: WindowConstraints(
-        minimumSize: Size(480, 320),
-        maximumSize: Size(640, 480),
+        minimumSize: Size(540, 380),
+        maximumSize: Size(540, 380),
       ),
+      resizable: false,
+      alwaysOnTop: true,
+      skipTaskbar: true,
+      frameless: true,
+      titleBarStyle: WindowTitleBarStyle.hidden,
     ),
     'authentication': WindowProfile(
       id: 'authentication',
@@ -20,6 +25,16 @@ const WindowingConfig desktopWindowingConfig = WindowingConfig(
       constraints: WindowConstraints(
         minimumSize: Size(900, 620),
       ),
+      resizable: false,
+      alwaysOnTop: false,
+      skipTaskbar: false,
+      frameless: true,
+      titleBarStyle: WindowTitleBarStyle.hidden,
+      resizable: true,
+      alwaysOnTop: false,
+      skipTaskbar: false,
+      frameless: false,
+      titleBarStyle: WindowTitleBarStyle.normal,
     ),
     'dashboard': WindowProfile(
       id: 'dashboard',
@@ -28,6 +43,11 @@ const WindowingConfig desktopWindowingConfig = WindowingConfig(
         minimumSize: Size(1120, 720),
       ),
       positionPolicy: WindowPositionPolicy.preserve,
+      resizable: true,
+      alwaysOnTop: false,
+      skipTaskbar: false,
+      frameless: false,
+      titleBarStyle: WindowTitleBarStyle.normal,
     ),
   },
   routeProfiles: {

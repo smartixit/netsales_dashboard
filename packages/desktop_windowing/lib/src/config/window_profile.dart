@@ -19,6 +19,11 @@ enum WindowPresentationState {
   fullscreen,
 }
 
+enum WindowTitleBarStyle {
+  normal,
+  hidden,
+}
+
 /// A named window geometry and presentation policy.
 class WindowProfile {
   const WindowProfile({
@@ -27,6 +32,11 @@ class WindowProfile {
     this.constraints = const WindowConstraints(),
     this.positionPolicy = WindowPositionPolicy.center,
     this.initialState = WindowPresentationState.normal,
+    this.resizable = true,
+    this.alwaysOnTop = false,
+    this.skipTaskbar = false,
+    this.frameless = false,
+    this.titleBarStyle = WindowTitleBarStyle.normal,
   }) : assert(id != '');
 
   final String id;
@@ -40,4 +50,19 @@ class WindowProfile {
   /// Applied during initialization. Profile changes do not override a
   /// maximized or fullscreen state explicitly chosen by the user.
   final WindowPresentationState initialState;
+
+  /// Whether the native window frame can be manually resized by the user.
+  final bool resizable;
+
+  /// Whether the window remains floating on top of all other windows.
+  final bool alwaysOnTop;
+
+  /// Whether the window is hidden from the system taskbar/dock.
+  final bool skipTaskbar;
+
+  /// Whether the native window is completely frameless without OS chrome.
+  final bool frameless;
+
+  /// OS title bar presentation style (normal or hidden).
+  final WindowTitleBarStyle titleBarStyle;
 }
