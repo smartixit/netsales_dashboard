@@ -22,7 +22,7 @@ class PlatformNetworksRemoteDataSourceImpl
     return _apiService.getList<PlatformNetworkModel>(
       ApiConstants.networks,
       fromJson: (json) => PlatformNetworkModel.fromJson(
-        Map<String, dynamic>.from(json as Map),
+        _asJsonMap(json),
       ),
       queryParameters: {
         if (search != null && search.trim().isNotEmpty) 'search': search.trim(),
@@ -38,7 +38,7 @@ class PlatformNetworksRemoteDataSourceImpl
     return _apiService.get<PlatformNetworkModel>(
       ApiConstants.network(networkId),
       fromJson: (json) => PlatformNetworkModel.fromJson(
-        Map<String, dynamic>.from(json as Map),
+        _asJsonMap(json),
       ),
     );
   }
@@ -52,7 +52,7 @@ class PlatformNetworksRemoteDataSourceImpl
       ApiConstants.network(networkId),
       data: data,
       fromJson: (json) => PlatformNetworkModel.fromJson(
-        Map<String, dynamic>.from(json as Map),
+        _asJsonMap(json),
       ),
     );
   }
@@ -72,4 +72,11 @@ class PlatformNetworksRemoteDataSourceImpl
       data: <String, dynamic>{'rejection_reason': reason},
     );
   }
+}
+
+
+Map<String, dynamic> _asJsonMap(Object? value) {
+  if (value is Map<String, dynamic>) return value;
+  if (value is Map<Object?, Object?>) return Map<String, dynamic>.from(value);
+  throw const FormatException('Unexpected network resource payload.');
 }
