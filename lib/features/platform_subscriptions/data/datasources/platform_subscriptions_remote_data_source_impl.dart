@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:netsales_dashboard/core/constants/api_constants.dart';
 import 'package:netsales_dashboard/core/models/api_response.dart';
 import 'package:netsales_dashboard/core/services/api_service.dart';
@@ -92,6 +93,22 @@ class PlatformSubscriptionsRemoteDataSourceImpl implements PlatformSubscriptions
   Future<ApiResponse<SubscriptionRequestModel>> getRequest(int id) => _api.get<SubscriptionRequestModel>(
     ApiConstants.subscriptionPlanRequest(id), fromJson: (json) => SubscriptionRequestModel.fromJson(_map(json)),
   );
+
+  @override
+  Future<Uint8List> getRequestReceipt(int id) async {
+    final linkResponse = await _api.get<Map<String, dynamic>>(
+      ApiConstants.subscriptionPlanRequestReceiptLink(id),
+      fromJson: (json) => _map(json),
+    );
+    if (!linkResponse.success || linkResponse.data == null) {
+      throw Exception(linkResponse.message.isEmpty ? 'Unable to authorize receipt access.' : linkResponse.message);
+    }
+    final url = linkResponse.data!['receipt_url']?.toString();
+    if (url == null || url.isEmpty) throw const FormatException('Receipt URL is missing.');
+    final bytes = await _api.downloadBytes(url);
+    if (bytes == null || bytes.isEmpty) throw Exception('Unable to download the subscription receipt.');
+    return bytes;
+  }
 
   @override
   Future<ApiResponse<void>> approveRequest(int id, {String? note}) => _api.post<void>(
