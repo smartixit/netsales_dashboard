@@ -271,3 +271,19 @@
 - `test/core/localization/app_localizations_test.dart`
 - `test/features/platform_dashboard/platform_navigation_registry_test.dart`
 - `test/widgets/dashboard_layout/dashboard_layout_test.dart`
+
+
+---
+
+## [2026-11-08] Platform Overview — Live Data Integration
+- **Authorized task:** User explicitly approved continuing implementation of the real-data Platform Overview.
+- **Dashboard implementation commits:**
+  - \`0e8c30eaf47fedb7be3d60cb2e986d846c084596\` — typed Overview domain/data contract, repository, use case, and binding integration.
+  - \`c10af366af5cab88709787533d329a4c2d9b6bad\` — Overview controller, period/refresh state, and ApiConstants endpoint; also corrected the existing nullable GetX route-middleware test expression.
+  - \`fdbeb8bb4e6471e9946e86f0a8a0f309dc2b0385\` — real metric rendering, chart series, attention queues, and localization.
+  - \`d3053d48773620dd1ee44208050af4c86ba293b9\` — aligned recent activity section and chart context handling.
+- **Backend:** PR #3 in \`smartixit/netsales_api\` was merged; merged head \`99f8066cb9f2a40cd8289981de50323c1608ea30\`.
+- **Files added/changed in Dashboard:** Overview entity/model/use case; Overview data source and repository contracts/implementation; activity entity/model extension; Dashboard binding/controller; API constant; Overview screen, chart grid, recent activity section, localization; navigation registry test null-safety correction.
+- **Verification evidence:** Dashboard CI run \`42499932463\` tested \`c10af366...\` and was still in progress when last inspected. It does not verify the later commits. API CI run \`42499361996\` completed failure at Composer dependency audit; the workflow reports high-severity dependency advisories. Do not mark either pipeline green.
+- **Unverified:** Current Flutter analyzer, full tests, Windows Debug build, API Pint/PHPUnit, live API request against a configured database, and rendered Windows/Web visual QA.
+- **Next:** Inspect current HEAD CI and fix every source/test failure in one coherent pass. Then verify API contract/export and run API Pint/PHPUnit. Do not merge Dashboard PR without user authorization.

@@ -35,3 +35,12 @@ Dashboard-specific decisions are maintained here. Shared product/API/financial d
 ## DASH-005 — Overview Data Integrity
 - **Decision:** No local calculation of authoritative balances, financial totals, or server-owned KPI values. No placeholder chart series or simulated activity records.
 - **Current blocker:** API routes reference a DashboardController for `GET /api/v1/dashboard/overview`, but no such controller exists in the current API source tree. The Overview therefore displays neutral unavailable KPI values and empty chart states until a real contract is implemented.
+
+
+| DASH-007 | 2026-11-08 | Consume the Laravel \`GET /api/v1/dashboard/overview\` contract as the single source for Overview KPIs, chart series, attention queues, and recent activity; retain permission-aware rendering and zero client-side financial calculations. | APPROVED |
+
+## DASH-007 — Live Platform Overview Contract
+- **Authorization:** User explicitly requested implementation of the real-data Overview and approved continuation.
+- **Decision:** Overview presentation consumes one server aggregate response through Clean Architecture and GetX. The client may format/display values but must not derive authoritative totals, balances, trends, or accounting figures.
+- **Scope:** Periods \`7d\`, \`30d\`, \`90d\`, \`12m\`; permission-aware metric groups, chart series, attention queues, and recent activity.
+- **Verification boundary:** Source integration is implemented, but runtime/CI and rendered visual verification are pending.
