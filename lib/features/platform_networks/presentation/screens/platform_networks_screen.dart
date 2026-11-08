@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/presentation/controllers/platform_dashboard_controller.dart';
 import 'package:netsales_dashboard/features/platform_networks/presentation/controllers/platform_networks_controller.dart';
 import 'package:netsales_dashboard/features/platform_networks/presentation/widgets/platform_network_filter_bar.dart';
+import 'package:netsales_dashboard/features/platform_networks/presentation/widgets/platform_network_metrics_section.dart';
 import 'package:netsales_dashboard/features/platform_networks/presentation/widgets/platform_networks_list.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/dashboard_layout/src/widgets/dashboard_page_header.dart';
@@ -18,6 +20,7 @@ class PlatformNetworksScreen extends GetView<PlatformNetworksController> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final dashboardController = Get.find<PlatformDashboardController>();
     return Padding(
       padding: EdgeInsets.all(AppSpacing.lg),
       child: Column(
@@ -36,6 +39,13 @@ class PlatformNetworksScreen extends GetView<PlatformNetworksController> {
                   onPressed: controller.isRefreshing.value ? null : controller.loadNetworks,
                 ),
               ],
+            ),
+          ),
+          SizedBox(height: AppSpacing.lg),
+          Obx(
+            () => PlatformNetworkMetricsSection(
+              metrics: dashboardController.overview.value?.metrics.networks,
+              l10n: l10n,
             ),
           ),
           SizedBox(height: AppSpacing.lg),
