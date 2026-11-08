@@ -177,16 +177,27 @@ class _NavigationTile extends StatelessWidget {
             vertical: AppSpacing.sm,
           ),
           onPressed: item.enabled ? () => onSelected(item.id) : null,
-          child: Row(
-            mainAxisAlignment: collapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
-            children: [
-              icon,
-              if (!collapsed) ...[
-                AppSpacing.hSm,
-                Expanded(child: Text(item.label, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTypography.bodyMedium.copyWith(color: color, fontWeight: selected ? FontWeight.w700 : FontWeight.w500))),
-                if (item.badge != null) _Badge(label: item.badge!),
-              ],
-            ],
+              child: Row(
+                mainAxisAlignment: collapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
+                children: [
+                  icon,
+                  if (!collapsed) ...[
+                    AppSpacing.hSm,
+                    Expanded(
+                      child: Text(
+                        item.label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.bodyMedium.copyWith(
+                          color: color,
+                          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    if (item.badge != null) _Badge(label: item.badge!),
+                  ],
+                ],
+              ),
             ),
             if (selected)
               PositionedDirectional(
