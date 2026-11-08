@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:netsales_dashboard/core/constants/app_permissions.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/core/routing/app_routes.dart';
@@ -22,7 +21,7 @@ class PlatformNetworkPosLinkDetailScreen
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final canEdit = PermissionService.to.can(AppPermissions.networksEdit);
+    final canEdit = PermissionService.to.isSuperAdmin;
     return Padding(
       padding: EdgeInsets.all(AppSpacing.lg),
       child: Obx(() {
