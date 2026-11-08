@@ -56,7 +56,7 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 
 ### Implemented in source; CI/visual validation pending
 - Persistent nested Platform Dashboard shell with Sidebar, Topbar, Page Header, and one route outlet.
-- Permission-driven navigation for SUPER_ADMIN, SUPPORT_AGENT, and ACCOUNTANT, matching the API permission seed assignments. ACCOUNTANT support-ticket visibility follows its actual `support.view` permission.
+- Permission-driven navigation for SUPER_ADMIN, SUPPORT_AGENT, and ACCOUNTANT, matching the API permission seed assignments. ACCOUNTANT does not receive `support.view` in the current API seeder; support tickets remain hidden.
 - Expand/collapse sidebar, automatic collapse below desktop breakpoint, responsive drawer below 900 dp, compact topbar on narrow screens, persisted Arabic/English locale, RTL/LTR from active locale, and existing Light/Dark ThemeService.
 - Platform Overview composes Dashboard Metrics, Syncfusion chart cards, recent activity timeline, and audit DataGrid. KPI cards show neutral unavailable values and charts remain empty until server aggregate data exists.
 - Notifications and audit records use existing API endpoints through typed repository/use-case layers.

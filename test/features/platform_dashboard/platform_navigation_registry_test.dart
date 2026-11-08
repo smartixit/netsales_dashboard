@@ -14,7 +14,7 @@ void main() {
     permissions.clear();
     Get.put<PermissionService>(permissions, permanent: true);
   });
-  tearDown(() async {
+  tearDown(() {
     permissions.clear();
     Get.reset();
     Get.testMode = false;
@@ -60,7 +60,6 @@ void main() {
         AppPermissions.expensesView,
         AppPermissions.subscriptionsView,
         AppPermissions.bankAccountsView,
-        AppPermissions.supportView,
         AppPermissions.notificationsView,
       ],
     );
@@ -71,7 +70,7 @@ void main() {
     expect(PlatformNavigationRegistry.canOpen(destination('pos_wallets')), isTrue);
     expect(PlatformNavigationRegistry.canOpen(destination('subscription_requests')), isTrue);
     expect(PlatformNavigationRegistry.canOpen(destination('bank_accounts')), isTrue);
-    expect(PlatformNavigationRegistry.canOpen(destination('support_tickets')), isTrue);
+    expect(PlatformNavigationRegistry.canOpen(destination('support_tickets')), isFalse);
     expect(PlatformNavigationRegistry.canOpen(destination('notifications')), isTrue);
     expect(PlatformNavigationRegistry.canOpen(destination('users')), isFalse);
     expect(PlatformNavigationRegistry.canOpen(destination('roles')), isFalse);

@@ -29,7 +29,7 @@ Dashboard-specific decisions are maintained here. Shared product/API/financial d
 
 ## DASH-004 — Platform Main Layout
 - **Decision:** One persistent shell owns Sidebar, Topbar, Page Header, and nested route outlet. A single Navigation Registry filters destinations using PermissionService; child route middleware repeats the client-side UX check.
-- **Role source:** API RolePermissionSeeder is canonical. ACCOUNTANT support-ticket visibility is retained because the seeder grants `support.view`.
+- **Role source:** API RolePermissionSeeder is canonical. ACCOUNTANT does not receive `support.view` in the current API seeder; support tickets remain hidden.
 - **Boundary:** Client navigation checks do not replace Laravel authorization. Backup and scheduled-task items are restricted to SUPER_ADMIN in the UI because dedicated permission keys are absent; API-side authorization remains to be verified.
 
 ## DASH-005 — Overview Data Integrity

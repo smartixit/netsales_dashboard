@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:netsales_dashboard/core/constants/app_radius.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/core/services/permission_service.dart';
@@ -31,8 +30,7 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
     final greeting = userName.isEmpty ? l10n.text('welcome_back') : '${l10n.text('welcome_back')}، $userName';
     final quickDestinations = PlatformNavigationRegistry.destinations.where(PlatformNavigationRegistry.canOpen).take(4).toList(growable: false);
 
-    return SingleChildScrollView(
-      child: Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _WelcomePanel(greeting: greeting, subtitle: l10n.text('platform_summary'), onRefresh: controller.refreshHeaderData),
@@ -125,7 +123,6 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
           icon: Icons.fact_check_outlined,
         ),
       ],
-      ),
     );
   }
 
@@ -161,7 +158,7 @@ class _WelcomePanel extends StatelessWidget {
       padding: EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
         color: colors.surfaceContainerLow,
-        borderRadius: AppRadius.lgRadius,
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: colors.outlineVariant),
       ),
       child: LayoutBuilder(
