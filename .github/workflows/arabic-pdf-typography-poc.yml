@@ -59,6 +59,19 @@ jobs:
         working-directory: packages/document_engine_poc
         run: flutter test test
 
+      - name: Generate candidate PDF artifacts
+        working-directory: packages/document_engine_poc
+        run: dart run bin/generate_poc.dart
+
+      - name: Upload PDF specimens and measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arabic-pdf-poc-${{ matrix.os }}
+          path: packages/document_engine_poc/build/poc-artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+
   payv-web-build:
     name: Payv Web compile
     runs-on: ubuntu-latest
