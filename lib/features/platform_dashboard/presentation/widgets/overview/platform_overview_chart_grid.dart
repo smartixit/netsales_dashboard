@@ -27,19 +27,7 @@ class PlatformOverviewChartGrid extends StatelessWidget {
           l.text('subscriptions'),
         ),
       if (p.can('networks.view') || p.can('pos.view'))
-        _chart(
-          context,
-          l.text('provider_distribution'),
-          ChartFamily.circular,
-          ChartType.doughnut,
-          charts.providerDistribution
-              .where((point) => point.value > 0)
-              .map(
-                (point) => ChartDataPoint(x: point.statusLabel, y: point.value),
-              )
-              .toList(growable: false),
-          l.text('providers'),
-        ),
+        _providerDistributionChart(context, charts.providerDistribution, l),
       if (p.can('support.view') || p.can('system_logs.view'))
         _chart(
           context,
@@ -75,6 +63,61 @@ class PlatformOverviewChartGrid extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  Widget _providerDistributionChart(
+    BuildContext context,
+    List<PlatformProviderDistributionPointEntity> points,
+    AppLocalizations l,
+  ) {
+    final permissions = PermissionService.to;
+    List<ChartDataPoint> mapPoints(String entity) => points
+        .where((point) => point.entity == entity && point.value > 0)
+        .map((point) => ChartDataPoint(
+              x: l.text('${entity}_status_${point.status.toLowerCase()}'),
+              y: point.value,
+            ))
+        .toList(growable: false);
+
+    final series = <ChartSeries>[
+      if (permissions.can('networks.view'))
+        ChartSeries(
+          id: 'network-status',
+          name: l.text('networks'),
+          data: mapPoints('network'),
+        ),
+      if (permissions.can('pos.view'))
+        ChartSeries(
+          id: 'pos-status',
+          name: l.text('pos'),
+          data: mapPoints('pos'),
+        ),
+    ].where((item) => item.data.isNotEmpty).toList(growable: false);
+
+    final state = series.isEmpty ? ChartState.empty : ChartState.data;
+    return ChartCard(
+      title: l.text('provider_distribution'),
+      description: l.text('server_aggregated_data'),
+      height: 286,
+      state: state,
+      chart: ChartRenderer(
+        definition: ChartDefinition(
+          family: ChartFamily.comparison,
+          type: ChartType.column,
+          series: series,
+          options: const ChartOptions(
+            showLegend: true,
+            showTooltip: true,
+            showMajorGridLines: true,
+            enableTrackball: true,
+            animate: true,
+            animationDuration: 520,
+          ),
+          state: state,
+        ),
+      ),
+      series: series,
     );
   }
 
