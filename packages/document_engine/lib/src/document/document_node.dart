@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import '../core/stable_identifier.dart';
@@ -350,7 +351,7 @@ final class DocumentQrCode extends DocumentNode {
     this.caption,
     this.sizePoints = 96,
   }) {
-    if (payload.trim().isEmpty || payload.length > 2048) {
+    if (payload.trim().isEmpty || utf8.encode(payload).length > 2048) {
       throw ArgumentError.value(payload, 'payload', 'Must contain 1-2048 chars.');
     }
     if (caption != null && caption!.trim().isEmpty) {
@@ -392,9 +393,27 @@ final class DocumentSignatureArea extends DocumentNode {
         throw ArgumentError.value(entry.value, entry.key, 'Invalid text length.');
       }
     }
-    if (_visualSignatureBytes != null &&
-        (_visualSignatureBytes!.isEmpty || _visualSignatureBytes!.length > 1024 * 1024)) {
-      throw ArgumentError('Visual signature image must be 1 byte to 1 MiB.');
+    if (_visualSignatureBytes != null) {
+      final bytes = _visualSignatureBytes!;
+      if (bytes.isEmpty || bytes.length > 1024 * 1024) {
+        throw ArgumentError('Visual signature image must be 1 byte to 1 MiB.');
+      }
+      final isPng = bytes.length >= 8 &&
+          bytes[0] == 0x89 &&
+          bytes[1] == 0x50 &&
+          bytes[2] == 0x4E &&
+          bytes[3] == 0x47 &&
+          bytes[4] == 0x0D &&
+          bytes[5] == 0x0A &&
+          bytes[6] == 0x1A &&
+          bytes[7] == 0x0A;
+      final isJpeg = bytes.length >= 3 &&
+          bytes[0] == 0xFF &&
+          bytes[1] == 0xD8 &&
+          bytes[2] == 0xFF;
+      if (!isPng && !isJpeg) {
+        throw ArgumentError('Visual signature image must be PNG or JPEG.');
+      }
     }
   }
 
