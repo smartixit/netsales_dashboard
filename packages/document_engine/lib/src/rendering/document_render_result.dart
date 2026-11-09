@@ -53,8 +53,8 @@ final class DocumentArtifact {
     required this.generatedAt,
     required Uint8List bytes,
     this.pageCount,
-  })  : _bytes = Uint8List.fromList(bytes),
-        sha256 = crypto.sha256.convert(bytes).toString();
+  }) : _bytes = Uint8List.fromList(bytes),
+       sha256 = crypto.sha256.convert(bytes).toString();
 
   final DocumentId documentId;
   final TemplateId templateId;

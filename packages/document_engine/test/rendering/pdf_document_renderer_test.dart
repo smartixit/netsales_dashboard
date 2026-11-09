@@ -40,7 +40,8 @@ void main() {
         DocumentSection(
           id: 'summary',
           title: 'Overview',
-          nodes: nodes ??
+          nodes:
+              nodes ??
               [
                 const DocumentParagraph(text: 'This is a generated report.'),
                 DocumentMetric(
@@ -92,51 +93,55 @@ void main() {
     );
   }
 
-  test('renders a PDF with metadata, digest, and defensive byte copies',
-      () async {
-    const renderer = PdfDocumentRenderer();
-    final result = await renderer.render(
-      snapshot: snapshot(),
-      template: template,
-      options: options(
-        headerText: 'NetSales Reports',
-        footerText: 'Confidential',
-      ),
-    );
+  test(
+    'renders a PDF with metadata, digest, and defensive byte copies',
+    () async {
+      const renderer = PdfDocumentRenderer();
+      final result = await renderer.render(
+        snapshot: snapshot(),
+        template: template,
+        options: options(
+          headerText: 'NetSales Reports',
+          footerText: 'Confidential',
+        ),
+      );
 
-    expect(result, isA<DocumentRenderSuccess>());
-    final artifact = (result as DocumentRenderSuccess).artifact;
-    expect(artifact.bytes.take(5), [37, 80, 68, 70, 45]);
-    expect(artifact.byteLength, greaterThan(100));
-    expect(artifact.sha256, matches(RegExp(r'^[a-f0-9]{64}$')));
-    expect(artifact.documentId, DocumentId('report-001'));
-    expect(artifact.templateVersion.toString(), '1.0.0');
-    expect(artifact.rendererId, 'document-engine.pdf');
-    expect(artifact.generatedAt, DateTime.utc(2026, 11, 9, 10));
+      expect(result, isA<DocumentRenderSuccess>());
+      final artifact = (result as DocumentRenderSuccess).artifact;
+      expect(artifact.bytes.take(5), [37, 80, 68, 70, 45]);
+      expect(artifact.byteLength, greaterThan(100));
+      expect(artifact.sha256, matches(RegExp(r'^[a-f0-9]{64}$')));
+      expect(artifact.documentId, DocumentId('report-001'));
+      expect(artifact.templateVersion.toString(), '1.0.0');
+      expect(artifact.rendererId, 'document-engine.pdf');
+      expect(artifact.generatedAt, DateTime.utc(2026, 11, 9, 10));
 
-    final firstCopy = artifact.bytes;
-    firstCopy[0] = 0;
-    expect(artifact.bytes.first, 37);
-  });
+      final firstCopy = artifact.bytes;
+      firstCopy[0] = 0;
+      expect(artifact.bytes.first, 37);
+    },
+  );
 
-  test('rejects complex RTL text until a shaping provider is approved',
-      () async {
-    const renderer = PdfDocumentRenderer();
-    final result = await renderer.render(
-      snapshot: snapshot(
-        languageTag: 'en-US',
-        nodes: const [DocumentParagraph(text: 'تقرير المبيعات')],
-      ),
-      template: template,
-      options: options(),
-    );
+  test(
+    'rejects complex RTL text until a shaping provider is approved',
+    () async {
+      const renderer = PdfDocumentRenderer();
+      final result = await renderer.render(
+        snapshot: snapshot(
+          languageTag: 'en-US',
+          nodes: const [DocumentParagraph(text: 'تقرير المبيعات')],
+        ),
+        template: template,
+        options: options(),
+      );
 
-    expect(result, isA<DocumentRenderFailure>());
-    expect(
-      (result as DocumentRenderFailure).code,
-      DocumentRenderFailureCode.unsupportedTextShaping,
-    );
-  });
+      expect(result, isA<DocumentRenderFailure>());
+      expect(
+        (result as DocumentRenderFailure).code,
+        DocumentRenderFailureCode.unsupportedTextShaping,
+      );
+    },
+  );
 
   test('rejects a template registered for another document type', () async {
     const renderer = PdfDocumentRenderer();
@@ -162,33 +167,37 @@ void main() {
     );
   });
 
-  test('requires the template to declare the requested page orientation',
-      () async {
-    const renderer = PdfDocumentRenderer();
-    final portraitOnly = DocumentTemplateDefinition(
-      id: TemplateId('report.portrait'),
-      version: TemplateVersion(major: 1, minor: 0, patch: 0),
-      documentTypeId: documentType,
-      displayName: 'Portrait report',
-      supportedLocaleTags: const ['en'],
-      capabilities: TemplateCapabilities({
-        TemplateCapability.pageNumbering,
-        TemplateCapability.portraitPage,
-      }),
-    );
+  test(
+    'requires the template to declare the requested page orientation',
+    () async {
+      const renderer = PdfDocumentRenderer();
+      final portraitOnly = DocumentTemplateDefinition(
+        id: TemplateId('report.portrait'),
+        version: TemplateVersion(major: 1, minor: 0, patch: 0),
+        documentTypeId: documentType,
+        displayName: 'Portrait report',
+        supportedLocaleTags: const ['en'],
+        capabilities: TemplateCapabilities({
+          TemplateCapability.pageNumbering,
+          TemplateCapability.portraitPage,
+        }),
+      );
 
-    final result = await renderer.render(
-      snapshot: snapshot(nodes: const [DocumentParagraph(text: 'Short report')]),
-      template: portraitOnly,
-      options: options(pageProfile: DocumentPageProfile.a4Landscape()),
-    );
+      final result = await renderer.render(
+        snapshot: snapshot(
+          nodes: const [DocumentParagraph(text: 'Short report')],
+        ),
+        template: portraitOnly,
+        options: options(pageProfile: DocumentPageProfile.a4Landscape()),
+      );
 
-    expect(result, isA<DocumentRenderFailure>());
-    expect(
-      (result as DocumentRenderFailure).code,
-      DocumentRenderFailureCode.unsupportedCapability,
-    );
-  });
+      expect(result, isA<DocumentRenderFailure>());
+      expect(
+        (result as DocumentRenderFailure).code,
+        DocumentRenderFailureCode.unsupportedCapability,
+      );
+    },
+  );
 
   test('validates printable area and page limits', () {
     expect(

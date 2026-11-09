@@ -62,46 +62,47 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           header: options.headerText == null
               ? null
               : (context) => pw.Container(
-                    alignment: pw.Alignment.centerLeft,
-                    padding: const pw.EdgeInsets.only(bottom: 8),
-                    decoration: const pw.BoxDecoration(
-                      border: pw.Border(
-                        bottom: pw.BorderSide(
-                          color: PdfColors.grey400,
-                          width: 0.5,
-                        ),
-                      ),
-                    ),
-                    child: pw.Text(
-                      options.headerText!,
-                      style: pw.TextStyle(
-                        fontSize: 9,
-                        color: PdfColors.grey700,
+                  alignment: pw.Alignment.centerLeft,
+                  padding: const pw.EdgeInsets.only(bottom: 8),
+                  decoration: const pw.BoxDecoration(
+                    border: pw.Border(
+                      bottom: pw.BorderSide(
+                        color: PdfColors.grey400,
+                        width: 0.5,
                       ),
                     ),
                   ),
+                  child: pw.Text(
+                    options.headerText!,
+                    style: pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
+                  ),
+                ),
           footer: options.footerText == null && !options.showPageNumbers
               ? null
               : (context) {
                   pageCount = context.pagesCount;
                   final parts = <pw.Widget>[];
                   if (options.footerText case final text?) {
-                    parts.add(pw.Text(
-                      text,
-                      style: const pw.TextStyle(
-                        fontSize: 8,
-                        color: PdfColors.grey600,
+                    parts.add(
+                      pw.Text(
+                        text,
+                        style: const pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColors.grey600,
+                        ),
                       ),
-                    ));
+                    );
                   }
                   if (options.showPageNumbers) {
-                    parts.add(pw.Text(
-                      '${context.pageNumber} / ${context.pagesCount}',
-                      style: const pw.TextStyle(
-                        fontSize: 8,
-                        color: PdfColors.grey600,
+                    parts.add(
+                      pw.Text(
+                        '${context.pageNumber} / ${context.pagesCount}',
+                        style: const pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColors.grey600,
+                        ),
                       ),
-                    ));
+                    );
                   }
                   return pw.Container(
                     alignment: pw.Alignment.center,
@@ -140,7 +141,8 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       );
     } catch (error) {
       final message = error.toString();
-      final isPageLimit = message.contains('TooManyPagesException') ||
+      final isPageLimit =
+          message.contains('TooManyPagesException') ||
           message.toLowerCase().contains('maximum number of pages');
       return DocumentRenderFailure(
         code: isPageLimit
@@ -207,19 +209,19 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (!template.capabilities.supportsAll(requiredCapabilities)) {
       return const DocumentRenderFailure(
         code: DocumentRenderFailureCode.unsupportedCapability,
-        message:
-            'The selected template does not declare all requested capabilities.',
+        message: 'The selected template does not declare all requested capabilities.',
       );
     }
 
     final orientationCapability =
         options.pageProfile.orientation == DocumentPageOrientation.portrait
-            ? TemplateCapability.portraitPage
-            : TemplateCapability.landscapePage;
+        ? TemplateCapability.portraitPage
+        : TemplateCapability.landscapePage;
     if (!template.capabilities.supports(orientationCapability)) {
       return const DocumentRenderFailure(
         code: DocumentRenderFailureCode.unsupportedCapability,
-        message: 'The selected template does not support this page orientation.',
+        message:
+            'The selected template does not support this page orientation.',
       );
     }
     return null;
@@ -247,7 +249,11 @@ final class PdfDocumentRenderer implements DocumentRenderer {
               rtlPattern.hasMatch(text)) {
             return true;
           }
-        } else if (node case DocumentMetric(:final label, :final value, :final caption)) {
+        } else if (node case DocumentMetric(
+          :final label,
+          :final value,
+          :final caption,
+        )) {
           if (rtlPattern.hasMatch(label) ||
               rtlPattern.hasMatch(_valueText(value)) ||
               (caption != null && rtlPattern.hasMatch(caption))) {
@@ -278,21 +284,17 @@ final class PdfDocumentRenderer implements DocumentRenderer {
         level: 0,
         child: pw.Text(
           snapshot.metadata.title,
-          style: pw.TextStyle(
-            fontSize: 20,
-            fontWeight: pw.FontWeight.bold,
-          ),
+          style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
         ),
       ),
     ];
     if (snapshot.metadata.subtitle case final subtitle?) {
-      widgets.add(pw.Paragraph(
-        text: subtitle,
-        style: const pw.TextStyle(
-          fontSize: 11,
-          color: PdfColors.grey700,
+      widgets.add(
+        pw.Paragraph(
+          text: subtitle,
+          style: const pw.TextStyle(fontSize: 11, color: PdfColors.grey700),
         ),
-      ));
+      );
     }
 
     for (final section in snapshot.sections) {
@@ -304,10 +306,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           case DocumentParagraph(:final text):
             widgets.add(pw.Paragraph(text: text));
           case DocumentHeading(:final text, :final level):
-            widgets.add(pw.Header(
-              level: level > 5 ? 5 : level,
-              child: pw.Text(text),
-            ));
+            widgets.add(
+              pw.Header(level: level > 5 ? 5 : level, child: pw.Text(text)),
+            );
           case DocumentMetric(:final label, :final value, :final caption):
             widgets.add(_metricWidget(label, value, caption));
           case DocumentTable(:final columns, :final rows):
@@ -335,10 +336,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           pw.SizedBox(height: 4),
           pw.Text(
             _valueText(value),
-            style: pw.TextStyle(
-              fontSize: 16,
-              fontWeight: pw.FontWeight.bold,
-            ),
+            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
           ),
           if (caption != null)
             pw.Padding(
@@ -412,10 +410,10 @@ final class PdfDocumentRenderer implements DocumentRenderer {
   }
 
   String _valueText(DocumentValue value) => switch (value) {
-        DocumentTextValue(:final value) => value,
-        DocumentIntegerValue(:final value) => value.toString(),
-        DocumentDecimalValue(:final value) => value,
-        DocumentDateTimeValue(:final value) => value.toIso8601String(),
-        DocumentBooleanValue(:final value) => value.toString(),
-      };
+    DocumentTextValue(:final value) => value,
+    DocumentIntegerValue(:final value) => value.toString(),
+    DocumentDecimalValue(:final value) => value,
+    DocumentDateTimeValue(:final value) => value.toIso8601String(),
+    DocumentBooleanValue(:final value) => value.toString(),
+  };
 }

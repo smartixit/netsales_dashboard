@@ -39,46 +39,43 @@ final class DocumentPageProfile {
     double marginRight = 36,
     double marginBottom = 36,
     double marginLeft = 36,
-  }) =>
-      DocumentPageProfile(
-        widthPoints: 595.28,
-        heightPoints: 841.89,
-        marginTop: marginTop,
-        marginRight: marginRight,
-        marginBottom: marginBottom,
-        marginLeft: marginLeft,
-      );
+  }) => DocumentPageProfile(
+    widthPoints: 595.28,
+    heightPoints: 841.89,
+    marginTop: marginTop,
+    marginRight: marginRight,
+    marginBottom: marginBottom,
+    marginLeft: marginLeft,
+  );
 
   factory DocumentPageProfile.a4Landscape({
     double marginTop = 36,
     double marginRight = 36,
     double marginBottom = 36,
     double marginLeft = 36,
-  }) =>
-      DocumentPageProfile(
-        widthPoints: 841.89,
-        heightPoints: 595.28,
-        orientation: DocumentPageOrientation.landscape,
-        marginTop: marginTop,
-        marginRight: marginRight,
-        marginBottom: marginBottom,
-        marginLeft: marginLeft,
-      );
+  }) => DocumentPageProfile(
+    widthPoints: 841.89,
+    heightPoints: 595.28,
+    orientation: DocumentPageOrientation.landscape,
+    marginTop: marginTop,
+    marginRight: marginRight,
+    marginBottom: marginBottom,
+    marginLeft: marginLeft,
+  );
 
   factory DocumentPageProfile.letterPortrait({
     double marginTop = 36,
     double marginRight = 36,
     double marginBottom = 36,
     double marginLeft = 36,
-  }) =>
-      DocumentPageProfile(
-        widthPoints: 612,
-        heightPoints: 792,
-        marginTop: marginTop,
-        marginRight: marginRight,
-        marginBottom: marginBottom,
-        marginLeft: marginLeft,
-      );
+  }) => DocumentPageProfile(
+    widthPoints: 612,
+    heightPoints: 792,
+    marginTop: marginTop,
+    marginRight: marginRight,
+    marginBottom: marginBottom,
+    marginLeft: marginLeft,
+  );
 
   final double widthPoints;
   final double heightPoints;
@@ -88,8 +85,7 @@ final class DocumentPageProfile {
   final double marginBottom;
   final double marginLeft;
 
-  static bool _isPositiveFinite(double value) =>
-      value.isFinite && value > 0;
+  static bool _isPositiveFinite(double value) => value.isFinite && value > 0;
 
   static bool _isNonNegativeFinite(double value) =>
       value.isFinite && value >= 0;
