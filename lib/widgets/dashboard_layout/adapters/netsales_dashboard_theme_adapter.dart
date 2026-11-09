@@ -43,15 +43,13 @@ class NetSalesDashboardThemeAdapter {
   /// the ThemeExtension and never import NetSales Dashboard core services.
   static Widget wrap({required BuildContext context, required Widget child}) {
     final baseTheme = Theme.of(context);
+    final layoutTheme = of(context);
+    final extensions = Map<Object, ThemeExtension<dynamic>>.of(
+      baseTheme.extensions,
+    )..[layoutTheme.type] = layoutTheme;
+
     return Theme(
-      data: baseTheme.copyWith(
-        extensions: <ThemeExtension<dynamic>>[
-          ...baseTheme.extensions.values.where(
-            (extension) => extension is! DashboardLayoutTheme,
-          ),
-          of(context),
-        ],
-      ),
+      data: baseTheme.copyWith(extensions: extensions.values),
       child: child,
     );
   }

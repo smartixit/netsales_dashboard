@@ -382,3 +382,23 @@
 - GitHub Actions run [42711215313](https://github.com/smartixit/netsales_dashboard/actions/runs/42711215313) completed successfully: Flutter 3.47.9 / Dart 3.13.7 setup and `dart format packages/document_engine` succeeded; nine files were formatted.
 - The follow-up PR checks on the formatter bot commit entered `action_required` without creating jobs. A repository-authored documentation commit is being used to trigger the exact-head PR checks again.
 - No local `flutter analyze` or `flutter test` result is claimed; the local execution environment has no Flutter/Dart SDK. Await exact-head GitHub Actions for package analysis/tests, full dashboard analysis/tests, and Windows compilation.
+
+
+## 2026-11-10 — Windows Dashboard ThemeExtension Collection Compile Fix
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `fix/dashboard-layout-theme-extension-map`
+
+### Root cause and correction
+- The Windows build error occurred in `NetSalesDashboardThemeAdapter.wrap`: a typed list literal combined with a spread of `ThemeData.extensions.values` and triggered an invalid recursive `ThemeExtension<dynamic>` generic element inference in the Windows AOT compilation path.
+- Replaced the list reconstruction with a typed copy of the existing extension map, replaced the entry under `DashboardLayoutTheme.type`, and passed the resulting map values to `ThemeData.copyWith`.
+- This retains every unrelated ThemeExtension and replaces an existing DashboardLayoutTheme entry without duplicate keys or unchecked casts.
+- Added a widget regression test that verifies unrelated extensions survive and the host DashboardLayoutTheme is replaced by the NetSales adapter value.
+
+### Scope
+- Dashboard theme adapter and its widget regression test only.
+- No design tokens, colors, business behavior, API contracts, or window-management behavior changed.
+
+### Verification
+- Pending exact-head GitHub Actions: dashboard analysis/tests and Windows Debug compilation.
+- No local Windows build is claimed; the reported MSBuild/AOT diagnostic is the target regression to be checked by CI.
