@@ -248,7 +248,7 @@ class _ExampleOutputAdapter
 
   @override
   Future<DocumentOutputResult> save(DocumentOutputRequest request) async {
-    final path = await FilePicker.platform.saveFile(
+    final path = await FilePicker.saveFile(
       fileName: request.fileName,
       type: FileType.custom,
       allowedExtensions: const ['pdf'],
