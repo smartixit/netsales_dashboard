@@ -1,5 +1,6 @@
 import 'package:netsales_dashboard/features/platform_subscriptions/data/models/subscription_feature_consumption_model.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/provider_subscription_entity.dart';
+import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_feature_consumption_entity.dart';
 
 class ProviderSubscriptionModel extends ProviderSubscriptionEntity {
   const ProviderSubscriptionModel({
