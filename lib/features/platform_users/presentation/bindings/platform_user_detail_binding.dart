@@ -5,6 +5,10 @@ import 'package:netsales_dashboard/features/platform_users/data/repositories/pla
 import 'package:netsales_dashboard/features/platform_users/domain/repositories/platform_users_repository.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/get_platform_user_detail_use_case.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/get_platform_user_sessions_use_case.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/usecases/get_platform_roles_use_case.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/usecases/create_platform_user_use_case.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/usecases/update_platform_user_use_case.dart';
+import 'package:netsales_dashboard/features/platform_users/presentation/controllers/platform_user_form_controller.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/controllers/platform_user_detail_controller.dart';
 
 class PlatformUserDetailBinding extends Bindings {
@@ -31,6 +35,22 @@ class PlatformUserDetailBinding extends Bindings {
         ),
       );
     }
+    Get.lazyPut<GetPlatformRolesUseCase>(
+      () => GetPlatformRolesUseCase(Get.find<PlatformUsersRepository>()),
+    );
+    Get.lazyPut<CreatePlatformUserUseCase>(
+      () => CreatePlatformUserUseCase(Get.find<PlatformUsersRepository>()),
+    );
+    Get.lazyPut<UpdatePlatformUserUseCase>(
+      () => UpdatePlatformUserUseCase(Get.find<PlatformUsersRepository>()),
+    );
+    Get.lazyPut<PlatformUserFormController>(
+      () => PlatformUserFormController(
+        getRoles: Get.find<GetPlatformRolesUseCase>(),
+        createUser: Get.find<CreatePlatformUserUseCase>(),
+        updateUser: Get.find<UpdatePlatformUserUseCase>(),
+      ),
+    );
     Get.lazyPut<GetPlatformUserDetailUseCase>(
       () => GetPlatformUserDetailUseCase(Get.find<PlatformUsersRepository>()),
     );
