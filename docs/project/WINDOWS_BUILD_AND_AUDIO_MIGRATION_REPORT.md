@@ -66,22 +66,19 @@
    - كتم وإيقاف أي تشغيل سابق بسلاسة قبل بدء تشغيل مقطع جديد لمنع التداخل الصوتي.
    - حماية استدعاءات التشغيل عبر `try/catch` وتسجيل أي أخطاء في وضع التطوير فقط (`kDebugMode`).
 
-### ثانياً: حل مشكلة NuGet للعمل دون إنترنت
-1. تم إنشاء ملف `nuget.config` في جذر المشروع وفي مجلد `windows/`:
+### ثانياً: إعداد NuGet قابل للنقل بين الأجهزة وبيئات CI
+1. يجب أن يحتوي ملفا `nuget.config` في جذر المشروع ومجلد `windows/` على مصدر NuGet الرسمي فقط، من دون أي مسار cache مرتبط بحساب أو جهاز بعينه:
    ```xml
    <?xml version="1.0" encoding="utf-8"?>
    <configuration>
      <packageSources>
        <clear />
-       <add key="LocalCache" value="C:\Users\DELL\.nuget\packages" />
        <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
      </packageSources>
-     <disabledPackageSources>
-       <add key="nuget.org" value="true" />
-     </disabledPackageSources>
    </configuration>
    ```
-2. تم تفعيل الكاش المحلي وتعطيل السيرفر الخارجي المحجوب، مما جعل تثبيت الحزم المطلوبة يتم خلال **400 جزء من الثانية** محلياً.
+2. لا يُسمح بتعطيل `nuget.org` أو تسجيل مسار مثل `C:\Users\<user>\.nuget\packages` داخل ملفات المشروع؛ فهذا المسار لا يوجد على أجهزة CI النظيفة ويمنع تنزيل الاعتماديات المطلوبة.
+3. أي مصدر محلي أو إعداد خاص باتصال مطور واحد يجب أن يبقى ضمن إعدادات المستخدم المحلية، وألا يستبدل مصادر NuGet المشتركة أو يعطلها.
 
 ### ثالثاً: عزل وتضمين حزمة `cnativeapi` محلياً (Vendoring)
 لضمان عدم عودة خطأ C++ حتى في حال تنفيذ `flutter pub cache clean` أو استنساخ المشروع على جهاز جديد:
