@@ -29,8 +29,6 @@ class PlatformWelcomePanel extends StatelessWidget {
     final date = DateFormat.yMMMMEEEEd(l10n.isArabic ? 'ar' : 'en')
         .format(DateTime.now());
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       padding: EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
