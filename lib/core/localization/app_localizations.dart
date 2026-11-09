@@ -328,7 +328,7 @@ class AppLocalizations {
     'suspended': 'Suspended',
     'approve_request': 'Approve request',
     'reject_request': 'Reject request',
-    'approve_subscription_request_confirmation': 'The server will approve this request, create the network subscription, and initialize its feature quotas under the backend\\'s financial and operational rules. Continue?',
+    'approve_subscription_request_confirmation': 'The server will approve this request, create the network subscription, and initialize its feature quotas in accordance with backend financial and operational rules. Continue?',
     'reject_subscription_request': 'Reject subscription request',
     'review_note_optional': 'Review note (optional)',
     'subscription_request_approved': 'Request approved and subscription created.',
