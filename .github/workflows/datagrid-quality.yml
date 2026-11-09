@@ -78,8 +78,10 @@ jobs:
         working-directory: packages/document_engine
         run: flutter pub get
 
-      - name: Format document engine package
-        run: dart format --output=none --set-exit-if-changed packages/document_engine
+      - name: Format document engine package and expose canonical diff
+        run: |
+          dart format packages/document_engine
+          git --no-pager diff -- packages/document_engine
 
       - name: Analyze document engine package
         working-directory: packages/document_engine
