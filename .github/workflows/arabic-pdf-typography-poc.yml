@@ -102,6 +102,8 @@ jobs:
         working-directory: packages/document_engine_poc
         run: flutter pub get
 
-      - name: Run Payv PDF generation in Chrome
+      - name: Compile Payv renderer for JavaScript
         working-directory: packages/document_engine_poc
-        run: flutter test --platform chrome test/payv_web_runtime_test.dart
+        run: |
+          mkdir -p build
+          dart compile js bin/payv_web_compile.dart -o build/payv_web_compile.js

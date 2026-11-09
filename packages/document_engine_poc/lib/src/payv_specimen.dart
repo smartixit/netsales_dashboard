@@ -53,7 +53,7 @@ Uint8List buildPayvSpecimen(Uint8List fontBytes) {
   }
 
   var pageNumber = 1;
-  var page = newPage('اختبار تشكيل النص العربي واتجاهه', pageNumber);
+  var page = newPage('اختبار عرض النص العربي واتجاهه', pageNumber);
   var y = page.height - 104;
 
   for (final value in <String>[...ArabicPdfCorpus.cases, ...ArabicPdfCorpus.payvIsolatedBidiCases]) {

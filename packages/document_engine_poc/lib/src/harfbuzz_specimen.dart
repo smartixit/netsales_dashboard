@@ -53,7 +53,7 @@ Future<Uint8List> buildHarfBuzzSpecimen({
             'Arabic and mixed-direction shaping — candidate B',
             style: const pw.TextStyle(fontSize: 16),
           ),
-          ShapedText(ArabicPdfCorpus.joiningAndDiacritics, style: style),
+          ShapedText(ArabicPdfCorpus.arabicJoining, style: style),
           ShapedText(ArabicPdfCorpus.lamAlefForms, style: style),
           ...ArabicPdfCorpus.glyphMappedCases.map(
             (value) => pw.Padding(

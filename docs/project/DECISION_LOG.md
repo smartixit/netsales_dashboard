@@ -106,3 +106,23 @@
 - IBM Plex Sans Arabic and Vazirmatn fixtures are distributed with their respective SIL OFL 1.1 license texts.
 - Tests, PDF signature, and JS compilation are diagnostics, not visual acceptance. Actual viewer review and extraction/search checks remain mandatory.
 - This approval authorizes the isolated experiment only. A distinct owner decision is required before selecting or integrating any production provider.
+
+
+| DOC-005 | 2026-11-09 | Close the isolated M4 Arabic PDF POC with vowel diacritics excluded from acceptance. Record Payv as the leading research candidate only; keep production dependencies, renderer behavior, and the complex-RTL rejection guard unchanged. LTR phone/identifier/currency runs embedded in Arabic must use Unicode isolates. | APPROVED |
+
+## DOC-005 — M4 Constrained Arabic PDF POC Outcome
+- Native PDF generation completed on Windows and Ubuntu for the baseline, HarfBuzz, and Payv candidates.
+- Payv is the leading research candidate due to readable Arabic joining, small output, and successful JavaScript compilation. It is not a production provider selection.
+- Vowel diacritics are outside acceptance scope. Required coverage retains Arabic joining, RTL, mixed Arabic/Latin, identifiers, punctuation, tables, and pagination.
+- LTR data runs embedded in RTL text must be explicitly isolated with U+2066/U+2069. No numeric values are changed or reformatted.
+- Web runtime rendering and preview/viewer acceptance remain deferred; M4 validates JavaScript compilation only.
+- The production RTL rejection guard and all production dependencies remain unchanged.
+
+| DOC-006 | 2026-11-09 | Authorize M5 implementation of generic report definitions, typed report criteria/presentation options, a schema-driven Flutter Configuration Studio, and a versioned SavedReportPreset serialization contract within document_engine. No Laravel API, persistence, authentication/tenant ownership, financial calculations, or production Arabic renderer integration is authorized. | APPROVED |
+
+## DOC-006 — M5 Report Configuration Contracts and Studio
+- Report definitions are application-supplied allowlists; the engine must not invent filters, sort/group choices, endpoints, or aggregations.
+- Presets store criteria and presentation choices only, never records, tokens, signed URLs, tenant authorization, or permission grants.
+- Preset persistence and owner/tenant access policy remain host/backend responsibilities. Reuse always requires fresh backend authorization.
+- Preset schema migration must be explicit/versioned; unsupported schema changes produce a typed migration/review failure, never silent field dropping.
+- The Configuration Studio must adapt to actual constraints, offer only definition/template capabilities, and remain independent of GetX/host navigation.

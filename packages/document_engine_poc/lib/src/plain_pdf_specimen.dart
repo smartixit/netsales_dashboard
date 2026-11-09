@@ -36,7 +36,7 @@ Future<Uint8List> buildPlainPdfSpecimen(Uint8List fontBytes) async {
         pw.Directionality(
           textDirection: pw.TextDirection.rtl,
           child: pw.Text(
-            ArabicPdfCorpus.joiningAndDiacritics,
+            ArabicPdfCorpus.arabicJoining,
             textAlign: pw.TextAlign.start,
             style: pw.TextStyle(font: font, fontSize: 15),
           ),

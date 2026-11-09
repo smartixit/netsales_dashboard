@@ -300,3 +300,29 @@
 - PR #36 is open. Exact-head Actions run 42635067589 was still running at handoff; its jobs were queued/in progress, so no pass is claimed.
 - Actual PDF rendering, visual inspection, text extraction/copy/search, font embedding, pagination, output size, and performance still require completed CI artifacts and manual Windows/Web review.
 - No local Flutter/Dart execution is claimed in this environment.
+
+
+## 2026-11-09 — M4 POC Closure and M5 Authorization
+
+**Repository:** `smartixit/netsales_dashboard`  
+**M4 PR:** #36  
+**M5 decision:** DOC-006 approved by the project owner
+
+### M4 outcome
+- Closed the M4 research scope without requiring vowel diacritics.
+- Preserved tests for Arabic joining, RTL, mixed Arabic/Latin values, identifiers, punctuation, tables, and pagination.
+- Recorded Payv as the leading research candidate, not a production selection.
+- Documented the need for Unicode LTR isolates around phone numbers, invoice references, UUIDs, and numeric/currency runs within Arabic paragraphs.
+- Replaced the browser rootBundle runtime test with the originally authorized JavaScript compile check. Web runtime/preview acceptance remains for the later preview milestone.
+- Production dependencies, renderer behavior, and the complex-RTL rejection guard remain unchanged.
+
+### M5 scope authorized
+- Generic application-supplied report definitions and allowlisted filters/fields/sorts/groups.
+- Typed criteria and presentation options kept separate from server query authorization.
+- A responsive schema-driven Flutter Configuration Studio, independent of GetX/navigation.
+- Versioned SavedReportPreset serialization and explicit migration/review outcomes.
+- No Laravel routes/schema, persistence, authorization, tenant policy, or financial arithmetic.
+
+### Verification boundary
+- Native Windows and Ubuntu generation on the exact pre-closure POC head passed; the final adjusted exact head must rerun POC tests, PDF generation, and JavaScript compilation.
+- No browser runtime PDF rendering or production Arabic provider approval is claimed.
