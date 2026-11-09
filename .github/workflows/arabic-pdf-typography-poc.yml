@@ -1,0 +1,82 @@
+name: Arabic PDF Typography POC
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/document_engine/**'
+      - 'packages/document_engine_poc/**'
+      - '.github/workflows/arabic-pdf-typography-poc.yml'
+  push:
+    branches:
+      - feat/document-engine-arabic-typography-m4-poc
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arabic-pdf-poc-\${{ github.workflow }}-\${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native-poc:
+    name: Native POC (\${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: \${{ matrix.os }}
+    timeout-minutes: 35
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.9'
+          cache: true
+
+      - name: Toolchain
+        run: |
+          flutter --version
+          dart --version
+
+      - name: Resolve POC dependencies
+        working-directory: packages/document_engine_poc
+        run: flutter pub get
+
+      - name: Format check
+        working-directory: packages/document_engine_poc
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze POC
+        working-directory: packages/document_engine_poc
+        run: dart analyze
+
+      - name: Run POC tests
+        working-directory: packages/document_engine_poc
+        run: flutter test test
+
+  payv-web-build:
+    name: Payv Web compile
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.9'
+          cache: true
+
+      - name: Resolve dependencies
+        working-directory: packages/document_engine_poc
+        run: flutter pub get
+
+      - name: Compile Payv candidate for Web
+        working-directory: packages/document_engine_poc
+        run: dart compile js -O2 lib/src/payv_specimen.dart -o build/payv_specimen.js
