@@ -157,14 +157,19 @@ class LoginFormCard extends GetView<LoginController> {
               // ── Trust & Security Footer ──
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.shield_outlined, size: 15, color: colors.success),
                   AppSpacing.hXs,
-                  Text(
-                    'اتصال مشفر وجلسة عمل محمية بالخادم',
-                    style: AppTypography.badgeText.copyWith(
-                      color: colors.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
+                  Flexible(
+                    child: Text(
+                      'اتصال مشفر وجلسة عمل محمية بالخادم',
+                      style: AppTypography.badgeText.copyWith(
+                        color: colors.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

@@ -15,8 +15,6 @@ class LoginBrandPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final compactHeight =

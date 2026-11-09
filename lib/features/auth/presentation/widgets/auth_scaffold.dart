@@ -35,6 +35,7 @@ class AuthScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: context.colors.surface,
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             const DesktopTitleBar(),
@@ -105,9 +106,10 @@ class AuthScaffold extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         if (compactBrand)
-                          const _CompactBrandHeader()
+                          const Expanded(child: _CompactBrandHeader())
                         else
-                          const SizedBox.shrink(),
+                          const Spacer(),
+                        AppSpacing.hSm,
                         const CustomThemeToggleButton(),
                       ],
                     ),
@@ -218,6 +220,7 @@ class _CompactBrandHeader extends StatelessWidget {
         AppSpacing.hSm,
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'NetSales',
@@ -225,12 +228,16 @@ class _CompactBrandHeader extends StatelessWidget {
                 fontWeight: FontWeight.w900,
                 color: colors.onSurface,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             Text(
               'منصة إدارة العمليات',
               style: AppTypography.badgeText.copyWith(
                 color: colors.onSurfaceVariant,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
