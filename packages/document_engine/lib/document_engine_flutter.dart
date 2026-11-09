@@ -1,0 +1,7 @@
+/// Flutter UI entry point for framework-neutral document report workflows.
+///
+/// Host applications remain responsible for state management, navigation,
+/// localization, API access, preview generation, and persistence.
+library;
+
+export 'src/widgets/report_configuration_studio.dart';

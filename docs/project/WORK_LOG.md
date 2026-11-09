@@ -326,3 +326,26 @@
 ### Verification boundary
 - Native Windows and Ubuntu generation on the exact pre-closure POC head passed; the final adjusted exact head must rerun POC tests, PDF generation, and JavaScript compilation.
 - No browser runtime PDF rendering or production Arabic provider approval is claimed.
+
+
+## 2026-11-09 — Document Engine M5 Report Configuration Foundation
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/document-engine-m5-report-configuration`  
+**Decision:** DOC-006 approved
+
+### Implemented
+- Added `ReportId`, schema-declared filter/choice types, output column definitions, metric slots, template references, language/page-profile allowlists, execution policy, and optional client row limit.
+- Added typed report filter values, criteria serialization, required/type/choice/length validation, and unknown-filter rejection.
+- Added presentation settings and validation for visible columns, sort/group allowlists, templates, locales, page profiles, and chart/metric capabilities.
+- Added SavedReportPreset serialization with separate preset/report schema versions and compatibility assessment that surfaces review-required changes without silent migration.
+- Added `document_engine_flutter.dart` with a controlled responsive Configuration Studio. State, translation resolution, routing, API access, preview generation, and save persistence remain host responsibilities.
+- Added focused tests for schema validation, criteria types/allowlists, presentation capabilities, preset round-tripping, strict unknown-field rejection, schema drift, and controlled widget callbacks.
+
+### Boundaries
+- No backend report endpoint, database table, queue, tenant policy, or preset persistence adapter is implemented.
+- No financial or reporting aggregation is performed by the engine. Values/metrics remain supplied by the server.
+- Production PDF Arabic provider selection remains separate from M5.
+
+### Verification
+- Exact-head formatting, analysis, tests, and CI are pending; no verification outcome is claimed before those checks complete.
