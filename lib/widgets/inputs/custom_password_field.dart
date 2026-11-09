@@ -96,8 +96,7 @@ class CustomPasswordField extends StatelessWidget {
       onFieldSubmitted: onFieldSubmitted,
       autofillHints: autofillHints,
       prefixIcon: prefixIcon ?? Icon(Icons.lock_outline_rounded),
-      validator:
-          validator ?? FormValidators.passwordValidator(fieldName: label),
+      validator: validator ?? FormValidators.required(fieldName: label),
     );
   }
 }

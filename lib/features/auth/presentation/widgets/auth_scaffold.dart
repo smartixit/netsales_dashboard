@@ -36,35 +36,40 @@ class AuthScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colors.surface,
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            const DesktopTitleBar(),
-            Expanded(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final showBrandPanel =
-                      constraints.maxWidth >= AppBreakpoints.tabletMax;
+      body: LayoutBuilder(
+        builder: (context, viewportConstraints) {
+          return SizedBox(
+            width: viewportConstraints.maxWidth,
+            height: viewportConstraints.maxHeight,
+            child: Column(
+              children: [
+                const DesktopTitleBar(),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final showBrandPanel =
+                          constraints.maxWidth >= AppBreakpoints.tabletMax;
 
-                  if (!showBrandPanel) {
-                    return _buildForm(context, compactBrand: true);
-                  }
+                      if (!showBrandPanel) {
+                        return _buildForm(context, compactBrand: true);
+                      }
 
-                  return Row(
-                    children: [
-                      const Expanded(flex: 5, child: LoginBrandPanel()),
-                      Expanded(
-                        flex: 6,
-                        child: _buildForm(context, compactBrand: false),
-                      ),
-                    ],
-                  );
-                },
-              ),
+                      return Row(
+                        children: [
+                          const Expanded(flex: 5, child: LoginBrandPanel()),
+                          Expanded(
+                            flex: 6,
+                            child: _buildForm(context, compactBrand: false),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -227,28 +232,30 @@ class _CompactBrandHeader extends StatelessWidget {
           ),
         ),
         AppSpacing.hSm,
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'NetSales',
-              style: AppTypography.titleMedium.copyWith(
-                fontWeight: FontWeight.w900,
-                color: colors.onSurface,
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'NetSales',
+                style: AppTypography.titleMedium.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: colors.onSurface,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Text(
-              'منصة إدارة العمليات',
-              style: AppTypography.badgeText.copyWith(
-                color: colors.onSurfaceVariant,
+              Text(
+                'منصة إدارة العمليات',
+                style: AppTypography.badgeText.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

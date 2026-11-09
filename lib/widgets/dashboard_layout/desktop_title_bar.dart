@@ -91,13 +91,17 @@ class DesktopTitleBar extends StatelessWidget implements PreferredSizeWidget {
                           ),
                         ),
                     AppSpacing.hSm,
-                    Text(
-                      title ?? 'NetSales Platform Dashboard',
-                      style: AppTypography.labelSmall.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 11.5,
-                        color: fg,
-                        letterSpacing: 0.15,
+                    Flexible(
+                      child: Text(
+                        title ?? 'NetSales Platform Dashboard',
+                        style: AppTypography.labelSmall.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11.5,
+                          color: fg,
+                          letterSpacing: 0.15,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const Spacer(),

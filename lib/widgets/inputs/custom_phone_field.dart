@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
@@ -78,8 +77,8 @@ class CustomPhoneField extends StatelessWidget {
           children: [
             AppSpacing.hXs,
             Container(
-              width: 1.w,
-              height: 20.h,
+              width: 1,
+              height: 20,
               color: colors.outlineVariant.withValues(alpha: 0.5),
             ),
             AppSpacing.hXs,
