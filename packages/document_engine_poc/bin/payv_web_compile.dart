@@ -1,4 +1,4 @@
-import '../lib/src/payv_specimen.dart';
+import 'package:document_engine_poc/src/payv_specimen.dart';
 
 void main() {
   // Referencing the entry point forces the compiler to resolve the complete

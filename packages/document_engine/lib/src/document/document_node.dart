@@ -394,7 +394,7 @@ final class DocumentSignatureArea extends DocumentNode {
       }
     }
     if (_visualSignatureBytes != null) {
-      final bytes = _visualSignatureBytes!;
+      final bytes = _visualSignatureBytes;
       if (bytes.isEmpty || bytes.length > 1024 * 1024) {
         throw ArgumentError('Visual signature image must be 1 byte to 1 MiB.');
       }

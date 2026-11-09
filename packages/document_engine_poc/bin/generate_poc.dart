@@ -39,7 +39,7 @@ Future<void> main(List<String> args) async {
         throw StateError('Generator returned bytes without a PDF signature.');
       }
 
-      await File(output.path + '/' + entry.key).writeAsBytes(bytes, flush: true);
+      await File('${output.path}/${entry.key}').writeAsBytes(bytes, flush: true);
       measurements.add(<String, Object>{
         'file': entry.key,
         'status': 'success',
@@ -56,7 +56,7 @@ Future<void> main(List<String> args) async {
         'elapsed_microseconds': timer.elapsedMicroseconds,
         'error': error.toString(),
       });
-      stderr.writeln('Candidate ' + entry.key + ' failed: ' + error.toString());
+      stderr.writeln('Candidate ${entry.key} failed: $error');
     }
   }
 
@@ -69,7 +69,7 @@ Future<void> main(List<String> args) async {
     'manual_visual_review_required': true,
     'text_extraction_is_not_visual_acceptance': true,
   };
-  await File(output.path + '/generation_report.json').writeAsString(
+  await File('${output.path}/generation_report.json').writeAsString(
     const JsonEncoder.withIndent('  ').convert(report),
     flush: true,
   );

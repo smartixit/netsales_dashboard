@@ -404,9 +404,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       if (node.signerName != null) pw.Text(node.signerName!),
       if (node.roleLabel != null) pw.Text(node.roleLabel!),
       if (node.approvalReference != null)
-        pw.Text('Approval reference: ' + node.approvalReference!),
+        pw.Text('Approval reference: ${node.approvalReference!}'),
       if (node.approvedAt != null)
-        pw.Text('Approved at: ' + node.approvedAt!.toIso8601String()),
+        pw.Text('Approved at: ${node.approvedAt!.toIso8601String()}'),
     ];
     final imageBytes = node.visualSignatureBytes;
     return pw.Container(

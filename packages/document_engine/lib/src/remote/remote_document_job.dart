@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:document_engine/src/output/document_output.dart';
 
 import '../core/document_id.dart';
 import '../core/template_id.dart';

@@ -37,7 +37,7 @@ Uint8List buildPayvSpecimen(Uint8List fontBytes) {
       style: heading,
       direction: PayvTextDirection.rtl,
     );
-    page.text('M4 POC | Page ' + number.toString(),
+    page.text('M4 POC | Page $number',
       x: 44,
       y: page.height - 48,
       style: small,

@@ -45,7 +45,7 @@ Future<Uint8List> buildHarfBuzzSpecimen({
           style: const pw.TextStyle(fontSize: 8),
         ),
         footer: (context) => pw.Text(
-          'HarfBuzz page ' + context.pageNumber.toString(),
+          'HarfBuzz page ${context.pageNumber}',
           style: const pw.TextStyle(fontSize: 8),
         ),
         build: (context) => <pw.Widget>[

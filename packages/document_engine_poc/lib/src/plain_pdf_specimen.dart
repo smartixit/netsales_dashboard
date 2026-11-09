@@ -24,7 +24,7 @@ Future<Uint8List> buildPlainPdfSpecimen(Uint8List fontBytes) async {
         style: pw.TextStyle(font: font, fontSize: 8),
       ),
       footer: (context) => pw.Text(
-        'Baseline page ' + context.pageNumber.toString(),
+        'Baseline page ${context.pageNumber}',
         style: pw.TextStyle(font: font, fontSize: 8),
       ),
       build: (context) => <pw.Widget>[

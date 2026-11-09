@@ -332,7 +332,7 @@ class CreatePlatformOverviewDocumentUseCase {
     rows: [
       for (var index = 0; index < rows.length; index++)
         DocumentTableRow(
-          id: '${idPrefix}-${index}',
+          id: '$idPrefix-$index',
           cells: [
             DocumentTableCell(value: DocumentTextValue(rows[index].$1)),
             DocumentTableCell(value: DocumentTextValue(rows[index].$2)),

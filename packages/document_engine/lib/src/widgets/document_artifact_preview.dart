@@ -80,7 +80,7 @@ class DocumentArtifactPreview extends StatelessWidget {
           children: [
             header,
             Expanded(child: preview),
-            if (metadataPanel != null) metadataPanel!,
+            ?metadataPanel,
           ],
         );
       },
@@ -119,7 +119,7 @@ class _DefaultHeader extends StatelessWidget {
               ],
             ),
           ),
-          if (toolbar != null) toolbar!,
+          ?toolbar,
         ],
       ),
     );

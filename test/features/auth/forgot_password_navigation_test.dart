@@ -33,7 +33,7 @@ void main() {
               page: () => const Scaffold(
                 body: Text('Password recovery'),
               ),
-              binding: BindingsBuilder(() {
+              binding: BindingsBuilder<dynamic>(() {
                 Get.lazyPut<ForgotPasswordController>(
                   () => ForgotPasswordController(
                     requestPasswordResetUseCase:
