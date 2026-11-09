@@ -43,13 +43,19 @@ class PlatformUserDetailScreen extends GetView<PlatformUserDetailController> {
             PlatformUserDetailHeader(
               user: detail.user,
               l10n: l10n,
+              isActive: detail.user.status == 'ACTIVE',
+              isStatusUpdating: controller.isStatusUpdating.value,
+              onToggleStatus: controller.canChangeStatus
+                  ? controller.changeStatus
+                  : null,
+              onEdit: controller.canEditUser ? () async {
               onEdit: () async {
                 final saved = await showPlatformUserForm(
                   l10n: l10n,
                   detail: detail,
                 );
                 if (saved == true) await controller.load();
-              },
+              } : null,
             ),
             SizedBox(height: AppSpacing.lg),
             Expanded(
