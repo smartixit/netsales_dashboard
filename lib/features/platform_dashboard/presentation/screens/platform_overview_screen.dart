@@ -43,6 +43,7 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
             PlatformWelcomePanel(
               userName: userName,
               onRefresh: controller.refreshHeaderData,
+              isRefreshing: controller.isRefreshingOverview.value,
             ),
             AppSpacing.vMd,
             _PeriodSelector(controller: controller),
