@@ -26,7 +26,11 @@ final class ReportCriteria {
     : filters = Map<String, ReportFilterValue>.unmodifiable(filters) {
     for (final id in this.filters.keys) {
       if (id.isEmpty || id != id.trim()) {
-        throw ArgumentError.value(id, 'filters', 'Filter identifiers must be trimmed.');
+        throw ArgumentError.value(
+          id,
+          'filters',
+          'Filter identifiers must be trimmed.',
+        );
       }
     }
   }
@@ -38,7 +42,8 @@ final class ReportCriteria {
   };
 
   factory ReportCriteria.fromJson(Map<String, Object?> json) {
-    if (!_hasOnlyKeys(json, const {'filters'}) || json['filters'] is! Map<String, Object?>) {
+    if (!_hasOnlyKeys(json, const {'filters'}) ||
+        json['filters'] is! Map<String, Object?>) {
       throw const FormatException('Malformed report criteria object.');
     }
     final rawFilters = json['filters'] as Map<String, Object?>;
@@ -59,45 +64,57 @@ final class ReportCriteria {
     for (final entry in filters.entries) {
       final definitionFilter = definition.filter(entry.key);
       if (definitionFilter == null) {
-        issues.add(ReportCriteriaValidationIssue(
-          code: 'unknown_filter',
-          fieldId: entry.key,
-        ));
+        issues.add(
+          ReportCriteriaValidationIssue(
+            code: 'unknown_filter',
+            fieldId: entry.key,
+          ),
+        );
         continue;
       }
 
       final value = entry.value;
       if (!_matchesKind(definitionFilter.kind, value)) {
-        issues.add(ReportCriteriaValidationIssue(
-          code: 'filter_type_mismatch',
-          fieldId: entry.key,
-        ));
+        issues.add(
+          ReportCriteriaValidationIssue(
+            code: 'filter_type_mismatch',
+            fieldId: entry.key,
+          ),
+        );
         continue;
       }
 
       if (value is ReportTextFilterValue) {
         if (definitionFilter.minLength != null &&
             value.value.length < definitionFilter.minLength!) {
-          issues.add(ReportCriteriaValidationIssue(
-            code: 'text_too_short',
-            fieldId: entry.key,
-          ));
+          issues.add(
+            ReportCriteriaValidationIssue(
+              code: 'text_too_short',
+              fieldId: entry.key,
+            ),
+          );
         }
         if (definitionFilter.maxLength != null &&
             value.value.length > definitionFilter.maxLength!) {
-          issues.add(ReportCriteriaValidationIssue(
-            code: 'text_too_long',
-            fieldId: entry.key,
-          ));
+          issues.add(
+            ReportCriteriaValidationIssue(
+              code: 'text_too_long',
+              fieldId: entry.key,
+            ),
+          );
         }
       }
 
       if (value is ReportChoiceFilterValue &&
-          !definitionFilter.choices.any((option) => option.value == value.value)) {
-        issues.add(ReportCriteriaValidationIssue(
-          code: 'choice_not_allowed',
-          fieldId: entry.key,
-        ));
+          !definitionFilter.choices.any(
+            (option) => option.value == value.value,
+          )) {
+        issues.add(
+          ReportCriteriaValidationIssue(
+            code: 'choice_not_allowed',
+            fieldId: entry.key,
+          ),
+        );
       }
       if (value is ReportChoicesFilterValue &&
           value.values.any(
@@ -105,19 +122,23 @@ final class ReportCriteria {
               (option) => option.value == selected,
             ),
           )) {
-        issues.add(ReportCriteriaValidationIssue(
-          code: 'choice_not_allowed',
-          fieldId: entry.key,
-        ));
+        issues.add(
+          ReportCriteriaValidationIssue(
+            code: 'choice_not_allowed',
+            fieldId: entry.key,
+          ),
+        );
       }
     }
 
     for (final filter in definition.filters) {
       if (filter.required && !filters.containsKey(filter.id)) {
-        issues.add(ReportCriteriaValidationIssue(
-          code: 'required_filter_missing',
-          fieldId: filter.id,
-        ));
+        issues.add(
+          ReportCriteriaValidationIssue(
+            code: 'required_filter_missing',
+            fieldId: filter.id,
+          ),
+        );
       }
     }
 

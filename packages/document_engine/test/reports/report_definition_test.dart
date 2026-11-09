@@ -2,9 +2,7 @@ import 'package:document_engine/document_engine.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  ReportDefinition definition({
-    int schemaVersion = 1,
-  }) => ReportDefinition(
+  ReportDefinition definition({int schemaVersion = 1}) => ReportDefinition(
     id: ReportId('sales.operations'),
     schemaVersion: schemaVersion,
     titleKey: 'reports.sales.title',
@@ -137,7 +135,10 @@ void main() {
     expect(issues.map((issue) => issue.code), contains('filter_type_mismatch'));
     expect(issues.map((issue) => issue.code), contains('text_too_long'));
     expect(issues.map((issue) => issue.code), contains('unknown_filter'));
-    expect(issues.map((issue) => issue.code), contains('required_filter_missing'));
+    expect(
+      issues.map((issue) => issue.code),
+      contains('required_filter_missing'),
+    );
 
     final invalidChoice = ReportCriteria(
       filters: {'status': ReportChoiceFilterValue('DELETED')},
@@ -201,36 +202,39 @@ void main() {
     expect(codes, contains('page_profile_not_allowed'));
   });
 
-  test('does not allow metric or chart toggles absent from the report schema', () {
-    final base = definition();
-    final noVisuals = ReportDefinition(
-      id: ReportId('sales.simple'),
-      schemaVersion: 1,
-      titleKey: 'reports.simple.title',
-      supportedLocaleTags: const ['en'],
-      filters: const [],
-      columns: [
-        ReportColumnDefinition(
-          id: 'reference',
-          labelKey: 'columns.reference',
-          dataType: ReportDataType.text,
-        ),
-      ],
-    );
-    expect(
-      ReportPresentationOptions(includeMetrics: true)
-          .validateAgainst(noVisuals)
-          .map((issue) => issue.code),
-      contains('metrics_not_available'),
-    );
-    expect(
-      ReportPresentationOptions(includeCharts: true)
-          .validateAgainst(noVisuals)
-          .map((issue) => issue.code),
-      contains('charts_not_available'),
-    );
-    expect(base.id, ReportId('sales.operations'));
-  });
+  test(
+    'does not allow metric or chart toggles absent from the report schema',
+    () {
+      final base = definition();
+      final noVisuals = ReportDefinition(
+        id: ReportId('sales.simple'),
+        schemaVersion: 1,
+        titleKey: 'reports.simple.title',
+        supportedLocaleTags: const ['en'],
+        filters: const [],
+        columns: [
+          ReportColumnDefinition(
+            id: 'reference',
+            labelKey: 'columns.reference',
+            dataType: ReportDataType.text,
+          ),
+        ],
+      );
+      expect(
+        ReportPresentationOptions(includeMetrics: true)
+            .validateAgainst(noVisuals)
+            .map((issue) => issue.code),
+        contains('metrics_not_available'),
+      );
+      expect(
+        ReportPresentationOptions(includeCharts: true)
+            .validateAgainst(noVisuals)
+            .map((issue) => issue.code),
+        contains('charts_not_available'),
+      );
+      expect(base.id, ReportId('sales.operations'));
+    },
+  );
   test('report registry resolves exact schema versions only', () {
     final registry = ReportDefinitionRegistry();
     final v1 = definition(schemaVersion: 1);
@@ -239,15 +243,9 @@ void main() {
       ..register(v2)
       ..register(v1);
 
-    expect(
-      registry.require(id: v1.id, schemaVersion: 1),
-      same(v1),
-    );
+    expect(registry.require(id: v1.id, schemaVersion: 1), same(v1));
     expect(registry.versionsOf(v1.id), [v1, v2]);
-    expect(
-      registry.find(id: v1.id, schemaVersion: 3),
-      isNull,
-    );
+    expect(registry.find(id: v1.id, schemaVersion: 3), isNull);
     expect(
       () => registry.require(id: v1.id, schemaVersion: 3),
       throwsStateError,
@@ -257,5 +255,4 @@ void main() {
       throwsStateError,
     );
   });
-
 }

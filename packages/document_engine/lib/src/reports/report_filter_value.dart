@@ -22,21 +22,29 @@ sealed class ReportFilterValue {
     if (type is! String ||
         json.length != 2 ||
         !json.keys.toSet().containsAll({'type', 'value'})) {
-      throw const FormatException('A report filter value requires type and value.');
+      throw const FormatException(
+        'A report filter value requires type and value.',
+      );
     }
 
     return switch (type) {
       'text' when value is String => ReportTextFilterValue(value),
       'integer' when value is int => ReportIntegerFilterValue(value),
       'decimal' when value is String => ReportDecimalFilterValue(value),
-      'date' when value is String => ReportDateFilterValue(DateTime.parse(value)),
+      'date' when value is String => ReportDateFilterValue(
+        DateTime.parse(value),
+      ),
       'date_range' when value is Map<String, Object?> =>
         ReportDateRangeFilterValue.fromJson(value),
       'boolean' when value is bool => ReportBooleanFilterValue(value),
       'choice' when value is String => ReportChoiceFilterValue(value),
-      'choices' when value is List<Object?> && value.every((item) => item is String) =>
+      'choices'
+          when value is List<Object?> &&
+              value.every((item) => item is String) =>
         ReportChoicesFilterValue(value.cast<String>()),
-      _ => throw FormatException('Unsupported or malformed report filter value type: $type.'),
+      _ => throw FormatException(
+        'Unsupported or malformed report filter value type: $type.',
+      ),
     };
   }
 }
@@ -62,7 +70,11 @@ final class ReportIntegerFilterValue extends ReportFilterValue {
 final class ReportDecimalFilterValue extends ReportFilterValue {
   ReportDecimalFilterValue(this.value) {
     if (!RegExp(r'^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$').hasMatch(value)) {
-      throw ArgumentError.value(value, 'value', 'Must be a canonical base-10 decimal string.');
+      throw ArgumentError.value(
+        value,
+        'value',
+        'Must be a canonical base-10 decimal string.',
+      );
     }
   }
   final String value;
@@ -84,7 +96,9 @@ final class ReportDateFilterValue extends ReportFilterValue {
 final class ReportDateRangeFilterValue extends ReportFilterValue {
   ReportDateRangeFilterValue({required this.start, required this.end}) {
     if (end.isBefore(start)) {
-      throw ArgumentError('A report date range end must not precede its start.');
+      throw ArgumentError(
+        'A report date range end must not precede its start.',
+      );
     }
   }
 
@@ -151,7 +165,11 @@ final class ReportChoicesFilterValue extends ReportFilterValue {
 
 String _validateChoice(String value) {
   if (value.isEmpty || value != value.trim() || value.length > 128) {
-    throw ArgumentError.value(value, 'value', 'Choice values must be 1-128 trimmed characters.');
+    throw ArgumentError.value(
+      value,
+      'value',
+      'Choice values must be 1-128 trimmed characters.',
+    );
   }
   return value;
 }

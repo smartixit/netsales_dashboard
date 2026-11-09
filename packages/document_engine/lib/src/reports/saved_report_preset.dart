@@ -25,8 +25,7 @@ final class ReportPresetCompatibility {
   final List<ReportCriteriaValidationIssue> criteriaIssues;
   final List<ReportPresentationValidationIssue> presentationIssues;
 
-  bool get requiresReview =>
-      status != ReportPresetCompatibilityStatus.current;
+  bool get requiresReview => status != ReportPresetCompatibilityStatus.current;
 }
 
 /// User-owned report configuration only; it never stores report data rows,
@@ -97,7 +96,9 @@ final class SavedReportPreset {
         json['report_schema_version'] is! int ||
         json['criteria'] is! Map<String, Object?> ||
         json['presentation'] is! Map<String, Object?>) {
-      throw const FormatException('Malformed or unsupported saved report preset.');
+      throw const FormatException(
+        'Malformed or unsupported saved report preset.',
+      );
     }
 
     final version = json['preset_schema_version'] as int;
@@ -113,7 +114,9 @@ final class SavedReportPreset {
       reportId: ReportId(json['report_id'] as String),
       reportSchemaVersion: json['report_schema_version'] as int,
       presetSchemaVersion: version,
-      criteria: ReportCriteria.fromJson(json['criteria'] as Map<String, Object?>),
+      criteria: ReportCriteria.fromJson(
+        json['criteria'] as Map<String, Object?>,
+      ),
       presentation: ReportPresentationOptions.fromJson(
         json['presentation'] as Map<String, Object?>,
       ),
@@ -130,9 +133,8 @@ final class SavedReportPreset {
     final criteriaIssues = criteria.validateAgainst(definition);
     final presentationIssues = presentation.validateAgainst(definition);
     final schemaChanged = reportSchemaVersion != definition.schemaVersion;
-    final isCompatible = !schemaChanged &&
-        criteriaIssues.isEmpty &&
-        presentationIssues.isEmpty;
+    final isCompatible =
+        !schemaChanged && criteriaIssues.isEmpty && presentationIssues.isEmpty;
 
     return ReportPresetCompatibility(
       status: isCompatible
@@ -146,7 +148,11 @@ final class SavedReportPreset {
   static String _validateName(String value) {
     final normalized = value.trim();
     if (normalized.isEmpty || normalized.length > 120) {
-      throw ArgumentError.value(value, 'name', 'Must contain 1-120 characters.');
+      throw ArgumentError.value(
+        value,
+        'name',
+        'Must contain 1-120 characters.',
+      );
     }
     return normalized;
   }

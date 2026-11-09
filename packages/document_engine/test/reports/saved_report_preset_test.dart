@@ -84,21 +84,30 @@ void main() {
     ),
   );
 
-  test('round-trips versioned criteria and presentation without losing decimals', () {
-    final original = preset();
-    final decoded = SavedReportPreset.fromJson(original.toJson());
-    expect(decoded.id, original.id);
-    expect(decoded.name, 'Monthly sales');
-    expect(decoded.reportId, original.reportId);
-    expect(decoded.reportSchemaVersion, 1);
-    expect(
-      (decoded.criteria.filters['amount']! as ReportDecimalFilterValue).value,
-      '12345678901234567890.1200',
-    );
-    expect(decoded.criteria.filters['period'], isA<ReportDateRangeFilterValue>());
-    expect(decoded.presentation.visibleColumnIds, ['reference', 'created_at']);
-    expect(decoded.presentation.sorts.single.fieldId, 'created_at');
-  });
+  test(
+    'round-trips versioned criteria and presentation without losing decimals',
+    () {
+      final original = preset();
+      final decoded = SavedReportPreset.fromJson(original.toJson());
+      expect(decoded.id, original.id);
+      expect(decoded.name, 'Monthly sales');
+      expect(decoded.reportId, original.reportId);
+      expect(decoded.reportSchemaVersion, 1);
+      expect(
+        (decoded.criteria.filters['amount']! as ReportDecimalFilterValue).value,
+        '12345678901234567890.1200',
+      );
+      expect(
+        decoded.criteria.filters['period'],
+        isA<ReportDateRangeFilterValue>(),
+      );
+      expect(decoded.presentation.visibleColumnIds, [
+        'reference',
+        'created_at',
+      ]);
+      expect(decoded.presentation.sorts.single.fieldId, 'created_at');
+    },
+  );
 
   test('rejects unsupported preset schema versions for explicit migration', () {
     final json = preset().toJson()..['preset_schema_version'] = 2;
@@ -109,7 +118,10 @@ void main() {
   });
 
   test('rejects unknown persisted keys such as tenant or record payloads', () {
-    final json = preset().toJson()..['records'] = [{'id': 1}];
+    final json = preset().toJson()
+      ..['records'] = [
+        {'id': 1},
+      ];
     expect(
       () => SavedReportPreset.fromJson(json),
       throwsA(isA<FormatException>()),

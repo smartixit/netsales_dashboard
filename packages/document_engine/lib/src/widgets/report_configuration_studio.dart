@@ -75,10 +75,12 @@ class ReportConfigurationStudio extends StatelessWidget {
                 _buildActions(context),
                 const SizedBox(height: 12),
                 Text(
-                  resolveLabel(context, 'report_configuration.authorization_notice'),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
+                  resolveLabel(
+                    context,
+                    'report_configuration.authorization_notice',
                   ),
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: colors.onSurfaceVariant),
                 ),
               ],
             ),
@@ -114,7 +116,8 @@ class ReportConfigurationStudio extends StatelessWidget {
           runSpacing: 8,
           children: [
             _InfoPill(
-              label: '${resolveLabel(context, 'report_configuration.schema_version')} ${definition.schemaVersion}',
+              label:
+                  '${resolveLabel(context, 'report_configuration.schema_version')} ${definition.schemaVersion}',
             ),
             _InfoPill(
               label: resolveLabel(
@@ -124,7 +127,8 @@ class ReportConfigurationStudio extends StatelessWidget {
             ),
             if (definition.clientRowLimit != null)
               _InfoPill(
-                label: '${resolveLabel(context, 'report_configuration.client_limit')} ${definition.clientRowLimit}',
+                label:
+                    '${resolveLabel(context, 'report_configuration.client_limit')} ${definition.clientRowLimit}',
               ),
           ],
         ),
@@ -135,7 +139,10 @@ class ReportConfigurationStudio extends StatelessWidget {
   Widget _buildFilterSection(BuildContext context) {
     return _SectionCard(
       title: resolveLabel(context, 'report_configuration.data_criteria'),
-      subtitle: resolveLabel(context, 'report_configuration.data_criteria_hint'),
+      subtitle: resolveLabel(
+        context,
+        'report_configuration.data_criteria_hint',
+      ),
       icon: Icons.filter_alt_outlined,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -149,7 +156,8 @@ class ReportConfigurationStudio extends StatelessWidget {
               text: resolveLabel(context, 'report_configuration.no_filters'),
             ),
           _ValidationSummary(
-            issues: criteria.validateAgainst(definition)
+            issues: criteria
+                .validateAgainst(definition)
                 .map((issue) => '${issue.code}: ${issue.fieldId}')
                 .toList(growable: false),
           ),
@@ -192,15 +200,17 @@ class ReportConfigurationStudio extends StatelessWidget {
             value.isEmpty
                 ? null
                 : (int.tryParse(value) == null
-                    ? null
-                    : ReportIntegerFilterValue(int.parse(value))),
+                      ? null
+                      : ReportIntegerFilterValue(int.parse(value))),
           ),
         );
       case ReportFilterKind.decimal:
         return _textField(
           key: ValueKey('report-filter-${filter.id}'),
           label: '$label$requiredLabel',
-          initialValue: current is ReportDecimalFilterValue ? current.value : '',
+          initialValue: current is ReportDecimalFilterValue
+              ? current.value
+              : '',
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           onChanged: (value) {
             ReportFilterValue? next;
@@ -226,8 +236,8 @@ class ReportConfigurationStudio extends StatelessWidget {
             value.isEmpty
                 ? null
                 : (DateTime.tryParse(value) == null
-                    ? null
-                    : ReportDateFilterValue(DateTime.parse(value))),
+                      ? null
+                      : ReportDateFilterValue(DateTime.parse(value))),
           ),
         );
       case ReportFilterKind.dateRange:
@@ -242,7 +252,10 @@ class ReportConfigurationStudio extends StatelessWidget {
                 Expanded(
                   child: _textField(
                     key: ValueKey('report-filter-${filter.id}-start'),
-                    label: resolveLabel(context, 'report_configuration.from_date'),
+                    label: resolveLabel(
+                      context,
+                      'report_configuration.from_date',
+                    ),
                     initialValue: range == null ? '' : _dateText(range.start),
                     onChanged: (value) => _updateDateRange(
                       filter.id,
@@ -255,7 +268,10 @@ class ReportConfigurationStudio extends StatelessWidget {
                 Expanded(
                   child: _textField(
                     key: ValueKey('report-filter-${filter.id}-end'),
-                    label: resolveLabel(context, 'report_configuration.to_date'),
+                    label: resolveLabel(
+                      context,
+                      'report_configuration.to_date',
+                    ),
                     initialValue: range == null ? '' : _dateText(range.end),
                     onChanged: (value) => _updateDateRange(
                       filter.id,
@@ -273,10 +289,8 @@ class ReportConfigurationStudio extends StatelessWidget {
           contentPadding: EdgeInsets.zero,
           title: Text('$label$requiredLabel'),
           value: current is ReportBooleanFilterValue && current.value,
-          onChanged: (value) => _setFilter(
-            filter.id,
-            ReportBooleanFilterValue(value),
-          ),
+          onChanged: (value) =>
+              _setFilter(filter.id, ReportBooleanFilterValue(value)),
         );
       case ReportFilterKind.singleChoice:
         return DropdownButtonFormField<String>(
@@ -307,7 +321,10 @@ class ReportConfigurationStudio extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('$label$requiredLabel', style: Theme.of(context).textTheme.labelLarge),
+            Text(
+              '$label$requiredLabel',
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
@@ -356,11 +373,7 @@ class ReportConfigurationStudio extends StatelessWidget {
     onChanged: onChanged,
   );
 
-  void _updateDateRange(
-    String id,
-    String? startText,
-    String? endText,
-  ) {
+  void _updateDateRange(String id, String? startText, String? endText) {
     final parsedStart = startText == null || startText.isEmpty
         ? null
         : DateTime.tryParse(startText);
@@ -379,14 +392,17 @@ class ReportConfigurationStudio extends StatelessWidget {
   Widget _buildPresentationSection(BuildContext context) {
     final visible = presentation.visibleColumnIds.isEmpty
         ? definition.columns
-            .where((column) => column.visibleByDefault)
-            .map((column) => column.id)
-            .toList(growable: false)
+              .where((column) => column.visibleByDefault)
+              .map((column) => column.id)
+              .toList(growable: false)
         : presentation.visibleColumnIds;
 
     return _SectionCard(
       title: resolveLabel(context, 'report_configuration.output_design'),
-      subtitle: resolveLabel(context, 'report_configuration.output_design_hint'),
+      subtitle: resolveLabel(
+        context,
+        'report_configuration.output_design_hint',
+      ),
       icon: Icons.tune_rounded,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -429,19 +445,24 @@ class ReportConfigurationStudio extends StatelessWidget {
           if (definition.metricSlots.isNotEmpty)
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
-              title: Text(resolveLabel(context, 'report_configuration.include_metrics')),
+              title: Text(
+                resolveLabel(context, 'report_configuration.include_metrics'),
+              ),
               value: presentation.includeMetrics,
               onChanged: (value) => _updatePresentation(includeMetrics: value),
             ),
           if (definition.chartsAvailable)
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
-              title: Text(resolveLabel(context, 'report_configuration.include_charts')),
+              title: Text(
+                resolveLabel(context, 'report_configuration.include_charts'),
+              ),
               value: presentation.includeCharts,
               onChanged: (value) => _updatePresentation(includeCharts: value),
             ),
           _ValidationSummary(
-            issues: presentation.validateAgainst(definition)
+            issues: presentation
+                .validateAgainst(definition)
                 .map((issue) => '${issue.code}: ${issue.fieldId}')
                 .toList(growable: false),
           ),
@@ -451,9 +472,13 @@ class ReportConfigurationStudio extends StatelessWidget {
   }
 
   Widget _buildSortControls(BuildContext context) {
-    final sortable = definition.columns.where((column) => column.sortable).toList();
+    final sortable = definition.columns
+        .where((column) => column.sortable)
+        .toList();
     if (sortable.isEmpty) return const SizedBox.shrink();
-    final selected = presentation.sorts.isEmpty ? null : presentation.sorts.first;
+    final selected = presentation.sorts.isEmpty
+        ? null
+        : presentation.sorts.first;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -479,8 +504,8 @@ class ReportConfigurationStudio extends StatelessWidget {
                 : [
                     ReportSortOption(
                       fieldId: id,
-                      direction: selected?.direction ??
-                          ReportSortDirection.ascending,
+                      direction:
+                          selected?.direction ?? ReportSortDirection.ascending,
                     ),
                   ],
           ),
@@ -491,17 +516,24 @@ class ReportConfigurationStudio extends StatelessWidget {
             key: const ValueKey('report-sort-direction'),
             initialValue: selected.direction,
             decoration: InputDecoration(
-              labelText: resolveLabel(context, 'report_configuration.sort_direction'),
+              labelText: resolveLabel(
+                context,
+                'report_configuration.sort_direction',
+              ),
               border: const OutlineInputBorder(),
             ),
             items: [
               DropdownMenuItem(
                 value: ReportSortDirection.ascending,
-                child: Text(resolveLabel(context, 'report_configuration.ascending')),
+                child: Text(
+                  resolveLabel(context, 'report_configuration.ascending'),
+                ),
               ),
               DropdownMenuItem(
                 value: ReportSortDirection.descending,
-                child: Text(resolveLabel(context, 'report_configuration.descending')),
+                child: Text(
+                  resolveLabel(context, 'report_configuration.descending'),
+                ),
               ),
             ],
             onChanged: (direction) {
@@ -526,7 +558,8 @@ class ReportConfigurationStudio extends StatelessWidget {
     if (groupable.isEmpty) return const SizedBox.shrink();
     return DropdownButtonFormField<String>(
       key: const ValueKey('report-group-field'),
-      initialValue: groupable.any((item) => item.id == presentation.groupByFieldId)
+      initialValue:
+          groupable.any((item) => item.id == presentation.groupByFieldId)
           ? presentation.groupByFieldId
           : '',
       decoration: InputDecoration(
@@ -536,7 +569,9 @@ class ReportConfigurationStudio extends StatelessWidget {
       items: [
         DropdownMenuItem(
           value: '',
-          child: Text(resolveLabel(context, 'report_configuration.no_grouping')),
+          child: Text(
+            resolveLabel(context, 'report_configuration.no_grouping'),
+          ),
         ),
         for (final column in groupable)
           DropdownMenuItem(
@@ -554,7 +589,9 @@ class ReportConfigurationStudio extends StatelessWidget {
   Widget _buildTemplateControl(BuildContext context) {
     if (definition.templates.isEmpty) return const SizedBox.shrink();
     final currentKey = presentation.template?.reference.key;
-    final hasCurrent = definition.templates.any((item) => item.key == currentKey);
+    final hasCurrent = definition.templates.any(
+      (item) => item.key == currentKey,
+    );
     return DropdownButtonFormField<String>(
       key: const ValueKey('report-template'),
       initialValue: hasCurrent ? currentKey : null,
@@ -564,14 +601,13 @@ class ReportConfigurationStudio extends StatelessWidget {
       ),
       items: [
         for (final item in definition.templates)
-          DropdownMenuItem(
-            value: item.key,
-            child: Text(item.key),
-          ),
+          DropdownMenuItem(value: item.key, child: Text(item.key)),
       ],
       onChanged: (key) {
         if (key == null) return;
-        final item = definition.templates.singleWhere((value) => value.key == key);
+        final item = definition.templates.singleWhere(
+          (value) => value.key == key,
+        );
         _updatePresentation(
           template: ReportTemplateSelection(id: item.id, version: item.version),
           clearTemplate: false,
@@ -583,7 +619,8 @@ class ReportConfigurationStudio extends StatelessWidget {
   Widget _buildLocaleControl(BuildContext context) {
     return DropdownButtonFormField<String>(
       key: const ValueKey('report-language'),
-      initialValue: presentation.languageTag != null &&
+      initialValue:
+          presentation.languageTag != null &&
               definition.supportsLocale(presentation.languageTag!)
           ? presentation.languageTag
           : definition.supportedLocaleTags.first,
@@ -603,7 +640,8 @@ class ReportConfigurationStudio extends StatelessWidget {
     if (definition.pageProfileIds.isEmpty) return const SizedBox.shrink();
     return DropdownButtonFormField<String>(
       key: const ValueKey('report-page-profile'),
-      initialValue: definition.pageProfileIds.contains(presentation.pageProfileId)
+      initialValue:
+          definition.pageProfileIds.contains(presentation.pageProfileId)
           ? presentation.pageProfileId
           : definition.pageProfileIds.first,
       decoration: InputDecoration(
@@ -723,9 +761,8 @@ class _SectionCard extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       subtitle,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: colors.onSurfaceVariant,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall
+                          ?.copyWith(color: colors.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -756,9 +793,8 @@ class _InfoPill extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         child: Text(
           label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: colors.onSurfaceVariant,
-          ),
+          style: Theme.of(context).textTheme.labelSmall
+              ?.copyWith(color: colors.onSurfaceVariant),
         ),
       ),
     );
@@ -774,7 +810,8 @@ class _ValidationSummary extends StatelessWidget {
     if (issues.isEmpty) return const SizedBox.shrink();
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.45),
+        color: Theme.of(context).colorScheme.errorContainer
+            .withValues(alpha: 0.45),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
@@ -800,9 +837,8 @@ class _EmptyHint extends StatelessWidget {
     padding: const EdgeInsets.symmetric(vertical: 14),
     child: Text(
       text,
-      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-      ),
+      style: Theme.of(context).textTheme.bodySmall
+          ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
     ),
   );
 }
@@ -825,9 +861,7 @@ class _StudioAction extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final enabled = onPressed != null;
     return Material(
-      color: secondary
-          ? colors.surfaceContainerHighest
-          : colors.primary,
+      color: secondary ? colors.surfaceContainerHighest : colors.primary,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),

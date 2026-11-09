@@ -21,7 +21,11 @@ enum ReportExecutionPolicy { client, server, either }
 final class ReportChoiceOption {
   ReportChoiceOption({required this.value, required this.labelKey}) {
     if (value.isEmpty || value != value.trim() || value.length > 128) {
-      throw ArgumentError.value(value, 'value', 'Must be 1-128 trimmed characters.');
+      throw ArgumentError.value(
+        value,
+        'value',
+        'Must be 1-128 trimmed characters.',
+      );
     }
     _requireKey(labelKey, 'labelKey');
   }
@@ -43,7 +47,11 @@ final class ReportFilterDefinition {
     _validateStableField(id, 'filterId');
     _requireKey(labelKey, 'labelKey');
     if (minLength != null && minLength! < 0) {
-      throw ArgumentError.value(minLength, 'minLength', 'Must not be negative.');
+      throw ArgumentError.value(
+        minLength,
+        'minLength',
+        'Must not be negative.',
+      );
     }
     if (maxLength != null && maxLength! < 1) {
       throw ArgumentError.value(maxLength, 'maxLength', 'Must be positive.');
@@ -51,17 +59,21 @@ final class ReportFilterDefinition {
     if (minLength != null && maxLength != null && minLength! > maxLength!) {
       throw ArgumentError('minLength cannot exceed maxLength.');
     }
-    if (kind != ReportFilterKind.text && (minLength != null || maxLength != null)) {
+    if (kind != ReportFilterKind.text &&
+        (minLength != null || maxLength != null)) {
       throw ArgumentError('Length constraints apply only to text filters.');
     }
     final choiceValues = this.choices.map((item) => item.value).toSet();
     if (choiceValues.length != this.choices.length) {
       throw ArgumentError('Choice values must be unique within a filter.');
     }
-    final isChoice = kind == ReportFilterKind.singleChoice ||
+    final isChoice =
+        kind == ReportFilterKind.singleChoice ||
         kind == ReportFilterKind.multiChoice;
     if (isChoice != this.choices.isNotEmpty) {
-      throw ArgumentError('Choice filters require options; other filters must not declare them.');
+      throw ArgumentError(
+        'Choice filters require options; other filters must not declare them.',
+      );
     }
   }
 
@@ -161,7 +173,11 @@ final class ReportDefinition {
        templates = List<ReportTemplateReference>.unmodifiable(templates),
        pageProfileIds = _normalizeIds(pageProfileIds, 'pageProfileIds') {
     if (schemaVersion < 1) {
-      throw ArgumentError.value(schemaVersion, 'schemaVersion', 'Must be positive.');
+      throw ArgumentError.value(
+        schemaVersion,
+        'schemaVersion',
+        'Must be positive.',
+      );
     }
     _requireKey(titleKey, 'titleKey');
     if (descriptionKey != null) _requireKey(descriptionKey!, 'descriptionKey');
@@ -169,19 +185,31 @@ final class ReportDefinition {
       throw ArgumentError('At least one supported locale is required.');
     }
     if (this.columns.isEmpty) {
-      throw ArgumentError('A report definition requires at least one output column.');
+      throw ArgumentError(
+        'A report definition requires at least one output column.',
+      );
     }
     _ensureUnique(this.filters.map((item) => item.id), 'filter IDs');
     _ensureUnique(this.columns.map((item) => item.id), 'column IDs');
     _ensureUnique(this.metricSlots.map((item) => item.id), 'metric slot IDs');
-    _ensureUnique(this.templates.map((item) => item.key), 'template references');
-    final hasClientPath = executionPolicy == ReportExecutionPolicy.client ||
+    _ensureUnique(
+      this.templates.map((item) => item.key),
+      'template references',
+    );
+    final hasClientPath =
+        executionPolicy == ReportExecutionPolicy.client ||
         executionPolicy == ReportExecutionPolicy.either;
     if (clientRowLimit != null && clientRowLimit! < 1) {
-      throw ArgumentError.value(clientRowLimit, 'clientRowLimit', 'Must be positive.');
+      throw ArgumentError.value(
+        clientRowLimit,
+        'clientRowLimit',
+        'Must be positive.',
+      );
     }
     if (hasClientPath && clientRowLimit == null) {
-      throw ArgumentError('Client-capable reports require an explicit clientRowLimit.');
+      throw ArgumentError(
+        'Client-capable reports require an explicit clientRowLimit.',
+      );
     }
   }
 
@@ -252,7 +280,11 @@ Set<String> _normalizeLocales(Iterable<String> values) {
     final tag = value.trim();
     if (tag != value ||
         !RegExp(r'^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$').hasMatch(tag)) {
-      throw ArgumentError.value(value, 'supportedLocaleTags', 'Invalid language tag.');
+      throw ArgumentError.value(
+        value,
+        'supportedLocaleTags',
+        'Invalid language tag.',
+      );
     }
     result.add(tag);
   }
@@ -260,10 +292,12 @@ Set<String> _normalizeLocales(Iterable<String> values) {
 }
 
 List<String> _normalizeIds(Iterable<String> values, String name) {
-  final result = values.map((value) {
-    validateStableIdentifier(value, parameterName: name);
-    return value;
-  }).toList(growable: false);
+  final result = values
+      .map((value) {
+        validateStableIdentifier(value, parameterName: name);
+        return value;
+      })
+      .toList(growable: false);
   _ensureUnique(result, name);
   return List<String>.unmodifiable(result);
 }

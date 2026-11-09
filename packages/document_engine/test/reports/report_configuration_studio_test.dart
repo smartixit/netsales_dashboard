@@ -67,17 +67,16 @@ void main() {
     ),
   );
 
-  testWidgets('renders only schema-declared filter and output controls', (tester) async {
+  testWidgets('renders only schema-declared filter and output controls', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1280, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await tester.pumpWidget(
-      buildStudio(
-        onCriteriaChanged: (_) {},
-        onPresentationChanged: (_) {},
-      ),
+      buildStudio(onCriteriaChanged: (_) {}, onPresentationChanged: (_) {}),
     );
 
     expect(find.text('reports.sales.title'), findsOneWidget);
@@ -88,7 +87,9 @@ void main() {
     expect(find.text('report_configuration.output_design'), findsOneWidget);
   });
 
-  testWidgets('reports controlled text-filter changes to the host', (tester) async {
+  testWidgets('reports controlled text-filter changes to the host', (
+    tester,
+  ) async {
     ReportCriteria? changed;
     await tester.pumpWidget(
       buildStudio(
@@ -107,27 +108,30 @@ void main() {
     );
   });
 
-  testWidgets('exposes preview without owning navigation or request execution', (tester) async {
-    var previewTapped = false;
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: ReportConfigurationStudio(
-            definition: definition,
-            criteria: ReportCriteria(),
-            presentation: ReportPresentationOptions(),
-            resolveLabel: (_, key) => key,
-            onCriteriaChanged: (_) {},
-            onPresentationChanged: (_) {},
-            onPreview: () => previewTapped = true,
+  testWidgets(
+    'exposes preview without owning navigation or request execution',
+    (tester) async {
+      var previewTapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ReportConfigurationStudio(
+              definition: definition,
+              criteria: ReportCriteria(),
+              presentation: ReportPresentationOptions(),
+              resolveLabel: (_, key) => key,
+              onCriteriaChanged: (_) {},
+              onPresentationChanged: (_) {},
+              onPreview: () => previewTapped = true,
+            ),
           ),
         ),
-      ),
-    );
-    final preview = find.text('report_configuration.preview');
-    await tester.ensureVisible(preview);
-    await tester.tap(preview);
-    await tester.pump();
-    expect(previewTapped, isTrue);
-  });
+      );
+      final preview = find.text('report_configuration.preview');
+      await tester.ensureVisible(preview);
+      await tester.tap(preview);
+      await tester.pump();
+      expect(previewTapped, isTrue);
+    },
+  );
 }
