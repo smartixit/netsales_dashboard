@@ -79,4 +79,4 @@ jobs:
 
       - name: Compile Payv candidate for Web
         working-directory: packages/document_engine_poc
-        run: dart compile js -O2 lib/src/payv_specimen.dart -o build/payv_specimen.js
+        run: dart compile js -O2 bin/payv_web_compile.dart -o build/payv_web_compile.js
