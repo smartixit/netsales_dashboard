@@ -9,11 +9,18 @@ void main() {
       '/forgot-password': 'authentication',
       '/dashboard': 'dashboard',
       '/dashboard/reports': 'dashboard',
+      '/dashboard/users/:id': 'dashboard',
     });
 
     test('maps routes that share one window profile', () {
       expect(router.resolve('/forgot-password'), 'authentication');
       expect(router.resolve('/dashboard/reports'), 'dashboard');
+    });
+
+    test('resolves parameterized routes and ignores query strings and trailing slashes', () {
+      expect(router.resolve('/dashboard/users/42'), 'dashboard');
+      expect(router.resolve('/dashboard/users/42?tab=security'), 'dashboard');
+      expect(router.resolve('/dashboard/users/42/'), 'dashboard');
     });
 
     test('returns null for unknown or empty routes', () {
