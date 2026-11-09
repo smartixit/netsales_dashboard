@@ -10,6 +10,7 @@ import 'package:netsales_dashboard/features/platform_users/presentation/widgets/
 import 'package:netsales_dashboard/features/platform_users/presentation/widgets/platform_user_security_section.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
+import 'package:netsales_dashboard/widgets/platform_workspace/platform_workspace.dart';
 
 class PlatformUserDetailScreen extends GetView<PlatformUserDetailController> {
   const PlatformUserDetailScreen({super.key});
@@ -17,8 +18,7 @@ class PlatformUserDetailScreen extends GetView<PlatformUserDetailController> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Padding(
-      padding: EdgeInsets.all(AppSpacing.lg),
+    return PlatformWorkspaceFrame(
       child: Obx(() {
         if (controller.isLoading.value) {
           return const CustomSkeletonGrid(count: 4, crossAxisCount: 1, itemHeight: 112);

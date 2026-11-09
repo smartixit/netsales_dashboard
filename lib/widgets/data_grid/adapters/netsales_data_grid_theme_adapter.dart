@@ -10,10 +10,10 @@ class NetSalesDataGridThemeAdapter {
     return SfDataGridTheme(
       data: SfDataGridThemeData(
         headerColor: colors.surfaceContainerHigh,
-        headerHoverColor: colors.surfaceContainerHighest,
+        headerHoverColor: colors.primaryContainer.withValues(alpha: 0.55),
         gridLineColor: colors.outlineVariant.withValues(alpha: 0.55),
         selectionColor: colors.primary.withValues(alpha: 0.12),
-        rowHoverColor: colors.surfaceContainerLow,
+        rowHoverColor: colors.primaryContainer.withValues(alpha: 0.20),
         sortIconColor: colors.primary,
         filterIconColor: colors.onSurfaceVariant,
         frozenPaneLineColor: colors.outlineVariant,

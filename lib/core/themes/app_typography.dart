@@ -11,7 +11,7 @@ class AppTypography {
   AppTypography._();
 
   /// اسم الخط الأساسي الموحد للنظام (IBM Plex Sans Arabic)
-  static const String fontFamily = 'ibm';
+  static const String fontFamily = 'IBM';
 
   // ---------------------------------------------------------------------------
   // أوزان الخطوط القياسية (Font Weights)

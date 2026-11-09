@@ -16,10 +16,22 @@ class AppGradients {
   /// تدرّج الهوية الأساسي — للبطاقة المالية الرئيسية (Hero).
   static LinearGradient financialHero(BuildContext context) {
     final scheme = _scheme(context);
+    final colors = _isDark(context)
+        ? const [
+            Color(0xFF0A3327),
+            Color(0xFF124A3D),
+            Color(0xFF213D4A),
+          ]
+        : [
+            scheme.primary,
+            scheme.secondary,
+            Color.lerp(scheme.tertiary, Colors.black, 0.08)!,
+          ];
+
     return LinearGradient(
       begin: AlignmentDirectional.topStart,
       end: AlignmentDirectional.bottomEnd,
-      colors: [scheme.primary, scheme.secondary, scheme.tertiary],
+      colors: colors,
       stops: const [0.0, 0.55, 1.0],
     );
   }

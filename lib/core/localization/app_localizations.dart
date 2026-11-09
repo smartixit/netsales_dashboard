@@ -139,6 +139,7 @@ class AppLocalizations {
     'network_pos_link_status_updated':'تم تحديث حالة الارتباط.',
     'network_pos_link_removed':'تم فك الارتباط بنجاح.',
 
+    'workspace_summary':'ملخص الحالة',
     'overview':'نظرة عامة','platform_management':'إدارة المنصة','users':'المستخدمون','roles':'الأدوار والصلاحيات','networks':'مزودو الشبكات','pos':'نقاط البيع','geography':'المحافظات والمديريات',
     'subscriptions':'الاشتراكات والتراخيص','subscription_plans':'خطط الاشتراك','provider_subscriptions':'اشتراكات المزودين','subscription_requests':'طلبات الاشتراك والترقية',
     'finance':'المالية والتقارير','sales':'تقارير المبيعات','network_wallets':'محافظ الشبكات','pos_wallets':'محافظ نقاط البيع','expenses':'المصروفات','bank_accounts':'الحسابات البنكية والتسويات','reports':'التقارير المالية',
@@ -452,6 +453,11 @@ class AppLocalizations {
     'network_pos_link_status_updated':'Relationship status updated.',
     'network_pos_link_removed':'Relationship removed successfully.',
 
+    'workspace_summary':'At a glance',
+    'period_7d':'Last 7 days',
+    'period_30d':'Last 30 days',
+    'period_90d':'Last 90 days',
+    'period_12m':'Last 12 months',
     'overview':'Overview','platform_management':'Platform management','users':'Users','roles':'Roles & permissions','networks':'Network providers','pos':'Points of sale','geography':'Governorates & directorates',
     'subscriptions':'Subscriptions & licensing','subscription_plans':'Subscription plans','provider_subscriptions':'Provider subscriptions','subscription_requests':'Subscription requests',
     'finance':'Finance & reports','sales':'Sales reports','network_wallets':'Network wallets','pos_wallets':'POS wallets','expenses':'Expenses','bank_accounts':'Bank accounts & settlements','reports':'Financial reports',

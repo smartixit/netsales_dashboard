@@ -99,6 +99,11 @@ class DashboardShell extends StatelessWidget {
         drawer: compact
             ? Drawer(
                 width: config.expandedSidebarWidth,
+                elevation: 0,
+                backgroundColor: theme.sidebarBackground,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                ),
                 child: SafeArea(child: sidebar),
               )
             : null,
@@ -116,6 +121,16 @@ class DashboardShell extends StatelessWidget {
                         width: effectiveCollapsed
                             ? config.collapsedSidebarWidth
                             : config.expandedSidebarWidth,
+                        decoration: BoxDecoration(
+                          color: theme.sidebarBackground,
+                          border: BorderDirectional(
+                            end: BorderSide(
+                              color: theme.border,
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        clipBehavior: Clip.antiAlias,
                         child: sidebar,
                       ),
                     Expanded(

@@ -14,6 +14,7 @@ import 'package:netsales_dashboard/widgets/feedback/custom_empty_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_state.dart';
+import 'package:netsales_dashboard/widgets/platform_workspace/platform_workspace.dart';
 
 class PlatformUsersScreen extends GetView<PlatformUsersController> {
   const PlatformUsersScreen({super.key});
@@ -22,8 +23,7 @@ class PlatformUsersScreen extends GetView<PlatformUsersController> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return Padding(
-      padding: EdgeInsets.all(AppSpacing.lg),
+    return PlatformWorkspaceFrame(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -58,11 +58,13 @@ class PlatformUsersScreen extends GetView<PlatformUsersController> {
             ),
           ),
           SizedBox(height: AppSpacing.lg),
-          Obx(() => PlatformUsersFilterBar(
-            controller: controller,
-            l10n: l10n,
-            showStatusFilters: !controller.isTrashView.value,
-          )),
+          PlatformWorkspaceSurface(
+            child: Obx(() => PlatformUsersFilterBar(
+              controller: controller,
+              l10n: l10n,
+              showStatusFilters: !controller.isTrashView.value,
+            )),
+          ),
           SizedBox(height: AppSpacing.md),
           Expanded(
             child: Obx(() {

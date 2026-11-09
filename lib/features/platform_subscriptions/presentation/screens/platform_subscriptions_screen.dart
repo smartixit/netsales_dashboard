@@ -19,6 +19,7 @@ import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_text_field.dart';
 import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
+import 'package:netsales_dashboard/widgets/platform_workspace/platform_workspace.dart';
 
 enum SubscriptionWorkspaceSection { plans, subscriptions, requests }
 
@@ -44,8 +45,7 @@ class PlatformSubscriptionsScreen extends GetView<PlatformSubscriptionsControlle
       SubscriptionWorkspaceSection.subscriptions => l10n.text('provider_subscriptions_description'),
       SubscriptionWorkspaceSection.requests => l10n.text('subscription_requests_description'),
     };
-    return Padding(
-      padding: EdgeInsets.all(AppSpacing.lg),
+    return PlatformWorkspaceFrame(
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         DashboardPageHeader(data: DashboardPageHeaderData(
           title: title,
@@ -69,7 +69,7 @@ class PlatformSubscriptionsScreen extends GetView<PlatformSubscriptionsControlle
         SizedBox(height: AppSpacing.lg),
         _SectionSwitcher(section: section, l10n: l10n),
         SizedBox(height: AppSpacing.md),
-        _buildFilters(l10n),
+        PlatformWorkspaceSurface(child: _buildFilters(l10n)),
         SizedBox(height: AppSpacing.md),
         Expanded(child: _buildContent(context, l10n, canEdit, canDelete, canApprove, canReject)),
       ]),

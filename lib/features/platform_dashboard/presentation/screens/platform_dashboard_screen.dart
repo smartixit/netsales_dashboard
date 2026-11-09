@@ -21,6 +21,7 @@ import 'package:netsales_dashboard/widgets/dashboard_extras/custom_command_palet
 import 'package:netsales_dashboard/widgets/dashboard_extras/custom_notification_center.dart';
 import 'package:netsales_dashboard/widgets/dashboard_extras/custom_profile_menu.dart';
 import 'package:netsales_dashboard/widgets/dashboard_layout/dashboard_layout.dart';
+import 'package:netsales_dashboard/widgets/dashboard_layout/adapters/netsales_dashboard_visual_theme_adapter.dart';
 
 class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
   const PlatformDashboardScreen({super.key});
@@ -75,12 +76,16 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
         final navigation = PlatformNavigationRegistry.build(context);
         final selectedId = _selectedId(controller.activeRoute.value);
         final selectedLabel = _labelForId(context, selectedId);
-        return DashboardShell(
+        return NetSalesDashboardVisualThemeAdapter.wrap(
+          context: context,
+          child: DashboardShell(
           config: const DashboardLayoutConfig(
-            expandedSidebarWidth: 272,
-            collapsedSidebarWidth: 76,
-            topbarHeight: 68,
-            mobileBreakpoint: 900,
+            expandedSidebarWidth: 268,
+            collapsedSidebarWidth: 74,
+            topbarHeight: 64,
+            mobileBreakpoint: 960,
+            contentPadding: 24,
+            maxContentWidth: 1800,
             showBreadcrumbs: true,
           ),
           navigation: navigation,
@@ -259,9 +264,7 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
           },
           pageHeader: DashboardPageHeaderData(
             title: selectedLabel,
-            description: selectedId == 'overview'
-                ? l10n.text('platform_summary')
-                : null,
+            description: null,
             icon: selectedId == 'overview'
                 ? Icons.space_dashboard_rounded
                 : Icons.dashboard_outlined,
@@ -269,6 +272,7 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
           child: GetRouterOutlet(
             anchorRoute: AppRoutes.dashboard,
             initialRoute: AppRoutes.overview,
+          ),
           ),
         );
       }),

@@ -15,6 +15,7 @@ import 'package:netsales_dashboard/widgets/data_grid/app_data_grid.dart';
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_features.dart';
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_pagination.dart';
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_state.dart';
+import 'package:netsales_dashboard/widgets/platform_workspace/platform_workspace.dart';
 import 'package:netsales_dashboard/widgets/dashboard_layout/src/widgets/dashboard_page_header.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_empty_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
@@ -28,8 +29,7 @@ class PlatformNetworkPosLinksScreen
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final canCreate = PermissionService.to.isSuperAdmin;
-    return Padding(
-      padding: EdgeInsets.all(AppSpacing.lg),
+    return PlatformWorkspaceFrame(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -66,7 +66,9 @@ class PlatformNetworkPosLinksScreen
             ),
           ),
           SizedBox(height: AppSpacing.lg),
-          PlatformNetworkPosLinksFilterBar(controller: controller, l10n: l10n),
+          PlatformWorkspaceSurface(
+            child: PlatformNetworkPosLinksFilterBar(controller: controller, l10n: l10n),
+          ),
           SizedBox(height: AppSpacing.md),
           Expanded(
             child: Obx(() {

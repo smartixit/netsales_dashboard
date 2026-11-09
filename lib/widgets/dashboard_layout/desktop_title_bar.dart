@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
+import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 
 /// Enterprise frameless desktop window title bar with native drag and window controls.
 class DesktopTitleBar extends StatelessWidget implements PreferredSizeWidget {
@@ -176,33 +177,21 @@ class _WindowCaptionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    final button = SizedBox(
+    final button = CustomButton(
+      variant: AppButtonVariant.custom,
+      size: AppButtonSize.custom,
+      shape: AppButtonShape.square,
       width: 44,
       height: DesktopTitleBar.titleBarHeight,
-      child: IconButton(
-        style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.hovered)) {
-              return isClose
-                  ? const Color(0xFFE81123)
-                  : colors.onSurface.withValues(alpha: 0.08);
-            }
-            return Colors.transparent;
-          }),
-          foregroundColor: WidgetStateProperty.resolveWith((states) {
-            if (isClose && states.contains(WidgetState.hovered)) {
-              return Colors.white;
-            }
-            return colors.onSurface.withValues(alpha: 0.85);
-          }),
-          shape: WidgetStateProperty.all(const RoundedRectangleBorder()),
-          padding: WidgetStateProperty.all(EdgeInsets.zero),
-          minimumSize: WidgetStateProperty.all(Size.zero),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        ),
-        icon: Icon(icon, size: iconSize),
-        onPressed: onPressed,
-      ),
+      padding: EdgeInsets.zero,
+      borderRadius: 0,
+      backgroundColor: Colors.transparent,
+      foregroundColor: isClose
+          ? colors.error.withValues(alpha: 0.9)
+          : colors.onSurface.withValues(alpha: 0.86),
+      enableScaleAnimation: false,
+      onPressed: onPressed,
+      child: Icon(icon, size: iconSize),
     );
 
     if (tooltip != null) {

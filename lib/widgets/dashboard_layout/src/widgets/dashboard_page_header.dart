@@ -33,11 +33,14 @@ class DashboardPageHeader extends StatelessWidget {
           children: [
             if (data.icon != null) ...[
               Container(
-                width: 44,
-                height: 44,
+                width: 42,
+                height: 42,
                 decoration: BoxDecoration(
-                  color: colors.primaryContainer,
+                  color: colors.primaryContainer.withValues(alpha: 0.72),
                   borderRadius: AppRadius.mdRadius,
+                  border: Border.all(
+                    color: colors.primary.withValues(alpha: 0.12),
+                  ),
                 ),
                 alignment: Alignment.center,
                 child: Icon(data.icon, color: colors.onPrimaryContainer),
@@ -50,8 +53,9 @@ class DashboardPageHeader extends StatelessWidget {
                 children: [
                   Text(
                     data.title,
-                    style: AppTypography.headlineSmall.copyWith(
+                    style: AppTypography.headlineMedium.copyWith(
                       color: colors.onSurface,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   if (data.description != null) ...[
