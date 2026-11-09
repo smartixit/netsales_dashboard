@@ -109,7 +109,7 @@ class PlatformUsersController extends GetxController {
       title: _t('user_soft_delete_title'),
       message: _t('user_soft_delete_confirmation'),
       confirmLabel: _t('user_soft_delete'),
-      cancelLabel: 'إلغاء',
+      cancelLabel: _t('cancel'),
     );
     if (confirmed != true) return;
     try {
@@ -127,7 +127,7 @@ class PlatformUsersController extends GetxController {
       title: _t('user_restore_title'),
       message: _t('user_restore_confirmation'),
       confirmLabel: _t('user_restore'),
-      cancelLabel: 'إلغاء',
+      cancelLabel: _t('cancel'),
     );
     if (confirmed != true) return;
     try {
@@ -145,7 +145,7 @@ class PlatformUsersController extends GetxController {
       title: _t('user_force_delete_title'),
       message: _t('user_force_delete_confirmation'),
       confirmLabel: _t('user_force_delete'),
-      cancelLabel: 'إلغاء',
+      cancelLabel: _t('cancel'),
     );
     if (confirmed != true) return;
     try {
