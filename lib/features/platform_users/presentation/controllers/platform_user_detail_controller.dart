@@ -111,7 +111,7 @@ class PlatformUserDetailController extends GetxController {
       title: _t('security_terminate_session'),
       message: _t('security_terminate_confirmation'),
       confirmLabel: _t('security_terminate_session'),
-      cancelLabel: 'إلغاء',
+      cancelLabel: _t('cancel'),
     );
     if (confirmed != true) return;
     try {
@@ -128,8 +128,8 @@ class PlatformUserDetailController extends GetxController {
     final confirmed = await CustomDialog.showConfirmation(
       title: _t('security_ban_user'),
       message: _t('security_ban_user_confirmation'),
-      confirmLabel: 'حظر المستخدم',
-      cancelLabel: 'إلغاء',
+      confirmLabel: _t('security_ban_user'),
+      cancelLabel: _t('cancel'),
     );
     if (confirmed != true) return;
     try {
@@ -147,7 +147,7 @@ class PlatformUserDetailController extends GetxController {
       title: _t('security_ban_device'),
       message: _t('security_ban_device_confirmation'),
       confirmLabel: _t('security_ban_device'),
-      cancelLabel: 'إلغاء',
+      cancelLabel: _t('cancel'),
     );
     if (confirmed != true) return;
     try {
@@ -164,8 +164,8 @@ class PlatformUserDetailController extends GetxController {
     final confirmed = await CustomDialog.showConfirmation(
       title: _t('security_unban'),
       message: _t('security_unban_confirmation'),
-      confirmLabel: 'رفع الحظر',
-      cancelLabel: 'إلغاء',
+      confirmLabel: _t('security_unban'),
+      cancelLabel: _t('cancel'),
     );
     if (confirmed != true) return;
     try {
@@ -190,7 +190,7 @@ class PlatformUserDetailController extends GetxController {
           ? 'سيتم تفعيل حساب المستخدم والسماح له بتسجيل الدخول. هل تريد المتابعة؟'
           : 'سيتم إيقاف حساب المستخدم ومنعه من استخدام المنصة. هل تريد المتابعة؟',
       confirmLabel: targetLabel,
-      cancelLabel: 'إلغاء',
+      cancelLabel: _t('cancel'),
     );
     if (confirmed != true) return;
 
