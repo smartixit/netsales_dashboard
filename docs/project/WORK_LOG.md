@@ -349,3 +349,23 @@
 
 ### Verification
 - Exact-head formatting, analysis, tests, and CI are pending; no verification outcome is claimed before those checks complete.
+
+
+## 2026-11-09 — Document Engine M6 Preview and Output Lifecycle
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/document-engine-m6-preview-output`
+
+### Implemented
+- Added independent `DocumentSavePort`, `DocumentSharePort`, and `DocumentPrintPort` contracts with typed success, cancellation, unsupported, and failure outcomes.
+- Added `DocumentOutputCoordinator` with per-operation concurrency guards, empty-artifact/name validation, Unicode-safe PDF filename normalization, and adapter exception containment.
+- Added a custom `DocumentArtifactPreview` over `PdfPreview`; built-in actions and page-format/orientation mutation are disabled. Host-owned toolbar and metadata slots preserve application design-system ownership.
+- Preview/save/share/print all receive the same existing immutable artifact; no output action regenerates a PDF.
+- Added focused unit tests for filename normalization, shared artifact identity/bytes, unsupported output, and empty artifact rejection.
+
+### Boundaries
+- No platform filesystem, Save As, browser download, native share, printer integration, durable storage, backend jobs, or official invoice path is implemented here. These remain host adapter and later integration responsibilities.
+- No Arabic provider is selected and the production RTL rejection behavior remains unchanged.
+
+### Verification
+- Deferred intentionally until the planned implementation milestones are complete, per project owner direction. No test, analyzer, platform build, or Actions pass is claimed.
