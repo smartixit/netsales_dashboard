@@ -333,6 +333,8 @@ abstract final class ApiConstants {
       '/subscription-plan-requests/trashed';
   static String subscriptionPlanRequest(int id) =>
       '/subscription-plan-requests/$id';
+  static String subscriptionPlanRequestReceiptLink(int id) =>
+      '/subscription-plan-requests/$id/receipt-link';
   static String subscriptionPlanRequestApprove(int id) =>
       '/subscription-plan-requests/$id/approve';
   static String subscriptionPlanRequestReject(int id) =>
