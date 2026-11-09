@@ -72,8 +72,8 @@ class LoginBrandPanel extends StatelessWidget {
                           // hierarchy before the primary brand statement.
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 6,
+                              horizontal: AppSpacing.md,
+                              vertical: AppSpacing.xs,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.08),
@@ -165,6 +165,7 @@ class LoginBrandPanel extends StatelessWidget {
                             subtitle:
                                 'قيود ومعاملات دقيقة من خادم النظام الموثوق',
                           ),
+                          AppSpacing.vSm,
                           const _PillarHighlightCard(
                             icon: Icons.speed_rounded,
                             title: 'أداء فائق واستقرار دائم',
