@@ -38,15 +38,17 @@ class PlatformUsersScreen extends GetView<PlatformUsersController> {
                   prefix: Icon(controller.isTrashView.value ? Icons.people_alt_outlined : Icons.delete_sweep_outlined, size: 18),
                   onPressed: controller.toggleTrashView,
                 )),
-                if (PermissionService.to.can(AppPermissions.usersCreate) && !controller.isTrashView.value)
-                  CustomButton.primary(
-                    text: l10n.text('create_platform_user'),
-                    prefix: const Icon(Icons.person_add_alt_1_rounded, size: 18),
-                    onPressed: () async {
-                      final saved = await showPlatformUserForm(l10n: l10n);
-                      if (saved == true) await controller.loadUsers();
-                    },
-                  ),
+                if (PermissionService.to.can(AppPermissions.usersCreate))
+                  Obx(() => controller.isTrashView.value
+                      ? const SizedBox.shrink()
+                      : CustomButton.primary(
+                          text: l10n.text('create_platform_user'),
+                          prefix: const Icon(Icons.person_add_alt_1_rounded, size: 18),
+                          onPressed: () async {
+                            final saved = await showPlatformUserForm(l10n: l10n);
+                            if (saved == true) await controller.loadUsers();
+                          },
+                        )),
                 CustomButton.secondary(
                   text: l10n.text('refresh'),
                   prefix: const Icon(Icons.refresh_rounded, size: 18),
@@ -56,7 +58,9 @@ class PlatformUsersScreen extends GetView<PlatformUsersController> {
             ),
           ),
           SizedBox(height: AppSpacing.lg),
-          if (!controller.isTrashView.value) PlatformUsersFilterBar(controller: controller, l10n: l10n),
+          Obx(() => controller.isTrashView.value
+              ? const SizedBox.shrink()
+              : PlatformUsersFilterBar(controller: controller, l10n: l10n)),
           SizedBox(height: AppSpacing.md),
           Expanded(
             child: Obx(() {
