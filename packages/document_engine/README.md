@@ -103,18 +103,17 @@ flutter test packages/document_engine/test
   authority, and the engine never calculates or aggregates report values.
 
 
-## M7 — Remote jobs and official artifact contracts
+## M8 — QR, watermark, signature, and receipt finishing primitives
 
-- Defines a typed asynchronous job lifecycle with strict wire states, submission
-  idempotency/correlation keys, progress bounds, and explicit cancellation.
-- Job requests carry only schema-versioned criteria/presentation payloads;
-  tenant identity and credentials are never accepted in the generic payload.
-- Successful jobs expose private artifact metadata, including official
-  document identity/revision, template and renderer provenance, byte length,
-  SHA-256, page count, and expiry.
-- Host adapters retrieve opaque artifact IDs through authenticated requests.
-  The package verifies byte length and SHA-256 before creating an immutable
-  `DocumentArtifact`.
-- These are client contracts only. Laravel routes, migrations, permissions,
-  queue jobs, object storage, retention, and download controllers require
-  separate backend authorization and are not created by this milestone.
+- `DocumentQrCode` renders an opaque, bounded payload supplied by the host.
+  It does not encrypt, sign, or verify the payload.
+- `DocumentWatermark` is a constrained visual overlay for draft/copy/
+  confidential/cancelled presentation. It never changes authoritative status.
+- `DocumentSignatureArea` supports supplied signer identity, role, approval
+  reference/time, and an optional bounded visual signature image. A visual
+  mark or printed approval reference is not a cryptographic signature.
+- Fixed-height 58 mm and 80 mm receipt PDF profiles are available. They define
+  PDF page geometry only and are not ESC/POS or thermal-printer drivers.
+- Template capabilities are enforced for QR, watermark, and signature areas.
+  RTL text in captions/labels/watermarks continues to fail closed until a
+  production shaping provider is separately approved.
