@@ -24,6 +24,22 @@ class PlatformUsersBinding extends Bindings {
     Get.lazyPut<GetPlatformUsersUseCase>(
       () => GetPlatformUsersUseCase(Get.find<PlatformUsersRepository>()),
     );
+    Get.lazyPut<GetPlatformRolesUseCase>(
+      () => GetPlatformRolesUseCase(Get.find<PlatformUsersRepository>()),
+    );
+    Get.lazyPut<CreatePlatformUserUseCase>(
+      () => CreatePlatformUserUseCase(Get.find<PlatformUsersRepository>()),
+    );
+    Get.lazyPut<UpdatePlatformUserUseCase>(
+      () => UpdatePlatformUserUseCase(Get.find<PlatformUsersRepository>()),
+    );
+    Get.lazyPut<PlatformUserFormController>(
+      () => PlatformUserFormController(
+        getRoles: Get.find<GetPlatformRolesUseCase>(),
+        createUser: Get.find<CreatePlatformUserUseCase>(),
+        updateUser: Get.find<UpdatePlatformUserUseCase>(),
+      ),
+    );
     Get.lazyPut<PlatformUsersController>(
       () => PlatformUsersController(Get.find<GetPlatformUsersUseCase>()),
     );
