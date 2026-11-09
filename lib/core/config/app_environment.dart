@@ -26,9 +26,9 @@ class AppEnvironment {
 
   static const String _devBaseUrl = 'http://192.168.1.4:8000/api/v1';
   static const String _stagingBaseUrl =
-      'https://staging.netsales_dashboard.smartix.app/api/v1';
+      'https://staging.netsales.smartix.app/api/v1';
   static const String _prodBaseUrl =
-      'https://netsales_dashboard.kesug.com/api/v1';
+      'https://netsales.kesug.com/api/v1';
 
   /// عنوان الـ API الفعّال للبيئة الحالية.
   static String get apiBaseUrl {
