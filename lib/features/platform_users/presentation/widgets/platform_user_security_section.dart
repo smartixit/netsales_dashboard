@@ -101,10 +101,12 @@ class PlatformUserSecuritySection extends StatelessWidget {
                       ],
                     ),
                     if (canManageSecurity && device.status == 'ACTIVE')
-                      IconButton(
+                      CustomButton.icon(
+                        icon: Icons.gpp_bad_outlined,
                         tooltip: 'حظر الجهاز',
                         onPressed: () => onBanDevice(device.id),
-                        icon: Icon(Icons.gpp_bad_outlined, color: context.colors.error),
+                        foregroundColor: context.colors.error,
+                        size: AppButtonSize.small,
                       ),
                   );
                 }).toList(),
@@ -156,7 +158,7 @@ class PlatformUserSecuritySection extends StatelessWidget {
                             ? CustomButton.danger(
                                 text: 'إنهاء',
                                 onPressed: () => onTerminateSession(session.id),
-                                size: CustomButtonSize.small,
+                                size: AppButtonSize.small,
                               )
                             : null,
                       ),
@@ -191,7 +193,7 @@ class PlatformUserSecuritySection extends StatelessWidget {
                         ? CustomButton.secondary(
                             text: 'رفع الحظر',
                             onPressed: () => onUnban(ban.id),
-                            size: CustomButtonSize.small,
+                            size: AppButtonSize.small,
                           )
                         : Text(
                             ban.endsAt?.toLocal().toString() ?? l10n.text('permanent'),
