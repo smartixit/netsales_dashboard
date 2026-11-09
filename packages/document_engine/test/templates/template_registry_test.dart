@@ -46,43 +46,46 @@ void main() {
     expect(registry.findDefault(documentTypeId: invoiceType), same(v1));
   });
 
-  test('rejects duplicate versions and duplicate defaults per document type',
-      () {
-    final registry = TemplateRegistry()
-      ..register(definition(isDefault: true));
+  test(
+    'rejects duplicate versions and duplicate defaults per document type',
+    () {
+      final registry = TemplateRegistry()
+        ..register(definition(isDefault: true));
 
-    expect(
-      () => registry.register(definition(isDefault: true)),
-      throwsStateError,
-    );
-    expect(
-      () => registry.register(definition(
-        id: TemplateId('sales.invoice.compact'),
-        isDefault: true,
-      )),
-      throwsStateError,
-    );
-  });
+      expect(
+        () => registry.register(definition(isDefault: true)),
+        throwsStateError,
+      );
+      expect(
+        () => registry.register(
+          definition(id: TemplateId('sales.invoice.compact'), isDefault: true),
+        ),
+        throwsStateError,
+      );
+    },
+  );
 
-  test('does not silently choose latest version when exact version is absent',
-      () {
-    final registry = TemplateRegistry()..register(definition());
+  test(
+    'does not silently choose latest version when exact version is absent',
+    () {
+      final registry = TemplateRegistry()..register(definition());
 
-    expect(
-      registry.find(
-        id: invoiceTemplate,
-        version: TemplateVersion(major: 2, minor: 0, patch: 0),
-      ),
-      isNull,
-    );
-    expect(
-      () => registry.require(
-        id: invoiceTemplate,
-        version: TemplateVersion(major: 2, minor: 0, patch: 0),
-      ),
-      throwsStateError,
-    );
-  });
+      expect(
+        registry.find(
+          id: invoiceTemplate,
+          version: TemplateVersion(major: 2, minor: 0, patch: 0),
+        ),
+        isNull,
+      );
+      expect(
+        () => registry.require(
+          id: invoiceTemplate,
+          version: TemplateVersion(major: 2, minor: 0, patch: 0),
+        ),
+        throwsStateError,
+      );
+    },
+  );
 
   test('filters by document type and locale', () {
     final registry = TemplateRegistry()..register(definition());

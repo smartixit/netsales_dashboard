@@ -14,8 +14,8 @@ final class DocumentTemplateDefinition {
     required this.capabilities,
     this.description,
     this.isDefault = false,
-  })  : displayName = _requireText(displayName, 'displayName'),
-        supportedLocaleTags = _normalizeLocaleTags(supportedLocaleTags);
+  }) : displayName = _requireText(displayName, 'displayName'),
+       supportedLocaleTags = _normalizeLocaleTags(supportedLocaleTags);
 
   final TemplateId id;
   final TemplateVersion version;
@@ -48,8 +48,19 @@ final class DocumentTemplateDefinition {
     final normalized = <String>{};
     for (final value in values) {
       final tag = value.trim();
-      if (!RegExp(r'^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$')
-          .hasMatch(tag)) {
+      if (!RegExp(r'^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*
+        throw ArgumentError.value(
+          value,
+          'supportedLocaleTags',
+          'Contains an invalid language tag.',
+        );
+      }
+      normalized.add(tag);
+    }
+    return Set<String>.unmodifiable(normalized);
+  }
+}
+).hasMatch(tag)) {
         throw ArgumentError.value(
           value,
           'supportedLocaleTags',

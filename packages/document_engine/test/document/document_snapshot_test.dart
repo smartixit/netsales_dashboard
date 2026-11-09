@@ -2,9 +2,7 @@ import 'package:document_engine/document_engine.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  DocumentSnapshot createSnapshot({
-    Iterable<DocumentSection>? sections,
-  }) {
+  DocumentSnapshot createSnapshot({Iterable<DocumentSection>? sections}) {
     return DocumentSnapshot(
       metadata: DocumentMetadata(
         id: DocumentId('doc-001'),
@@ -16,7 +14,8 @@ void main() {
         ),
         createdAt: DateTime.utc(2026, 11, 9),
       ),
-      sections: sections ??
+      sections:
+          sections ??
           [
             DocumentSection(
               id: 'overview',
@@ -36,14 +35,19 @@ void main() {
   test('captures locale and supplied content without deriving values', () {
     final snapshot = createSnapshot();
     expect(snapshot.metadata.locale.languageTag, 'ar-YE');
-    expect(snapshot.metadata.locale.direction,
-        DocumentTextDirection.rightToLeft);
+    expect(
+      snapshot.metadata.locale.direction,
+      DocumentTextDirection.rightToLeft,
+    );
     expect(snapshot.sections.single.nodes, hasLength(3));
   });
 
   test('defensively copies sections and nested table collections', () {
     final sections = <DocumentSection>[
-      DocumentSection(id: 'one', nodes: const [DocumentParagraph(text: 'A')]),
+      DocumentSection(
+        id: 'one',
+        nodes: const [DocumentParagraph(text: 'A')],
+      ),
     ];
     final snapshot = createSnapshot(sections: sections);
     sections.clear();
@@ -54,17 +58,21 @@ void main() {
 
   test('rejects duplicate section identifiers', () {
     expect(
-      () => createSnapshot(sections: [
-        DocumentSection(id: 'duplicate', nodes: const []),
-        DocumentSection(id: 'duplicate', nodes: const []),
-      ]),
+      () => createSnapshot(
+        sections: [
+          DocumentSection(id: 'duplicate', nodes: const []),
+          DocumentSection(id: 'duplicate', nodes: const []),
+        ],
+      ),
       throwsArgumentError,
     );
   });
 
   test('rejects invalid heading levels and schema versions', () {
-    expect(() => DocumentHeading(text: 'Invalid', level: 7),
-        throwsArgumentError);
+    expect(
+      () => DocumentHeading(text: 'Invalid', level: 7),
+      throwsArgumentError,
+    );
     expect(createSnapshot().schemaVersion, 1);
     expect(
       () => DocumentSnapshot(
@@ -98,14 +106,17 @@ void main() {
     expect(table.rows, hasLength(1));
 
     expect(
-      () => DocumentTable(columns: columns, rows: [
-        DocumentTableRow(
-          id: 'bad',
-          cells: const [
-            DocumentTableCell(value: DocumentTextValue('only one')),
-          ],
-        ),
-      ]),
+      () => DocumentTable(
+        columns: columns,
+        rows: [
+          DocumentTableRow(
+            id: 'bad',
+            cells: const [
+              DocumentTableCell(value: DocumentTextValue('only one')),
+            ],
+          ),
+        ],
+      ),
       throwsArgumentError,
     );
     expect(

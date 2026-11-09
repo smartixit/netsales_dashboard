@@ -5,8 +5,10 @@ void main() {
   group('Stable identifiers', () {
     test('accept valid identifiers and preserve value equality', () {
       expect(DocumentId('doc:2026-001'), DocumentId('doc:2026-001'));
-      expect(TemplateId('sales.invoice.standard').value,
-          'sales.invoice.standard');
+      expect(
+        TemplateId('sales.invoice.standard').value,
+        'sales.invoice.standard',
+      );
     });
 
     test('rejects empty, padded, oversized, and unsupported characters', () {
