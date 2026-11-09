@@ -13,12 +13,10 @@ import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
 
 class PlatformUserFormController extends GetxController {
   PlatformUserFormController({
-    required GetPlatformRolesUseCase getRoles,
-    required CreatePlatformUserUseCase createUser,
-    required UpdatePlatformUserUseCase updateUser,
-  }) : _getRoles = getRoles,
-       _createUser = createUser,
-       _updateUser = updateUser;
+    required this.getRoles,
+    required this.createUser,
+    required this.updateUser,
+  });
 
   final GetPlatformRolesUseCase _getRoles;
   final CreatePlatformUserUseCase _createUser;
