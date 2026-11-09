@@ -13,4 +13,8 @@ abstract interface class PlatformUsersRepository {
   Future<PlatformUserEntity> createUser(Map<String, dynamic> data);
   Future<PlatformUserEntity> updateUser(int userId, Map<String, dynamic> data);
   Future<PlatformUserEntity> updateUserStatus(int userId, String status);
+  Future<void> terminateSession(int sessionId);
+  Future<void> banUser(int userId, {required String type, required String reason});
+  Future<void> banDevice(int deviceId, {required String type, required String reason});
+  Future<void> unban(int banId);
 }
