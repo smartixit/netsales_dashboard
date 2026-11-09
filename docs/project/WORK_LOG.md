@@ -200,3 +200,27 @@
 - The Arabic shaping package is a research candidate only. No PDF text-shaping dependency is approved or installed.
 - Official financial artifacts remain backend-finalized and immutable. Client-generated PDFs are limited to bounded non-official documents.
 - Package implementation and dependency changes remain gated on explicit owner approval of the architecture.
+
+## 2026-11-09 — Document Engine M1 Core Contracts
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/document-engine-core-contracts`  
+**Base:** `019610b06e822c5e226c87476ca88fd513b378d8`
+
+### Implemented
+- Added the local `packages/document_engine` Dart package with zero runtime dependencies.
+- Added typed identifiers (`DocumentId`, `DocumentTypeId`, `TemplateId`) and numeric semantic `TemplateVersion`.
+- Added locale/direction metadata, typed document values (decimal strings remain exact), content nodes, structured tables, sections, and immutable snapshots.
+- Added immutable template capability declarations and an in-memory registry with exact-version lookup, unique-version enforcement, and one default per document type.
+- Added package README and strict analyzer options.
+- Added focused unit tests for identifiers, decimal validation, version ordering, snapshot collection immutability, duplicate IDs, table consistency, locale matching, registry defaults, and exact-version lookup.
+- Added a dedicated Ubuntu CI job for package dependency resolution, format check, static analysis, and tests; the existing Dashboard Windows job now waits for this package job as well.
+- Updated DOC-001 to APPROVED based on the merged architecture PR and recorded DOC-002 for the approved M1 scope.
+
+### Scope boundaries
+- No PDF/printing or Arabic shaping dependency was added.
+- No Flutter UI, GetX, host application dependency, Laravel API, migration, persistence adapter, financial logic, invoice migration, or official document template was changed.
+- No package integration into the Dashboard host app was performed.
+
+### Verification
+- CI is configured but must be evaluated on the exact PR head SHA. No local Flutter/Dart runtime is available through this GitHub-only execution, so no local analyzer/test outcome is claimed.

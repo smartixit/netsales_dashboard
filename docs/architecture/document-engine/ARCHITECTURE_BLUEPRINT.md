@@ -1,11 +1,11 @@
 # NetSales Document Engine — Architecture Blueprint
 
-**Status:** PROPOSED — architecture review only  
+**Status:** APPROVED — PR #19 merged on 2026-11-09  
 **Owner:** NetSales Dashboard / shared reusable Flutter capability  
 **Date:** 2026-11-09  
 **Target package:** packages/document_engine  
-**Decision authority:** Explicit project-owner approval is required before implementation  
-**Scope of this document:** Architecture, contracts, boundaries, risks, and delivery roadmap. It does not authorize package implementation, dependency changes, invoice migration, or API changes.
+**Decision authority:** Approved by project owner via merge of PR #19; each subsequent milestone remains independently gated  
+**Scope of this document:** Architecture, contracts, boundaries, risks, and delivery roadmap. It authorizes staged implementation within the approved boundaries. Unselected dependencies, invoice migration, and API changes remain separately gated.
 
 ---
 
@@ -977,7 +977,7 @@ The proposed sequence minimizes rework and makes each milestone independently re
 | M9 | App integration, migration of selected existing documents, second-host reuse | Proven reuse and migration evidence |
 | M10 | Full quality, performance, security, and visual review | Release candidate and package compatibility matrix |
 
-No milestone begins implicitly because a previous milestone has been documented. Each requires explicit approval at the project's established gates.
+M1 core contracts are separately approved in DOC-002. No later milestone begins implicitly because a previous milestone has been documented; each requires explicit approval at the project's established gates.
 
 ---
 
