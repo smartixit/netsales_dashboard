@@ -134,9 +134,7 @@ class _ExampleDocumentHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('Northstar Labs'),
-    ),
+    appBar: AppBar(title: const Text('Northstar Labs')),
     body: FutureBuilder<DocumentArtifact?>(
       future: _buildArtifact(),
       builder: (context, snapshot) {
@@ -145,7 +143,9 @@ class _ExampleDocumentHost extends StatelessWidget {
         }
         final artifact = snapshot.data;
         if (artifact == null) {
-          return const Center(child: Text('The sample PDF could not be generated.'));
+          return const Center(
+            child: Text('The sample PDF could not be generated.'),
+          );
         }
         return _ExamplePreview(artifact: artifact);
       },
@@ -236,9 +236,8 @@ class _ExamplePreview extends StatelessWidget {
       DocumentOutputCancelled() => 'Operation cancelled.',
       DocumentOutputFailure(:final message) => message,
     };
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 }
 

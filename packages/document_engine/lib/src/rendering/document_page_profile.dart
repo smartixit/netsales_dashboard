@@ -120,7 +120,11 @@ final class DocumentPageProfile {
 
   static double _validateReceiptHeight(double value) {
     if (!value.isFinite || value < 144 || value > 14400) {
-      throw ArgumentError.value(value, 'heightPoints', 'Must be 144-14400 points.');
+      throw ArgumentError.value(
+        value,
+        'heightPoints',
+        'Must be 144-14400 points.',
+      );
     }
     return value;
   }

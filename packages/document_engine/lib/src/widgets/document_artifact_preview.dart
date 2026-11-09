@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'document_pdf_bytes_preview.dart';
 
 import '../rendering/document_render_result.dart';
@@ -30,7 +31,7 @@ class DocumentArtifactPreview extends StatelessWidget {
   final Widget? loadingWidget;
   final Widget Function(BuildContext context, Object error)? errorBuilder;
   final Widget Function(BuildContext context, DocumentArtifact artifact)?
-      headerBuilder;
+  headerBuilder;
   final EdgeInsets padding;
   final EdgeInsets previewPageMargin;
   final double maxPageWidth;
@@ -50,7 +51,8 @@ class DocumentArtifactPreview extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= 960 && metadataPanel != null;
-        final header = headerBuilder?.call(context, artifact) ??
+        final header =
+            headerBuilder?.call(context, artifact) ??
             _DefaultHeader(
               title: title ?? artifact.documentId.value,
               pageCount: artifact.pageCount,
@@ -112,10 +114,7 @@ class _DefaultHeader extends StatelessWidget {
               children: [
                 Text(title, style: textTheme.titleMedium),
                 if (pageCount != null)
-                  Text(
-                    '$pageCount pages',
-                    style: textTheme.bodySmall,
-                  ),
+                  Text('$pageCount pages', style: textTheme.bodySmall),
               ],
             ),
           ),
