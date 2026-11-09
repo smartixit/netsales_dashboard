@@ -1,0 +1,38 @@
+name: Temporary M5 Dart Formatter
+
+on:
+  push:
+    branches:
+      - feat/document-engine-m5-report-configuration
+    paths:
+      - 'packages/document_engine/**'
+      - '.github/workflows/m5-temporary-dart-format.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.9'
+      - name: Format document engine package
+        run: dart format packages/document_engine
+      - name: Commit formatter output when needed
+        shell: bash
+        run: |
+          if [[ -n "$(git status --short -- packages/document_engine)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add packages/document_engine
+            git commit -m "style(document-engine): apply Dart formatter"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          else
+            echo "Document engine package is already formatted."
+          fi
