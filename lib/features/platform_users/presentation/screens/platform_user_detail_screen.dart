@@ -4,6 +4,7 @@ import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/controllers/platform_user_detail_controller.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/widgets/platform_user_detail_header.dart';
+import 'package:netsales_dashboard/features/platform_users/presentation/widgets/platform_user_form_sheet.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/widgets/platform_user_identity_panel.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/widgets/platform_user_information_section.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/widgets/platform_user_security_section.dart';
@@ -39,7 +40,17 @@ class PlatformUserDetailScreen extends GetView<PlatformUserDetailController> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            PlatformUserDetailHeader(user: detail.user, l10n: l10n),
+            PlatformUserDetailHeader(
+              user: detail.user,
+              l10n: l10n,
+              onEdit: () async {
+                final saved = await showPlatformUserForm(
+                  l10n: l10n,
+                  detail: detail,
+                );
+                if (saved == true) await controller.load();
+              },
+            ),
             SizedBox(height: AppSpacing.lg),
             Expanded(
               child: SingleChildScrollView(
