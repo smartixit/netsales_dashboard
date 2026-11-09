@@ -17,4 +17,8 @@ abstract interface class PlatformUsersRemoteDataSource {
   Future<ApiResponse<PlatformUserModel>> createUser(Map<String, dynamic> data);
   Future<ApiResponse<PlatformUserModel>> updateUser(int userId, Map<String, dynamic> data);
   Future<ApiResponse<PlatformUserModel>> updateUserStatus(int userId, String status);
+  Future<ApiResponse<dynamic>> terminateSession(int sessionId);
+  Future<ApiResponse<dynamic>> banUser(int userId, {required String type, required String reason, DateTime? endsAt});
+  Future<ApiResponse<dynamic>> banDevice(int deviceId, {required String type, required String reason, DateTime? endsAt});
+  Future<ApiResponse<dynamic>> unban(int banId);
 }
