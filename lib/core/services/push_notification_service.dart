@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io' show Platform;
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -48,6 +50,13 @@ class PushNotificationService extends GetxService {
       ? Get.find<PushNotificationService>()
       : instance;
 
+  /// التحقق من دعم النظام الحالي لخدمة Firebase Messaging الرسمية
+  /// جوجل لا توفر دعماً لـ FCM على Windows / Linux سطح المكتب
+  static bool get isFcmSupported {
+    if (kIsWeb) return true;
+    return Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
+  }
+
   FirebaseMessaging get _fcm => FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
@@ -77,6 +86,15 @@ class PushNotificationService extends GetxService {
     if (_fcmToken != null && _fcmToken!.isNotEmpty) {
       return _fcmToken!;
     }
+
+    // على أنظمة سطح المكتب غير المدعومة من FCM نولد رمز جهاز ديسك توب متوافق ومستقر
+    if (!isFcmSupported) {
+      final deviceUuid = DeviceService.instance.deviceUuid;
+      final fallbackUuid = deviceUuid.isNotEmpty ? deviceUuid : 'dashboard_client';
+      _fcmToken = 'desktop_windows_$fallbackUuid';
+      return _fcmToken!;
+    }
+
     try {
       final token = await _fcm.getToken();
       if (token != null && token.isNotEmpty) {
@@ -95,35 +113,41 @@ class PushNotificationService extends GetxService {
   /// تهيئة محرك الإشعارات
   Future<PushNotificationService> init() async {
     try {
-      // 1. تهيئة حزمة فايربيس
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
+      // 1. تهيئة حزمة فايربيس (إذا كانت مدعومة)
+      try {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      } catch (e) {
+        log('⚠️ [PushNotificationService] Firebase.initializeApp skipped or failed: $e');
+      }
 
-      // 2. تسجيل دالة استقبال إشعارات الخلفية
-      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+      // 2. تسجيل دالة استقبال إشعارات الخلفية (للمنصات المدعومة فقط)
+      if (isFcmSupported) {
+        FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+      }
 
-      // 3. تهيئة قنوات وأدوات الإشعارات المحلية
+      // 3. تهيئة قنوات وأدوات الإشعارات المحلية (تعمل على كل المنصات بما فيها Windows)
       await _initLocalNotifications();
 
-      // 4. طلب أذونات الإشعارات (Android 13+ و iOS)
-      await requestPermissions();
+      // 4. طلب أذونات الإشعارات وضبط مستمعات الرسائل (للمنصات المدعومة فقط)
+      if (isFcmSupported) {
+        await requestPermissions();
 
-      // 5. ضبط إعدادات عرض الإشعارات أثناء فتح التطبيق (Foreground)
-      await _fcm.setForegroundNotificationPresentationOptions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
+        await _fcm.setForegroundNotificationPresentationOptions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
 
-      // 6. الاستماع لرسائل المقدمة والتفاعل مع النقر
-      _setupMessageListeners();
-
-      // 7. جلب رمز FCM الحالي
-      await _retrieveFcmToken();
-
-      // 8. فحص الرسالة الأولية في حال فُتح التطبيق من إشعار وهو مغلق (Terminated State)
-      await _checkInitialMessage();
+        _setupMessageListeners();
+        await _retrieveFcmToken();
+        await _checkInitialMessage();
+      } else {
+        // على منصات سطح المكتب، نجهز رمز ديسك توب المتوافق فورياً
+        await getOrFetchFcmToken();
+        log('ℹ️ [PushNotificationService] Running on Desktop (Windows/Linux) - using native local notifications & synthetic device token.');
+      }
 
       log(
         '✅ [PushNotificationService] Initialized enterprise push engine successfully.',
@@ -284,7 +308,9 @@ class PushNotificationService extends GetxService {
     try {
       await StorageService.instance.remove(StorageKeys.fcmTokenStorage);
       _fcmToken = null;
-      await _fcm.deleteToken();
+      if (isFcmSupported) {
+        await _fcm.deleteToken();
+      }
       log('🧹 [PushNotificationService] FCM Token deleted from device.');
     } catch (e) {
       log('⚠️ [PushNotificationService] Error clearing FCM token: $e');
