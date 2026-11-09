@@ -50,9 +50,8 @@ jobs:
       - name: Normalize POC Dart formatting
         working-directory: packages/document_engine_poc
         run: |
-          New-Item -ItemType Directory -Force -Path build | Out-Null
           dart format .
-          git diff -- . > build/dart-format.patch
+          git diff -- . > dart-format.patch
           dart format --output=none --set-exit-if-changed .
 
       - name: Upload normalized formatter patch
@@ -60,7 +59,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: arabic-pdf-dart-format-patch-${{ matrix.os }}
-          path: packages/document_engine_poc/build/dart-format.patch
+          path: packages/document_engine_poc/dart-format.patch
           if-no-files-found: warn
           retention-days: 3
 
