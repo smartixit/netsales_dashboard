@@ -65,12 +65,17 @@ Future<Uint8List> buildPlainPdfSpecimen(Uint8List fontBytes) async {
           ),
         ),
         pw.SizedBox(height: 10),
-        pw.Directionality(
-          textDirection: pw.TextDirection.rtl,
-          child: pw.Text(
-            ArabicPdfCorpus.longParagraph,
-            textAlign: pw.TextAlign.start,
-            style: pw.TextStyle(font: font, fontSize: 9),
+        ...ArabicPdfCorpus.longParagraph.split('\\n\\n').map(
+          (paragraph) => pw.Padding(
+            padding: const pw.EdgeInsets.only(bottom: 8),
+            child: pw.Directionality(
+              textDirection: pw.TextDirection.rtl,
+              child: pw.Text(
+                paragraph,
+                textAlign: pw.TextAlign.start,
+                style: pw.TextStyle(font: font, fontSize: 9),
+              ),
+            ),
           ),
         ),
       ],
