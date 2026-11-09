@@ -454,6 +454,10 @@ class AppLocalizations {
     'network_pos_link_removed':'Relationship removed successfully.',
 
     'workspace_summary':'At a glance',
+    'period_7d':'Last 7 days',
+    'period_30d':'Last 30 days',
+    'period_90d':'Last 90 days',
+    'period_12m':'Last 12 months',
     'overview':'Overview','platform_management':'Platform management','users':'Users','roles':'Roles & permissions','networks':'Network providers','pos':'Points of sale','geography':'Governorates & directorates',
     'subscriptions':'Subscriptions & licensing','subscription_plans':'Subscription plans','provider_subscriptions':'Provider subscriptions','subscription_requests':'Subscription requests',
     'finance':'Finance & reports','sales':'Sales reports','network_wallets':'Network wallets','pos_wallets':'POS wallets','expenses':'Expenses','bank_accounts':'Bank accounts & settlements','reports':'Financial reports',
