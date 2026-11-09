@@ -4,7 +4,7 @@ import 'package:netsales_dashboard/core/constants/app_radius.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
-import 'package:netsales_dashboard/widgets/dashboard_layout/src/theme/dashboard_layout_theme.dart';
+import 'package:netsales_dashboard/core/themes/dashboard_layout_theme.dart';
 
 class AppThemes {
   AppThemes._();
