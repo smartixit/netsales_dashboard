@@ -416,4 +416,52 @@ void main() {
       throwsArgumentError,
     );
   });
+
+  test('renders line, pie, and donut vector charts', () async {
+    const renderer = PdfDocumentRenderer();
+    for (final type in [
+      DocumentChartType.line,
+      DocumentChartType.pie,
+      DocumentChartType.donut,
+    ]) {
+      final result = await renderer.render(
+        snapshot: snapshot(
+          nodes: [
+            DocumentChart(
+              title: 'Regional performance',
+              type: type,
+              series: [
+                DocumentChartSeries(
+                  id: 'regions',
+                  label: 'Regions',
+                  points: [
+                    DocumentChartPoint(
+                      label: 'North',
+                      value: 10,
+                      displayValue: '10.00',
+                    ),
+                    DocumentChartPoint(
+                      label: 'South',
+                      value: 20,
+                      displayValue: '20.00',
+                    ),
+                    DocumentChartPoint(
+                      label: 'West',
+                      value: 15,
+                      displayValue: '15.00',
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        template: template,
+        options: options(),
+      );
+
+      expect(result, isA<DocumentRenderSuccess>(), reason: type.name);
+    }
+  });
+
 }
