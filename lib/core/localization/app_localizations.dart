@@ -316,7 +316,7 @@ class AppLocalizations {
     'pos_metrics_rejected':'نقاط البيع المرفوضة',
     'pos_metrics_banned':'نقاط البيع المحظورة',
 
-    'export_pdf':'تصدير PDF',
+    'export_pdf':'تصدير PDF (إنجليزي)',
     'save_pdf':'حفظ PDF',
     'share_pdf':'مشاركة PDF',
     'print_pdf':'طباعة',
@@ -628,7 +628,7 @@ class AppLocalizations {
     'pos_metrics_rejected':'Rejected POS',
     'pos_metrics_banned':'Banned POS',
 
-    'export_pdf':'Export PDF',
+    'export_pdf':'Export PDF (English)',
     'save_pdf':'Save PDF',
     'share_pdf':'Share PDF',
     'print_pdf':'Print',
