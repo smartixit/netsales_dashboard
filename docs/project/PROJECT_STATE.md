@@ -321,14 +321,6 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - **Verification pending:** exact-head format, Dart analysis, unit/widget tests, Windows package compilation as required by the workflow, and PR CI.
 
 
-## Document Engine — M6 Preview and Output Lifecycle (2026-11-09)
-
-**Status:** IN PROGRESS — implementation branch created  
-**Branch:** `feat/document-engine-m6-preview-output`
-
-- Added independent host-owned save, share, and print ports plus a typed output coordinator.
-- The coordinator passes the same immutable `DocumentArtifact` to every operation, normalizes safe PDF filenames while preserving Unicode/Arabic, rejects duplicate in-flight operations per action, distinguishes unsupported actions and cancellation, and contains adapter failures.
-- Added `DocumentArtifactPreview` over the pinned `printing` package. Its built-in action bar, print/share controls, debug mode, page-format changes, and orientation changes are disabled. The host supplies its own toolbar and metadata panel.
-- Preview consumes the existing artifact bytes; it never calls the renderer. Page count and document identity are surfaced in the default header.
-- No platform I/O implementation, save destination policy, storage persistence, Laravel endpoint, or official invoice integration is included in this package milestone.
-- **Verification deferred by owner direction:** formatting, analysis, tests, platform builds, and GitHub Actions are intentionally postponed until all planned milestones are implemented.
+### M9 additional evidence
+- Added a second independent Flutter host example, branded Northstar Labs, with its own save/share/print adapters and no GetX dependency.
+- Migrated the existing MediaPdfViewerCard preview surface to the shared `DocumentPdfBytesPreview` widget. Existing byte loading, cache behavior, and external-open action remain unchanged; the migration does not fabricate DocumentArtifact provenance for imported files.

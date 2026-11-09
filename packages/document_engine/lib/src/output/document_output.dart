@@ -159,7 +159,7 @@ final class DocumentOutputCoordinator {
 String? normalizePdfFileName(String value) {
   var name = value.trim();
   if (name.isEmpty) return null;
-  name = name.replaceAll(RegExp(r'\.pdf$', caseSensitive: false), '');
+  name = name.replaceAll(RegExp(r'(?:\.pdf)+$', caseSensitive: false), '');
   name = name.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F]'), '_');
   name = name.replaceAll(RegExp(r'\s+'), ' ').trim();
   name = name.replaceAll(RegExp(r'^[. ]+|[. ]+$'), '');

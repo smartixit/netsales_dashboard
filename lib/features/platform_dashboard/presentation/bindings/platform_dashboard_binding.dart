@@ -1,4 +1,8 @@
 import 'package:get/get.dart';
+import 'package:document_engine/document_engine.dart';
+import 'package:netsales_dashboard/core/services/netsales_document_output_adapter.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/domain/usecases/create_platform_overview_document_use_case.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/presentation/controllers/platform_overview_document_controller.dart';
 import 'package:netsales_dashboard/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:netsales_dashboard/features/auth/data/datasources/auth_remote_data_source_impl.dart';
 import 'package:netsales_dashboard/features/auth/data/repositories/auth_repository_impl.dart';
@@ -90,6 +94,25 @@ class PlatformDashboardBinding extends Bindings {
       Get.lazyPut<GetRecentPlatformActivityUseCase>(
         () => GetRecentPlatformActivityUseCase(
           Get.find<PlatformDashboardRepository>(),
+        ),
+      );
+    }
+
+    if (!Get.isRegistered<CreatePlatformOverviewDocumentUseCase>()) {
+      Get.lazyPut<CreatePlatformOverviewDocumentUseCase>(
+        CreatePlatformOverviewDocumentUseCase.new,
+      );
+    }
+    if (!Get.isRegistered<PlatformOverviewDocumentController>()) {
+      final adapter = const NetSalesDocumentOutputAdapter();
+      Get.lazyPut<PlatformOverviewDocumentController>(
+        () => PlatformOverviewDocumentController(
+          createDocument: Get.find<CreatePlatformOverviewDocumentUseCase>(),
+          output: DocumentOutputCoordinator(
+            savePort: adapter,
+            sharePort: adapter,
+            printPort: adapter,
+          ),
         ),
       );
     }

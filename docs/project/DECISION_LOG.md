@@ -128,12 +128,6 @@
 - The Configuration Studio must adapt to actual constraints, offer only definition/template capabilities, and remain independent of GetX/host navigation.
 
 
-| DOC-007 | 2026-11-09 | Authorize M6 implementation of a custom artifact preview and same-artifact save/share/print ports. The package defines independent host-owned ports and typed output lifecycle results; the host owns platform I/O, destinations, permissions, and UI controls. Preview must disable the printing package's built-in toolbar and prohibit page geometry mutation for an already-rendered artifact. | APPROVED |
-
-## DOC-007 — M6 Preview and Output Lifecycle
-- `DocumentArtifactPreview` displays an existing immutable `DocumentArtifact`; it must not call the renderer or regenerate bytes.
-- Built-in `PdfPreview` actions, print/share buttons, debug mode, page-format selection, and orientation selection are disabled. The host owns a single custom toolbar.
-- Save, share, and print are independent ports. Every operation receives the same artifact bytes and digest.
-- Save cancellation is a distinct non-error result. Unsupported host operations are explicit; duplicate in-flight actions are rejected.
-- The engine does not implement app filesystem policy, user-selected destinations, browser download, native permissions, durable storage, Laravel APIs, or official invoice workflows.
-- The existing RTL rejection guard remains unchanged; M6 does not approve a production shaping provider.
+## DOC-010 — M9 additional acceptance evidence
+- The existing media-gallery PDF viewer is migrated to the shared raw-bytes preview primitive. Its source loading/cache and external-open behaviors are preserved.
+- A second sample Flutter host (Northstar Labs) must remain independent of GetX and NetSales-specific services; it demonstrates a different branding profile and host-owned output adapters.

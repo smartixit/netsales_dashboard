@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import '../core/stable_identifier.dart';
 import 'document_locale.dart';
 import 'document_value.dart';
@@ -337,4 +340,92 @@ final class DocumentChart extends DocumentNode {
 
 final class DocumentPageBreak extends DocumentNode {
   const DocumentPageBreak();
+}
+
+
+/// Opaque QR content supplied by the host. The engine renders but never
+/// encrypts, signs, validates, or interprets this payload.
+final class DocumentQrCode extends DocumentNode {
+  DocumentQrCode({
+    required this.payload,
+    this.caption,
+    this.sizePoints = 96,
+  }) {
+    if (payload.trim().isEmpty || utf8.encode(payload).length > 2048) {
+      throw ArgumentError.value(payload, 'payload', 'Must contain 1-2048 UTF-8 bytes.');
+    }
+    if (caption != null && caption!.trim().isEmpty) {
+      throw ArgumentError.value(caption, 'caption', 'Must not be empty.');
+    }
+    if (!sizePoints.isFinite || sizePoints < 48 || sizePoints > 240) {
+      throw ArgumentError.value(sizePoints, 'sizePoints', 'Must be 48-240.');
+    }
+  }
+
+  final String payload;
+  final String? caption;
+  final double sizePoints;
+}
+
+/// A visual/manual signature area. Printed identity and approval references
+/// are supplied by the host; this is not a cryptographic digital signature.
+final class DocumentSignatureArea extends DocumentNode {
+  DocumentSignatureArea({
+    required this.label,
+    this.signerName,
+    this.roleLabel,
+    this.approvalReference,
+    this.approvedAt,
+    Uint8List? visualSignatureBytes,
+  }) : _visualSignatureBytes = visualSignatureBytes == null
+           ? null
+           : Uint8List.fromList(visualSignatureBytes) {
+    if (label.trim().isEmpty || label.length > 120) {
+      throw ArgumentError.value(label, 'label', 'Must contain 1-120 chars.');
+    }
+    for (final entry in {
+      'signerName': signerName,
+      'roleLabel': roleLabel,
+      'approvalReference': approvalReference,
+    }.entries) {
+      if (entry.value != null &&
+          (entry.value!.trim().isEmpty || entry.value!.length > 160)) {
+        throw ArgumentError.value(entry.value, entry.key, 'Invalid text length.');
+      }
+    }
+    if (_visualSignatureBytes != null) {
+      final bytes = _visualSignatureBytes!;
+      if (bytes.isEmpty || bytes.length > 1024 * 1024) {
+        throw ArgumentError('Visual signature image must be 1 byte to 1 MiB.');
+      }
+      final isPng = bytes.length >= 8 &&
+          bytes[0] == 0x89 &&
+          bytes[1] == 0x50 &&
+          bytes[2] == 0x4E &&
+          bytes[3] == 0x47 &&
+          bytes[4] == 0x0D &&
+          bytes[5] == 0x0A &&
+          bytes[6] == 0x1A &&
+          bytes[7] == 0x0A;
+      final isJpeg = bytes.length >= 3 &&
+          bytes[0] == 0xFF &&
+          bytes[1] == 0xD8 &&
+          bytes[2] == 0xFF;
+      if (!isPng && !isJpeg) {
+        throw ArgumentError('Visual signature image must be PNG or JPEG.');
+      }
+    }
+  }
+
+  final String label;
+  final String? signerName;
+  final String? roleLabel;
+  final String? approvalReference;
+  final DateTime? approvedAt;
+  final Uint8List? _visualSignatureBytes;
+
+  Uint8List? get visualSignatureBytes =>
+      _visualSignatureBytes == null
+          ? null
+          : Uint8List.fromList(_visualSignatureBytes);
 }

@@ -5,6 +5,8 @@ import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/core/services/session_service.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/controllers/platform_dashboard_controller.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/presentation/controllers/platform_overview_document_controller.dart';
+import 'package:netsales_dashboard/features/platform_dashboard/presentation/widgets/overview/platform_overview_document_preview_dialog.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_dashboard_overview_entity.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/navigation/platform_navigation_registry.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/widgets/overview/platform_overview_chart_grid.dart';
@@ -44,6 +46,35 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
             ),
             AppSpacing.vMd,
             _PeriodSelector(controller: controller),
+            if (data != null) ...[
+              AppSpacing.vSm,
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: CustomButton.outline(
+                  text: l10n.text('export_pdf'),
+                  prefix: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+                  size: AppButtonSize.small,
+                  loading: Get.find<PlatformOverviewDocumentController>()
+                      .isGenerating.value,
+                  onPressed: Get.find<PlatformOverviewDocumentController>()
+                          .isGenerating.value
+                      ? null
+                      : () async {
+                          final documentController =
+                              Get.find<PlatformOverviewDocumentController>();
+                          final artifact =
+                              await documentController.generate(data);
+                          if (artifact == null) return;
+                          await Get.dialog<void>(
+                            PlatformOverviewDocumentPreviewDialog(
+                              artifact: artifact,
+                            ),
+                            barrierDismissible: false,
+                          );
+                        },
+                ),
+              ),
+            ],
             if (controller.isOverviewStale && data != null) ...[
               AppSpacing.vSm,
               CustomStatusBanner(

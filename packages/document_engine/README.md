@@ -103,15 +103,17 @@ flutter test packages/document_engine/test
   authority, and the engine never calculates or aggregates report values.
 
 
-## M6 — Artifact preview and output lifecycle
+## M8 — QR, watermark, signature, and receipt finishing primitives
 
-- `DocumentArtifactPreview` previews the immutable bytes of an existing
-  artifact. It does not invoke the renderer and does not permit the preview
-  surface to silently change page size or orientation.
-- `DocumentOutputCoordinator` routes save, share, and print requests to
-  host-owned adapters using the same artifact and SHA-256 identity.
-- Output results are typed; duplicate in-flight operations are rejected per
-  action, adapter exceptions are contained, and PDF filenames are normalized
-  without stripping Arabic or other Unicode letters.
-- Platform I/O, permissions, destinations, printer selection, feedback, and
-  application design-system controls remain the responsibility of the host.
+- `DocumentQrCode` renders an opaque, bounded payload supplied by the host.
+  It does not encrypt, sign, or verify the payload.
+- `DocumentWatermark` is a constrained visual overlay for draft/copy/
+  confidential/cancelled presentation. It never changes authoritative status.
+- `DocumentSignatureArea` supports supplied signer identity, role, approval
+  reference/time, and an optional bounded visual signature image. A visual
+  mark or printed approval reference is not a cryptographic signature.
+- Fixed-height 58 mm and 80 mm receipt PDF profiles are available. They define
+  PDF page geometry only and are not ESC/POS or thermal-printer drivers.
+- Template capabilities are enforced for QR, watermark, and signature areas.
+  RTL text in captions/labels/watermarks continues to fail closed until a
+  production shaping provider is separately approved.
