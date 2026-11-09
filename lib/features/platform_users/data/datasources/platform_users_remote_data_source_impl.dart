@@ -19,6 +19,28 @@ class PlatformUsersRemoteDataSourceImpl implements PlatformUsersRemoteDataSource
         cursor: cursor, perPage: perPage);
 
   @override
+  Future<ApiResponse<List<PlatformUserModel>>> getTrashedUsers({
+    String? search,
+    String? cursor,
+    int perPage = 20,
+  }) =>
+      _apiService.getList<PlatformUserModel>(
+        ApiConstants.usersTrashed,
+        fromJson: (json) => PlatformUserModel.fromJson(Map<String, dynamic>.from(json as Map)),
+        queryParameters: {if (search != null && search.trim().isNotEmpty) 'search': search.trim()},
+        cursor: cursor,
+        perPage: perPage,
+      );
+
+  @override
+  Future<ApiResponse<dynamic>> restoreUser(int userId) =>
+      _apiService.post<dynamic>(ApiConstants.userRestore(userId));
+
+  @override
+  Future<ApiResponse<dynamic>> forceDeleteUser(int userId) =>
+      _apiService.delete<dynamic>(ApiConstants.userForceDelete(userId));
+
+  @override
   Future<ApiResponse<PlatformUserDetailModel>> getUserDetail(int userId) =>
       _apiService.get<PlatformUserDetailModel>(ApiConstants.user(userId),
         fromJson: (json) => PlatformUserDetailModel.fromJson(Map<String, dynamic>.from(json as Map)));
