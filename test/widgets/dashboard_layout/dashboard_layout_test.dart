@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:netsales_dashboard/core/themes/dashboard_layout_theme.dart';
+import 'package:netsales_dashboard/widgets/dashboard_layout/adapters/netsales_dashboard_theme_adapter.dart';
 import 'package:netsales_dashboard/widgets/dashboard_layout/dashboard_layout.dart';
 
 void main() {
@@ -72,6 +74,59 @@ void main() {
     expect(find.text('Home'), findsOneWidget);
   });
 
+
+  testWidgets('theme adapter preserves extensions and replaces layout theme', (
+    tester,
+  ) async {
+    const retainedExtension = _RetainedThemeExtension();
+    const originalLayoutTheme = DashboardLayoutTheme(
+      sidebarBackground: Colors.black,
+      sidebarForeground: Colors.white,
+      sidebarMuted: Colors.grey,
+      sidebarSelectedBackground: Colors.blue,
+      sidebarSelectedForeground: Colors.white,
+      sidebarHoverBackground: Colors.black12,
+      topbarBackground: Colors.black,
+      contentBackground: Colors.black,
+      border: Colors.white,
+      badgeBackground: Colors.blue,
+      badgeForeground: Colors.white,
+      itemRadius: 99,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          extensions: <ThemeExtension<dynamic>>[
+            retainedExtension,
+            originalLayoutTheme,
+          ],
+        ),
+        home: Builder(
+          builder: (context) => NetSalesDashboardThemeAdapter.wrap(
+            context: context,
+            child: Builder(
+              builder: (wrappedContext) {
+                final theme = Theme.of(wrappedContext);
+                expect(
+                  theme.extension<_RetainedThemeExtension>(),
+                  same(retainedExtension),
+                );
+
+                final layoutTheme = theme.extension<DashboardLayoutTheme>();
+                expect(layoutTheme, isNotNull);
+                expect(layoutTheme, isNot(same(originalLayoutTheme)));
+                expect(layoutTheme!.itemRadius, isNot(99));
+
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  });
+
   testWidgets('uses drawer navigation at compact width', (tester) async {
     tester.view.physicalSize = const Size(700, 900);
     tester.view.devicePixelRatio = 1;
@@ -88,4 +143,18 @@ void main() {
     expect(find.text('Compact content'), findsOneWidget);
     expect(find.byIcon(Icons.menu_rounded), findsOneWidget);
   });
+}
+
+  
+class _RetainedThemeExtension extends ThemeExtension<_RetainedThemeExtension> {
+  const _RetainedThemeExtension();
+
+  @override
+  _RetainedThemeExtension copyWith() => this;
+
+  @override
+  _RetainedThemeExtension lerp(
+    ThemeExtension<_RetainedThemeExtension>? other,
+    double t,
+  ) => this;
 }
