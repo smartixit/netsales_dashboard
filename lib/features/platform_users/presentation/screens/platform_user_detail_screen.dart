@@ -21,11 +21,7 @@ class PlatformUserDetailScreen extends GetView<PlatformUserDetailController> {
       padding: EdgeInsets.all(AppSpacing.lg),
       child: Obx(() {
         if (controller.isLoading.value) {
-          return const CustomSkeletonGrid(
-            count: 4,
-            crossAxisCount: 1,
-            itemHeight: 112,
-          );
+          return const CustomSkeletonGrid(count: 4, crossAxisCount: 1, itemHeight: 112);
         }
         final detail = controller.detail.value;
         if (detail == null) {
@@ -45,17 +41,13 @@ class PlatformUserDetailScreen extends GetView<PlatformUserDetailController> {
               l10n: l10n,
               isActive: detail.user.status == 'ACTIVE',
               isStatusUpdating: controller.isStatusUpdating.value,
-              onToggleStatus: controller.canChangeStatus
-                  ? controller.changeStatus
+              onToggleStatus: controller.canChangeStatus ? controller.changeStatus : null,
+              onEdit: controller.canEditUser
+                  ? () async {
+                      final saved = await showPlatformUserForm(l10n: l10n, detail: detail);
+                      if (saved == true) await controller.load();
+                    }
                   : null,
-              onEdit: controller.canEditUser ? () async {
-              onEdit: () async {
-                final saved = await showPlatformUserForm(
-                  l10n: l10n,
-                  detail: detail,
-                );
-                if (saved == true) await controller.load();
-              } : null,
             ),
             SizedBox(height: AppSpacing.lg),
             Expanded(
