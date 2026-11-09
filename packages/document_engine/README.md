@@ -101,3 +101,17 @@ flutter test packages/document_engine/test
 - A client-capable report must declare its own bounded row limit. Large reports
   can be marked server-only. Laravel remains the authorization and query
   authority, and the engine never calculates or aggregates report values.
+
+
+## M6 — Artifact preview and output lifecycle
+
+- `DocumentArtifactPreview` previews the immutable bytes of an existing
+  artifact. It does not invoke the renderer and does not permit the preview
+  surface to silently change page size or orientation.
+- `DocumentOutputCoordinator` routes save, share, and print requests to
+  host-owned adapters using the same artifact and SHA-256 identity.
+- Output results are typed; duplicate in-flight operations are rejected per
+  action, adapter exceptions are contained, and PDF filenames are normalized
+  without stripping Arabic or other Unicode letters.
+- Platform I/O, permissions, destinations, printer selection, feedback, and
+  application design-system controls remain the responsibility of the host.
