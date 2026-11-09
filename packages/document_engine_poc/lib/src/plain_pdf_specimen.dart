@@ -51,7 +51,7 @@ Future<Uint8List> buildPlainPdfSpecimen(Uint8List fontBytes) async {
           ),
         ),
         pw.SizedBox(height: 10),
-        ...ArabicPdfCorpus.cases.map(
+        ...ArabicPdfCorpus.glyphMappedCases.map(
           (value) => pw.Directionality(
             textDirection: pw.TextDirection.rtl,
             child: pw.Padding(
