@@ -773,6 +773,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       double yFor(double value) {
         return top + (maxValue - value) / range * plotHeight;
       }
+
       if (chart.showGrid) {
         for (var line = 0; line <= 4; line++) {
           final y = top + plotHeight * line / 4;
