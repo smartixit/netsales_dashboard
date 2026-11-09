@@ -45,6 +45,7 @@ class PlatformDashboardController extends GetxController {
   final RxBool hasOverviewError = false.obs;
   final RxBool isRefreshingOverview = false.obs;
   final RxString selectedPeriod = '30d'.obs;
+  int _overviewRequestGeneration = 0;
 
   final RxList<PlatformNotificationEntity> notifications =
       <PlatformNotificationEntity>[].obs;
@@ -121,6 +122,7 @@ class PlatformDashboardController extends GetxController {
 
   Future<void> loadOverview({String? period}) async {
     final requestedPeriod = period ?? selectedPeriod.value;
+    final requestGeneration = ++_overviewRequestGeneration;
     final hasExistingOverview = overview.value != null;
 
     if (!hasExistingOverview) {
@@ -130,9 +132,12 @@ class PlatformDashboardController extends GetxController {
     hasOverviewError.value = false;
 
     try {
-      overview.value = await getOverview.execute(period: requestedPeriod);
+      final result = await getOverview.execute(period: requestedPeriod);
+      if (requestGeneration != _overviewRequestGeneration) return;
+      overview.value = result;
       selectedPeriod.value = requestedPeriod;
     } catch (error) {
+      if (requestGeneration != _overviewRequestGeneration) return;
       hasOverviewError.value = true;
       if (!hasExistingOverview) {
         CustomSnackbar.show(
@@ -144,13 +149,15 @@ class PlatformDashboardController extends GetxController {
         );
       }
     } finally {
-      isLoadingOverview.value = false;
-      isRefreshingOverview.value = false;
+      if (requestGeneration == _overviewRequestGeneration) {
+        isLoadingOverview.value = false;
+        isRefreshingOverview.value = false;
+      }
     }
   }
 
   Future<void> changePeriod(String period) async {
-    if (period != selectedPeriod.value && !isRefreshingOverview.value) {
+    if (period != selectedPeriod.value) {
       await loadOverview(period: period);
     }
   }

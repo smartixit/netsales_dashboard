@@ -194,7 +194,7 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
           id: 'active_subscriptions',
           title: l10n.text('active_subscriptions'),
           value: subscriptions.active.toString(),
-          variant: DashboardMetricVariant.trend,
+          variant: DashboardMetricVariant.standard,
           icon: Icons.card_membership_outlined,
           description: '${l10n.text('total')}: ${subscriptions.total}',
           tone: DashboardMetricTone.success,

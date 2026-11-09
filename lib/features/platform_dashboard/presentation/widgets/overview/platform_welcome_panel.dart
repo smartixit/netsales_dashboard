@@ -15,9 +15,11 @@ class PlatformWelcomePanel extends StatelessWidget {
     super.key,
     required this.userName,
     required this.onRefresh,
+    this.isRefreshing = false,
   });
   final String userName;
   final VoidCallback onRefresh;
+  final bool isRefreshing;
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +125,8 @@ class PlatformWelcomePanel extends StatelessWidget {
           final action = CustomButton.outline(
             text: l10n.text('refresh'),
             prefix: const Icon(Icons.refresh_rounded, size: 18),
-            onPressed: onRefresh,
+            onPressed: isRefreshing ? null : onRefresh,
+            loading: isRefreshing,
             size: AppButtonSize.small,
             backgroundColor: Colors.white.withValues(alpha: 0.14),
             foregroundColor: Colors.white,
