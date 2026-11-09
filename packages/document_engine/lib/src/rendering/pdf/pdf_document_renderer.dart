@@ -171,7 +171,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (snapshot.metadata.locale.direction ==
             DocumentTextDirection.rightToLeft ||
         RegExp(r'^(ar|fa|ur|he|ps|sd)(-|$)').hasMatch(locale) ||
-        _containsUnshapedRtl(snapshot)) {
+        _containsUnshapedRtl(snapshot, options.watermark)) {
       return const DocumentRenderFailure(
         code: DocumentRenderFailureCode.unsupportedTextShaping,
         message:
