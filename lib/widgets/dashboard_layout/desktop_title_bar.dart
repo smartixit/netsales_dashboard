@@ -63,84 +63,94 @@ class DesktopTitleBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       child: Directionality(
         textDirection: TextDirection.ltr,
-        child: Row(
-          children: [
-            // ── Comprehensive Draggable Area (Icon + Title + Central Region) ──
-            Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanStart: (details) {
-                  windowing?.startDragging();
-                },
-                onDoubleTap: () {
-                  windowing?.performTitleBarDoubleClick();
-                },
-                child: Row(
-                  children: [
-                    AppSpacing.hMd,
-                    leading ??
-                        Image.asset(
-                          'assets/images/brand_icon.png',
-                          width: 17,
-                          height: 17,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, obj, e) => Icon(
-                            Icons.hub_rounded,
-                            size: 16,
-                            color: colors.primary,
+        child: ClipRect(
+          child: Row(
+            children: [
+              // ── Comprehensive Draggable Area (Icon + Title + Central Region) ──
+              Expanded(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onPanStart: (details) {
+                    windowing?.startDragging();
+                  },
+                  onDoubleTap: () {
+                    windowing?.performTitleBarDoubleClick();
+                  },
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      // إذا كانت المساحة المتوفرة في لحظة التصغير أقل من الحد الأدنى للعناصر الثابتة (37dp)
+                      if (constraints.maxWidth < 40) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return Row(
+                        children: [
+                          AppSpacing.hMd,
+                          leading ??
+                              Image.asset(
+                                'assets/images/brand_icon.png',
+                                width: 17,
+                                height: 17,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, obj, e) => Icon(
+                                  Icons.hub_rounded,
+                                  size: 16,
+                                  color: colors.primary,
+                                ),
+                              ),
+                          AppSpacing.hSm,
+                          Expanded(
+                            child: Text(
+                              title ?? 'NetSales Platform Dashboard',
+                              style: AppTypography.labelSmall.copyWith(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 11.5,
+                                color: fg,
+                                letterSpacing: 0.15,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                        ),
-                    AppSpacing.hSm,
-                    Flexible(
-                      child: Text(
-                        title ?? 'NetSales Platform Dashboard',
-                        style: AppTypography.labelSmall.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 11.5,
-                          color: fg,
-                          letterSpacing: 0.15,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const Spacer(),
-                  ],
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
 
-            // ── Optional Trailing Actions ──
-            ...?actions,
+              // ── Optional Trailing Actions ──
+              ...?actions,
 
-            // ── Native-Style Window Caption Buttons ──
-            if (showControls && windowing != null) ...[
-              _WindowCaptionButton(
-                icon: Icons.remove_rounded,
-                tooltip: 'تصغير النافذة',
-                onPressed: windowing.minimize,
-              ),
-              ValueListenableBuilder<bool>(
-                valueListenable: windowing.isMaximizedListenable,
-                builder: (context, isMax, _) {
-                  return _WindowCaptionButton(
-                    icon: isMax
-                        ? Icons.filter_none_rounded
-                        : Icons.crop_square_rounded,
-                    tooltip: isMax ? 'استعادة' : 'تكبير',
-                    iconSize: 13,
-                    onPressed: windowing.toggleMaximize,
-                  );
-                },
-              ),
-              _WindowCaptionButton(
-                icon: Icons.close_rounded,
-                tooltip: 'إغلاق',
-                isClose: true,
-                onPressed: windowing.close,
-              ),
+              // ── Native-Style Window Caption Buttons ──
+              if (showControls && windowing != null) ...[
+                _WindowCaptionButton(
+                  icon: Icons.remove_rounded,
+                  tooltip: 'تصغير النافذة',
+                  onPressed: windowing.minimize,
+                ),
+                ValueListenableBuilder<bool>(
+                  valueListenable: windowing.isMaximizedListenable,
+                  builder: (context, isMax, _) {
+                    return _WindowCaptionButton(
+                      icon: isMax
+                          ? Icons.filter_none_rounded
+                          : Icons.crop_square_rounded,
+                      tooltip: isMax ? 'استعادة' : 'تكبير',
+                      iconSize: 13,
+                      onPressed: windowing.toggleMaximize,
+                    );
+                  },
+                ),
+                _WindowCaptionButton(
+                  icon: Icons.close_rounded,
+                  tooltip: 'إغلاق',
+                  isClose: true,
+                  onPressed: windowing.close,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

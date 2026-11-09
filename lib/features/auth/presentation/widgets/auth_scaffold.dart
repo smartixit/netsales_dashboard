@@ -37,37 +37,38 @@ class AuthScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: context.colors.surface,
       body: LayoutBuilder(
-        builder: (context, viewportConstraints) {
-          return SizedBox(
-            width: viewportConstraints.maxWidth,
-            height: viewportConstraints.maxHeight,
-            child: Column(
-              children: [
-                const DesktopTitleBar(),
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final showBrandPanel =
-                          constraints.maxWidth >= AppBreakpoints.tabletMax;
+        builder: (context, constraints) {
+          // إذا كانت النافذة في حالة تصغير مؤقت (Minimize) بارتفاع ضئيل
+          if (constraints.maxHeight < 50) {
+            return const SizedBox.shrink();
+          }
 
-                      if (!showBrandPanel) {
-                        return _buildForm(context, compactBrand: true);
-                      }
+          return Column(
+            children: [
+              const DesktopTitleBar(),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, innerConstraints) {
+                    final showBrandPanel =
+                        innerConstraints.maxWidth >= AppBreakpoints.tabletMax;
 
-                      return Row(
-                        children: [
-                          const Expanded(flex: 5, child: LoginBrandPanel()),
-                          Expanded(
-                            flex: 6,
-                            child: _buildForm(context, compactBrand: false),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                    if (!showBrandPanel) {
+                      return _buildForm(context, compactBrand: true);
+                    }
+
+                    return Row(
+                      children: [
+                        const Expanded(flex: 5, child: LoginBrandPanel()),
+                        Expanded(
+                          flex: 6,
+                          child: _buildForm(context, compactBrand: false),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
