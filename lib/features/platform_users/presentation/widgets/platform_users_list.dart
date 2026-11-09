@@ -56,7 +56,7 @@ class PlatformUsersList extends StatelessWidget {
                         user: user,
                         compact: compact,
                         isTrashed: true,
-                        onRestore: () => controller.restoreUser(user.id),
+                        onRestore: controller.canRestore ? () => controller.restoreUser(user.id) : null,
                         onForceDelete: controller.canDelete ? () => controller.forceDeleteUser(user.id) : null,
                       )
                     : InkWell(
