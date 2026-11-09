@@ -276,3 +276,53 @@
 
 ### Verification status
 - Exact-head Flutter formatting, analyzer, focused/full tests, Windows Debug build, GitHub Actions, and rendered Windows/Web visual QA remain pending.
+
+
+## 2026-11-09 — Document Engine M4 Arabic Typography POC Harness
+
+**Repository:** smartixit/netsales_dashboard  
+**Branch:** feat/document-engine-arabic-typography-m4-poc  
+**PR:** #36  
+**Implementation head at handoff:** 5416eb31b1cd97209c1580b3cdbc30c974e2de80
+
+### Implemented
+- Added isolated package packages/document_engine_poc. It is not imported by the Dashboard app and does not add dependencies to production document_engine.
+- Added synthetic Arabic/RTL corpus and table fixtures covering joining, diacritics, lam-alef, mixed Latin/Arabic, punctuation, bidi isolates, Arabic-Indic/Western digits, and preformatted references/amounts.
+- Added baseline pdf renderer and isolated candidate implementations for HarfBuzz-backed pdf_text_shaper and pure-Dart payv.
+- Added byte-for-byte IBM Plex Sans Arabic Regular and Vazirmatn Regular TTF fixtures, including their SIL OFL 1.1 licenses and upstream blob provenance.
+- Added native Ubuntu/Windows CI and a Dart-to-JavaScript compile check for the pure-Dart candidate.
+
+### Boundaries
+- No production dependency, renderer switch, public API, Dashboard feature integration, Laravel change, invoice migration, or financial calculation was changed.
+- No shaping provider is approved. Production RTL rejection remains the expected behavior until a separate provider decision.
+
+### Verification
+- PR #36 is open. Exact-head Actions run 42635067589 was still running at handoff; its jobs were queued/in progress, so no pass is claimed.
+- Actual PDF rendering, visual inspection, text extraction/copy/search, font embedding, pagination, output size, and performance still require completed CI artifacts and manual Windows/Web review.
+- No local Flutter/Dart execution is claimed in this environment.
+
+
+## 2026-11-09 — M4 POC Closure and M5 Authorization
+
+**Repository:** `smartixit/netsales_dashboard`  
+**M4 PR:** #36  
+**M5 decision:** DOC-006 approved by the project owner
+
+### M4 outcome
+- Closed the M4 research scope without requiring vowel diacritics.
+- Preserved tests for Arabic joining, RTL, mixed Arabic/Latin values, identifiers, punctuation, tables, and pagination.
+- Recorded Payv as the leading research candidate, not a production selection.
+- Documented the need for Unicode LTR isolates around phone numbers, invoice references, UUIDs, and numeric/currency runs within Arabic paragraphs.
+- Replaced the browser rootBundle runtime test with the originally authorized JavaScript compile check. Web runtime/preview acceptance remains for the later preview milestone.
+- Production dependencies, renderer behavior, and the complex-RTL rejection guard remain unchanged.
+
+### M5 scope authorized
+- Generic application-supplied report definitions and allowlisted filters/fields/sorts/groups.
+- Typed criteria and presentation options kept separate from server query authorization.
+- A responsive schema-driven Flutter Configuration Studio, independent of GetX/navigation.
+- Versioned SavedReportPreset serialization and explicit migration/review outcomes.
+- No Laravel routes/schema, persistence, authorization, tenant policy, or financial arithmetic.
+
+### Verification boundary
+- Native Windows and Ubuntu generation on the exact pre-closure POC head passed; the final adjusted exact head must rerun POC tests, PDF generation, and JavaScript compilation.
+- No browser runtime PDF rendering or production Arabic provider approval is claimed.

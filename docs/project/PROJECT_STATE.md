@@ -273,3 +273,35 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - Authentication API/domain behavior and backend security authority are unchanged. WNS/Reverb remains deferred.
 - **Verification pending:** exact-head formatting, analyzer, tests, Windows Debug build, and rendered Windows/Web QA.
 - Next: evaluate CI on the final PR head, fix any diagnostics, then halt for user review and merge.
+
+
+## Document Engine M4 — Arabic PDF Typography POC (2026-11-09)
+
+**Status:** ACTIVE — isolated research harness; provider not selected.  
+**Branch:** feat/document-engine-arabic-typography-m4-poc  
+**PR:** #36
+
+- Added packages/document_engine_poc as an isolated research package outside the Dashboard app and production document_engine dependency graph.
+- The harness contains a fixed synthetic Arabic/mixed-direction corpus, baseline pdf rendering, a HarfBuzz/pdf_text_shaper candidate, and a pure-Dart payv candidate.
+- IBM Plex Sans Arabic Regular and Vazirmatn Regular are byte-for-byte test fixtures with their SIL OFL 1.1 licenses.
+- Native Ubuntu/Windows CI and a Dart-to-JavaScript compile job are configured. Run 42635009795 was in progress at the latest check.
+- Production renderer behavior remains unchanged; complex RTL is still rejected.
+- Next: fix any exact-head CI failures; obtain and inspect candidate PDF artifacts in Windows and Web viewers; record extraction/copy/search, shaping, glyph coverage, font embedding, mixed bidi, pagination, size, and timing; then prepare a separate provider recommendation for explicit owner review.
+
+
+## Document Engine — M4 Closed / M5 Active (2026-11-09)
+
+**M4 status:** COMPLETE — constrained Arabic PDF research outcome recorded.  
+**PR:** #36  
+**Research candidate:** Payv 0.1.2 (not approved for production).
+
+- Vowel diacritics are excluded from acceptance. Arabic joining, RTL, mixed Arabic/Latin runs, numeric identifiers, font embedding, pagination, and table wrapping remain core considerations.
+- Native PDF generation succeeded on Windows and Ubuntu for all three POC candidates.
+- Payv was the strongest constrained research candidate. Latin/numeric runs inside RTL paragraphs require Unicode LTR isolates (U+2066/U+2069).
+- Payv JavaScript compilation is the Web evidence for M4; browser runtime generation and preview/viewer accessibility remain deferred.
+- No production dependency, renderer switch, API, Laravel feature, or official invoice integration was made. The complex-RTL rejection guard remains in place.
+
+**M5 status:** ACTIVE — generic ReportDefinition, typed criteria/presentation, Configuration Studio, and versioned preset contracts.
+- M5 is independent of production Arabic provider selection.
+- No server endpoints, storage adapter, tenant ownership policy, or financial calculations are included.
+- Next: implement pure report contracts and validation first, then framework-neutral preset serialization/migration contracts, followed by the Flutter Configuration Studio entry point and responsive widget tests.
