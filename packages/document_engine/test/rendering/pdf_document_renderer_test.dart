@@ -12,6 +12,8 @@ void main() {
     capabilities: TemplateCapabilities({
       TemplateCapability.tables,
       TemplateCapability.metrics,
+      TemplateCapability.charts,
+      TemplateCapability.coverPage,
       TemplateCapability.pageNumbering,
       TemplateCapability.repeatingHeader,
       TemplateCapability.repeatingFooter,
@@ -217,5 +219,248 @@ void main() {
       ),
       throwsArgumentError,
     );
+  });
+
+  test(
+    'renders charts, metric grids, styled tables, and a cover page',
+    () async {
+      const renderer = PdfDocumentRenderer();
+      final chart = DocumentChart(
+        title: 'Monthly performance',
+        subtitle: 'Server-provided series',
+        type: DocumentChartType.bar,
+        series: [
+          DocumentChartSeries(
+            id: 'actual',
+            label: 'Actual',
+            color: '0D7A5F',
+            points: [
+              DocumentChartPoint(
+                label: 'Jan',
+                value: 12,
+                displayValue: '12.00',
+              ),
+              DocumentChartPoint(
+                label: 'Feb',
+                value: 18,
+                displayValue: '18.00',
+              ),
+              DocumentChartPoint(
+                label: 'Mar',
+                value: 15,
+                displayValue: '15.00',
+              ),
+            ],
+          ),
+          DocumentChartSeries(
+            id: 'target',
+            label: 'Target',
+            color: '2563EB',
+            points: [
+              DocumentChartPoint(label: 'Jan', value: 10),
+              DocumentChartPoint(label: 'Feb', value: 16),
+              DocumentChartPoint(label: 'Mar', value: 16),
+            ],
+          ),
+        ],
+      );
+      final table = DocumentTable(
+        columns: [
+          DocumentTableColumn(id: 'period', label: 'Period'),
+          DocumentTableColumn(
+            id: 'value',
+            label: 'Value',
+            alignment: DocumentCellAlignment.decimal,
+          ),
+        ],
+        rows: [
+          DocumentTableRow(
+            id: 'jan',
+            cells: [
+              const DocumentTableCell(value: DocumentTextValue('January')),
+              DocumentTableCell(value: DocumentDecimalValue('1250.50')),
+            ],
+          ),
+          DocumentTableRow(
+            id: 'feb',
+            cells: [
+              const DocumentTableCell(value: DocumentTextValue('February')),
+              DocumentTableCell(value: DocumentDecimalValue('1500.75')),
+            ],
+          ),
+        ],
+        style: DocumentTableStyle(
+          stripedRows: true,
+          compact: true,
+          headerColor: 'E2E8F0',
+          alternateRowColor: 'F8FAFC',
+          columnWeights: [2, 1],
+        ),
+      );
+
+      final result = await renderer.render(
+        snapshot: snapshot(
+          nodes: [
+            DocumentMetricGrid(
+              columns: 2,
+              metrics: [
+                DocumentMetric(
+                  label: 'Gross sales',
+                  value: DocumentDecimalValue('1250.50'),
+                  caption: 'Supplied total',
+                ),
+                DocumentMetric(
+                  label: 'Orders',
+                  value: DocumentIntegerValue(42),
+                ),
+                DocumentMetric(
+                  label: 'Average',
+                  value: DocumentDecimalValue('29.77'),
+                ),
+              ],
+            ),
+            table,
+            chart,
+          ],
+        ),
+        template: template,
+        options: DocumentRenderOptions(
+          pageProfile: DocumentPageProfile.a4Portrait(),
+          generatedAt: DateTime.utc(2026, 11, 9, 10),
+          coverPage: true,
+          coverTitle: 'Quarterly report',
+          coverSubtitle: 'Executive summary',
+          coverMetadata: const {'Period': 'Q3 2026', 'Prepared by': 'NetSales'},
+          firstPageHeaderText: 'Quarterly report',
+          headerText: 'NetSales | Confidential',
+          footerText: 'Internal use',
+        ),
+      );
+
+      expect(result, isA<DocumentRenderSuccess>());
+      final artifact = (result as DocumentRenderSuccess).artifact;
+      expect(artifact.bytes.take(5), [37, 80, 68, 70, 45]);
+      expect(artifact.byteLength, greaterThan(500));
+      expect(artifact.rendererVersion, '1.1.0');
+    },
+  );
+
+  test(
+    'validates chart categories, pie values, and metric grid constraints',
+    () {
+      expect(
+        () => DocumentChart(
+          title: 'Misaligned series',
+          type: DocumentChartType.line,
+          series: [
+            DocumentChartSeries(
+              id: 'one',
+              label: 'One',
+              points: [
+                DocumentChartPoint(label: 'Jan', value: 1),
+                DocumentChartPoint(label: 'Feb', value: 2),
+              ],
+            ),
+            DocumentChartSeries(
+              id: 'two',
+              label: 'Two',
+              points: [
+                DocumentChartPoint(label: 'Feb', value: 1),
+                DocumentChartPoint(label: 'Mar', value: 2),
+              ],
+            ),
+          ],
+        ),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => DocumentChart(
+          title: 'Invalid pie',
+          type: DocumentChartType.pie,
+          series: [
+            DocumentChartSeries(
+              id: 'slices',
+              label: 'Slices',
+              points: [
+                DocumentChartPoint(label: 'A', value: -1),
+                DocumentChartPoint(label: 'B', value: 2),
+              ],
+            ),
+          ],
+        ),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => DocumentMetricGrid(
+          columns: 5,
+          metrics: [
+            DocumentMetric(label: 'Count', value: DocumentIntegerValue(1)),
+          ],
+        ),
+        throwsArgumentError,
+      );
+    },
+  );
+
+  test('includes the cover page in the configured maximum page count', () {
+    expect(
+      () => DocumentRenderOptions(
+        pageProfile: DocumentPageProfile.a4Portrait(),
+        generatedAt: DateTime.utc(2026),
+        coverPage: true,
+        coverTitle: 'Cover',
+        maxPages: 1,
+      ),
+      throwsArgumentError,
+    );
+  });
+
+  test('renders line, pie, and donut vector charts', () async {
+    const renderer = PdfDocumentRenderer();
+    for (final type in [
+      DocumentChartType.line,
+      DocumentChartType.pie,
+      DocumentChartType.donut,
+    ]) {
+      final result = await renderer.render(
+        snapshot: snapshot(
+          nodes: [
+            DocumentChart(
+              title: 'Regional performance',
+              type: type,
+              series: [
+                DocumentChartSeries(
+                  id: 'regions',
+                  label: 'Regions',
+                  points: [
+                    DocumentChartPoint(
+                      label: 'North',
+                      value: 10,
+                      displayValue: '10.00',
+                    ),
+                    DocumentChartPoint(
+                      label: 'South',
+                      value: 20,
+                      displayValue: '20.00',
+                    ),
+                    DocumentChartPoint(
+                      label: 'West',
+                      value: 15,
+                      displayValue: '15.00',
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        template: template,
+        options: options(),
+      );
+
+      expect(result, isA<DocumentRenderSuccess>(), reason: type.name);
+    }
   });
 }

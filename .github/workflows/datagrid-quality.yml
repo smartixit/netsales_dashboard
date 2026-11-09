@@ -89,7 +89,7 @@ jobs:
 
       - name: Test document engine package
         working-directory: packages/document_engine
-        run: flutter test
+        run: flutter test test
 
   flutter-quality:
     name: Full dashboard analyze, tests and Windows compile
@@ -121,7 +121,7 @@ jobs:
           flutter pub get --enforce-lockfile
 
       - name: Analyze complete dashboard
-        run: flutter analyze
+        run: flutter analyze lib test integration_test
 
       - name: Analyze Splash and Authentication delivery scope
         if: ${{ !cancelled() && steps.resolve_dependencies.outcome == 'success' }}

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -12,10 +14,10 @@ import '../document_render_options.dart';
 import '../document_render_result.dart';
 import '../document_renderer.dart';
 
-/// First PDF backend for bounded, non-official client-side documents.
+/// PDF backend for bounded, non-official client-side documents.
 ///
-/// Arabic/Hebrew/Persian shaping is deliberately rejected until a shaping
-/// provider is selected and validated in the dedicated typography milestone.
+/// Complex RTL scripts are rejected until a shaping provider is selected and
+/// validated in the dedicated typography milestone.
 final class PdfDocumentRenderer implements DocumentRenderer {
   const PdfDocumentRenderer();
 
@@ -23,7 +25,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
   String get rendererId => 'document-engine.pdf';
 
   @override
-  String get rendererVersion => '1.0.0';
+  String get rendererVersion => '1.1.0';
 
   @override
   Future<DocumentRenderResult> render({
@@ -49,6 +51,21 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       );
       int? pageCount;
 
+      if (options.coverPage) {
+        document.addPage(
+          pw.Page(
+            pageFormat: pageFormat,
+            margin: pw.EdgeInsets.fromLTRB(
+              profile.marginLeft,
+              profile.marginTop,
+              profile.marginRight,
+              profile.marginBottom,
+            ),
+            build: (_) => _coverWidget(options),
+          ),
+        );
+      }
+
       document.addPage(
         pw.MultiPage(
           pageFormat: pageFormat,
@@ -58,70 +75,30 @@ final class PdfDocumentRenderer implements DocumentRenderer {
             profile.marginRight,
             profile.marginBottom,
           ),
-          maxPages: options.maxPages,
-          header: options.headerText == null
-              ? null
-              : (context) => pw.Container(
-                  alignment: pw.Alignment.centerLeft,
-                  padding: const pw.EdgeInsets.only(bottom: 8),
-                  decoration: const pw.BoxDecoration(
-                    border: pw.Border(
-                      bottom: pw.BorderSide(
-                        color: PdfColors.grey400,
-                        width: 0.5,
-                      ),
-                    ),
-                  ),
-                  child: pw.Text(
-                    options.headerText!,
-                    style: pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
-                  ),
-                ),
-          footer: options.footerText == null && !options.showPageNumbers
-              ? null
-              : (context) {
-                  pageCount = context.pagesCount;
-                  final parts = <pw.Widget>[];
-                  if (options.footerText case final text?) {
-                    parts.add(
-                      pw.Text(
-                        text,
-                        style: const pw.TextStyle(
-                          fontSize: 8,
-                          color: PdfColors.grey600,
-                        ),
-                      ),
-                    );
-                  }
-                  if (options.showPageNumbers) {
-                    parts.add(
-                      pw.Text(
-                        '${context.pageNumber} / ${context.pagesCount}',
-                        style: const pw.TextStyle(
-                          fontSize: 8,
-                          color: PdfColors.grey600,
-                        ),
-                      ),
-                    );
-                  }
-                  return pw.Container(
-                    alignment: pw.Alignment.center,
-                    padding: const pw.EdgeInsets.only(top: 8),
-                    decoration: const pw.BoxDecoration(
-                      border: pw.Border(
-                        top: pw.BorderSide(
-                          color: PdfColors.grey300,
-                          width: 0.5,
-                        ),
-                      ),
-                    ),
-                    child: pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                      children: parts,
-                    ),
-                  );
-                },
-          build: (context) => _buildContent(snapshot),
+          maxPages: options.maxPages - (options.coverPage ? 1 : 0),
+          header: (context) {
+            final text = context.pageNumber == 1
+                ? options.firstPageHeaderText ?? options.headerText
+                : options.headerText;
+            if (text == null) return pw.SizedBox();
+            return _runningHeader(text);
+          },
+          footer: (context) {
+            final text = context.pageNumber == 1
+                ? options.firstPageFooterText ?? options.footerText
+                : options.footerText;
+            pageCount = context.pagesCount + (options.coverPage ? 1 : 0);
+            if (text == null && !options.showPageNumbers) {
+              return pw.SizedBox();
+            }
+            return _runningFooter(
+              text,
+              options.showPageNumbers
+                  ? '${context.pageNumber + (options.coverPage ? 1 : 0)} / ${context.pagesCount + (options.coverPage ? 1 : 0)}'
+                  : null,
+            );
+          },
+          build: (_) => _buildContent(snapshot),
         ),
       );
 
@@ -140,10 +117,10 @@ final class PdfDocumentRenderer implements DocumentRenderer {
         ),
       );
     } catch (error) {
-      final message = error.toString();
+      final message = error.toString().toLowerCase();
       final isPageLimit =
-          message.contains('TooManyPagesException') ||
-          message.toLowerCase().contains('maximum number of pages');
+          message.contains('toomanypagesexception') ||
+          message.contains('maximum number of pages');
       return DocumentRenderFailure(
         code: isPageLimit
             ? DocumentRenderFailureCode.pageLimitExceeded
@@ -186,25 +163,30 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       );
     }
 
+    final nodes = snapshot.sections.expand((section) => section.nodes);
     final requiredCapabilities = <TemplateCapability>[];
     if (options.showPageNumbers) {
       requiredCapabilities.add(TemplateCapability.pageNumbering);
     }
-    if (options.headerText != null) {
+    if (options.headerText != null || options.firstPageHeaderText != null) {
       requiredCapabilities.add(TemplateCapability.repeatingHeader);
     }
-    if (options.footerText != null) {
+    if (options.footerText != null || options.firstPageFooterText != null) {
       requiredCapabilities.add(TemplateCapability.repeatingFooter);
     }
-    if (snapshot.sections.any(
-      (section) => section.nodes.any((node) => node is DocumentTable),
-    )) {
+    if (options.coverPage) {
+      requiredCapabilities.add(TemplateCapability.coverPage);
+    }
+    if (nodes.any((node) => node is DocumentTable)) {
       requiredCapabilities.add(TemplateCapability.tables);
     }
-    if (snapshot.sections.any(
-      (section) => section.nodes.any((node) => node is DocumentMetric),
+    if (nodes.any(
+      (node) => node is DocumentMetric || node is DocumentMetricGrid,
     )) {
       requiredCapabilities.add(TemplateCapability.metrics);
+    }
+    if (nodes.any((node) => node is DocumentChart)) {
+      requiredCapabilities.add(TemplateCapability.charts);
     }
     if (!template.capabilities.supportsAll(requiredCapabilities)) {
       return const DocumentRenderFailure(
@@ -259,6 +241,35 @@ final class PdfDocumentRenderer implements DocumentRenderer {
               (caption != null && rtlPattern.hasMatch(caption))) {
             return true;
           }
+        } else if (node case DocumentMetricGrid(:final metrics)) {
+          if (metrics.any(
+            (metric) =>
+                rtlPattern.hasMatch(metric.label) ||
+                rtlPattern.hasMatch(_valueText(metric.value)) ||
+                (metric.caption != null &&
+                    rtlPattern.hasMatch(metric.caption!)),
+          )) {
+            return true;
+          }
+        } else if (node case DocumentChart(
+          :final title,
+          :final subtitle,
+          :final series,
+        )) {
+          if (rtlPattern.hasMatch(title) ||
+              (subtitle != null && rtlPattern.hasMatch(subtitle)) ||
+              series.any(
+                (item) =>
+                    rtlPattern.hasMatch(item.label) ||
+                    item.points.any(
+                      (point) =>
+                          rtlPattern.hasMatch(point.label) ||
+                          (point.displayValue != null &&
+                              rtlPattern.hasMatch(point.displayValue!)),
+                    ),
+              )) {
+            return true;
+          }
         } else if (node case DocumentTable(:final columns, :final rows)) {
           if (columns.any((column) => rtlPattern.hasMatch(column.label))) {
             return true;
@@ -311,8 +322,12 @@ final class PdfDocumentRenderer implements DocumentRenderer {
             );
           case DocumentMetric(:final label, :final value, :final caption):
             widgets.add(_metricWidget(label, value, caption));
-          case DocumentTable(:final columns, :final rows):
-            widgets.add(_tableWidget(columns, rows));
+          case DocumentMetricGrid(:final metrics, :final columns):
+            widgets.add(_metricGridWidget(metrics, columns));
+          case DocumentTable(:final columns, :final rows, :final style):
+            widgets.add(_tableWidget(columns, rows, style));
+          case DocumentChart():
+            widgets.addAll(_chartWidgets(node));
           case DocumentPageBreak():
             widgets.add(pw.NewPage());
         }
@@ -321,12 +336,123 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     return widgets;
   }
 
+  pw.Widget _coverWidget(DocumentRenderOptions options) {
+    final entries = options.coverMetadata.entries.toList();
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      mainAxisAlignment: pw.MainAxisAlignment.center,
+      children: [
+        pw.Container(
+          width: 64,
+          height: 4,
+          color: PdfColors.teal700,
+          margin: const pw.EdgeInsets.only(bottom: 28),
+        ),
+        pw.Text(
+          options.coverTitle!,
+          style: pw.TextStyle(fontSize: 30, fontWeight: pw.FontWeight.bold),
+        ),
+        if (options.coverSubtitle case final subtitle?)
+          pw.Padding(
+            padding: const pw.EdgeInsets.only(top: 12),
+            child: pw.Text(
+              subtitle,
+              style: const pw.TextStyle(fontSize: 14, color: PdfColors.grey700),
+            ),
+          ),
+        if (entries.isNotEmpty)
+          pw.Padding(
+            padding: const pw.EdgeInsets.only(top: 42),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: entries
+                  .map(
+                    (entry) => pw.Padding(
+                      padding: const pw.EdgeInsets.only(bottom: 8),
+                      child: pw.Row(
+                        children: [
+                          pw.SizedBox(
+                            width: 110,
+                            child: pw.Text(
+                              entry.key,
+                              style: const pw.TextStyle(
+                                fontSize: 9,
+                                color: PdfColors.grey600,
+                              ),
+                            ),
+                          ),
+                          pw.Expanded(
+                            child: pw.Text(
+                              entry.value,
+                              style: const pw.TextStyle(fontSize: 10),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+        pw.Spacer(),
+        pw.Text(
+          'Generated ${options.generatedAt.toUtc().toIso8601String()}',
+          style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey500),
+        ),
+      ],
+    );
+  }
+
+  pw.Widget _runningHeader(String text) => pw.Container(
+    alignment: pw.Alignment.centerLeft,
+    padding: const pw.EdgeInsets.only(bottom: 8),
+    decoration: const pw.BoxDecoration(
+      border: pw.Border(
+        bottom: pw.BorderSide(color: PdfColors.grey400, width: 0.5),
+      ),
+    ),
+    child: pw.Text(
+      text,
+      style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
+    ),
+  );
+
+  pw.Widget _runningFooter(String? text, String? pageNumber) {
+    final parts = <pw.Widget>[
+      if (text != null)
+        pw.Expanded(
+          child: pw.Text(
+            text,
+            style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+          ),
+        ),
+      if (pageNumber != null)
+        pw.Text(
+          pageNumber,
+          style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+        ),
+    ];
+    return pw.Container(
+      padding: const pw.EdgeInsets.only(top: 8),
+      decoration: const pw.BoxDecoration(
+        border: pw.Border(
+          top: pw.BorderSide(color: PdfColors.grey300, width: 0.5),
+        ),
+      ),
+      child: pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        children: parts,
+      ),
+    );
+  }
+
   pw.Widget _metricWidget(String label, DocumentValue value, String? caption) {
     return pw.Container(
-      margin: const pw.EdgeInsets.symmetric(vertical: 6),
+      margin: const pw.EdgeInsets.symmetric(vertical: 5),
       padding: const pw.EdgeInsets.all(10),
       decoration: pw.BoxDecoration(
-        border: pw.Border.all(color: PdfColors.grey400, width: 0.7),
+        color: PdfColors.grey100,
+        border: pw.Border.all(color: PdfColors.grey300, width: 0.6),
         borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
       ),
       child: pw.Column(
@@ -354,33 +480,87 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     );
   }
 
+  pw.Widget _metricGridWidget(List<DocumentMetric> metrics, int columns) {
+    final rows = <pw.Widget>[];
+    for (var start = 0; start < metrics.length; start += columns) {
+      final row = metrics.skip(start).take(columns).toList();
+      rows.add(
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            for (final metric in row)
+              pw.Expanded(
+                child: pw.Padding(
+                  padding: const pw.EdgeInsets.all(3),
+                  child: _metricWidget(
+                    metric.label,
+                    metric.value,
+                    metric.caption,
+                  ),
+                ),
+              ),
+            for (var empty = row.length; empty < columns; empty++)
+              pw.Expanded(child: pw.SizedBox()),
+          ],
+        ),
+      );
+    }
+    return pw.Column(children: rows);
+  }
+
   pw.Widget _tableWidget(
     List<DocumentTableColumn> columns,
     List<DocumentTableRow> rows,
+    DocumentTableStyle style,
   ) {
     final tableRows = <pw.TableRow>[
       pw.TableRow(
         repeat: true,
-        decoration: const pw.BoxDecoration(color: PdfColors.grey200),
+        decoration: pw.BoxDecoration(color: _pdfColor(style.headerColor)),
         children: columns
-            .map((column) => _tableCell(column.label, column.alignment, true))
+            .map(
+              (column) => _tableCell(
+                column.label,
+                column.alignment,
+                true,
+                style.compact,
+              ),
+            )
             .toList(),
       ),
-      ...rows.map(
-        (row) => pw.TableRow(
+      ...rows.indexed.map(
+        (entry) => pw.TableRow(
+          decoration: style.stripedRows && entry.$1.isOdd
+              ? pw.BoxDecoration(color: _pdfColor(style.alternateRowColor))
+              : null,
           children: [
-            for (var index = 0; index < row.cells.length; index++)
+            for (var index = 0; index < entry.$2.cells.length; index++)
               _tableCell(
-                _valueText(row.cells[index].value),
+                _valueText(entry.$2.cells[index].value),
                 columns[index].alignment,
                 false,
+                style.compact,
               ),
           ],
         ),
       ),
     ];
+    final weights = style.columnWeights;
     return pw.Table(
-      border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
+      border: style.showBorders
+          ? pw.TableBorder.all(color: PdfColors.grey400, width: 0.45)
+          : pw.TableBorder(
+              horizontalInside: const pw.BorderSide(
+                color: PdfColors.grey300,
+                width: 0.35,
+              ),
+            ),
+      columnWidths: weights == null
+          ? null
+          : {
+              for (var index = 0; index < weights.length; index++)
+                index: pw.FlexColumnWidth(weights[index]),
+            },
       children: tableRows,
     );
   }
@@ -389,6 +569,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     String text,
     DocumentCellAlignment alignment,
     bool isHeader,
+    bool compact,
   ) {
     final textAlign = switch (alignment) {
       DocumentCellAlignment.leading => pw.TextAlign.left,
@@ -397,7 +578,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       DocumentCellAlignment.decimal => pw.TextAlign.right,
     };
     return pw.Padding(
-      padding: const pw.EdgeInsets.all(5),
+      padding: pw.EdgeInsets.all(compact ? 3 : 6),
       child: pw.Text(
         text,
         textAlign: textAlign,
@@ -406,6 +587,276 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           fontWeight: isHeader ? pw.FontWeight.bold : pw.FontWeight.normal,
         ),
       ),
+    );
+  }
+
+  List<pw.Widget> _chartWidgets(DocumentChart chart) {
+    final categories = chart.series.first.points;
+    final widgets = <pw.Widget>[
+      pw.Header(
+        level: 2,
+        child: pw.Text(
+          chart.title,
+          style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+        ),
+      ),
+      if (chart.subtitle != null)
+        pw.Paragraph(
+          text: chart.subtitle!,
+          style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+        ),
+      pw.SvgImage(svg: _chartSvg(chart), height: 180),
+    ];
+
+    if (chart.type == DocumentChartType.bar ||
+        chart.type == DocumentChartType.line) {
+      widgets.add(
+        pw.Padding(
+          padding: const pw.EdgeInsets.only(top: 4),
+          child: pw.Wrap(
+            spacing: 8,
+            runSpacing: 3,
+            children: categories
+                .map(
+                  (point) => pw.Text(
+                    point.label,
+                    style: const pw.TextStyle(fontSize: 7),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      );
+    }
+
+    if (chart.showLegend) {
+      widgets.add(
+        pw.Padding(
+          padding: const pw.EdgeInsets.symmetric(vertical: 8),
+          child: pw.Wrap(
+            spacing: 12,
+            runSpacing: 5,
+            children: chart.series
+                .map(
+                  (series) => pw.Row(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    children: [
+                      pw.Container(
+                        width: 7,
+                        height: 7,
+                        decoration: pw.BoxDecoration(
+                          color: _pdfColor(series.color),
+                          shape: pw.BoxShape.circle,
+                        ),
+                      ),
+                      pw.SizedBox(width: 4),
+                      pw.Text(
+                        series.label,
+                        style: const pw.TextStyle(fontSize: 8),
+                      ),
+                    ],
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      );
+    }
+
+    widgets.add(_chartDataTable(chart));
+    widgets.add(pw.SizedBox(height: 12));
+    return widgets;
+  }
+
+  pw.Widget _chartDataTable(DocumentChart chart) {
+    final isCircular =
+        chart.type == DocumentChartType.pie ||
+        chart.type == DocumentChartType.donut;
+    final categories = chart.series.first.points;
+    final rows = <pw.TableRow>[
+      pw.TableRow(
+        repeat: true,
+        children: [
+          _chartTableCell(isCircular ? 'Category' : 'Period', true),
+          for (final series in chart.series)
+            _chartTableCell(isCircular ? 'Value' : series.label, true),
+        ],
+      ),
+      for (var index = 0; index < categories.length; index++)
+        pw.TableRow(
+          children: [
+            _chartTableCell(categories[index].label, false),
+            for (final series in chart.series)
+              _chartTableCell(
+                series.points[index].displayValue ??
+                    series.points[index].value.toString(),
+                false,
+              ),
+          ],
+        ),
+    ];
+    return pw.Padding(
+      padding: const pw.EdgeInsets.only(top: 5),
+      child: pw.Table(
+        border: const pw.TableBorder(
+          horizontalInside: pw.BorderSide(color: PdfColors.grey300, width: 0.3),
+        ),
+        children: rows,
+      ),
+    );
+  }
+
+  pw.Widget _chartTableCell(String value, bool header) => pw.Padding(
+    padding: const pw.EdgeInsets.symmetric(vertical: 3, horizontal: 4),
+    child: pw.Text(
+      value,
+      style: pw.TextStyle(
+        fontSize: 7,
+        fontWeight: header ? pw.FontWeight.bold : pw.FontWeight.normal,
+      ),
+    ),
+  );
+
+  String _chartSvg(DocumentChart chart) {
+    const width = 600.0;
+    const height = 240.0;
+    const left = 32.0;
+    const right = 16.0;
+    const top = 16.0;
+    const bottom = 22.0;
+    final plotWidth = width - left - right;
+    final plotHeight = height - top - bottom;
+    final buffer = StringBuffer(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="240" viewBox="0 0 600 240">',
+    );
+
+    if (chart.type == DocumentChartType.pie ||
+        chart.type == DocumentChartType.donut) {
+      final points = chart.series.single.points;
+      final total = points.fold<double>(0, (sum, point) => sum + point.value);
+      var angle = -math.pi / 2;
+      const cx = 300.0;
+      const cy = 120.0;
+      const radius = 100.0;
+      for (var index = 0; index < points.length; index++) {
+        final sweep = points[index].value / total * math.pi * 2;
+        if (sweep > 0) {
+          final end = angle + sweep;
+          final x1 = cx + radius * math.cos(angle);
+          final y1 = cy + radius * math.sin(angle);
+          final x2 = cx + radius * math.cos(end);
+          final y2 = cy + radius * math.sin(end);
+          final largeArc = sweep > math.pi ? 1 : 0;
+          buffer.write(
+            '<path d="M $cx $cy L $x1 $y1 A $radius $radius 0 $largeArc 1 $x2 $y2 Z" fill="#${_pieColor(index)}"/>',
+          );
+        }
+        angle += sweep;
+      }
+      if (chart.type == DocumentChartType.donut) {
+        buffer.write('<circle cx="$cx" cy="$cy" r="52" fill="#FFFFFF"/>');
+      }
+    } else {
+      final allValues = chart.series
+          .expand((series) => series.points.map((point) => point.value))
+          .toList();
+      var minValue = allValues.reduce((a, b) => a < b ? a : b);
+      var maxValue = allValues.reduce((a, b) => a > b ? a : b);
+      if (chart.type == DocumentChartType.bar) {
+        minValue = minValue < 0 ? minValue : 0;
+        maxValue = maxValue > 0 ? maxValue : 0;
+      }
+      if (minValue == maxValue) {
+        maxValue = minValue + 1;
+      }
+      final range = maxValue - minValue;
+      double yFor(double value) {
+        return top + (maxValue - value) / range * plotHeight;
+      }
+
+      if (chart.showGrid) {
+        for (var line = 0; line <= 4; line++) {
+          final y = top + plotHeight * line / 4;
+          buffer.write(
+            '<line x1="$left" y1="$y" x2="${width - right}" y2="$y" stroke="#D7DEE7" stroke-width="1"/>',
+          );
+        }
+      }
+      if (chart.type == DocumentChartType.bar) {
+        final count = chart.series.first.points.length;
+        final groupWidth = plotWidth / count;
+        final barWidth = math.min(34.0, groupWidth / (chart.series.length + 1));
+        final baseline = yFor(0);
+        for (
+          var seriesIndex = 0;
+          seriesIndex < chart.series.length;
+          seriesIndex++
+        ) {
+          final series = chart.series[seriesIndex];
+          for (
+            var pointIndex = 0;
+            pointIndex < series.points.length;
+            pointIndex++
+          ) {
+            final value = series.points[pointIndex].value;
+            final x =
+                left +
+                groupWidth * pointIndex +
+                groupWidth / 2 +
+                (seriesIndex - (chart.series.length - 1) / 2) * barWidth -
+                barWidth / 2;
+            final y = yFor(value);
+            buffer.write(
+              '<rect x="$x" y="${math.min(y, baseline)}" width="$barWidth" height="${math.max(1, (baseline - y).abs())}" rx="3" fill="#${series.color}"/>',
+            );
+          }
+        }
+      } else {
+        for (final series in chart.series) {
+          final points = <String>[];
+          for (var index = 0; index < series.points.length; index++) {
+            final x =
+                left +
+                (series.points.length == 1
+                    ? plotWidth / 2
+                    : plotWidth * index / (series.points.length - 1));
+            points.add('$x,${yFor(series.points[index].value)}');
+          }
+          final path = points
+              .asMap()
+              .entries
+              .map(
+                (entry) =>
+                    '${entry.key == 0 ? 'M' : 'L'} ${entry.value.replaceAll(',', ' ')}',
+              )
+              .join(' ');
+          buffer.write(
+            '<path d="$path" fill="none" stroke="#${series.color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>',
+          );
+          for (final point in points) {
+            final coordinates = point.split(',');
+            buffer.write(
+              '<circle cx="${coordinates[0]}" cy="${coordinates[1]}" r="5" fill="#${series.color}"/>',
+            );
+          }
+        }
+      }
+    }
+    buffer.write('</svg>');
+    return buffer.toString();
+  }
+
+  String _pieColor(int index) {
+    const colors = ['0D7A5F', '2563EB', 'D97706', '7C3AED', 'DB2777', '0891B2'];
+    return colors[index % colors.length];
+  }
+
+  PdfColor _pdfColor(String hex) {
+    final value = int.parse(hex, radix: 16);
+    return PdfColor(
+      ((value >> 16) & 0xFF) / 255,
+      ((value >> 8) & 0xFF) / 255,
+      (value & 0xFF) / 255,
     );
   }
 
