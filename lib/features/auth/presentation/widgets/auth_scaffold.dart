@@ -8,11 +8,12 @@ import 'package:netsales_dashboard/features/auth/presentation/widgets/login_bran
 import 'package:netsales_dashboard/widgets/buttons/custom_theme_toggle_button.dart';
 import 'package:netsales_dashboard/widgets/dashboard_layout/desktop_title_bar.dart';
 
-/// الهيكل التفاعلي المشترك لواجهات الدخول في بيئة Windows Desktop
+/// الهيكل التفاعلي المشترك لواجهات الدخول في بيئة Windows Desktop.
 ///
-/// يوفر تقسيماً متجاوباً وفاخراً:
-/// - لوحة الهوية المؤسسية (Brand Panel) للشاشات الكبيرة ومتوسطة الحجم.
-/// - حاوية النموذج المركزية مع شريط العنوان المكتبي وزر تبديل السمة (Light/Dark).
+/// يحافظ على فصل مساحة الهوية عن نموذج الدخول، مع:
+/// - لوحة علامة تجارية ذات تسلسل بصري مستقل للشاشات المكتبية.
+/// - نموذج محدود العرض ومتمركز رأسياً عندما تسمح مساحة النافذة.
+/// - تمرير آمن وكثافة رأسية أقل للنوافذ المكتبية القصيرة.
 class AuthScaffold extends StatelessWidget {
   const AuthScaffold({
     super.key,
@@ -31,10 +32,8 @@ class AuthScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
     return Scaffold(
-      backgroundColor: colors.surface,
+      backgroundColor: context.colors.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -45,19 +44,19 @@ class AuthScaffold extends StatelessWidget {
                   final showBrandPanel =
                       constraints.maxWidth >= AppBreakpoints.tabletMax;
 
-                  if (showBrandPanel) {
-                    return Row(
-                      children: [
-                        const Expanded(flex: 5, child: LoginBrandPanel()),
-                        Expanded(
-                          flex: 6,
-                          child: _buildForm(context, compactBrand: false),
-                        ),
-                      ],
-                    );
+                  if (!showBrandPanel) {
+                    return _buildForm(context, compactBrand: true);
                   }
 
-                  return _buildForm(context, compactBrand: true);
+                  return Row(
+                    children: [
+                      const Expanded(flex: 5, child: LoginBrandPanel()),
+                      Expanded(
+                        flex: 6,
+                        child: _buildForm(context, compactBrand: false),
+                      ),
+                    ],
+                  );
                 },
               ),
             ),
@@ -70,95 +69,123 @@ class AuthScaffold extends StatelessWidget {
   Widget _buildForm(BuildContext context, {required bool compactBrand}) {
     final colors = context.colors;
 
-    return SingleChildScrollView(
-      padding: EdgeInsetsDirectional.fromSTEB(
-        AppSpacing.xxl,
-        compactBrand ? AppSpacing.xl : AppSpacing.xxl,
-        AppSpacing.xxl,
-        AppSpacing.xxl,
-      ),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: AppBreakpoints.maxFormWidth,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compactHeight =
+            constraints.maxHeight < AppBreakpoints.desktopCompactHeightMax;
+        final horizontalPadding = constraints.maxWidth < 520
+            ? AppSpacing.md
+            : AppSpacing.xxxl;
+        final verticalPadding = compactHeight
+            ? AppSpacing.md
+            : AppSpacing.xxl;
+        final availableContentHeight =
+            (constraints.maxHeight - (verticalPadding * 2))
+                .clamp(0.0, double.infinity)
+                .toDouble();
+
+        return SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+            horizontal: horizontalPadding,
+            vertical: verticalPadding,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Top Controls Bar ──
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (compactBrand)
-                    const _CompactBrandHeader()
-                  else
-                    const SizedBox.shrink(),
-                  const CustomThemeToggleButton(),
-                ],
-              ),
-
-              AppSpacing.vXl,
-
-              // ── Header Icon Badge ──
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Container(
-                  padding: EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: colors.primaryContainer.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(AppRadius.lg),
-                    border: Border.all(
-                      color: colors.primary.withValues(alpha: 0.15),
-                      width: 1,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: availableContentHeight),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: AppBreakpoints.maxFormWidth,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // ── Top Controls ──
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (compactBrand)
+                          const _CompactBrandHeader()
+                        else
+                          const SizedBox.shrink(),
+                        const CustomThemeToggleButton(),
+                      ],
                     ),
-                  ),
-                  child: Icon(icon, size: 24, color: colors.primary),
+
+                    SizedBox(
+                      height: compactHeight ? AppSpacing.md : AppSpacing.xl,
+                    ),
+
+                    // ── Authentication Identity ──
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Container(
+                        padding: EdgeInsets.all(
+                          compactHeight ? AppSpacing.sm : AppSpacing.md,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colors.primaryContainer.withValues(
+                            alpha: 0.5,
+                          ),
+                          borderRadius: BorderRadius.circular(AppRadius.lg),
+                          border: Border.all(
+                            color: colors.primary.withValues(alpha: 0.15),
+                            width: 1,
+                          ),
+                        ),
+                        child: Icon(icon, size: 24, color: colors.primary),
+                      ),
+                    ),
+
+                    AppSpacing.vLg,
+
+                    Text(
+                      title,
+                      style: AppTypography.headlineLarge.copyWith(
+                        color: colors.onSurface,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                    AppSpacing.vXs,
+                    Text(
+                      subtitle,
+                      style: AppTypography.bodyMedium.copyWith(
+                        color: colors.onSurfaceVariant,
+                        height: 1.55,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+
+                    SizedBox(
+                      height: compactHeight
+                          ? AppSpacing.lg
+                          : AppSpacing.xxl,
+                    ),
+
+                    child,
+
+                    if (footer != null) ...[
+                      AppSpacing.vXxl,
+                      footer!,
+                    ],
+
+                    AppSpacing.vXxl,
+
+                    Text(
+                      '© 2026 منصة NetSales • كافة الحقوق محفوظة',
+                      style: AppTypography.badgeText.copyWith(
+                        color: colors.onSurfaceVariant.withValues(alpha: 0.8),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
-
-              AppSpacing.vLg,
-
-              // ── Title & Subtitle ──
-              Text(
-                title,
-                style: AppTypography.headlineMedium.copyWith(
-                  color: colors.onSurface,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.3,
-                ),
-                textAlign: TextAlign.start,
-              ),
-              AppSpacing.vXs,
-              Text(
-                subtitle,
-                style: AppTypography.bodyMedium.copyWith(
-                  color: colors.onSurfaceVariant,
-                  height: 1.6,
-                ),
-                textAlign: TextAlign.start,
-              ),
-
-              AppSpacing.vXl,
-
-              // ── Form Child ──
-              child,
-
-              if (footer != null) ...[AppSpacing.vXxl, footer!],
-
-              AppSpacing.vXxl,
-
-              // ── Platform Copyright Footer ──
-              Text(
-                '© 2026 منصة NetSales • كافة الحقوق محفوظة',
-                style: AppTypography.badgeText.copyWith(
-                  color: colors.onSurfaceVariant.withValues(alpha: 0.8),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

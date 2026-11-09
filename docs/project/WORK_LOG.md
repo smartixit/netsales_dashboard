@@ -161,3 +161,22 @@
 ### Verification
 - Regression tests added; GitHub Actions analyzer, full tests, and Windows build are pending PR CI.
 - No live rendered Windows/Web visual QA is claimed from this execution context.
+
+
+## 2026-11-09 — Premium Desktop Authentication Polish
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/premium-authentication-polish`
+
+### Implemented
+- Strengthened the brand-panel hierarchy: clearer product descriptor, larger brand identity and headline, better description contrast, and an explicit platform-pillars section.
+- Removed equal visual weighting from the three benefit cards. Security remains the highlighted trust pillar; financial governance and desktop stability are quieter supporting rows.
+- Added a centralized desktop compact-height breakpoint and use it to reduce vertical gaps when the authentication window is short.
+- Centered the authentication form vertically when space permits while keeping the content scrollable and overflow-safe when the window is compact.
+- Increased the login welcome heading to the proper desktop page-heading token.
+- Added responsive authentication layout tests for 900×620, 1040×720, 1440×900, 1920×1080, and a compact-width 880×720 case, covering both themes and RTL/LTR.
+- Authentication behavior, API calls, controller state, and credential submission were not changed.
+
+### Verification
+- Focused responsive widget tests, full Flutter tests, analyzer, and Windows Debug build are pending PR CI.
+- No live rendered Windows/Web visual QA is claimed from this execution context.
