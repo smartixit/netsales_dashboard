@@ -20,7 +20,7 @@ class PlatformOverviewChartGrid extends StatelessWidget {
           context,
           l.text('subscription_trend'),
           ChartFamily.cartesian,
-          ChartType.line,
+          ChartType.spline,
           charts.subscriptionTrend
               .map((point) => ChartDataPoint(x: point.period, y: point.value))
               .toList(growable: false),
@@ -91,13 +91,14 @@ class PlatformOverviewChartGrid extends StatelessWidget {
     return ChartCard(
       title: title,
       description: AppLocalizations.of(context).text('server_aggregated_data'),
-      height: 230,
+      height: 286,
       state: state,
       chart: ChartRenderer(
         definition: ChartDefinition(
           family: family,
           type: type,
           series: [series],
+          options: const ChartOptions(showLegend: true, showTooltip: true, showMajorGridLines: true, enableTrackball: true, animate: true, animationDuration: 520),
           state: state,
         ),
       ),

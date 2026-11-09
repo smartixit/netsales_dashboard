@@ -173,10 +173,11 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
           id: 'active_networks',
           title: l10n.text('active_network_providers'),
           value: network.active.toString(),
-          variant: DashboardMetricVariant.standard,
+          variant: DashboardMetricVariant.status,
           icon: Icons.router_outlined,
           description: '${l10n.text('total')}: ${network.total}',
           tone: DashboardMetricTone.success,
+          statusLabel: '${network.pending} ${l10n.text('pending')}',
         ),
       if (metrics.pos case final pos?)
         DashboardMetricData(
@@ -193,7 +194,7 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
           id: 'active_subscriptions',
           title: l10n.text('active_subscriptions'),
           value: subscriptions.active.toString(),
-          variant: DashboardMetricVariant.standard,
+          variant: DashboardMetricVariant.trend,
           icon: Icons.card_membership_outlined,
           description: '${l10n.text('total')}: ${subscriptions.total}',
           tone: DashboardMetricTone.success,
@@ -202,9 +203,10 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
           id: 'expiring_subscriptions',
           title: l10n.text('expiring_subscriptions'),
           value: subscriptions.expiringWithin7Days.toString(),
-          variant: DashboardMetricVariant.standard,
+          variant: DashboardMetricVariant.status,
           icon: Icons.hourglass_bottom_rounded,
           tone: DashboardMetricTone.warning,
+          statusLabel: l10n.text('within_seven_days'),
           description: l10n.text('within_seven_days'),
         ),
       ],
@@ -213,11 +215,12 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
           id: 'support_tickets',
           title: l10n.text('support_tickets'),
           value: support.totalTickets.toString(),
-          variant: DashboardMetricVariant.standard,
+          variant: DashboardMetricVariant.status,
           icon: Icons.support_agent_outlined,
           tone: DashboardMetricTone.info,
           description:
               '${l10n.text('unread_messages')}: ${support.unreadMessages}',
+          statusLabel: l10n.text('server_aggregated_data'),
         ),
       if (metrics.sales case final sales?)
         DashboardMetricData(
@@ -275,6 +278,7 @@ class _AttentionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final colors = context.colors;
     final data = controller.overview.value!;
     final groups = data.attentionGroups
         .where((g) => g.count > 0)
@@ -315,21 +319,32 @@ class _AttentionSection extends StatelessWidget {
               ),
             ),
             for (final item in group.items)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.flag_outlined),
-                title: Text(
-                  item.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                child: Material(
+                  color: colors.surfaceContainerLow,
+                  borderRadius: AppRadius.mdRadius,
+                  child: InkWell(
+                    borderRadius: AppRadius.mdRadius,
+                    onTap: () => _openRoute(item.routeKey),
+                    child: Padding(
+                      padding: EdgeInsets.all(AppSpacing.md),
+                      child: Row(children: [
+                        Icon(Icons.flag_outlined, color: colors.warning, size: 19),
+                        AppSpacing.hSm,
+                        Expanded(child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(item.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+                            Text(item.subtitle, maxLines: 1, overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant)),
+                          ],
+                        )),
+                        Icon(Icons.arrow_forward_ios_rounded, size: 13, color: colors.onSurfaceVariant),
+                      ]),
+                    ),
+                  ),
                 ),
-                subtitle: Text(
-                  item.subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: const Icon(Icons.chevron_right_rounded),
-                onTap: () => _openRoute(item.routeKey),
               ),
             AppSpacing.vSm,
           ],
