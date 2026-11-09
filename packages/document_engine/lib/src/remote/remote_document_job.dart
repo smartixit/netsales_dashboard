@@ -1,14 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
-import 'package:document_engine/src/output/document_output.dart';
 
 import '../core/document_id.dart';
 import '../core/template_id.dart';
 import '../core/template_version.dart';
 import '../rendering/document_render_result.dart';
 import '../reports/report_id.dart';
-import 'output/document_output.dart';
+import '../output/document_output.dart';
 
 /// Server-owned asynchronous document generation state.
 enum RemoteDocumentJobStatus {
