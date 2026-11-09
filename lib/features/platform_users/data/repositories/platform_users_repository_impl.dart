@@ -38,6 +38,42 @@ class PlatformUsersRepositoryImpl implements PlatformUsersRepository {
   }
 
   @override
+  Future<ApiResponse<List<PlatformUserEntity>>> getTrashedUsers({
+    String? search,
+    String? cursor,
+    int perPage = 20,
+  }) async {
+    final response = await _remoteDataSource.getTrashedUsers(
+      search: search,
+      cursor: cursor,
+      perPage: perPage,
+    );
+    return ApiResponse<List<PlatformUserEntity>>(
+      success: response.success,
+      message: response.message,
+      data: response.data,
+      errors: response.errors,
+      nextCursor: response.nextCursor,
+      prevCursor: response.prevCursor,
+      meta: response.meta,
+      isIdempotentHit: response.isIdempotentHit,
+      idempotencyKey: response.idempotencyKey,
+    );
+  }
+
+  @override
+  Future<void> restoreUser(int userId) async {
+    final response = await _remoteDataSource.restoreUser(userId);
+    if (!response.success) throw Exception(response.message.isNotEmpty ? response.message : 'تعذرت استعادة المستخدم.');
+  }
+
+  @override
+  Future<void> forceDeleteUser(int userId) async {
+    final response = await _remoteDataSource.forceDeleteUser(userId);
+    if (!response.success) throw Exception(response.message.isNotEmpty ? response.message : 'تعذر الحذف النهائي للمستخدم.');
+  }
+
+  @override
   Future<PlatformUserDetailEntity?> getUserDetail(int id) async {
     final response = await _remoteDataSource.getUserDetail(id);
     if (!response.success || response.data == null) {
