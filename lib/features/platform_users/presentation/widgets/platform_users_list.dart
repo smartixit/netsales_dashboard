@@ -29,7 +29,7 @@ class PlatformUsersList extends StatelessWidget {
       final compact = constraints.maxWidth < 650;
       return Column(
         children: [
-          if (!compact) _UsersTableHeader(l10n: l10n),
+          if (!compact && !controller.isTrashView.value) _UsersTableHeader(l10n: l10n),
           Expanded(
             child: ListView.separated(
               itemCount: controller.users.length + (controller.hasMore ? 1 : 0),
