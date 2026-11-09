@@ -17,10 +17,21 @@ class CreatePlatformOverviewDocumentUseCase {
       );
     }
 
+    final charts = overview.charts;
+    if (charts.subscriptionTrend.length > 100 ||
+        charts.providerDistribution.length > 100 ||
+        charts.operationalActivity.length > 100 ||
+        overview.attentionGroups.length > 100) {
+      return const DocumentRenderFailure(
+        code: DocumentRenderFailureCode.layoutFailure,
+        message: 'The overview snapshot exceeds the bounded report input limit.',
+      );
+    }
+
     final sections = <DocumentSection>[];
     sections.addAll(_metricSections(overview.metrics));
 
-    final chartNodes = _chartNodes(overview.charts);
+    final chartNodes = _chartAndTableNodes(charts);
     if (chartNodes.isNotEmpty) {
       sections.add(
         DocumentSection(
@@ -53,39 +64,6 @@ class CreatePlatformOverviewDocumentUseCase {
                       ),
                       DocumentTableCell(
                         value: DocumentIntegerValue(attentionRows[index].count),
-                      ),
-                    ],
-                  ),
-              ],
-              style: DocumentTableStyle(stripedRows: true, compact: true),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final activity = overview.charts.operationalActivity;
-    if (activity.length > 24 && activity.length <= 100) {
-      sections.add(
-        DocumentSection(
-          id: 'activity-data',
-          title: 'Operational activity data',
-          nodes: [
-            DocumentTable(
-              columns: [
-                DocumentTableColumn(id: 'date', label: 'Date'),
-                DocumentTableColumn(id: 'value', label: 'Value'),
-              ],
-              rows: [
-                for (var index = 0; index < activity.length; index++)
-                  DocumentTableRow(
-                    id: 'activity-point-$index',
-                    cells: [
-                      DocumentTableCell(
-                        value: DocumentTextValue(activity[index].date),
-                      ),
-                      DocumentTableCell(
-                        value: DocumentIntegerValue(activity[index].value),
                       ),
                     ],
                   ),
@@ -220,83 +198,149 @@ class CreatePlatformOverviewDocumentUseCase {
     return sections;
   }
 
-  List<DocumentNode> _chartNodes(PlatformDashboardChartsEntity charts) {
+  List<DocumentNode> _chartAndTableNodes(
+    PlatformDashboardChartsEntity charts,
+  ) {
     final nodes = <DocumentNode>[];
 
-    if (charts.subscriptionTrend.isNotEmpty &&
-        charts.subscriptionTrend.length <= 24) {
-      nodes.add(
-        DocumentChart(
-          title: 'Subscription trend',
-          type: DocumentChartType.line,
-          series: [
-            DocumentChartSeries(
-              id: 'subscription-count',
-              label: 'Subscriptions',
-              points: [
-                for (final point in charts.subscriptionTrend)
-                  DocumentChartPoint(
-                    label: point.period,
-                    value: point.value.toDouble(),
-                    displayValue: point.value.toString(),
-                  ),
-              ],
-            ),
+    if (charts.subscriptionTrend.isNotEmpty) {
+      if (charts.subscriptionTrend.length <= 24) {
+        nodes.add(
+          DocumentChart(
+            title: 'Subscription trend',
+            type: DocumentChartType.line,
+            series: [
+              DocumentChartSeries(
+                id: 'subscription-count',
+                label: 'Subscriptions',
+                points: [
+                  for (final point in charts.subscriptionTrend)
+                    DocumentChartPoint(
+                      label: point.period,
+                      value: point.value.toDouble(),
+                      displayValue: point.value.toString(),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        );
+      } else {
+        nodes.add(_twoColumnTable(
+          idPrefix: 'subscription-point',
+          firstColumnId: 'period',
+          firstColumnLabel: 'Period',
+          secondColumnId: 'value',
+          secondColumnLabel: 'Value',
+          rows: [
+            for (final point in charts.subscriptionTrend)
+              (point.period, point.value.toString()),
           ],
-        ),
-      );
+        ));
+      }
     }
 
-    if (charts.providerDistribution.isNotEmpty &&
-        charts.providerDistribution.length <= 24) {
-      nodes.add(
-        DocumentChart(
-          title: 'Provider distribution',
-          type: DocumentChartType.bar,
-          series: [
-            DocumentChartSeries(
-              id: 'provider-status-count',
-              label: 'Providers',
-              points: [
-                for (final point in charts.providerDistribution)
-                  DocumentChartPoint(
-                    label: '${point.entity}-${point.status}',
-                    value: point.value.toDouble(),
-                    displayValue: point.value.toString(),
-                  ),
-              ],
-            ),
+    if (charts.providerDistribution.isNotEmpty) {
+      if (charts.providerDistribution.length <= 24) {
+        nodes.add(
+          DocumentChart(
+            title: 'Provider distribution',
+            type: DocumentChartType.bar,
+            series: [
+              DocumentChartSeries(
+                id: 'provider-status-count',
+                label: 'Providers',
+                points: [
+                  for (final point in charts.providerDistribution)
+                    DocumentChartPoint(
+                      label: '${point.entity}-${point.status}',
+                      value: point.value.toDouble(),
+                      displayValue: point.value.toString(),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        );
+      } else {
+        nodes.add(_twoColumnTable(
+          idPrefix: 'provider-point',
+          firstColumnId: 'category',
+          firstColumnLabel: 'Category',
+          secondColumnId: 'value',
+          secondColumnLabel: 'Value',
+          rows: [
+            for (final point in charts.providerDistribution)
+              ('${point.entity}-${point.status}', point.value.toString()),
           ],
-        ),
-      );
+        ));
+      }
     }
 
-    if (charts.operationalActivity.isNotEmpty &&
-        charts.operationalActivity.length <= 24) {
-      nodes.add(
-        DocumentChart(
-          title: 'Operational activity',
-          type: DocumentChartType.line,
-          series: [
-            DocumentChartSeries(
-              id: 'activity-count',
-              label: 'Activity',
-              points: [
-                for (final point in charts.operationalActivity)
-                  DocumentChartPoint(
-                    label: point.date,
-                    value: point.value.toDouble(),
-                    displayValue: point.value.toString(),
-                  ),
-              ],
-            ),
+    if (charts.operationalActivity.isNotEmpty) {
+      if (charts.operationalActivity.length <= 24) {
+        nodes.add(
+          DocumentChart(
+            title: 'Operational activity',
+            type: DocumentChartType.line,
+            series: [
+              DocumentChartSeries(
+                id: 'activity-count',
+                label: 'Activity',
+                points: [
+                  for (final point in charts.operationalActivity)
+                    DocumentChartPoint(
+                      label: point.date,
+                      value: point.value.toDouble(),
+                      displayValue: point.value.toString(),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        );
+      } else {
+        nodes.add(_twoColumnTable(
+          idPrefix: 'activity-point',
+          firstColumnId: 'date',
+          firstColumnLabel: 'Date',
+          secondColumnId: 'value',
+          secondColumnLabel: 'Value',
+          rows: [
+            for (final point in charts.operationalActivity)
+              (point.date, point.value.toString()),
           ],
-        ),
-      );
+        ));
+      }
     }
 
     return nodes;
   }
+
+  DocumentTable _twoColumnTable({
+    required String idPrefix,
+    required String firstColumnId,
+    required String firstColumnLabel,
+    required String secondColumnId,
+    required String secondColumnLabel,
+    required List<(String, String)> rows,
+  }) => DocumentTable(
+    columns: [
+      DocumentTableColumn(id: firstColumnId, label: firstColumnLabel),
+      DocumentTableColumn(id: secondColumnId, label: secondColumnLabel),
+    ],
+    rows: [
+      for (var index = 0; index < rows.length; index++)
+        DocumentTableRow(
+          id: '$D{idPrefix}-$D{index}',
+          cells: [
+            DocumentTableCell(value: DocumentTextValue(rows[index].$1)),
+            DocumentTableCell(value: DocumentTextValue(rows[index].$2)),
+          ],
+        ),
+    ],
+    style: DocumentTableStyle(stripedRows: true, compact: true),
+  );
 
   DocumentMetric _integerMetric(String label, int value) => DocumentMetric(
     label: label,
