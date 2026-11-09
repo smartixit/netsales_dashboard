@@ -13,7 +13,7 @@ void main() {
       throwsArgumentError,
     );
     expect(
-      () => DocumentQrCode(payload: 'x' * 2049),
+      () => DocumentQrCode(payload: List<String>.filled(2049, 'x').join()),
       throwsArgumentError,
     );
   });
