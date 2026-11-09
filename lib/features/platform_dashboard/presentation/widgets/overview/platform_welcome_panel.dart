@@ -6,6 +6,8 @@ import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/core/themes/app_breakpoints.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
+import 'package:netsales_dashboard/core/themes/app_gradients.dart';
+import 'package:netsales_dashboard/core/themes/app_elevation.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 
 class PlatformWelcomePanel extends StatelessWidget {
@@ -30,18 +32,17 @@ class PlatformWelcomePanel extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.xl),
+      padding: EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLowest,
-        borderRadius: AppRadius.xlRadius,
-        border: Border.all(color: colors.outlineVariant.withValues(alpha: 0.35)),
-        boxShadow: [
-          BoxShadow(
-            color: colors.shadow.withValues(alpha: isDark ? 0.2 : 0.04),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        gradient: AppGradients.financialHero(context),
+        borderRadius: AppRadius.xxlRadius,
+        boxShadow: AppElevation.tinted(
+          context,
+          colors.primary,
+          alpha: 0.16,
+          blur: 24,
+          dy: 8,
+        ),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -84,8 +85,8 @@ class PlatformWelcomePanel extends StatelessWidget {
                     Text(
                       greeting,
                       style: AppTypography.titleLarge.copyWith(
-                        color: colors.onSurface,
-                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     AppSpacing.vXxs,
@@ -94,7 +95,7 @@ class PlatformWelcomePanel extends StatelessWidget {
                         Text(
                           l10n.text('platform_summary'),
                           style: AppTypography.bodySmall.copyWith(
-                            color: colors.onSurfaceVariant,
+                            color: Colors.white.withValues(alpha: 0.84),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -111,7 +112,7 @@ class PlatformWelcomePanel extends StatelessWidget {
                         Text(
                           date,
                           style: AppTypography.caption.copyWith(
-                            color: colors.onSurfaceVariant.withValues(alpha: 0.8),
+                            color: Colors.white.withValues(alpha: 0.72),
                           ),
                         ),
                       ],
@@ -126,6 +127,9 @@ class PlatformWelcomePanel extends StatelessWidget {
             prefix: const Icon(Icons.refresh_rounded, size: 18),
             onPressed: onRefresh,
             size: AppButtonSize.small,
+            backgroundColor: Colors.white.withValues(alpha: 0.14),
+            foregroundColor: Colors.white,
+            borderColor: Colors.white.withValues(alpha: 0.24),
           );
           if (compact) {
             return Column(

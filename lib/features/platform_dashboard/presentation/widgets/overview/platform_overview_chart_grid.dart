@@ -61,15 +61,15 @@ class PlatformOverviewChartGrid extends StatelessWidget {
     }
     return LayoutBuilder(
       builder: (context, c) {
-        final columns = c.maxWidth >= 1200
-            ? 3
-            : c.maxWidth >= 900
+        final columns = definitions.length == 1
+            ? 1
+            : c.maxWidth >= 1080
             ? 2
             : 1;
-        final width = (c.maxWidth - AppSpacing.md * (columns - 1)) / columns;
+        final width = (c.maxWidth - AppSpacing.lg * (columns - 1)) / columns;
         return Wrap(
-          spacing: AppSpacing.md,
-          runSpacing: AppSpacing.md,
+          spacing: AppSpacing.lg,
+          runSpacing: AppSpacing.lg,
           children: [
             for (final item in definitions) SizedBox(width: width, child: item),
           ],
