@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   actions: read
 
 concurrency:
@@ -80,6 +80,20 @@ jobs:
 
       - name: Apply canonical Dart formatting
         run: dart format packages/document_engine
+
+      - name: Commit canonical formatting repair
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_BRANCH: ${{ github.head_ref }}
+        run: |
+          if ! git diff --quiet -- packages/document_engine; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add packages/document_engine
+            git commit -m "style(document-engine): apply canonical Dart formatting"
+            git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${PR_BRANCH}"
+          fi
 
       - name: Capture canonical formatter patch
         if: always()
