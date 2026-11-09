@@ -33,7 +33,12 @@ class PlatformUsersScreen extends GetView<PlatformUsersController> {
               description: l10n.text('platform_users_description'),
               icon: Icons.manage_accounts_rounded,
               actions: [
-                if (PermissionService.to.can(AppPermissions.usersCreate))
+                Obx(() => CustomButton.secondary(
+                  text: controller.isTrashView.value ? 'العودة للمستخدمين' : 'سلة المحذوفات',
+                  prefix: Icon(controller.isTrashView.value ? Icons.people_alt_outlined : Icons.delete_sweep_outlined, size: 18),
+                  onPressed: controller.toggleTrashView,
+                )),
+                if (PermissionService.to.can(AppPermissions.usersCreate) && !controller.isTrashView.value)
                   CustomButton.primary(
                     text: l10n.text('create_platform_user'),
                     prefix: const Icon(Icons.person_add_alt_1_rounded, size: 18),
@@ -51,7 +56,7 @@ class PlatformUsersScreen extends GetView<PlatformUsersController> {
             ),
           ),
           SizedBox(height: AppSpacing.lg),
-          PlatformUsersFilterBar(controller: controller, l10n: l10n),
+          if (!controller.isTrashView.value) PlatformUsersFilterBar(controller: controller, l10n: l10n),
           SizedBox(height: AppSpacing.md),
           Expanded(
             child: Obx(() {
