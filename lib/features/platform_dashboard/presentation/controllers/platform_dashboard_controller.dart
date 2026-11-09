@@ -129,6 +129,7 @@ class PlatformDashboardController extends GetxController {
       isLoadingOverview.value = true;
     }
     isRefreshingOverview.value = hasExistingOverview;
+    selectedPeriod.value = requestedPeriod;
     hasOverviewError.value = false;
 
     try {
@@ -139,6 +140,7 @@ class PlatformDashboardController extends GetxController {
     } catch (error) {
       if (requestGeneration != _overviewRequestGeneration) return;
       hasOverviewError.value = true;
+      selectedPeriod.value = overview.value?.period.key ?? requestedPeriod;
       if (!hasExistingOverview) {
         CustomSnackbar.show(
           title: LocaleService.to.isArabic
