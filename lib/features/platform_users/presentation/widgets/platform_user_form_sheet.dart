@@ -30,12 +30,19 @@ Future<bool?> showPlatformUserForm({
     leadingIcon: Icons.manage_accounts_rounded,
     maxHeightFactor: 0.9,
     scrollable: true,
+    isDismissible: false,
+    enableDrag: false,
+    showCloseButton: false,
     child: PlatformUserFormFields(controller: controller, l10n: l10n),
     actions: [
       Expanded(
-        child: CustomButton.outline(
-          text: l10n.text('cancel'),
-          onPressed: () => Get.back<bool>(),
+        child: Obx(
+          () => CustomButton.outline(
+            text: l10n.text('cancel'),
+            onPressed: controller.isSaving.value
+                ? null
+                : () => Get.back<bool>(),
+          ),
         ),
       ),
       AppSpacing.hSm,
