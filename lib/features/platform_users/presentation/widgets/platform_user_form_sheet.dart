@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:netsales_dashboard/core/constants/app_breakpoints.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
