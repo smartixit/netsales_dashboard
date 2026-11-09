@@ -49,6 +49,8 @@ class DesktopWindowingController {
 
   void toggleMaximize() {}
 
+  void performTitleBarDoubleClick() {}
+
   void startDragging() {}
 
   void close() {}

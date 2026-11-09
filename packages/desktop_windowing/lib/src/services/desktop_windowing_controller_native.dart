@@ -486,6 +486,13 @@ class DesktopWindowingController {
 
   void startDragging() => _window?.startDragging();
 
+  void performTitleBarDoubleClick() {
+    final window = _window;
+    if (window == null) return;
+    window.performTitleBarDoubleClick();
+    _isMaximizedNotifier.value = window.isMaximized;
+  }
+
   void close() => _window?.close();
 
   void setFullscreen(bool enabled) {
