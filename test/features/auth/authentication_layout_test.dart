@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/themes/app_themes.dart';
 import 'package:netsales_dashboard/core/themes/app_breakpoints.dart';
 import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_scaffold.dart';
+import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_flow_progress.dart';
 
 void main() {
   const scenarios = <({
@@ -61,6 +62,11 @@ void main() {
                 icon: Icons.shield_rounded,
                 title: 'مرحباً بك مجدداً',
                 subtitle: 'سجّل الدخول إلى لوحة التحكم الإدارية.',
+                progress: const AuthFlowProgress(
+                  currentStep: 2,
+                  totalSteps: 3,
+                  label: 'التحقق من الهوية',
+                ),
                 child: const SizedBox(
                   height: 420,
                   child: Center(child: Text('نموذج تسجيل الدخول')),
@@ -73,6 +79,8 @@ void main() {
 
         expect(find.text('مرحباً بك مجدداً'), findsOneWidget);
         expect(find.text('نموذج تسجيل الدخول'), findsOneWidget);
+        expect(find.text('التحقق من الهوية'), findsOneWidget);
+        expect(find.text('2 / 3'), findsOneWidget);
         expect(
           find.text('NETSALES PLATFORM • DESKTOP EDITION'),
           scenario.size.width >= AppBreakpoints.tabletMax

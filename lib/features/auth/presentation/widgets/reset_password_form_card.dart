@@ -7,6 +7,7 @@ import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
 import 'package:netsales_dashboard/core/utils/form_validators.dart';
 import 'package:netsales_dashboard/features/auth/presentation/controllers/reset_password_controller.dart';
+import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_notice_banner.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_password_field.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_password_requirement_item.dart';
@@ -68,6 +69,13 @@ class ResetPasswordFormCard extends GetView<ResetPasswordController> {
               ),
               AppSpacing.vLg,
             ],
+            AuthNoticeBanner(
+              icon: Icons.security_rounded,
+              title: 'أنشئ كلمة مرور فريدة',
+              message: 'استخدم كلمة لا تعيد استخدامها في خدمات أخرى، ولا تشاركها مع أي شخص.',
+              accentColor: colors.primary,
+            ),
+            AppSpacing.vLg,
             if (!isDirectReset) ...[
               CustomPasswordField(
                 controller: controller.currentPasswordController,

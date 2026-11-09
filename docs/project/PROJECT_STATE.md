@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-11-09  
 **Repository:** `smartixit/netsales_dashboard`  
-**Working branch:** `feat/platform-main-layout`  
+**Working branch:** `feat/premium-authentication-experience`  
 **Authentication UI delivery baseline:** `ce9bc0ee1b167c21ee74ffdd2f7614d18a60e97a`
 
 ## Current work
@@ -260,3 +260,16 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - A diagnostic CI run after canonical formatting passed package dependency resolution, static analysis, and all document-engine tests.
 - A subsequent strict CI run is evaluating the exact PR head above. Its format, analyzer, test, and desktop-windowing outcomes must be recorded from the completed run; no overall pass is claimed while it is still running.
 - No preview/printing UI, official invoice migration, Laravel API, financial logic, or host application integration is included.
+
+## Premium Authentication Flow — In Progress (2026-11-09)
+
+**Branch:** \`feat/premium-authentication-experience\`
+
+- Extended the shared authentication scaffold with a reusable step-progress slot, retaining the premium Login brand/form composition.
+- Added shared progress, security notice, and authentication result components; applied them to Forgot Password, OTP, 2FA, Password Reset, Success, and Unauthorized screens.
+- Fixed Forgot Password → Login route handling to reveal the existing Login route when it is directly underneath recovery, or clear the stack before creating a new Login route. This prevents two Login forms from sharing \`LoginController.formKey\`.
+- Removed ScreenUtil scaling from shared password-requirement item geometry.
+- Added navigation regression and responsive progress widget tests.
+- Authentication API/domain behavior and backend security authority are unchanged. WNS/Reverb remains deferred.
+- **Verification pending:** exact-head formatting, analyzer, tests, Windows Debug build, and rendered Windows/Web QA.
+- Next: evaluate CI on the final PR head, fix any diagnostics, then halt for user review and merge.
