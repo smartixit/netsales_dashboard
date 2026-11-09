@@ -316,6 +316,11 @@ class AppLocalizations {
     'pos_metrics_rejected':'نقاط البيع المرفوضة',
     'pos_metrics_banned':'نقاط البيع المحظورة',
 
+    'export_pdf':'تصدير PDF',
+    'save_pdf':'حفظ PDF',
+    'share_pdf':'مشاركة PDF',
+    'print_pdf':'طباعة',
+    'close':'إغلاق',
   };
   static const Map<String, String> _english = {
     'users_trash':'Recycle bin',
@@ -624,5 +629,10 @@ class AppLocalizations {
     'pos_metrics_rejected':'Rejected POS',
     'pos_metrics_banned':'Banned POS',
 
+    'export_pdf':'Export PDF',
+    'save_pdf':'Save PDF',
+    'share_pdf':'Share PDF',
+    'print_pdf':'Print',
+    'close':'Close',
   };
 }
