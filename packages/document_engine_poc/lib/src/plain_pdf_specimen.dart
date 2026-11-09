@@ -65,7 +65,7 @@ Future<Uint8List> buildPlainPdfSpecimen(Uint8List fontBytes) async {
           ),
         ),
         pw.SizedBox(height: 10),
-        ...ArabicPdfCorpus.longParagraph.split('\\n\\n').map(
+        ...ArabicPdfCorpus.longParagraph.split('\n\n').map(
           (paragraph) => pw.Padding(
             padding: const pw.EdgeInsets.only(bottom: 8),
             child: pw.Directionality(
