@@ -16,29 +16,7 @@ final class DocumentLocale {
     final normalized = value.trim();
     final valid =
         normalized == value &&
-        RegExp(r'^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*
-
-    if (!valid) {
-      throw ArgumentError.value(
-        value,
-        'languageTag',
-        'Must be a valid language tag such as "ar", "ar-YE", or "en-US".',
-      );
-    }
-
-    return normalized;
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      other is DocumentLocale &&
-      other.languageTag == languageTag &&
-      other.direction == direction;
-
-  @override
-  int get hashCode => Object.hash(languageTag, direction);
-}
-).hasMatch(normalized);
+        RegExp(r'^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$').hasMatch(normalized);
 
     if (!valid) {
       throw ArgumentError.value(

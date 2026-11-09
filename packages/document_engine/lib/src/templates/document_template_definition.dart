@@ -48,19 +48,7 @@ final class DocumentTemplateDefinition {
     final normalized = <String>{};
     for (final value in values) {
       final tag = value.trim();
-      if (!RegExp(r'^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*
-        throw ArgumentError.value(
-          value,
-          'supportedLocaleTags',
-          'Contains an invalid language tag.',
-        );
-      }
-      normalized.add(tag);
-    }
-    return Set<String>.unmodifiable(normalized);
-  }
-}
-).hasMatch(tag)) {
+      if (!RegExp(r'^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$').hasMatch(tag)) {
         throw ArgumentError.value(
           value,
           'supportedLocaleTags',
