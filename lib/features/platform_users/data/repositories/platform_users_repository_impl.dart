@@ -62,6 +62,12 @@ class PlatformUsersRepositoryImpl implements PlatformUsersRepository {
   }
 
   @override
+  Future<void> deleteUser(int userId) async {
+    final response = await _remoteDataSource.deleteUser(userId);
+    if (!response.success) throw Exception(response.message.isNotEmpty ? response.message : 'تعذر حذف المستخدم مؤقتاً.');
+  }
+
+  @override
   Future<void> restoreUser(int userId) async {
     final response = await _remoteDataSource.restoreUser(userId);
     if (!response.success) throw Exception(response.message.isNotEmpty ? response.message : 'تعذرت استعادة المستخدم.');
