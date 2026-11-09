@@ -180,3 +180,23 @@
 ### Verification
 - Focused responsive widget tests, full Flutter tests, analyzer, and Windows Debug build are pending PR CI.
 - No live rendered Windows/Web visual QA is claimed from this execution context.
+
+## 2026-11-09 — Reusable Document Engine Architecture Blueprint (Design Only)
+
+**Repository:** smartixit/netsales_dashboard  
+**Branch:** docs/document-engine-architecture-blueprint  
+**Base HEAD:** 849e0dc902b38433a0a68b7c7c534b749f150118
+
+### Delivered
+- Added docs/architecture/document-engine/ARCHITECTURE_BLUEPRINT.md defining the proposed package boundary, generic document/report contracts, template capabilities/versioning, rendering strategies, PDF layout/pagination, Arabic/RTL, preview/output adapters, backend job/artifact integration, integrity, security, quality gates, and incremental roadmap.
+- Added docs/architecture/document-engine/ARABIC_PDF_POC.md to make the Arabic shaping and multi-script typography evaluation evidence-based.
+- Updated the Dashboard documentation index.
+- Recorded DOC-001 in DECISION_LOG.md as PROPOSED.
+
+### Scope and verification boundary
+- Documentation-only change. No package implementation, application code, dependency, pubspec.yaml/lockfile, Laravel API, route, migration, invoice, or PDF template was changed.
+- No analyzer, unit/widget test, Windows build, or visual QA was run; this was a design-documentation delivery.
+- The exact resolved dashboard lockfile versions were inspected. Printing 5.15.1 and PDF 3.13.1 remain the initial implementation candidates, not a claim of compatibility for every API property without version-specific verification.
+- The Arabic shaping package is a research candidate only. No PDF text-shaping dependency is approved or installed.
+- Official financial artifacts remain backend-finalized and immutable. Client-generated PDFs are limited to bounded non-official documents.
+- Package implementation and dependency changes remain gated on explicit owner approval of the architecture.
