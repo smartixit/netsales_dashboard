@@ -57,12 +57,16 @@ class PlatformUsersList extends StatelessWidget {
                         compact: compact,
                         isTrashed: true,
                         onRestore: () => controller.restoreUser(user.id),
-                        onForceDelete: () => controller.forceDeleteUser(user.id),
+                        onForceDelete: controller.canDelete ? () => controller.forceDeleteUser(user.id) : null,
                       )
                     : InkWell(
                         onTap: () => Get.toNamed<void>(AppRoutes.userDetail(user.id)),
                         borderRadius: BorderRadius.circular(AppRadius.md),
-                        child: _UserRow(user: user, compact: compact),
+                        child: _UserRow(
+                          user: user,
+                          compact: compact,
+                          onDelete: controller.canDelete ? () => controller.softDeleteUser(user.id) : null,
+                        ),
                       );
               },
             ),
@@ -117,13 +121,14 @@ class _UsersTableHeader extends StatelessWidget {
 }
 
 class _UserRow extends StatelessWidget {
-  const _UserRow({required this.user, required this.compact, this.isTrashed = false, this.onRestore, this.onForceDelete});
+  const _UserRow({required this.user, required this.compact, this.isTrashed = false, this.onRestore, this.onForceDelete, this.onDelete});
 
   final PlatformUserEntity user;
   final bool compact;
   final bool isTrashed;
   final VoidCallback? onRestore;
   final VoidCallback? onForceDelete;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -191,7 +196,11 @@ class _UserRow extends StatelessWidget {
                     Expanded(child: identity),
                     SizedBox(width: AppSpacing.sm),
                     badge,
-                    if (isTrashed) ...[
+                    if (!isTrashed && onDelete != null)
+                      CustomButton.icon(icon: Icons.delete_outline_rounded, tooltip: 'نقل إلى سلة المحذوفات', onPressed: onDelete, foregroundColor: context.colors.error, size: AppButtonSize.small),
+                    if (!isTrashed && onDelete != null)
+                  CustomButton.icon(icon: Icons.delete_outline_rounded, tooltip: 'نقل إلى سلة المحذوفات', onPressed: onDelete, foregroundColor: context.colors.error, size: AppButtonSize.small),
+                if (isTrashed) ...[
                       CustomButton.icon(icon: Icons.restore_rounded, tooltip: 'استعادة', onPressed: onRestore, size: AppButtonSize.small),
                       CustomButton.icon(icon: Icons.delete_forever_outlined, tooltip: 'حذف نهائي', onPressed: onForceDelete, foregroundColor: context.colors.error, size: AppButtonSize.small),
                     ],
