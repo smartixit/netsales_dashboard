@@ -578,7 +578,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       DocumentCellAlignment.decimal => pw.TextAlign.right,
     };
     return pw.Padding(
-      padding: EdgeInsets.all(compact ? 3 : 6),
+      padding: pw.EdgeInsets.all(compact ? 3 : 6),
       child: pw.Text(
         text,
         textAlign: textAlign,
@@ -770,8 +770,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
         maxValue = minValue + 1;
       }
       final range = maxValue - minValue;
-      final yFor = (double value) =>
-          top + (maxValue - value) / range * plotHeight;
+      double yFor(double value) {
+        return top + (maxValue - value) / range * plotHeight;
+      }
       if (chart.showGrid) {
         for (var line = 0; line <= 4; line++) {
           final y = top + plotHeight * line / 4;

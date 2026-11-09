@@ -16,7 +16,7 @@ final class DocumentRenderOptions {
     this.coverPage = false,
     this.coverTitle,
     this.coverSubtitle,
-    this.coverMetadata = const {},
+    Map<String, String> coverMetadata = const {},
     this.maxPages = 100,
   }) : coverMetadata = Map<String, String>.unmodifiable(coverMetadata) {
     if (maxPages < 1 || maxPages > 1000) {
