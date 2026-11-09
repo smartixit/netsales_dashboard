@@ -1,4 +1,4 @@
-name: M5 Document Engine Formatter Patch
+name: M5 Document Engine Formatter
 
 on:
   push:
@@ -7,29 +7,32 @@ on:
     paths:
       - 'packages/document_engine/**'
       - '.github/workflows/m5-document-engine-formatter.yml'
-  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
           flutter-version: '3.47.9'
-      - name: Apply pinned Dart formatter and export patch
+      - name: Apply pinned Dart formatter and push canonical result
         shell: bash
         run: |
           dart --version
           dart format packages/document_engine
-          git diff --binary -- packages/document_engine > /tmp/document-engine-m5-format.patch
-          test -s /tmp/document-engine-m5-format.patch
-      - uses: actions/upload-artifact@v4
-        with:
-          name: document-engine-m5-format-patch
-          path: /tmp/document-engine-m5-format.patch
-          retention-days: 3
+          if [[ -n "$(git status --short -- packages/document_engine)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add packages/document_engine
+            git commit -m "style(document-engine): apply pinned Dart formatter"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          else
+            echo "Package is already formatted."
+          fi
