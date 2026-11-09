@@ -12,7 +12,7 @@ import 'package:netsales_dashboard/core/themes/app_typography.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/core/models/media_gallery_item_model.dart';
 import 'package:open_filex/open_filex.dart';
-import 'package:printing/printing.dart';
+import 'package:document_engine/document_engine_flutter.dart';
 
 /// بطاقة وعارض مستندات الـ PDF التفاعلي المدمج داخل المعرض (MediaPdfViewerCard)
 ///
@@ -202,14 +202,10 @@ class _MediaPdfViewerCardState extends State<MediaPdfViewerCard> {
           ),
         ),
         Expanded(
-          child: PdfPreview(
-            build: (_) async => _pdfBytes!,
-            pdfFileName: '${widget.item.title}.pdf',
-            canChangePageFormat: false,
-            canChangeOrientation: false,
-            canDebug: false,
-            useActions:
-                false, // الإجراءات تُدار بالكامل عبر أزرار نظامنا الموحدة
+          child: DocumentPdfBytesPreview(
+            bytes: _pdfBytes!,
+            fileName: '${widget.item.title}.pdf',
+            padding: EdgeInsets.zero,
             scrollViewDecoration: const BoxDecoration(
               color: Colors.transparent,
             ),
