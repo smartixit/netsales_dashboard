@@ -256,11 +256,13 @@ class ReportConfigurationStudio extends StatelessWidget {
                       context,
                       'report_configuration.from_date',
                     ),
-                    initialValue: range == null ? '' : _dateText(range.start),
+                    initialValue: range?.start == null
+                        ? ''
+                        : _dateText(range!.start!),
                     onChanged: (value) => _updateDateRange(
                       filter.id,
                       value,
-                      range == null ? null : _dateText(range.end),
+                      range?.end == null ? null : _dateText(range!.end!),
                     ),
                   ),
                 ),
@@ -272,10 +274,12 @@ class ReportConfigurationStudio extends StatelessWidget {
                       context,
                       'report_configuration.to_date',
                     ),
-                    initialValue: range == null ? '' : _dateText(range.end),
+                    initialValue: range?.end == null
+                        ? ''
+                        : _dateText(range!.end!),
                     onChanged: (value) => _updateDateRange(
                       filter.id,
-                      range == null ? null : _dateText(range.start),
+                      range?.start == null ? null : _dateText(range!.start!),
                       value,
                     ),
                   ),
@@ -285,12 +289,15 @@ class ReportConfigurationStudio extends StatelessWidget {
           ],
         );
       case ReportFilterKind.boolean:
-        return SwitchListTile.adaptive(
-          contentPadding: EdgeInsets.zero,
-          title: Text('$label$requiredLabel'),
-          value: current is ReportBooleanFilterValue && current.value,
-          onChanged: (value) =>
-              _setFilter(filter.id, ReportBooleanFilterValue(value)),
+        return Material(
+          type: MaterialType.transparency,
+          child: SwitchListTile.adaptive(
+            contentPadding: EdgeInsets.zero,
+            title: Text('$label$requiredLabel'),
+            value: current is ReportBooleanFilterValue && current.value,
+            onChanged: (value) =>
+                _setFilter(filter.id, ReportBooleanFilterValue(value)),
+          ),
         );
       case ReportFilterKind.singleChoice:
         return DropdownButtonFormField<String>(
@@ -374,18 +381,28 @@ class ReportConfigurationStudio extends StatelessWidget {
   );
 
   void _updateDateRange(String id, String? startText, String? endText) {
-    final parsedStart = startText == null || startText.isEmpty
+    final normalizedStart = startText?.trim() ?? '';
+    final normalizedEnd = endText?.trim() ?? '';
+    final start = normalizedStart.isEmpty
         ? null
-        : DateTime.tryParse(startText);
-    final parsedEnd = endText == null || endText.isEmpty
+        : DateTime.tryParse(normalizedStart);
+    final end = normalizedEnd.isEmpty
         ? null
-        : DateTime.tryParse(endText);
-    final start = parsedStart ?? parsedEnd;
-    final end = parsedEnd ?? parsedStart;
-    if (start == null || end == null || end.isBefore(start)) {
+        : DateTime.tryParse(normalizedEnd);
+
+    // Keep the last valid selection while the user is midway through typing.
+    if ((normalizedStart.isNotEmpty && start == null) ||
+        (normalizedEnd.isNotEmpty && end == null)) {
+      return;
+    }
+    if (start == null && end == null) {
       _setFilter(id, null);
       return;
     }
+    if (start != null && end != null && end.isBefore(start)) {
+      return;
+    }
+
     _setFilter(id, ReportDateRangeFilterValue(start: start, end: end));
   }
 
@@ -413,24 +430,27 @@ class ReportConfigurationStudio extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           for (final column in definition.columns)
-            CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              controlAffinity: ListTileControlAffinity.leading,
-              title: Text(resolveLabel(context, column.labelKey)),
-              value: visible.contains(column.id),
-              onChanged: column.hideable
-                  ? (checked) {
-                      final next = visible.toSet();
-                      if (checked == true) {
-                        next.add(column.id);
-                      } else if (next.length > 1) {
-                        next.remove(column.id);
+            Material(
+              type: MaterialType.transparency,
+              child: CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                controlAffinity: ListTileControlAffinity.leading,
+                title: Text(resolveLabel(context, column.labelKey)),
+                value: visible.contains(column.id),
+                onChanged: column.hideable
+                    ? (checked) {
+                        final next = visible.toSet();
+                        if (checked == true) {
+                          next.add(column.id);
+                        } else if (next.length > 1) {
+                          next.remove(column.id);
+                        }
+                        _updatePresentation(
+                          visibleColumnIds: next.toList(growable: false),
+                        );
                       }
-                      _updatePresentation(
-                        visibleColumnIds: next.toList(growable: false),
-                      );
-                    }
-                  : null,
+                    : null,
+              ),
             ),
           const SizedBox(height: 12),
           _buildSortControls(context),
@@ -443,22 +463,29 @@ class ReportConfigurationStudio extends StatelessWidget {
           const SizedBox(height: 12),
           _buildPageProfileControl(context),
           if (definition.metricSlots.isNotEmpty)
-            SwitchListTile.adaptive(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                resolveLabel(context, 'report_configuration.include_metrics'),
+            Material(
+              type: MaterialType.transparency,
+              child: SwitchListTile.adaptive(
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  resolveLabel(context, 'report_configuration.include_metrics'),
+                ),
+                value: presentation.includeMetrics,
+                onChanged: (value) =>
+                    _updatePresentation(includeMetrics: value),
               ),
-              value: presentation.includeMetrics,
-              onChanged: (value) => _updatePresentation(includeMetrics: value),
             ),
           if (definition.chartsAvailable)
-            SwitchListTile.adaptive(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                resolveLabel(context, 'report_configuration.include_charts'),
+            Material(
+              type: MaterialType.transparency,
+              child: SwitchListTile.adaptive(
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  resolveLabel(context, 'report_configuration.include_charts'),
+                ),
+                value: presentation.includeCharts,
+                onChanged: (value) => _updatePresentation(includeCharts: value),
               ),
-              value: presentation.includeCharts,
-              onChanged: (value) => _updatePresentation(includeCharts: value),
             ),
           _ValidationSummary(
             issues: presentation

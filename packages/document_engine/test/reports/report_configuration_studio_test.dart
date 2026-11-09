@@ -17,6 +17,11 @@ void main() {
         kind: ReportFilterKind.text,
       ),
       ReportFilterDefinition(
+        id: 'period',
+        labelKey: 'filters.period',
+        kind: ReportFilterKind.dateRange,
+      ),
+      ReportFilterDefinition(
         id: 'status',
         labelKey: 'filters.status',
         kind: ReportFilterKind.singleChoice,
@@ -134,4 +139,27 @@ void main() {
       expect(previewTapped, isTrue);
     },
   );
+  testWidgets(
+    'allows a date range start boundary to be selected before its end',
+    (tester) async {
+      ReportCriteria? changed;
+      await tester.pumpWidget(
+        buildStudio(
+          onCriteriaChanged: (value) => changed = value,
+          onPresentationChanged: (_) {},
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey('report-filter-period-start')),
+        '2026-01-01',
+      );
+
+      final selected =
+          changed!.filters['period']! as ReportDateRangeFilterValue;
+      expect(selected.start, DateTime(2026, 1, 1));
+      expect(selected.end, isNull);
+    },
+  );
+
 }

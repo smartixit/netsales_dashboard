@@ -186,4 +186,29 @@ void main() {
       throwsArgumentError,
     );
   });
+  test('round-trips an open-ended date range boundary', () {
+    final startOnly = ReportDateRangeFilterValue(
+      start: DateTime.utc(2026, 1, 1),
+      end: null,
+    );
+    final decoded = ReportFilterValue.fromJson(startOnly.toJson())
+        as ReportDateRangeFilterValue;
+    expect(decoded.start, DateTime.utc(2026, 1, 1));
+    expect(decoded.end, isNull);
+
+    final endOnly = ReportDateRangeFilterValue(
+      start: null,
+      end: DateTime.utc(2026, 1, 31),
+    );
+    final decodedEndOnly =
+        ReportFilterValue.fromJson(endOnly.toJson())
+            as ReportDateRangeFilterValue;
+    expect(decodedEndOnly.start, isNull);
+    expect(decodedEndOnly.end, DateTime.utc(2026, 1, 31));
+    expect(
+      () => ReportDateRangeFilterValue(start: null, end: null),
+      throwsArgumentError,
+    );
+  });
+
 }

@@ -135,8 +135,13 @@ void main() {
     expect(issues.map((issue) => issue.code), contains('filter_type_mismatch'));
     expect(issues.map((issue) => issue.code), contains('text_too_long'));
     expect(issues.map((issue) => issue.code), contains('unknown_filter'));
+    final missingRequired = ReportCriteria(
+      filters: {
+        'search': ReportTextFilterValue('North region'),
+      },
+    );
     expect(
-      issues.map((issue) => issue.code),
+      missingRequired.validateAgainst(schema).map((issue) => issue.code),
       contains('required_filter_missing'),
     );
 

@@ -95,35 +95,45 @@ final class ReportDateFilterValue extends ReportFilterValue {
 
 final class ReportDateRangeFilterValue extends ReportFilterValue {
   ReportDateRangeFilterValue({required this.start, required this.end}) {
-    if (end.isBefore(start)) {
+    if (start == null && end == null) {
+      throw ArgumentError(
+        'A report date range requires at least one boundary.',
+      );
+    }
+    if (start != null && end != null && end!.isBefore(start!)) {
       throw ArgumentError(
         'A report date range end must not precede its start.',
       );
     }
   }
 
-  final DateTime start;
-  final DateTime end;
+  /// Inclusive lower bound; null represents an open lower boundary.
+  final DateTime? start;
+
+  /// Inclusive upper bound; null represents an open upper boundary.
+  final DateTime? end;
 
   factory ReportDateRangeFilterValue.fromJson(Map<String, Object?> value) {
     if (value.length != 2 ||
-        value['start'] is! String ||
-        value['end'] is! String ||
+        (value['start'] != null && value['start'] is! String) ||
+        (value['end'] != null && value['end'] is! String) ||
         !value.keys.toSet().containsAll({'start', 'end'})) {
       throw const FormatException('Malformed report date range.');
     }
+    final startText = value['start'] as String?;
+    final endText = value['end'] as String?;
     return ReportDateRangeFilterValue(
-      start: DateTime.parse(value['start'] as String),
-      end: DateTime.parse(value['end'] as String),
+      start: startText == null ? null : DateTime.parse(startText),
+      end: endText == null ? null : DateTime.parse(endText),
     );
   }
 
   @override
   String get type => 'date_range';
   @override
-  Object get jsonValue => <String, String>{
-    'start': start.toIso8601String(),
-    'end': end.toIso8601String(),
+  Object get jsonValue => <String, Object?>{
+    'start': start?.toIso8601String(),
+    'end': end?.toIso8601String(),
   };
 }
 
