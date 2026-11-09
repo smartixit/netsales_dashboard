@@ -9,13 +9,7 @@ class PlatformWorkspaceFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: padding ??
-            EdgeInsetsDirectional.fromSTEB(
-              AppSpacing.lg,
-              AppSpacing.lg,
-              AppSpacing.lg,
-              AppSpacing.xl,
-            ),
+        padding: padding ?? EdgeInsets.zero,
         child: child,
       );
 }
