@@ -120,4 +120,36 @@ class PlatformUsersRepositoryImpl implements PlatformUsersRepository {
     }
     return response.data!;
   }
+  @override
+  Future<void> terminateSession(int sessionId) async {
+    final response = await _remoteDataSource.terminateSession(sessionId);
+    if (!response.success) {
+      throw Exception(response.message.isNotEmpty ? response.message : 'تعذر إنهاء الجلسة.');
+    }
+  }
+
+  @override
+  Future<void> banUser(int userId, {required String type, required String reason}) async {
+    final response = await _remoteDataSource.banUser(userId, type: type, reason: reason);
+    if (!response.success) {
+      throw Exception(response.message.isNotEmpty ? response.message : 'تعذر حظر المستخدم.');
+    }
+  }
+
+  @override
+  Future<void> banDevice(int deviceId, {required String type, required String reason}) async {
+    final response = await _remoteDataSource.banDevice(deviceId, type: type, reason: reason);
+    if (!response.success) {
+      throw Exception(response.message.isNotEmpty ? response.message : 'تعذر حظر الجهاز.');
+    }
+  }
+
+  @override
+  Future<void> unban(int banId) async {
+    final response = await _remoteDataSource.unban(banId);
+    if (!response.success) {
+      throw Exception(response.message.isNotEmpty ? response.message : 'تعذر رفع الحظر.');
+    }
+  }
+
 }
