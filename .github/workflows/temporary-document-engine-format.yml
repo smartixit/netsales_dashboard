@@ -1,0 +1,44 @@
+name: Temporary Document Engine Formatting Repair
+
+on:
+  push:
+    branches:
+      - fix/document-output-integration-analyzer-errors
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    name: Apply pinned Dart formatter and remove helper
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout fix branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up pinned Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.9'
+          cache: true
+
+      - name: Format document engine package
+        run: dart format packages/document_engine
+
+      - name: Commit formatter output and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/temporary-document-engine-format.yml
+          git add packages/document_engine
+          if git diff --cached --quiet; then
+            echo "No formatter changes were produced."
+            exit 1
+          fi
+          git commit -m "style(document-engine): apply Dart 3.13 formatting"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
