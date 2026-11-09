@@ -19,8 +19,8 @@
 ---
 
 ## 3. Proposed Architecture Work
-- [Document Engine Architecture Blueprint](../architecture/document-engine/ARCHITECTURE_BLUEPRINT.md): proposed reusable document/reporting engine architecture. Design-only; implementation requires explicit approval.
-- [Arabic PDF Typography POC](../architecture/document-engine/ARABIC_PDF_POC.md): evidence matrix for Arabic shaping, mixed RTL/LTR text, and PDF output. No dependency is approved by this plan.
+- [Document Engine Architecture Blueprint](../architecture/document-engine/ARCHITECTURE_BLUEPRINT.md): approved reusable document/reporting engine architecture and staged roadmap.
+- [Arabic PDF Typography POC](../architecture/document-engine/ARABIC_PDF_POC.md): evidence matrix for Arabic shaping, mixed RTL/LTR text, and PDF output. No shaping dependency is approved.
 
 ---
 

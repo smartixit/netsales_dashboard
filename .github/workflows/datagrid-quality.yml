@@ -53,11 +53,47 @@ jobs:
       - name: Test desktop windowing package
         run: flutter test packages/desktop_windowing/test
 
+  document-engine-package:
+    name: Document engine package analyze and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.9'
+          cache: true
+
+      - name: Report toolchain
+        run: |
+          flutter --version
+          dart --version
+
+      - name: Resolve document engine package dependencies
+        working-directory: packages/document_engine
+        run: flutter pub get
+
+      - name: Format document engine package
+        run: dart format --output=none --set-exit-if-changed packages/document_engine
+
+      - name: Analyze document engine package
+        working-directory: packages/document_engine
+        run: dart analyze
+
+      - name: Test document engine package
+        working-directory: packages/document_engine
+        run: flutter test
+
   flutter-quality:
     name: Full dashboard analyze, tests and Windows compile
     runs-on: windows-latest
     timeout-minutes: 60
-    needs: desktop-windowing-package
+    needs: [desktop-windowing-package, document-engine-package]
 
     steps:
       - name: Checkout repository

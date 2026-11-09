@@ -62,13 +62,23 @@
 - ScreenUtil is not a responsive layout engine for this desktop product. It is retained only until all legacy leaf-widget imports are migrated, with all scale factors disabled in the app bootstrap.
 - Responsive behavior must select layouts, columns, margins, and bounded content widths through `AppBreakpoints` and actual constraints, never by multiplying all dimensions by the entire window width/height.
 
-| DOC-001 | 2026-11-09 | Propose one internal reusable package, document_engine, with separate Document and Reporting domains, immutable generic contracts, host-supplied adapters, and explicit client/server rendering policies. Official financial artifacts remain backend-finalized and immutable; large reports use backend jobs. | PROPOSED |
+| DOC-001 | 2026-11-09 | One internal reusable package, document_engine, with separate Document and Reporting domains, immutable generic contracts, host-supplied adapters, and explicit client/server rendering policies. Official financial artifacts remain backend-finalized and immutable; large reports use backend jobs. | APPROVED |
 
-## DOC-001 — Reusable Document and Reporting Engine (PROPOSED)
-- This is an architecture proposal only. It does not authorize package implementation, dependency changes, API routes/migrations, invoice migration, or PDF template creation.
+## DOC-001 — Reusable Document and Reporting Engine (APPROVED)
+- Approved by the project owner through review and merge of PR #19 on 2026-11-09. The approval authorizes staged implementation of the internal reusable package within the approved architecture; it does not approve unselected dependencies, API routes/migrations, invoice migration, or official-document renderer changes.
 - The first implementation candidate is one local package at packages/document_engine; public extraction is deferred until its API proves stable and reusable by a second host application.
 - The package must not depend on NetSales business models, GetX, Laravel clients, host authorization, or application storage services.
 - Three generation paths remain explicit: bounded non-official client rendering, backend-finalized official artifacts, and backend asynchronous large-report generation.
 - Official artifacts are represented by immutable server snapshots and stored final PDF bytes with template/renderer metadata and a digest. SHA-256 is integrity detection, not a digital signature.
 - The Arabic text-shaping implementation, client rendering limits, exact output adapter contracts, and server job endpoints remain open research/design items until their proof-of-concept and contract reviews are approved.
-- Next gate: review the Architecture Blueprint and Arabic PDF Typography POC, then explicitly approve or amend the design before implementation planning.
+- Implementation is milestone-gated. M1 covers pure-Dart core contracts and the template registry. PDF rendering, Arabic shaping provider selection, backend endpoints, invoice migration, and reporting UI require their own explicit gates.
+
+| DOC-002 | 2026-11-09 | M1 delivers immutable generic document contracts, stable identifiers, exact template versions, capabilities, and deterministic in-memory registry; no renderer, backend integration, persistence, or host UI. | APPROVED |
+
+## DOC-002 — Document Engine M1 Core Contracts
+- M1 package path: `packages/document_engine`.
+- Runtime package API is Dart-only and framework-agnostic; no GetX, Flutter widgets, Laravel client, NetSales business entities, storage, or rendering dependencies.
+- Decimal business values are preserved as canonical base-10 strings; the engine performs no arithmetic, totals, aggregation, rounding, currency conversion, or document numbering.
+- Template lookup is exact by `(TemplateId, TemplateVersion)`. Registration rejects duplicate versions and ambiguous default templates per document type.
+- Collections exposed by document snapshots and definitions are defensive immutable copies.
+- M1 verification must include focused tests and static analysis in a dedicated CI job. No package integration into the host app occurs in M1.

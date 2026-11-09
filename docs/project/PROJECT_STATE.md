@@ -220,3 +220,17 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - No Dart/PHP application source, pubspec.yaml, pubspec.lock, API route, migration, invoice logic, PDF template, or dependency was modified.
 - No analyzer, test suite, Windows build, or visual QA was run because this delivery contains documentation only.
 - Next gate: review the proposed contracts, the Arabic typography POC matrix, and open decisions. Package implementation remains blocked until explicit approval.
+
+## Document Engine — M1 Core Contracts (2026-11-09)
+
+**Architecture:** DOC-001 APPROVED via merged PR #19.  
+**M1 scope:** DOC-002 APPROVED.  
+**Implementation branch:** `feat/document-engine-core-contracts`.
+
+- Created the initial local package at `packages/document_engine`.
+- Implemented typed stable identifiers, exact semantic template versions, locale/direction metadata, typed document values, immutable content nodes/sections/snapshots, structured tables, template capabilities, and exact-version in-memory registry.
+- Runtime package dependencies are intentionally empty: Flutter widgets, GetX, PDF/printing, shaping, NetSales models, Laravel, and storage are not dependencies.
+- Added focused tests for identifier/value validation, semantic version ordering, snapshot immutability, table shape, locale support, duplicate template versions/defaults, and exact-version lookup.
+- Added a dedicated CI job for package dependency resolution, formatting, analysis, and tests. Results remain pending until the PR workflow runs on the exact head SHA.
+- M1 does not integrate the package into the Dashboard host application and does not migrate existing exports or official invoices.
+- Next: complete exact-head CI, address any failures, review M1 API surface, then stop for user acceptance before M2.
