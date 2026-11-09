@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:printing/printing.dart';
+import 'document_pdf_bytes_preview.dart';
 
 import '../rendering/document_render_result.dart';
 
@@ -37,21 +37,14 @@ class DocumentArtifactPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final preview = PdfPreview(
-      build: (_) async => artifact.bytes,
-      pdfFileName: 'document.pdf',
-      allowPrinting: false,
-      allowSharing: false,
-      canChangePageFormat: false,
-      canChangeOrientation: false,
-      canDebug: false,
-      useActions: false,
+    final preview = DocumentPdfBytesPreview(
+      bytes: artifact.bytes,
+      fileName: 'document.pdf',
       loadingWidget: loadingWidget,
-      onError: errorBuilder,
+      errorBuilder: errorBuilder,
       padding: padding,
       previewPageMargin: previewPageMargin,
       maxPageWidth: maxPageWidth,
-      dynamicLayout: false,
     );
 
     return LayoutBuilder(
