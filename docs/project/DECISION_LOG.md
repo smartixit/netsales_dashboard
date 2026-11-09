@@ -82,3 +82,15 @@
 - Template lookup is exact by `(TemplateId, TemplateVersion)`. Registration rejects duplicate versions and ambiguous default templates per document type.
 - Collections exposed by document snapshots and definitions are defensive immutable copies.
 - M1 verification must include focused tests and static analysis in a dedicated CI job. No package integration into the host app occurs in M1.
+
+| DOC-003 | 2026-11-09 | M2 introduces a bounded client-side PDF renderer behind a generic renderer port. It must validate template/document compatibility and declared capabilities, use explicit page geometry and generation time, preserve immutable artifact bytes with SHA-256 provenance, and reject complex RTL scripts until a shaping provider is validated. | APPROVED |
+
+## DOC-003 — Document Engine M2 PDF Renderer
+- M2 uses the existing `pdf` Dart package as the concrete PDF backend and `crypto` for artifact integrity metadata.
+- The package exposes a renderer port and typed success/failure outcomes; renderer-specific widgets and mutable PDF layout objects are not part of the public API.
+- Page geometry is expressed in PDF points. Supported initial profiles are A4 portrait, A4 landscape, and Letter portrait; margins must leave a positive printable area.
+- Every render operation receives its generation timestamp explicitly and has a bounded page count. The engine does not read the system clock or derive document dates.
+- The PDF renderer validates document type, template locale, requested capabilities, and page orientation before layout.
+- Artifact bytes are defensively copied and SHA-256 is computed at the artifact boundary. The digest is integrity detection, not a digital signature.
+- Complex RTL scripts are rejected explicitly until the separate Arabic typography POC selects and verifies a shaping implementation.
+- M2 does not implement official invoice rendering, financial calculations, Laravel APIs, report criteria, preview/printing UI, or host application integration.

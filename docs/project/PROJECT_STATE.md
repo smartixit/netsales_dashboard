@@ -234,3 +234,29 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - Added a dedicated CI job for package dependency resolution, formatting, analysis, and tests. Results remain pending until the PR workflow runs on the exact head SHA.
 - M1 does not integrate the package into the Dashboard host application and does not migrate existing exports or official invoices.
 - Next: complete exact-head CI, address any failures, review M1 API surface, then stop for user acceptance before M2.
+
+## Document Engine — M1 Repair and M2 PDF Renderer (2026-11-09)
+
+**Implementation PR:** [#32](https://github.com/smartixit/netsales_dashboard/pull/32)  
+**Branch:** `feat/document-engine-pdf-renderer-final`  
+**Head under strict verification:** `e1bf8be52dd89b620a64adad4cade5b801106d84`
+
+### M1 repair
+- Replaced the 13 non-canonical Dart files with the output of the pinned Dart 3.13.7 formatter.
+- Repaired the locale-tag and template-locale validators as complete, parseable source.
+- Committed the package-specific lockfile to make the internal package dependency resolution reproducible.
+- Restored the strict non-mutating format check in CI.
+
+### M2 implementation
+- Added the generic `DocumentRenderer` port and typed `DocumentRenderSuccess` / `DocumentRenderFailure` results.
+- Added A4 portrait, A4 landscape, and Letter page profiles with validated dimensions and margins.
+- Added explicit render options for generation timestamp, page numbering, header/footer, and maximum page count.
+- Added the PDF backend for multipage headings, paragraphs, supplied metrics, structured tables, repeated table headings, explicit page breaks, repeating headers/footers, and page numbering.
+- Added immutable PDF artifact access, provenance metadata, byte length, and SHA-256 computed internally.
+- Added pre-render validation for template/document type, locale, requested template capabilities, and page orientation.
+- Complex RTL content is rejected explicitly pending the approved shaping strategy.
+
+### Verification status
+- A diagnostic CI run after canonical formatting passed package dependency resolution, static analysis, and all document-engine tests.
+- A subsequent strict CI run is evaluating the exact PR head above. Its format, analyzer, test, and desktop-windowing outcomes must be recorded from the completed run; no overall pass is claimed while it is still running.
+- No preview/printing UI, official invoice migration, Laravel API, financial logic, or host application integration is included.

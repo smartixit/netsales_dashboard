@@ -7,8 +7,8 @@ final class DocumentSection {
     required String id,
     this.title,
     required Iterable<DocumentNode> nodes,
-  })  : id = validateStableIdentifier(id, parameterName: 'sectionId'),
-        nodes = List<DocumentNode>.unmodifiable(nodes);
+  }) : id = validateStableIdentifier(id, parameterName: 'sectionId'),
+       nodes = List<DocumentNode>.unmodifiable(nodes);
 
   final String id;
   final String? title;

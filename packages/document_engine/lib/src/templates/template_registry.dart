@@ -6,7 +6,7 @@ import 'document_template_definition.dart';
 /// In-memory registry of exact immutable template definitions.
 final class TemplateRegistry {
   final Map<TemplateId, Map<TemplateVersion, DocumentTemplateDefinition>>
-      _definitions = {};
+  _definitions = {};
 
   void register(DocumentTemplateDefinition definition) {
     final versions = _definitions.putIfAbsent(
@@ -21,7 +21,9 @@ final class TemplateRegistry {
     }
 
     if (definition.isDefault &&
-        _definitions.values.expand((items) => items.values).any(
+        _definitions.values
+            .expand((items) => items.values)
+            .any(
               (existing) =>
                   existing.documentTypeId == definition.documentTypeId &&
                   existing.isDefault,
@@ -38,8 +40,7 @@ final class TemplateRegistry {
   DocumentTemplateDefinition? find({
     required TemplateId id,
     required TemplateVersion version,
-  }) =>
-      _definitions[id]?[version];
+  }) => _definitions[id]?[version];
 
   DocumentTemplateDefinition require({
     required TemplateId id,
