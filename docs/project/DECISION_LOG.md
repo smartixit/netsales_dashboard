@@ -61,3 +61,14 @@
 - `AppTypography`, `AppSpacing`, `AppRadius`, and `AppThemes` are expressed in stable logical pixels; TextStyle line-height remains a unitless multiplier.
 - ScreenUtil is not a responsive layout engine for this desktop product. It is retained only until all legacy leaf-widget imports are migrated, with all scale factors disabled in the app bootstrap.
 - Responsive behavior must select layouts, columns, margins, and bounded content widths through `AppBreakpoints` and actual constraints, never by multiplying all dimensions by the entire window width/height.
+
+| DOC-001 | 2026-11-09 | Propose one internal reusable package, document_engine, with separate Document and Reporting domains, immutable generic contracts, host-supplied adapters, and explicit client/server rendering policies. Official financial artifacts remain backend-finalized and immutable; large reports use backend jobs. | PROPOSED |
+
+## DOC-001 — Reusable Document and Reporting Engine (PROPOSED)
+- This is an architecture proposal only. It does not authorize package implementation, dependency changes, API routes/migrations, invoice migration, or PDF template creation.
+- The first implementation candidate is one local package at packages/document_engine; public extraction is deferred until its API proves stable and reusable by a second host application.
+- The package must not depend on NetSales business models, GetX, Laravel clients, host authorization, or application storage services.
+- Three generation paths remain explicit: bounded non-official client rendering, backend-finalized official artifacts, and backend asynchronous large-report generation.
+- Official artifacts are represented by immutable server snapshots and stored final PDF bytes with template/renderer metadata and a digest. SHA-256 is integrity detection, not a digital signature.
+- The Arabic text-shaping implementation, client rendering limits, exact output adapter contracts, and server job endpoints remain open research/design items until their proof-of-concept and contract reviews are approved.
+- Next gate: review the Architecture Blueprint and Arabic PDF Typography POC, then explicitly approve or amend the design before implementation planning.

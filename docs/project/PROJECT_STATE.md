@@ -1,6 +1,6 @@
 # NetSales Dashboard — Project State
 
-**Last updated:** 2026-11-08  
+**Last updated:** 2026-11-09  
 **Repository:** `smartixit/netsales_dashboard`  
 **Working branch:** `feat/platform-main-layout`  
 **Authentication UI delivery baseline:** `ce9bc0ee1b167c21ee74ffdd2f7614d18a60e97a`
@@ -195,3 +195,28 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 
 ### Verification boundary
 - Flutter analyzer, full tests, Windows build, GitHub Actions, and rendered visual QA are pending PR verification. No local run or visual inspection is claimed.
+
+
+## Premium Desktop Authentication Polish — 2026-11-09
+
+- Refined the existing Login brand/form composition without changing authentication or API behavior.
+- The brand panel now has a clearer identity headline and supporting product descriptor, with one emphasized security pillar and quieter financial-governance / desktop-stability supporting items.
+- The form column is vertically centered when available space permits and switches to compact spacing at the centralized desktop height breakpoint; scrolling remains available for short windows.
+- Responsive widget coverage has been added for compact, standard, and wide desktop sizes, both themes, and RTL/LTR. CI verification is pending the corresponding PR.
+- Live rendered Windows/Web visual QA is still required before declaring the visual delivery fully accepted.
+
+
+## Document Engine Architecture — Design Only (2026-11-09)
+
+**Review branch:** docs/document-engine-architecture-blueprint  
+**Base main HEAD:** 849e0dc902b38433a0a68b7c7c534b749f150118  
+**Status:** PROPOSED — awaiting architecture review and explicit approval.
+
+- Added a design-only Architecture Blueprint for one reusable internal package, packages/document_engine.
+- The proposal separates generic Document and Reporting responsibilities, defines typed immutable contracts, host adapters, template capability/version rules, rendering policies, and secure backend integration boundaries.
+- It specifies three distinct paths: bounded non-official client PDFs, backend-finalized immutable official documents, and backend asynchronous large reports.
+- Added an Arabic PDF Typography POC matrix. No text-shaping dependency is selected or added.
+- Updated the Dashboard documentation index and recorded DOC-001 as PROPOSED, not APPROVED.
+- No Dart/PHP application source, pubspec.yaml, pubspec.lock, API route, migration, invoice logic, PDF template, or dependency was modified.
+- No analyzer, test suite, Windows build, or visual QA was run because this delivery contains documentation only.
+- Next gate: review the proposed contracts, the Arabic typography POC matrix, and open decisions. Package implementation remains blocked until explicit approval.
