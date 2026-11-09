@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_entity.dart';
 import 'package:netsales_dashboard/core/constants/app_permissions.dart';
@@ -29,6 +30,8 @@ class PlatformUsersController extends GetxController {
   final errorMessage = ''.obs;
   Timer? _searchDebounce;
   int _requestGeneration = 0;
+
+  String _t(String key) => AppLocalizations(Get.locale ?? const Locale('ar')).text(key);
 
   bool get hasMore => nextCursor.value?.isNotEmpty ?? false;
   bool get canDelete => PermissionService.to.can(AppPermissions.usersDelete);
@@ -103,54 +106,54 @@ class PlatformUsersController extends GetxController {
   Future<void> softDeleteUser(int userId) async {
     if (!canDelete) return;
     final confirmed = await CustomDialog.showConfirmation(
-      title: 'حذف المستخدم',
-      message: 'سيتم نقل الحساب إلى سلة المحذوفات وإبطال جلساته النشطة. هل تريد المتابعة؟',
-      confirmLabel: 'نقل إلى سلة المحذوفات',
+      title: _t('user_soft_delete_title'),
+      message: _t('user_soft_delete_confirmation'),
+      confirmLabel: _t('user_soft_delete'),
       cancelLabel: 'إلغاء',
     );
     if (confirmed != true) return;
     try {
       await _recoverUser.softDelete(userId);
       await loadUsers();
-      CustomSnackbar.show(title: 'تم نقل الحساب', message: 'نُقل المستخدم إلى سلة المحذوفات.', type: SnackType.success);
+      CustomSnackbar.show(title: _t('user_soft_delete'), message: _t('user_moved_to_trash'), type: SnackType.success);
     } catch (error) {
-      CustomSnackbar.show(title: 'تعذر حذف المستخدم', message: error.toString(), type: SnackType.error);
+      CustomSnackbar.show(title: _t('user_soft_delete_title'), message: error.toString(), type: SnackType.error);
     }
   }
 
   Future<void> restoreUser(int userId) async {
     if (!canRestore) return;
     final confirmed = await CustomDialog.showConfirmation(
-      title: 'استعادة المستخدم',
-      message: 'سيتم إعادة الحساب إلى قائمة المستخدمين النشطين. هل تريد المتابعة؟',
-      confirmLabel: 'استعادة',
+      title: _t('user_restore_title'),
+      message: _t('user_restore_confirmation'),
+      confirmLabel: _t('user_restore'),
       cancelLabel: 'إلغاء',
     );
     if (confirmed != true) return;
     try {
       await _recoverUser.restore(userId);
       await loadUsers();
-      CustomSnackbar.show(title: 'تمت الاستعادة', message: 'أعيد المستخدم إلى النظام.', type: SnackType.success);
+      CustomSnackbar.show(title: _t('user_restore'), message: _t('user_restored'), type: SnackType.success);
     } catch (error) {
-      CustomSnackbar.show(title: 'تعذرت الاستعادة', message: error.toString(), type: SnackType.error);
+      CustomSnackbar.show(title: _t('user_restore_title'), message: error.toString(), type: SnackType.error);
     }
   }
 
   Future<void> forceDeleteUser(int userId) async {
     if (!canDelete) return;
     final confirmed = await CustomDialog.showConfirmation(
-      title: 'حذف نهائي غير قابل للتراجع',
-      message: 'سيتم حذف الحساب نهائياً من قاعدة البيانات. لا يمكن استعادة هذه البيانات بعد التنفيذ. هل أنت متأكد؟',
-      confirmLabel: 'حذف نهائي',
+      title: _t('user_force_delete_title'),
+      message: _t('user_force_delete_confirmation'),
+      confirmLabel: _t('user_force_delete'),
       cancelLabel: 'إلغاء',
     );
     if (confirmed != true) return;
     try {
       await _recoverUser.forceDelete(userId);
       await loadUsers();
-      CustomSnackbar.show(title: 'تم الحذف النهائي', message: 'حذف الحساب نهائياً.', type: SnackType.success);
+      CustomSnackbar.show(title: _t('user_force_delete'), message: _t('user_force_deleted'), type: SnackType.success);
     } catch (error) {
-      CustomSnackbar.show(title: 'تعذر الحذف النهائي', message: error.toString(), type: SnackType.error);
+      CustomSnackbar.show(title: _t('user_force_delete_title'), message: error.toString(), type: SnackType.error);
     }
   }
 
