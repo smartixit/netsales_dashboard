@@ -20,6 +20,11 @@ class PlatformUserSecuritySection extends StatelessWidget {
     required this.isLoading,
     required this.error,
     required this.onRetry,
+    required this.canManageSecurity,
+    required this.onTerminateSession,
+    required this.onBanUser,
+    required this.onBanDevice,
+    required this.onUnban,
     required this.l10n,
   });
   final PlatformUserDetailEntity detail;
@@ -27,6 +32,11 @@ class PlatformUserSecuritySection extends StatelessWidget {
   final bool isLoading;
   final String error;
   final VoidCallback onRetry;
+  final bool canManageSecurity;
+  final ValueChanged<int> onTerminateSession;
+  final VoidCallback onBanUser;
+  final ValueChanged<int> onBanDevice;
+  final ValueChanged<int> onUnban;
   final AppLocalizations l10n;
 
   @override
@@ -37,7 +47,16 @@ class PlatformUserSecuritySection extends StatelessWidget {
         title: l10n.text('security_overview'),
         description: l10n.text('security_overview_description'),
       ),
-      SizedBox(height: AppSpacing.md),
+      if (canManageSecurity && detail.user.status == 'ACTIVE') ...[
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: CustomButton.danger(
+            text: l10n.text('security_ban_user'),
+            onPressed: onBanUser,
+          ),
+        ),
+        SizedBox(height: AppSpacing.md),
+      ],
       _Surface(
         title: l10n.text('registered_devices'),
         count: detail.devices.length,
@@ -64,20 +83,33 @@ class PlatformUserSecuritySection extends StatelessWidget {
                     subtitle: Text(
                       '${type.label} · ${device.lastUsedAt?.toLocal().toString() ?? l10n.text('not_available')}',
                     ),
-                    trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        CustomStatusBadge.fromPresentation(
-                          status,
-                          isCompact: true,
-                        ),
-                        if (device.isPrimary)
-                          Text(
-                            l10n.text('primary_device'),
-                            style: AppTypography.caption.copyWith(
-                              color: context.colors.primary,
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            CustomStatusBadge.fromPresentation(
+                              status,
+                              isCompact: true,
                             ),
+                            if (device.isPrimary)
+                              Text(
+                                l10n.text('primary_device'),
+                                style: AppTypography.caption.copyWith(
+                                  color: context.colors.primary,
+                                ),
+                              ),
+                          ],
+                        ),
+                        if (canManageSecurity && device.status == 'ACTIVE')
+                          CustomButton.icon(
+                            icon: Icons.gpp_bad_outlined,
+                            tooltip: l10n.text('security_ban_device'),
+                            onPressed: () => onBanDevice(device.id),
+                            foregroundColor: context.colors.error,
+                            size: AppButtonSize.small,
                           ),
                       ],
                     ),
@@ -127,6 +159,13 @@ class PlatformUserSecuritySection extends StatelessWidget {
                         subtitle: Text(
                           '${session.ipAddress ?? l10n.text('not_available')} · ${session.lastActivityAt?.toLocal().toString() ?? l10n.text('not_available')}',
                         ),
+                        trailing: canManageSecurity
+                            ? CustomButton.danger(
+                                text: l10n.text('security_terminate_session'),
+                                onPressed: () => onTerminateSession(session.id),
+                                size: AppButtonSize.small,
+                              )
+                            : null,
                       ),
                     )
                     .toList(),
@@ -155,11 +194,16 @@ class PlatformUserSecuritySection extends StatelessWidget {
                           ? ban.reason!
                           : l10n.text('no_ban_reason'),
                     ),
-                    trailing: Text(
-                      ban.endsAt?.toLocal().toString() ??
-                          l10n.text('permanent'),
-                      style: AppTypography.caption,
-                    ),
+                    trailing: canManageSecurity
+                        ? CustomButton.secondary(
+                            text: l10n.text('security_unban'),
+                            onPressed: () => onUnban(ban.id),
+                            size: AppButtonSize.small,
+                          )
+                        : Text(
+                            ban.endsAt?.toLocal().toString() ?? l10n.text('permanent'),
+                            style: AppTypography.caption,
+                          ),
                   ),
                 )
                 .toList(),

@@ -1,14 +1,24 @@
 import 'package:netsales_dashboard/core/models/api_response.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_role_entity.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_entity.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_detail_entity.dart';
 
 abstract interface class PlatformUsersRepository {
+  Future<ApiResponse<List<PlatformUserEntity>>> getTrashedUsers({String? search, String? cursor, int perPage = 20});
+  Future<void> deleteUser(int userId);
+  Future<void> restoreUser(int userId);
+  Future<void> forceDeleteUser(int userId);
   Future<ApiResponse<List<PlatformUserEntity>>> getUsers({
-    String? search,
-    String? status,
-    String? cursor,
-    int perPage,
+    String? search, String? status, String? cursor, int perPage,
   });
   Future<PlatformUserDetailEntity?> getUserDetail(int id);
   Future<List<PlatformUserSessionEntity>> getUserSessions(int id);
+  Future<List<PlatformRoleEntity>> getPlatformRoles();
+  Future<PlatformUserEntity> createUser(Map<String, dynamic> data);
+  Future<PlatformUserEntity> updateUser(int userId, Map<String, dynamic> data);
+  Future<PlatformUserEntity> updateUserStatus(int userId, String status);
+  Future<void> terminateSession(int sessionId);
+  Future<void> banUser(int userId, {required String type, required String reason});
+  Future<void> banDevice(int deviceId, {required String type, required String reason});
+  Future<void> unban(int banId);
 }

@@ -13,9 +13,17 @@ class PlatformUserDetailHeader extends StatelessWidget {
     super.key,
     required this.user,
     required this.l10n,
+    this.onEdit,
+    this.onToggleStatus,
+    this.isStatusUpdating = false,
+    this.isActive = true,
   });
   final PlatformUserEntity user;
   final AppLocalizations l10n;
+  final VoidCallback? onEdit;
+  final VoidCallback? onToggleStatus;
+  final bool isStatusUpdating;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -40,6 +48,23 @@ class PlatformUserDetailHeader extends StatelessWidget {
           ],
         ),
       ),
+      if (onToggleStatus != null) ...[
+        SizedBox(width: AppSpacing.sm),
+        CustomButton.secondary(
+          text: isActive ? l10n.text('deactivate_user') : l10n.text('activate_user'),
+          prefix: Icon(isActive ? Icons.pause_circle_outline_rounded : Icons.play_circle_outline_rounded, size: 18),
+          loading: isStatusUpdating,
+          onPressed: isStatusUpdating ? null : onToggleStatus,
+        ),
+      ],
+      if (onEdit != null) ...[
+        SizedBox(width: AppSpacing.sm),
+        CustomButton.primary(
+          text: l10n.text('edit_platform_user'),
+          prefix: const Icon(Icons.edit_outlined, size: 18),
+          onPressed: onEdit,
+        ),
+      ],
     ],
   );
 }

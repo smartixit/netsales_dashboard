@@ -29,7 +29,7 @@ class PlatformUsersList extends StatelessWidget {
       final compact = constraints.maxWidth < 650;
       return Column(
         children: [
-          if (!compact) _UsersTableHeader(l10n: l10n),
+          if (!compact && !controller.isTrashView.value) _UsersTableHeader(l10n: l10n),
           Expanded(
             child: ListView.separated(
               itemCount: controller.users.length + (controller.hasMore ? 1 : 0),
@@ -51,11 +51,25 @@ class PlatformUsersList extends StatelessWidget {
                   );
                 }
                 final user = controller.users[index];
-                return InkWell(
-                  onTap: () => Get.toNamed<void>(AppRoutes.userDetail(user.id)),
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  child: _UserRow(user: user, compact: compact),
-                );
+                return controller.isTrashView.value
+                    ? _UserRow(
+                        user: user,
+                        compact: compact,
+                        l10n: l10n,
+                        isTrashed: true,
+                        onRestore: controller.canRestore ? () => controller.restoreUser(user.id) : null,
+                        onForceDelete: controller.canDelete ? () => controller.forceDeleteUser(user.id) : null,
+                      )
+                    : InkWell(
+                        onTap: () => Get.toNamed<void>(AppRoutes.userDetail(user.id)),
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        child: _UserRow(
+                          user: user,
+                          compact: compact,
+                          l10n: l10n,
+                          onDelete: controller.canDelete ? () => controller.softDeleteUser(user.id) : null,
+                        ),
+                      );
               },
             ),
           ),
@@ -109,10 +123,15 @@ class _UsersTableHeader extends StatelessWidget {
 }
 
 class _UserRow extends StatelessWidget {
-  const _UserRow({required this.user, required this.compact});
+  const _UserRow({required this.user, required this.compact, this.isTrashed = false, this.onRestore, this.onForceDelete, this.onDelete, required this.l10n});
 
   final PlatformUserEntity user;
   final bool compact;
+  final AppLocalizations l10n;
+  final bool isTrashed;
+  final VoidCallback? onRestore;
+  final VoidCallback? onForceDelete;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -180,6 +199,29 @@ class _UserRow extends StatelessWidget {
                     Expanded(child: identity),
                     SizedBox(width: AppSpacing.sm),
                     badge,
+                    if (!isTrashed && onDelete != null)
+                      CustomButton.icon(
+                        icon: Icons.delete_outline_rounded,
+                        tooltip: l10n.text('user_soft_delete'),
+                        onPressed: onDelete,
+                        foregroundColor: context.colors.error,
+                        size: AppButtonSize.small,
+                      ),
+                    if (isTrashed && onRestore != null)
+                      CustomButton.icon(
+                        icon: Icons.restore_rounded,
+                        tooltip: l10n.text('user_restore'),
+                        onPressed: onRestore,
+                        size: AppButtonSize.small,
+                      ),
+                    if (isTrashed && onForceDelete != null)
+                      CustomButton.icon(
+                        icon: Icons.delete_forever_outlined,
+                        tooltip: l10n.text('user_force_delete'),
+                        onPressed: onForceDelete,
+                        foregroundColor: context.colors.error,
+                        size: AppButtonSize.small,
+                      ),
                   ],
                 ),
                 SizedBox(height: AppSpacing.sm),
@@ -221,6 +263,29 @@ class _UserRow extends StatelessWidget {
                   ),
                 ),
                 Expanded(flex: 1, child: badge),
+                if (!isTrashed && onDelete != null)
+                  CustomButton.icon(
+                    icon: Icons.delete_outline_rounded,
+                    tooltip: l10n.text('user_soft_delete'),
+                    onPressed: onDelete,
+                    foregroundColor: context.colors.error,
+                    size: AppButtonSize.small,
+                  ),
+                if (isTrashed && onRestore != null)
+                  CustomButton.icon(
+                    icon: Icons.restore_rounded,
+                    tooltip: l10n.text('user_restore'),
+                    onPressed: onRestore,
+                    size: AppButtonSize.small,
+                  ),
+                if (isTrashed && onForceDelete != null)
+                  CustomButton.icon(
+                    icon: Icons.delete_forever_outlined,
+                    tooltip: l10n.text('user_force_delete'),
+                    onPressed: onForceDelete,
+                    foregroundColor: context.colors.error,
+                    size: AppButtonSize.small,
+                  ),
                 Expanded(
                   flex: 2,
                   child: Text(

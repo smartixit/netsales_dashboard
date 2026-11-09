@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/provider_subscription_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_plan_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_feature_entity.dart';
+import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_plan_feature_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/get_subscription_features_use_case.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_request_entity.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecases/approve_subscription_request_use_case.dart';
@@ -245,15 +246,17 @@ class PlatformSubscriptionsController extends GetxController {
   }
 
   void resetPlanForm([SubscriptionPlanEntity? plan]) {
+    final planFeatures = plan?.planFeatures ??
+        const <SubscriptionPlanFeatureEntity>[];
     planNameController.text = plan?.name ?? '';
     planPriceController.text = plan?.price ?? '';
     planDiscountController.text = plan?.discount ?? '0';
     planValidityController.text = (plan?.validityDays ?? 30).toString();
     planDescriptionController.text = plan?.description ?? '';
-    selectedFeatureIds.assignAll((plan?.planFeatures ?? const []).where((feature) => feature.isActive).map((feature) => feature.featureId));
+    selectedFeatureIds.assignAll(planFeatures.where((feature) => feature.isActive).map((feature) => feature.featureId));
     for (final controller in featureLimitControllers.values) { controller.dispose(); }
     featureLimitControllers.clear();
-    for (final feature in plan?.planFeatures ?? const []) {
+    for (final feature in planFeatures) {
       featureLimitControllers[feature.featureId] = TextEditingController(text: feature.value);
     }
   }

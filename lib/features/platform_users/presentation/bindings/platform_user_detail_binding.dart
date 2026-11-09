@@ -5,7 +5,13 @@ import 'package:netsales_dashboard/features/platform_users/data/repositories/pla
 import 'package:netsales_dashboard/features/platform_users/domain/repositories/platform_users_repository.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/get_platform_user_detail_use_case.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/get_platform_user_sessions_use_case.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/usecases/get_platform_roles_use_case.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/usecases/create_platform_user_use_case.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/usecases/update_platform_user_use_case.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/usecases/update_platform_user_status_use_case.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/usecases/manage_platform_user_security_use_case.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/controllers/platform_user_detail_controller.dart';
+import 'package:netsales_dashboard/features/platform_users/presentation/controllers/platform_user_form_controller.dart';
 
 class PlatformUserDetailBinding extends Bindings {
   @override
@@ -31,17 +37,63 @@ class PlatformUserDetailBinding extends Bindings {
         ),
       );
     }
-    Get.lazyPut<GetPlatformUserDetailUseCase>(
-      () => GetPlatformUserDetailUseCase(Get.find<PlatformUsersRepository>()),
-    );
-    Get.lazyPut<GetPlatformUserSessionsUseCase>(
-      () => GetPlatformUserSessionsUseCase(Get.find<PlatformUsersRepository>()),
-    );
+    if (!Get.isRegistered<GetPlatformRolesUseCase>()) {
+      Get.lazyPut<GetPlatformRolesUseCase>(
+        () => GetPlatformRolesUseCase(Get.find<PlatformUsersRepository>()),
+      );
+    }
+    if (!Get.isRegistered<CreatePlatformUserUseCase>()) {
+      Get.lazyPut<CreatePlatformUserUseCase>(
+        () => CreatePlatformUserUseCase(Get.find<PlatformUsersRepository>()),
+      );
+    }
+    if (!Get.isRegistered<UpdatePlatformUserUseCase>()) {
+      Get.lazyPut<UpdatePlatformUserUseCase>(
+        () => UpdatePlatformUserUseCase(Get.find<PlatformUsersRepository>()),
+      );
+    }
+    if (!Get.isRegistered<UpdatePlatformUserStatusUseCase>()) {
+      Get.lazyPut<UpdatePlatformUserStatusUseCase>(
+        () => UpdatePlatformUserStatusUseCase(
+          Get.find<PlatformUsersRepository>(),
+        ),
+      );
+    }
+    if (!Get.isRegistered<PlatformUserFormController>()) {
+      Get.lazyPut<PlatformUserFormController>(
+        () => PlatformUserFormController(
+          getRoles: Get.find<GetPlatformRolesUseCase>(),
+          createUser: Get.find<CreatePlatformUserUseCase>(),
+          updateUser: Get.find<UpdatePlatformUserUseCase>(),
+        ),
+      );
+    }
+    if (!Get.isRegistered<GetPlatformUserDetailUseCase>()) {
+      Get.lazyPut<GetPlatformUserDetailUseCase>(
+        () => GetPlatformUserDetailUseCase(
+          Get.find<PlatformUsersRepository>(),
+        ),
+      );
+    }
+    if (!Get.isRegistered<GetPlatformUserSessionsUseCase>()) {
+      Get.lazyPut<GetPlatformUserSessionsUseCase>(
+        () => GetPlatformUserSessionsUseCase(
+          Get.find<PlatformUsersRepository>(),
+        ),
+      );
+    }
+    if (!Get.isRegistered<ManagePlatformUserSecurityUseCase>()) {
+      Get.lazyPut<ManagePlatformUserSecurityUseCase>(
+        () => ManagePlatformUserSecurityUseCase(Get.find<PlatformUsersRepository>()),
+      );
+    }
     Get.lazyPut<PlatformUserDetailController>(
       () => PlatformUserDetailController(
         id,
         Get.find<GetPlatformUserDetailUseCase>(),
         Get.find<GetPlatformUserSessionsUseCase>(),
+        Get.find<UpdatePlatformUserStatusUseCase>(),
+        Get.find<ManagePlatformUserSecurityUseCase>(),
       ),
     );
   }
