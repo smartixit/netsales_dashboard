@@ -7,6 +7,7 @@
 ## Contract boundaries
 
 - `ReportDefinition` is supplied by the consuming application. It is an allowlist of filter controls, output columns, metric slots, templates, locales, page profiles, and rendering policy.
+- `ReportDefinitionRegistry` registers immutable report schema versions and resolves them only by exact report ID and version. Missing versions are never replaced with a latest schema.
 - `ReportCriteria` stores typed user selections only. It never contains records, arbitrary query fragments, API routes, or tenant/authorization data.
 - `ReportPresentationOptions` stores presentation choices only. The engine validates selected columns, sorting/grouping, template, locale, page profile, metrics, and charts against the same definition.
 - The backend remains the only authority for permission checks, query execution, tenant isolation, and aggregation.
@@ -33,7 +34,7 @@ It renders only filters and presentation controls declared in the selected `Repo
 
 ## Initial verification matrix
 
-- Domain: unique IDs, schema constraints, filter value types, allowlisted choices.
+- Domain: unique IDs, schema constraints, filter value types, allowlisted choices, exact registry version lookup.
 - Criteria: required filters, unknown IDs, value kind, text length, decimal preservation, valid date ranges.
 - Presentation: required/known columns, sortable/groupable fields, template/version, locale, page profile, metrics/charts capabilities.
 - Presets: round trip, strict shape, unsupported preset version, report schema drift, wrong report identity.

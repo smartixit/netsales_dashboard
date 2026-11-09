@@ -221,11 +221,11 @@ final class ReportDefinition {
     });
   }
 
-  List<String> get sortableColumnIds => List.unmodifiable(
+  List<String> get sortableColumnIds => List<String>.unmodifiable(
     columns.where((column) => column.sortable).map((column) => column.id),
   );
 
-  List<String> get groupableColumnIds => List.unmodifiable(
+  List<String> get groupableColumnIds => List<String>.unmodifiable(
     columns.where((column) => column.groupable).map((column) => column.id),
   );
 }

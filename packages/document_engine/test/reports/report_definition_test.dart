@@ -231,4 +231,31 @@ void main() {
     );
     expect(base.id, ReportId('sales.operations'));
   });
+  test('report registry resolves exact schema versions only', () {
+    final registry = ReportDefinitionRegistry();
+    final v1 = definition(schemaVersion: 1);
+    final v2 = definition(schemaVersion: 2);
+    registry
+      ..register(v2)
+      ..register(v1);
+
+    expect(
+      registry.require(id: v1.id, schemaVersion: 1),
+      same(v1),
+    );
+    expect(registry.versionsOf(v1.id), [v1, v2]);
+    expect(
+      registry.find(id: v1.id, schemaVersion: 3),
+      isNull,
+    );
+    expect(
+      () => registry.require(id: v1.id, schemaVersion: 3),
+      throwsStateError,
+    );
+    expect(
+      () => registry.register(definition(schemaVersion: 2)),
+      throwsStateError,
+    );
+  });
+
 }

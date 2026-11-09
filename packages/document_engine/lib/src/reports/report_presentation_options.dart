@@ -18,7 +18,7 @@ final class ReportSortOption {
     'direction': direction.name,
   };
 
-  factory ReportSortOption.fromJson(Map json) {
+  factory ReportSortOption.fromJson(Map<String, Object?> json) {
     if (!_hasOnlyKeys(json, const {'field_id', 'direction'}) ||
         json['field_id'] is! String ||
         json['direction'] is! String) {
@@ -54,13 +54,13 @@ final class ReportTemplateSelection {
     },
   };
 
-  factory ReportTemplateSelection.fromJson(Map json) {
+  factory ReportTemplateSelection.fromJson(Map<String, Object?> json) {
     if (!_hasOnlyKeys(json, const {'id', 'version'}) ||
         json['id'] is! String ||
-        json['version'] is! Map) {
+        json['version'] is! Map<String, Object?>) {
       throw const FormatException('Malformed report template selection.');
     }
-    final version = json['version'] as Map;
+    final version = json['version'] as Map<String, Object?>;
     if (!_hasOnlyKeys(version, const {'major', 'minor', 'patch'}) ||
         version['major'] is! int ||
         version['minor'] is! int ||
@@ -131,7 +131,7 @@ final class ReportPresentationOptions {
     'include_charts': includeCharts,
   };
 
-  factory ReportPresentationOptions.fromJson(Map json) {
+  factory ReportPresentationOptions.fromJson(Map<String, Object?> json) {
     const keys = {
       'visible_column_ids',
       'sorts',
@@ -143,13 +143,13 @@ final class ReportPresentationOptions {
       'include_charts',
     };
     if (!_hasOnlyKeys(json, keys) ||
-        json['visible_column_ids'] is! List ||
-        !(json['visible_column_ids'] as List).every((item) => item is String) ||
-        json['sorts'] is! List ||
-        !(json['sorts'] as List).every((item) => item is Map) ||
+        json['visible_column_ids'] is! List<Object?> ||
+        !(json['visible_column_ids'] as List<Object?>).every((item) => item is String) ||
+        json['sorts'] is! List<Object?> ||
+        !(json['sorts'] as List<Object?>).every((item) => item is Map<String, Object?>) ||
         (json['group_by_field_id'] != null &&
             json['group_by_field_id'] is! String) ||
-        (json['template'] != null && json['template'] is! Map) ||
+        (json['template'] != null && json['template'] is! Map<String, Object?>) ||
         (json['language_tag'] != null && json['language_tag'] is! String) ||
         (json['page_profile_id'] != null && json['page_profile_id'] is! String) ||
         json['include_metrics'] is! bool ||
@@ -158,13 +158,13 @@ final class ReportPresentationOptions {
     }
 
     return ReportPresentationOptions(
-      visibleColumnIds: (json['visible_column_ids'] as List).cast<String>(),
-      sorts: (json['sorts'] as List)
-          .map((item) => ReportSortOption.fromJson(item as Map)),
+      visibleColumnIds: (json['visible_column_ids'] as List<Object?>).cast<String>(),
+      sorts: (json['sorts'] as List<Object?>)
+          .map((item) => ReportSortOption.fromJson(item as Map<String, Object?>)),
       groupByFieldId: json['group_by_field_id'] as String?,
       template: json['template'] == null
           ? null
-          : ReportTemplateSelection.fromJson(json['template'] as Map),
+          : ReportTemplateSelection.fromJson(json['template'] as Map<String, Object?>),
       languageTag: json['language_tag'] as String?,
       pageProfileId: json['page_profile_id'] as String?,
       includeMetrics: json['include_metrics'] as bool,
@@ -274,5 +274,5 @@ final class ReportPresentationOptions {
   }
 }
 
-bool _hasOnlyKeys(Map value, Set<String> allowed) =>
+bool _hasOnlyKeys(Map<String, Object?> value, Set<String> allowed) =>
     value.keys.every((key) => key is String && allowed.contains(key));

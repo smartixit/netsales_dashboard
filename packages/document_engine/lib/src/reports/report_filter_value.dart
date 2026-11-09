@@ -14,7 +14,7 @@ sealed class ReportFilterValue {
   };
 
   static ReportFilterValue fromJson(Object? json) {
-    if (json is! Map) {
+    if (json is! Map<String, Object?>) {
       throw const FormatException('A report filter value must be an object.');
     }
     final type = json['type'];
@@ -30,11 +30,11 @@ sealed class ReportFilterValue {
       'integer' when value is int => ReportIntegerFilterValue(value),
       'decimal' when value is String => ReportDecimalFilterValue(value),
       'date' when value is String => ReportDateFilterValue(DateTime.parse(value)),
-      'date_range' when value is Map =>
+      'date_range' when value is Map<String, Object?> =>
         ReportDateRangeFilterValue.fromJson(value),
       'boolean' when value is bool => ReportBooleanFilterValue(value),
       'choice' when value is String => ReportChoiceFilterValue(value),
-      'choices' when value is List && value.every((item) => item is String) =>
+      'choices' when value is List<Object?> && value.every((item) => item is String) =>
         ReportChoicesFilterValue(value.cast<String>()),
       _ => throw FormatException('Unsupported or malformed report filter value type: $type.'),
     };
@@ -91,7 +91,7 @@ final class ReportDateRangeFilterValue extends ReportFilterValue {
   final DateTime start;
   final DateTime end;
 
-  factory ReportDateRangeFilterValue.fromJson(Map value) {
+  factory ReportDateRangeFilterValue.fromJson(Map<String, Object?> value) {
     if (value.length != 2 ||
         value['start'] is! String ||
         value['end'] is! String ||

@@ -78,7 +78,7 @@ final class SavedReportPreset {
     'presentation': presentation.toJson(),
   };
 
-  factory SavedReportPreset.fromJson(Map json) {
+  factory SavedReportPreset.fromJson(Map<String, Object?> json) {
     const allowed = {
       'preset_schema_version',
       'id',
@@ -95,8 +95,8 @@ final class SavedReportPreset {
         json['name'] is! String ||
         json['report_id'] is! String ||
         json['report_schema_version'] is! int ||
-        json['criteria'] is! Map ||
-        json['presentation'] is! Map) {
+        json['criteria'] is! Map<String, Object?> ||
+        json['presentation'] is! Map<String, Object?>) {
       throw const FormatException('Malformed or unsupported saved report preset.');
     }
 
@@ -113,9 +113,9 @@ final class SavedReportPreset {
       reportId: ReportId(json['report_id'] as String),
       reportSchemaVersion: json['report_schema_version'] as int,
       presetSchemaVersion: version,
-      criteria: ReportCriteria.fromJson(json['criteria'] as Map),
+      criteria: ReportCriteria.fromJson(json['criteria'] as Map<String, Object?>),
       presentation: ReportPresentationOptions.fromJson(
-        json['presentation'] as Map,
+        json['presentation'] as Map<String, Object?>,
       ),
     );
   }
@@ -152,5 +152,5 @@ final class SavedReportPreset {
   }
 }
 
-bool _hasOnlyKeys(Map value, Set<String> allowed) =>
+bool _hasOnlyKeys(Map<String, Object?> value, Set<String> allowed) =>
     value.keys.every((key) => key is String && allowed.contains(key));

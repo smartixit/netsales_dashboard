@@ -83,6 +83,7 @@ flutter test packages/document_engine/test
 
 ## M5 — Report definitions and configuration contracts
 
+- `ReportDefinitionRegistry` registers immutable schema versions and requires exact ID/version lookup; it never falls back to latest.
 - Application-supplied `ReportDefinition` schemas declare the only available
   filters, output columns, metric slots, chart availability, templates,
   locales, page profiles, execution policy, and optional client row bound.

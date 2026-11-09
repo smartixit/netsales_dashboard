@@ -37,11 +37,11 @@ final class ReportCriteria {
     'filters': filters.map((key, value) => MapEntry(key, value.toJson())),
   };
 
-  factory ReportCriteria.fromJson(Map json) {
-    if (!_hasOnlyKeys(json, const {'filters'}) || json['filters'] is! Map) {
+  factory ReportCriteria.fromJson(Map<String, Object?> json) {
+    if (!_hasOnlyKeys(json, const {'filters'}) || json['filters'] is! Map<String, Object?>) {
       throw const FormatException('Malformed report criteria object.');
     }
-    final rawFilters = json['filters'] as Map;
+    final rawFilters = json['filters'] as Map<String, Object?>;
     final parsed = <String, ReportFilterValue>{};
     for (final entry in rawFilters.entries) {
       if (entry.key is! String) {
@@ -142,5 +142,5 @@ bool _matchesKind(ReportFilterKind kind, ReportFilterValue value) =>
       ReportFilterKind.multiChoice => value is ReportChoicesFilterValue,
     };
 
-bool _hasOnlyKeys(Map value, Set<String> allowed) =>
+bool _hasOnlyKeys(Map<String, Object?> value, Set<String> allowed) =>
     value.keys.every((key) => key is String && allowed.contains(key));
