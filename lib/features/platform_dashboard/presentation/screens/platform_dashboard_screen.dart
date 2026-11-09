@@ -10,6 +10,7 @@ import 'package:netsales_dashboard/core/services/session_service.dart';
 import 'package:netsales_dashboard/core/services/theme_service.dart';
 import 'package:netsales_dashboard/core/themes/app_breakpoints.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
+import 'package:netsales_dashboard/core/themes/app_typography.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/controllers/platform_dashboard_controller.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/navigation/platform_navigation_registry.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/widgets/platform_navigation_footer.dart';
@@ -109,12 +110,64 @@ class PlatformDashboardScreen extends GetView<PlatformDashboardController> {
                   backgroundColor: colors.surfaceContainerLow,
                   dimension: 40,
                 )
-              : CustomButton.outline(
-                  onPressed: openPalette,
-                  size: AppButtonSize.small,
-                  prefix: const Icon(Icons.search_rounded, size: 18),
-                  text: l10n.text('search'),
-                  width: 180,
+              : Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: openPalette,
+                    borderRadius: AppRadius.mdRadius,
+                    child: Container(
+                      width: 260,
+                      height: AppSpacing.buttonHeight,
+                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                      decoration: BoxDecoration(
+                        color: colors.surfaceContainerLow.withValues(alpha: 0.65),
+                        borderRadius: AppRadius.mdRadius,
+                        border: Border.all(
+                          color: colors.outlineVariant.withValues(alpha: 0.35),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.search_rounded,
+                            size: 19,
+                            color: colors.onSurfaceVariant.withValues(alpha: 0.8),
+                          ),
+                          AppSpacing.hSm,
+                          Expanded(
+                            child: Text(
+                              '${l10n.text('search')}...',
+                              style: AppTypography.bodySmall.copyWith(
+                                color: colors.onSurfaceVariant.withValues(alpha: 0.7),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppSpacing.xs,
+                              vertical: AppSpacing.xxs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colors.surfaceContainerHighest.withValues(alpha: 0.8),
+                              borderRadius: AppRadius.xsRadius,
+                              border: Border.all(
+                                color: colors.outlineVariant.withValues(alpha: 0.4),
+                              ),
+                            ),
+                            child: Text(
+                              'Ctrl K',
+                              style: AppTypography.caption.copyWith(
+                                color: colors.onSurfaceVariant,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
           notifications: controller.canViewNotifications
               ? CustomNotificationCenter(

@@ -163,10 +163,19 @@ class _NavigationTile extends StatelessWidget {
         : item.enabled
         ? theme.sidebarForeground
         : theme.sidebarMuted;
-    final icon = Icon(
-      selected ? (item.selectedIcon ?? item.icon) : item.icon,
-      size: 20,
-      color: color,
+    final iconWidget = Container(
+      padding: EdgeInsets.all(AppSpacing.xs),
+      decoration: BoxDecoration(
+        color: selected
+            ? theme.sidebarSelectedForeground.withValues(alpha: 0.12)
+            : Colors.transparent,
+        borderRadius: AppRadius.smRadius,
+      ),
+      child: Icon(
+        selected ? (item.selectedIcon ?? item.icon) : item.icon,
+        size: 20,
+        color: color,
+      ),
     );
 
     if (item.hasChildren && !collapsed) {
@@ -191,7 +200,7 @@ class _NavigationTile extends StatelessWidget {
               onPressed: () => onSelected(item.id),
               child: Row(
                 children: [
-                  icon,
+                  iconWidget,
                   AppSpacing.hSm,
                   Expanded(
                     child: Text(
@@ -246,7 +255,7 @@ class _NavigationTile extends StatelessWidget {
                     ? MainAxisAlignment.center
                     : MainAxisAlignment.start,
                 children: [
-                  icon,
+                  iconWidget,
                   if (!collapsed) ...[
                     AppSpacing.hSm,
                     Expanded(

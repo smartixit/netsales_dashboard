@@ -55,14 +55,25 @@ class DashboardMetricContent extends StatelessWidget {
               Tooltip(
                 message: metric.tooltip ?? metric.title,
                 child: Container(
-                  width: 38,
-                  height: 38,
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
-                    color: accent.withValues(alpha: 0.10),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        accent.withValues(alpha: 0.16),
+                        accent.withValues(alpha: 0.05),
+                      ],
+                    ),
                     borderRadius: BorderRadius.circular(tokens.iconRadius),
+                    border: Border.all(
+                      color: accent.withValues(alpha: 0.22),
+                      width: 1,
+                    ),
                   ),
                   alignment: Alignment.center,
-                  child: Icon(metric.icon, size: 20, color: accent),
+                  child: Icon(metric.icon, size: 21, color: accent),
                 ),
               ),
             ] else if (metric.tooltip != null) ...[

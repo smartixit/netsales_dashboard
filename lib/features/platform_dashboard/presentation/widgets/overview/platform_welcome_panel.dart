@@ -27,37 +27,96 @@ class PlatformWelcomePanel extends StatelessWidget {
     final date = DateFormat.yMMMMEEEEd(l10n.isArabic ? 'ar' : 'en')
         .format(DateTime.now());
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      padding: EdgeInsets.all(AppSpacing.xl),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.xl),
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: AppRadius.lgRadius,
-        border: Border.all(color: colors.outlineVariant),
+        color: colors.surfaceContainerLowest,
+        borderRadius: AppRadius.xlRadius,
+        border: Border.all(color: colors.outlineVariant.withValues(alpha: 0.35)),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadow.withValues(alpha: isDark ? 0.2 : 0.04),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
           final compact = constraints.maxWidth < AppBreakpoints.desktopMax;
-          final copy = Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          final copy = Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                greeting,
-                style: AppTypography.headlineSmall.copyWith(
-                  color: colors.onSurface,
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      colors.primary,
+                      colors.secondary,
+                    ],
+                  ),
+                  borderRadius: AppRadius.cardRadius,
+                  boxShadow: [
+                    BoxShadow(
+                      color: colors.primary.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: Colors.white,
+                  size: 26,
                 ),
               ),
-              AppSpacing.vXs,
-              Text(
-                l10n.text('platform_summary'),
-                style: AppTypography.bodyMedium.copyWith(
-                  color: colors.onSurfaceVariant,
-                ),
-              ),
-              AppSpacing.vXs,
-              Text(
-                date,
-                style: AppTypography.caption.copyWith(
-                  color: colors.onSurfaceVariant,
+              AppSpacing.hMd,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      greeting,
+                      style: AppTypography.titleLarge.copyWith(
+                        color: colors.onSurface,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    AppSpacing.vXxs,
+                    Row(
+                      children: [
+                        Text(
+                          l10n.text('platform_summary'),
+                          style: AppTypography.bodySmall.copyWith(
+                            color: colors.onSurfaceVariant,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        AppSpacing.hSm,
+                        Container(
+                          width: 4,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+                          ),
+                        ),
+                        AppSpacing.hSm,
+                        Text(
+                          date,
+                          style: AppTypography.caption.copyWith(
+                            color: colors.onSurfaceVariant.withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -77,6 +136,7 @@ class PlatformWelcomePanel extends StatelessWidget {
           return Row(
             children: [
               Expanded(child: copy),
+              AppSpacing.hMd,
               action,
             ],
           );
