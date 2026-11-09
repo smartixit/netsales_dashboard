@@ -203,7 +203,7 @@ class _UserRow extends StatelessWidget {
                       CustomButton.icon(icon: Icons.delete_outline_rounded, tooltip: l10n.text('user_soft_delete'), onPressed: onDelete, foregroundColor: context.colors.error, size: AppButtonSize.small),
                     if (!isTrashed && onDelete != null)
                   CustomButton.icon(icon: Icons.delete_outline_rounded, tooltip: 'نقل إلى سلة المحذوفات', onPressed: onDelete, foregroundColor: context.colors.error, size: AppButtonSize.small),
-                if (isTrashed) ...[
+                if (isTrashed && onRestore != null) ...[
                       CustomButton.icon(icon: Icons.restore_rounded, tooltip: l10n.text('user_restore'), onPressed: onRestore, size: AppButtonSize.small),
                       CustomButton.icon(icon: Icons.delete_forever_outlined, tooltip: l10n.text('user_force_delete'), onPressed: onForceDelete, foregroundColor: context.colors.error, size: AppButtonSize.small),
                     ],
@@ -248,7 +248,7 @@ class _UserRow extends StatelessWidget {
                   ),
                 ),
                 Expanded(flex: 1, child: badge),
-                if (isTrashed) ...[
+                if (isTrashed && onRestore != null) ...[
                   CustomButton.icon(icon: Icons.restore_rounded, tooltip: 'استعادة', onPressed: onRestore, size: AppButtonSize.small),
                   CustomButton.icon(icon: Icons.delete_forever_outlined, tooltip: 'حذف نهائي', onPressed: onForceDelete, foregroundColor: context.colors.error, size: AppButtonSize.small),
                 ],
