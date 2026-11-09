@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:netsales_dashboard/core/constants/app_radius.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
@@ -233,7 +232,7 @@ class AppThemes {
         ),
         shape: RoundedRectangleBorder(borderRadius: AppRadius.lgRadius),
         textStyle: AppTypography.buttonText,
-        minimumSize: Size(double.infinity, 56.h),
+        minimumSize: Size(double.infinity, AppSpacing.buttonHeight),
       ),
     );
   }
@@ -251,10 +250,10 @@ class AppThemes {
           horizontal: AppSpacing.buttonPaddingH,
           vertical: AppSpacing.buttonPaddingV,
         ),
-        side: BorderSide(color: colors.outline, width: 1.5.w),
+        side: BorderSide(color: colors.outline, width: 1.5),
         shape: RoundedRectangleBorder(borderRadius: AppRadius.lgRadius),
         textStyle: AppTypography.labelLarge,
-        minimumSize: Size(double.infinity, 56.h),
+        minimumSize: Size(double.infinity, AppSpacing.buttonHeight),
       ),
     );
   }
@@ -310,30 +309,30 @@ class AppThemes {
       ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.input),
-        borderSide: BorderSide(color: colors.outline, width: 1.w),
+        borderSide: BorderSide(color: colors.outline, width: 1.0),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.input),
         borderSide: BorderSide(
           color: colors.outline.withValues(alpha: .25),
-          width: 1.w,
+          width: 1.0,
         ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.input),
-        borderSide: BorderSide(color: colors.primary, width: 2.w),
+        borderSide: BorderSide(color: colors.primary, width: 2.0),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.input),
-        borderSide: BorderSide(color: colors.error, width: 1.w),
+        borderSide: BorderSide(color: colors.error, width: 1.0),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.input),
-        borderSide: BorderSide(color: colors.error, width: 2.w),
+        borderSide: BorderSide(color: colors.error, width: 2.0),
       ),
       disabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.input),
-        borderSide: BorderSide(color: colors.disabled, width: 1.w),
+        borderSide: BorderSide(color: colors.disabled, width: 1.0),
       ),
       labelStyle: AppTypography.bodyMedium.copyWith(
         color: colors.onSurfaceVariant,
@@ -407,7 +406,7 @@ class AppThemes {
       disabledColor: colors.disabled,
       selectedColor: colors.primaryContainer,
       secondarySelectedColor: colors.secondaryContainer,
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: AppSpacing.xs),
       labelStyle: AppTypography.labelMedium.copyWith(color: colors.onSurface),
       secondaryLabelStyle: AppTypography.labelMedium.copyWith(
         color: colors.onSecondaryContainer,
@@ -421,7 +420,7 @@ class AppThemes {
   static DividerThemeData _buildDividerTheme({required AppColors colors}) {
     return DividerThemeData(
       color: colors.divider,
-      thickness: 1.w,
+      thickness: 1.0,
       space: AppSpacing.lg,
     );
   }
@@ -430,7 +429,7 @@ class AppThemes {
   static ListTileThemeData _buildListTileTheme({required AppColors colors}) {
     return ListTileThemeData(
       contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-      minLeadingWidth: 24.w,
+      minLeadingWidth: AppSpacing.xxl,
       iconColor: colors.onSurfaceVariant,
       textColor: colors.onSurface,
       titleTextStyle: AppTypography.bodyLarge,
@@ -470,7 +469,7 @@ class AppThemes {
         return Colors.transparent;
       }),
       checkColor: WidgetStateProperty.all(colors.onPrimary),
-      side: BorderSide(color: colors.outline, width: 1.5.w),
+      side: BorderSide(color: colors.outline, width: 1.5),
       shape: RoundedRectangleBorder(borderRadius: AppRadius.xsRadius),
     );
   }
@@ -494,9 +493,9 @@ class AppThemes {
       inactiveTrackColor: colors.surfaceContainerHighest,
       thumbColor: colors.primary,
       overlayColor: colors.primary.withValues(alpha: 0.1),
-      trackHeight: 4.h,
-      thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10.r),
-      overlayShape: RoundSliderOverlayShape(overlayRadius: 20.r),
+      trackHeight: AppSpacing.xs,
+      thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10.0),
+      overlayShape: RoundSliderOverlayShape(overlayRadius: 20.0),
     );
   }
 
@@ -508,7 +507,7 @@ class AppThemes {
       color: colors.primary,
       linearTrackColor: colors.surfaceContainerHighest,
       circularTrackColor: colors.surfaceContainerHighest,
-      linearMinHeight: 4.h,
+      linearMinHeight: AppSpacing.xs,
     );
   }
 
@@ -520,7 +519,7 @@ class AppThemes {
         borderRadius: AppRadius.lgRadius,
       ),
       textStyle: AppTypography.caption.copyWith(color: colors.onInverseSurface),
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: AppSpacing.sm),
       waitDuration: const Duration(milliseconds: 500),
       showDuration: const Duration(seconds: 2),
       // يمنع تفعيل التلميح بنقرة واحدة على سطح المكتب (سلوك Flutter
@@ -542,7 +541,7 @@ class AppThemes {
       foregroundColor: colors.onPrimaryContainer,
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: AppRadius.fullRadius),
-      sizeConstraints: BoxConstraints.tightFor(width: 56.w, height: 56.h),
+      sizeConstraints: BoxConstraints.tightFor(width: 56.0, height: AppSpacing.buttonHeight),
     );
   }
 

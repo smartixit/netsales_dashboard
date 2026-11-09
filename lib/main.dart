@@ -181,8 +181,11 @@ class MyApp extends StatelessWidget {
     final localeService = LocaleService.to;
 
     return ScreenUtilInit(
-      designSize: const Size(375, 812),
-      minTextAdapt: true,
+      designSize: const Size(1440, 900),
+      // Desktop and responsive Web layouts use logical pixels + AppBreakpoints.
+      // Keep ScreenUtil only as a compatibility shim for legacy leaf widgets.
+      enableScaleWH: () => false,
+      enableScaleText: () => false,
       builder: (context, child) {
         return Obx(() {
           return GetMaterialApp(

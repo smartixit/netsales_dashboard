@@ -1,64 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+/// Radius tokens are stable logical pixels, not screen-relative measurements.
 class AppRadius {
   AppRadius._();
 
-  /// No radius (0)
-  static double get none => 0.r;
+  static const double none = 0;
+  static const double xs = 4;
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16;
+  static const double xl = 20;
+  static const double xxl = 24;
+  static const double xxxl = 28;
+  static const double full = 999;
 
-  /// Extra small radius (4) - Tags, chips, small badges
-  static double get xs => 4.r;
+  static const double button = 16;
+  static const double input = 12;
+  static const double card = 16;
+  static const double dialog = 24;
+  static const double bottomSheet = 24;
+  static const double chip = 8;
+  static const double avatar = 999;
+  static const double snackbar = 12;
+  static const double tooltip = 8;
 
-  /// Small radius (8) - Small buttons, inputs, checkboxes
-  static double get sm => 8.r;
-
-  /// Medium radius (12) - Cards, dialogs, menus
-  static double get md => 12.r;
-
-  /// Large radius (16) - Large cards, sheets, containers
-  static double get lg => 16.r;
-
-  /// Extra large radius (20) - Modals, bottom sheets
-  static double get xl => 20.r;
-
-  /// Double extra large radius (24) - Bottom sheets, drawers
-  static double get xxl => 24.r;
-
-  /// Triple extra large radius (28) - Large dialogs
-  static double get xxxl => 28.r;
-
-  /// Full radius (999) - Pills, avatars, circular buttons
-  static double get full => 999.r;
-
-  /// Button radius
-  static double get button => 16.r;
-
-  /// Input radius
-  static double get input => 12.r;
-
-  /// Card radius
-  static double get card => 16.r;
-
-  /// Dialog radius
-  static double get dialog => 24.r;
-
-  /// Bottom sheet radius
-  static double get bottomSheet => 24.r;
-
-  /// Chip radius
-  static double get chip => 8.r;
-
-  /// Avatar radius
-  static double get avatar => 999.r;
-
-  /// Snackbar radius
-  static double get snackbar => 12.r;
-
-  /// Tooltip radius
-  static double get tooltip => 8.r;
-
-  /// Border radius shortcuts
   static BorderRadius get noneRadius => BorderRadius.circular(none);
   static BorderRadius get xsRadius => BorderRadius.circular(xs);
   static BorderRadius get smRadius => BorderRadius.circular(sm);
@@ -68,7 +33,6 @@ class AppRadius {
   static BorderRadius get xxlRadius => BorderRadius.circular(xxl);
   static BorderRadius get fullRadius => BorderRadius.circular(full);
 
-  /// Top-only radius
   static BorderRadius get topLg =>
       BorderRadius.vertical(top: Radius.circular(lg));
   static BorderRadius get topXl =>
@@ -76,17 +40,13 @@ class AppRadius {
   static BorderRadius get topXxl =>
       BorderRadius.vertical(top: Radius.circular(xxl));
 
-  /// Bottom-only radius
   static BorderRadius get bottomLg =>
       BorderRadius.vertical(bottom: Radius.circular(lg));
   static BorderRadius get bottomXl =>
       BorderRadius.vertical(bottom: Radius.circular(xl));
 
-  /// Left-only radius
   static BorderRadius get leftLg =>
       BorderRadius.horizontal(left: Radius.circular(lg));
-
-  /// Right-only radius
   static BorderRadius get rightLg =>
       BorderRadius.horizontal(right: Radius.circular(lg));
 }
