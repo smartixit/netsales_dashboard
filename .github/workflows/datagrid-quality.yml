@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   actions: read
 
 concurrency:
@@ -80,34 +80,8 @@ jobs:
         working-directory: packages/document_engine
         run: flutter pub get
 
-      - name: Apply canonical Dart formatting
-        run: dart format packages/document_engine
-
-      - name: Commit canonical formatter changes
-        if: github.event_name == 'pull_request'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_BRANCH: ${{ github.head_ref }}
-        run: |
-          if ! git diff --quiet -- packages/document_engine; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add packages/document_engine
-            git commit -m "style(document-engine): apply canonical Dart formatting"
-            git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${PR_BRANCH}"
-          fi
-
-      - name: Capture canonical formatter patch
-        if: always()
-        run: git diff -- packages/document_engine > document-engine-format.patch
-
-      - name: Upload canonical formatter patch
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: document-engine-format-patch
-          path: document-engine-format.patch
-          if-no-files-found: error
+      - name: Verify document engine formatting
+        run: dart format --output=none --set-exit-if-changed packages/document_engine
 
       - name: Analyze document engine package
         working-directory: packages/document_engine
