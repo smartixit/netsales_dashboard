@@ -123,7 +123,7 @@ void main() {
       () async {
     const renderer = PdfDocumentRenderer();
     final result = await renderer.render(
-      snapshot(
+      snapshot: snapshot(
         languageTag: 'en-US',
         nodes: const [DocumentParagraph(text: 'تقرير المبيعات')],
       ),
@@ -178,7 +178,7 @@ void main() {
     );
 
     final result = await renderer.render(
-      snapshot(nodes: const [DocumentParagraph(text: 'Short report')]),
+      snapshot: snapshot(nodes: const [DocumentParagraph(text: 'Short report')]),
       template: portraitOnly,
       options: options(pageProfile: DocumentPageProfile.a4Landscape()),
     );
