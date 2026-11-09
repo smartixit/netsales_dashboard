@@ -34,6 +34,7 @@ class DesktopWindowingController {
   late final Ticker _ticker;
   Window? _window;
   ListenerId? _listenerId;
+  final ValueNotifier<bool> _isMaximizedNotifier = ValueNotifier<bool>(false);
   bool _initialized = false;
   bool _nativeAnimation = false;
   String? _activeProfileId;
@@ -285,6 +286,13 @@ class DesktopWindowingController {
   }
 
   void _handleWindowEvent(WindowEvent event) {
+    if (_window != null) {
+      final currentMaximized = _window!.isMaximized;
+      if (_isMaximizedNotifier.value != currentMaximized) {
+        _isMaximizedNotifier.value = currentMaximized;
+      }
+    }
+
     if (!_ticker.isActive || _nativeAnimation || _window == null) {
       return;
     }
@@ -448,21 +456,32 @@ class DesktopWindowingController {
   }
 
   bool get isMaximized => _window?.isMaximized ?? false;
+  ValueListenable<bool> get isMaximizedListenable => _isMaximizedNotifier;
 
-  void maximize() => _window?.maximize();
+  void maximize() {
+    _window?.maximize();
+    _isMaximizedNotifier.value = isMaximized;
+  }
 
-  void minimize() => _window?.minimize();
+  void minimize() {
+    _window?.minimize();
+    _isMaximizedNotifier.value = isMaximized;
+  }
 
-  void restore() => _window?.restore();
+  void restore() {
+    _window?.unmaximize();
+    _isMaximizedNotifier.value = isMaximized;
+  }
 
   void toggleMaximize() {
     final window = _window;
     if (window == null) return;
     if (window.isMaximized) {
-      window.restore();
+      window.unmaximize();
     } else {
       window.maximize();
     }
+    _isMaximizedNotifier.value = window.isMaximized;
   }
 
   void startDragging() => _window?.startDragging();
@@ -483,6 +502,7 @@ class DesktopWindowingController {
     _disposed = true;
     _cancelTransition(WindowOperationStatus.interruptedByNewRequest);
     _ticker.dispose();
+    _isMaximizedNotifier.dispose();
     final window = _window;
     final listenerId = _listenerId;
     if (window != null && listenerId != null) {

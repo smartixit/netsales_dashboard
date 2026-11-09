@@ -120,13 +120,18 @@ class DesktopTitleBar extends StatelessWidget implements PreferredSizeWidget {
                 tooltip: 'تصغير النافذة',
                 onPressed: windowing.minimize,
               ),
-              _WindowCaptionButton(
-                icon: windowing.isMaximized
-                    ? Icons.filter_none_rounded
-                    : Icons.crop_square_rounded,
-                tooltip: windowing.isMaximized ? 'استعادة' : 'تكبير',
-                iconSize: 13,
-                onPressed: windowing.toggleMaximize,
+              ValueListenableBuilder<bool>(
+                valueListenable: windowing.isMaximizedListenable,
+                builder: (context, isMax, _) {
+                  return _WindowCaptionButton(
+                    icon: isMax
+                        ? Icons.filter_none_rounded
+                        : Icons.crop_square_rounded,
+                    tooltip: isMax ? 'استعادة' : 'تكبير',
+                    iconSize: 13,
+                    onPressed: windowing.toggleMaximize,
+                  );
+                },
               ),
               _WindowCaptionButton(
                 icon: Icons.close_rounded,

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../config/windowing_config.dart';
@@ -37,6 +38,8 @@ class DesktopWindowingController {
       );
 
   bool get isMaximized => false;
+  ValueListenable<bool> get isMaximizedListenable =>
+      ValueNotifier<bool>(false);
 
   void maximize() {}
 
