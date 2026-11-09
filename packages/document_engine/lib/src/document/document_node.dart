@@ -57,7 +57,9 @@ final class DocumentMetricGrid extends DocumentNode {
     this.columns = 2,
   }) : metrics = List<DocumentMetric>.unmodifiable(metrics) {
     if (this.metrics.isEmpty || this.metrics.length > 20) {
-      throw ArgumentError('A metric grid must contain between one and twenty metrics.');
+      throw ArgumentError(
+        'A metric grid must contain between one and twenty metrics.',
+      );
     }
     if (columns < 1 || columns > 4) {
       throw ArgumentError.value(columns, 'columns', 'Must be between 1 and 4.');
@@ -86,7 +88,9 @@ final class DocumentTableStyle {
     _validateColor(alternateRowColor, 'alternateRowColor');
     if (this.columnWeights != null &&
         (this.columnWeights!.isEmpty ||
-            this.columnWeights!.any((weight) => !weight.isFinite || weight <= 0))) {
+            this.columnWeights!.any(
+              (weight) => !weight.isFinite || weight <= 0,
+            ))) {
       throw ArgumentError.value(
         columnWeights,
         'columnWeights',
@@ -158,7 +162,9 @@ final class DocumentTable extends DocumentNode {
        style = style ?? DocumentTableStyle() {
     final columnIds = this.columns.map((column) => column.id).toSet();
     if (this.columns.isEmpty || columnIds.length != this.columns.length) {
-      throw ArgumentError('Table columns must be non-empty and uniquely identified.');
+      throw ArgumentError(
+        'Table columns must be non-empty and uniquely identified.',
+      );
     }
 
     final rowIds = this.rows.map((row) => row.id).toSet();
@@ -178,7 +184,9 @@ final class DocumentTable extends DocumentNode {
 
     if (this.style.columnWeights != null &&
         (this.style.columnWeights!.length != this.columns.length ||
-            this.style.columnWeights!.any((weight) => !weight.isFinite || weight <= 0))) {
+            this.style.columnWeights!.any(
+              (weight) => !weight.isFinite || weight <= 0,
+            ))) {
       throw ArgumentError.value(
         this.style.columnWeights!.length,
         'style.columnWeights',
@@ -230,7 +238,11 @@ final class DocumentChartSeries {
       throw ArgumentError('A chart series must contain at least one point.');
     }
     if (!RegExp(r'^[0-9A-Fa-f]{6}$').hasMatch(color)) {
-      throw ArgumentError.value(color, 'color', 'Use a six-digit RGB hex value.');
+      throw ArgumentError.value(
+        color,
+        'color',
+        'Use a six-digit RGB hex value.',
+      );
     }
   }
 
@@ -271,23 +283,39 @@ final class DocumentChart extends DocumentNode {
         throw ArgumentError('Pie and donut charts require exactly one series.');
       }
       if (this.series.single.points.length > 12) {
-        throw ArgumentError('Pie and donut charts support at most twelve slices.');
+        throw ArgumentError(
+          'Pie and donut charts support at most twelve slices.',
+        );
       }
       final values = this.series.single.points.map((point) => point.value);
-      if (values.any((value) => value < 0) || values.every((value) => value == 0)) {
-        throw ArgumentError('Pie and donut values must be non-negative with a positive total.');
+      if (values.any((value) => value < 0) ||
+          values.every((value) => value == 0)) {
+        throw ArgumentError(
+          'Pie and donut values must be non-negative with a positive total.',
+        );
       }
     } else {
       if (this.series.any((item) => item.points.length > 100)) {
-        throw ArgumentError('Cartesian chart series support at most 24 points.');
+        throw ArgumentError(
+          'Cartesian chart series support at most 24 points.',
+        );
       }
-      final labels = this.series.first.points.map((point) => point.label).toList();
-      if (this.series.any((item) =>
-          item.points.length != labels.length ||
-          !item.points.map((point) => point.label).toList().asMap().entries.every(
-            (entry) => entry.value == labels[entry.key],
-          ))) {
-        throw ArgumentError('All Cartesian chart series must share the same categories.');
+      final labels = this.series.first.points
+          .map((point) => point.label)
+          .toList();
+      if (this.series.any(
+        (item) =>
+            item.points.length != labels.length ||
+            !item.points
+                .map((point) => point.label)
+                .toList()
+                .asMap()
+                .entries
+                .every((entry) => entry.value == labels[entry.key]),
+      )) {
+        throw ArgumentError(
+          'All Cartesian chart series must share the same categories.',
+        );
       }
     }
   }

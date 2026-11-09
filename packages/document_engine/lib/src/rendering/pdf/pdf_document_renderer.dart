@@ -168,12 +168,10 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (options.showPageNumbers) {
       requiredCapabilities.add(TemplateCapability.pageNumbering);
     }
-    if (options.headerText != null ||
-        options.firstPageHeaderText != null) {
+    if (options.headerText != null || options.firstPageHeaderText != null) {
       requiredCapabilities.add(TemplateCapability.repeatingHeader);
     }
-    if (options.footerText != null ||
-        options.firstPageFooterText != null) {
+    if (options.footerText != null || options.firstPageFooterText != null) {
       requiredCapabilities.add(TemplateCapability.repeatingFooter);
     }
     if (options.coverPage) {
@@ -182,8 +180,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (nodes.any((node) => node is DocumentTable)) {
       requiredCapabilities.add(TemplateCapability.tables);
     }
-    if (nodes.any((node) =>
-        node is DocumentMetric || node is DocumentMetricGrid)) {
+    if (nodes.any(
+      (node) => node is DocumentMetric || node is DocumentMetricGrid,
+    )) {
       requiredCapabilities.add(TemplateCapability.metrics);
     }
     if (nodes.any((node) => node is DocumentChart)) {
@@ -192,8 +191,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (!template.capabilities.supportsAll(requiredCapabilities)) {
       return const DocumentRenderFailure(
         code: DocumentRenderFailureCode.unsupportedCapability,
-        message:
-            'The selected template does not declare all requested capabilities.',
+        message: 'The selected template does not declare all requested capabilities.',
       );
     }
 
@@ -204,7 +202,8 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (!template.capabilities.supports(orientationCapability)) {
       return const DocumentRenderFailure(
         code: DocumentRenderFailureCode.unsupportedCapability,
-        message: 'The selected template does not support this page orientation.',
+        message:
+            'The selected template does not support this page orientation.',
       );
     }
     return null;
@@ -243,22 +242,32 @@ final class PdfDocumentRenderer implements DocumentRenderer {
             return true;
           }
         } else if (node case DocumentMetricGrid(:final metrics)) {
-          if (metrics.any((metric) =>
-              rtlPattern.hasMatch(metric.label) ||
-              rtlPattern.hasMatch(_valueText(metric.value)) ||
-              (metric.caption != null &&
-                  rtlPattern.hasMatch(metric.caption!)))) {
+          if (metrics.any(
+            (metric) =>
+                rtlPattern.hasMatch(metric.label) ||
+                rtlPattern.hasMatch(_valueText(metric.value)) ||
+                (metric.caption != null &&
+                    rtlPattern.hasMatch(metric.caption!)),
+          )) {
             return true;
           }
-        } else if (node case DocumentChart(:final title, :final subtitle, :final series)) {
+        } else if (node case DocumentChart(
+          :final title,
+          :final subtitle,
+          :final series,
+        )) {
           if (rtlPattern.hasMatch(title) ||
               (subtitle != null && rtlPattern.hasMatch(subtitle)) ||
-              series.any((item) =>
-                  rtlPattern.hasMatch(item.label) ||
-                  item.points.any((point) =>
-                      rtlPattern.hasMatch(point.label) ||
-                      (point.displayValue != null &&
-                          rtlPattern.hasMatch(point.displayValue!))))) {
+              series.any(
+                (item) =>
+                    rtlPattern.hasMatch(item.label) ||
+                    item.points.any(
+                      (point) =>
+                          rtlPattern.hasMatch(point.label) ||
+                          (point.displayValue != null &&
+                              rtlPattern.hasMatch(point.displayValue!)),
+                    ),
+              )) {
             return true;
           }
         } else if (node case DocumentTable(:final columns, :final rows)) {
@@ -357,29 +366,31 @@ final class PdfDocumentRenderer implements DocumentRenderer {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: entries
-                  .map((entry) => pw.Padding(
-                        padding: const pw.EdgeInsets.only(bottom: 8),
-                        child: pw.Row(
-                          children: [
-                            pw.SizedBox(
-                              width: 110,
-                              child: pw.Text(
-                                entry.key,
-                                style: const pw.TextStyle(
-                                  fontSize: 9,
-                                  color: PdfColors.grey600,
-                                ),
+                  .map(
+                    (entry) => pw.Padding(
+                      padding: const pw.EdgeInsets.only(bottom: 8),
+                      child: pw.Row(
+                        children: [
+                          pw.SizedBox(
+                            width: 110,
+                            child: pw.Text(
+                              entry.key,
+                              style: const pw.TextStyle(
+                                fontSize: 9,
+                                color: PdfColors.grey600,
                               ),
                             ),
-                            pw.Expanded(
-                              child: pw.Text(
-                                entry.value,
-                                style: const pw.TextStyle(fontSize: 10),
-                              ),
+                          ),
+                          pw.Expanded(
+                            child: pw.Text(
+                              entry.value,
+                              style: const pw.TextStyle(fontSize: 10),
                             ),
-                          ],
-                        ),
-                      ))
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
           ),
@@ -507,7 +518,14 @@ final class PdfDocumentRenderer implements DocumentRenderer {
         repeat: true,
         decoration: pw.BoxDecoration(color: _pdfColor(style.headerColor)),
         children: columns
-            .map((column) => _tableCell(column.label, column.alignment, true, style.compact))
+            .map(
+              (column) => _tableCell(
+                column.label,
+                column.alignment,
+                true,
+                style.compact,
+              ),
+            )
             .toList(),
       ),
       ...rows.indexed.map(
@@ -599,10 +617,12 @@ final class PdfDocumentRenderer implements DocumentRenderer {
             spacing: 8,
             runSpacing: 3,
             children: categories
-                .map((point) => pw.Text(
-                      point.label,
-                      style: const pw.TextStyle(fontSize: 7),
-                    ))
+                .map(
+                  (point) => pw.Text(
+                    point.label,
+                    style: const pw.TextStyle(fontSize: 7),
+                  ),
+                )
                 .toList(),
           ),
         ),
@@ -616,21 +636,28 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           child: pw.Wrap(
             spacing: 12,
             runSpacing: 5,
-            children: chart.series.map((series) => pw.Row(
-              mainAxisSize: pw.MainAxisSize.min,
-              children: [
-                pw.Container(
-                  width: 7,
-                  height: 7,
-                  decoration: pw.BoxDecoration(
-                    color: _pdfColor(series.color),
-                    shape: pw.BoxShape.circle,
+            children: chart.series
+                .map(
+                  (series) => pw.Row(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    children: [
+                      pw.Container(
+                        width: 7,
+                        height: 7,
+                        decoration: pw.BoxDecoration(
+                          color: _pdfColor(series.color),
+                          shape: pw.BoxShape.circle,
+                        ),
+                      ),
+                      pw.SizedBox(width: 4),
+                      pw.Text(
+                        series.label,
+                        style: const pw.TextStyle(fontSize: 8),
+                      ),
+                    ],
                   ),
-                ),
-                pw.SizedBox(width: 4),
-                pw.Text(series.label, style: const pw.TextStyle(fontSize: 8)),
-              ],
-            )).toList(),
+                )
+                .toList(),
           ),
         ),
       );
@@ -642,7 +669,8 @@ final class PdfDocumentRenderer implements DocumentRenderer {
   }
 
   pw.Widget _chartDataTable(DocumentChart chart) {
-    final isCircular = chart.type == DocumentChartType.pie ||
+    final isCircular =
+        chart.type == DocumentChartType.pie ||
         chart.type == DocumentChartType.donut;
     final categories = chart.series.first.points;
     final rows = <pw.TableRow>[
@@ -671,10 +699,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       padding: const pw.EdgeInsets.only(top: 5),
       child: pw.Table(
         border: const pw.TableBorder(
-          horizontalInside: pw.BorderSide(
-            color: PdfColors.grey300,
-            width: 0.3,
-          ),
+          horizontalInside: pw.BorderSide(color: PdfColors.grey300, width: 0.3),
         ),
         children: rows,
       ),
@@ -732,8 +757,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
         buffer.write('<circle cx="$cx" cy="$cy" r="52" fill="#FFFFFF"/>');
       }
     } else {
-      final allValues = chart.series.expand((series) =>
-          series.points.map((point) => point.value)).toList();
+      final allValues = chart.series
+          .expand((series) => series.points.map((point) => point.value))
+          .toList();
       var minValue = allValues.reduce((a, b) => a < b ? a : b);
       var maxValue = allValues.reduce((a, b) => a > b ? a : b);
       if (chart.type == DocumentChartType.bar) {
@@ -759,11 +785,21 @@ final class PdfDocumentRenderer implements DocumentRenderer {
         final groupWidth = plotWidth / count;
         final barWidth = math.min(34.0, groupWidth / (chart.series.length + 1));
         final baseline = yFor(0);
-        for (var seriesIndex = 0; seriesIndex < chart.series.length; seriesIndex++) {
+        for (
+          var seriesIndex = 0;
+          seriesIndex < chart.series.length;
+          seriesIndex++
+        ) {
           final series = chart.series[seriesIndex];
-          for (var pointIndex = 0; pointIndex < series.points.length; pointIndex++) {
+          for (
+            var pointIndex = 0;
+            pointIndex < series.points.length;
+            pointIndex++
+          ) {
             final value = series.points[pointIndex].value;
-            final x = left + groupWidth * pointIndex +
+            final x =
+                left +
+                groupWidth * pointIndex +
                 groupWidth / 2 +
                 (seriesIndex - (chart.series.length - 1) / 2) * barWidth -
                 barWidth / 2;
@@ -777,13 +813,21 @@ final class PdfDocumentRenderer implements DocumentRenderer {
         for (final series in chart.series) {
           final points = <String>[];
           for (var index = 0; index < series.points.length; index++) {
-            final x = left + (series.points.length == 1
-                ? plotWidth / 2
-                : plotWidth * index / (series.points.length - 1));
+            final x =
+                left +
+                (series.points.length == 1
+                    ? plotWidth / 2
+                    : plotWidth * index / (series.points.length - 1));
             points.add('$x,${yFor(series.points[index].value)}');
           }
-          final path = points.asMap().entries.map((entry) =>
-              '${entry.key == 0 ? 'M' : 'L'} ${entry.value.replaceAll(',', ' ')}').join(' ');
+          final path = points
+              .asMap()
+              .entries
+              .map(
+                (entry) =>
+                    '${entry.key == 0 ? 'M' : 'L'} ${entry.value.replaceAll(',', ' ')}',
+              )
+              .join(' ');
           buffer.write(
             '<path d="$path" fill="none" stroke="#${series.color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>',
           );

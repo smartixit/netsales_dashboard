@@ -27,13 +27,17 @@ final class DocumentRenderOptions {
       );
     }
     if (coverPage && maxPages < 2) {
-      throw ArgumentError('A cover page and content require at least two pages.');
+      throw ArgumentError(
+        'A cover page and content require at least two pages.',
+      );
     }
     if (coverPage && (coverTitle == null || coverTitle!.trim().isEmpty)) {
       throw ArgumentError('A cover page requires a non-empty coverTitle.');
     }
     if (!coverPage &&
-        (coverTitle != null || coverSubtitle != null || coverMetadata.isNotEmpty)) {
+        (coverTitle != null ||
+            coverSubtitle != null ||
+            coverMetadata.isNotEmpty)) {
       throw ArgumentError('Cover content requires coverPage to be enabled.');
     }
   }
