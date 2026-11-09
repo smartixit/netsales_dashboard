@@ -83,31 +83,36 @@ class PlatformUserSecuritySection extends StatelessWidget {
                     subtitle: Text(
                       '${type.label} · ${device.lastUsedAt?.toLocal().toString() ?? l10n.text('not_available')}',
                     ),
-                    trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        CustomStatusBadge.fromPresentation(
-                          status,
-                          isCompact: true,
-                        ),
-                        if (device.isPrimary)
-                          Text(
-                            l10n.text('primary_device'),
-                            style: AppTypography.caption.copyWith(
-                              color: context.colors.primary,
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            CustomStatusBadge.fromPresentation(
+                              status,
+                              isCompact: true,
                             ),
+                            if (device.isPrimary)
+                              Text(
+                                l10n.text('primary_device'),
+                                style: AppTypography.caption.copyWith(
+                                  color: context.colors.primary,
+                                ),
+                              ),
+                          ],
+                        ),
+                        if (canManageSecurity && device.status == 'ACTIVE')
+                          CustomButton.icon(
+                            icon: Icons.gpp_bad_outlined,
+                            tooltip: 'حظر الجهاز',
+                            onPressed: () => onBanDevice(device.id),
+                            foregroundColor: context.colors.error,
+                            size: AppButtonSize.small,
                           ),
                       ],
                     ),
-                    if (canManageSecurity && device.status == 'ACTIVE')
-                      CustomButton.icon(
-                        icon: Icons.gpp_bad_outlined,
-                        tooltip: 'حظر الجهاز',
-                        onPressed: () => onBanDevice(device.id),
-                        foregroundColor: context.colors.error,
-                        size: AppButtonSize.small,
-                      ),
                   );
                 }).toList(),
               ),
