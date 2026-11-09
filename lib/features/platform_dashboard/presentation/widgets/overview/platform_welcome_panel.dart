@@ -58,8 +58,8 @@ class PlatformWelcomePanel extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      colors.primary,
-                      colors.secondary,
+                      Colors.white.withValues(alpha: 0.24),
+                      Colors.white.withValues(alpha: 0.08),
                     ],
                   ),
                   borderRadius: AppRadius.cardRadius,
@@ -105,7 +105,7 @@ class PlatformWelcomePanel extends StatelessWidget {
                           height: 4,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+                            color: Colors.white.withValues(alpha: 0.62),
                           ),
                         ),
                         AppSpacing.hSm,
