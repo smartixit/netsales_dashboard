@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 
-/// Consistent responsive page inset for Platform Scope workspaces.
+/// Shared workspace frame. The application shell already supplies page insets.
 class PlatformWorkspaceFrame extends StatelessWidget {
   const PlatformWorkspaceFrame({super.key, required this.child, this.padding});
 
