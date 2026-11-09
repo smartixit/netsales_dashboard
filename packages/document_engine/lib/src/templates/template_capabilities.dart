@@ -19,7 +19,7 @@ enum TemplateCapability {
 /// Immutable set of capabilities declared by a template.
 final class TemplateCapabilities {
   TemplateCapabilities(Iterable<TemplateCapability> values)
-      : values = Set<TemplateCapability>.unmodifiable(values);
+    : values = Set<TemplateCapability>.unmodifiable(values);
 
   final Set<TemplateCapability> values;
 

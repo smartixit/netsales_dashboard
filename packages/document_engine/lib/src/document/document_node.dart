@@ -35,11 +35,8 @@ final class DocumentHeading extends DocumentNode {
 
 /// A supplied display value. The engine does not derive or aggregate it.
 final class DocumentMetric extends DocumentNode {
-  DocumentMetric({
-    required String label,
-    required this.value,
-    this.caption,
-  }) : label = _requireLabel(label);
+  DocumentMetric({required String label, required this.value, this.caption})
+    : label = _requireLabel(label);
 
   final String label;
   final DocumentValue value;
@@ -53,20 +50,15 @@ final class DocumentMetric extends DocumentNode {
   }
 }
 
-enum DocumentCellAlignment {
-  leading,
-  center,
-  trailing,
-  decimal,
-}
+enum DocumentCellAlignment { leading, center, trailing, decimal }
 
 final class DocumentTableColumn {
   DocumentTableColumn({
     required String id,
     required String label,
     this.alignment = DocumentCellAlignment.leading,
-  })  : id = validateStableIdentifier(id, parameterName: 'columnId'),
-        label = _requireLabel(label);
+  }) : id = validateStableIdentifier(id, parameterName: 'columnId'),
+       label = _requireLabel(label);
 
   final String id;
   final String label;
@@ -81,10 +73,7 @@ final class DocumentTableColumn {
 }
 
 final class DocumentTableCell {
-  const DocumentTableCell({
-    required this.value,
-    this.direction,
-  });
+  const DocumentTableCell({required this.value, this.direction});
 
   final DocumentValue value;
   final DocumentTextDirection? direction;
@@ -94,8 +83,8 @@ final class DocumentTableRow {
   DocumentTableRow({
     required String id,
     required Iterable<DocumentTableCell> cells,
-  })  : id = validateStableIdentifier(id, parameterName: 'rowId'),
-        cells = List<DocumentTableCell>.unmodifiable(cells);
+  }) : id = validateStableIdentifier(id, parameterName: 'rowId'),
+       cells = List<DocumentTableCell>.unmodifiable(cells);
 
   final String id;
   final List<DocumentTableCell> cells;
@@ -106,8 +95,8 @@ final class DocumentTable extends DocumentNode {
   DocumentTable({
     required Iterable<DocumentTableColumn> columns,
     required Iterable<DocumentTableRow> rows,
-  })  : columns = List<DocumentTableColumn>.unmodifiable(columns),
-        rows = List<DocumentTableRow>.unmodifiable(rows) {
+  }) : columns = List<DocumentTableColumn>.unmodifiable(columns),
+       rows = List<DocumentTableRow>.unmodifiable(rows) {
     final columnIds = this.columns.map((column) => column.id).toSet();
     if (columnIds.length != this.columns.length) {
       throw ArgumentError('Table column identifiers must be unique.');
