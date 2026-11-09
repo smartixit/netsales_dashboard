@@ -13,6 +13,7 @@ import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
 import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
 import 'package:netsales_dashboard/widgets/dashboard_layout/src/widgets/dashboard_page_header.dart';
+import 'package:netsales_dashboard/widgets/platform_workspace/platform_workspace.dart';
 
 class PlatformNetworkPosLinkDetailScreen
     extends GetView<PlatformNetworkPosLinkDetailController> {
@@ -22,8 +23,7 @@ class PlatformNetworkPosLinkDetailScreen
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final canEdit = PermissionService.to.isSuperAdmin;
-    return Padding(
-      padding: EdgeInsets.all(AppSpacing.lg),
+    return PlatformWorkspaceFrame(
       child: Obx(() {
         final link = controller.link.value;
         if (controller.isLoading.value) {

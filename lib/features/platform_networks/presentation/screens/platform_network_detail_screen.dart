@@ -14,6 +14,7 @@ import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_text_field.dart';
 import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
+import 'package:netsales_dashboard/widgets/platform_workspace/platform_workspace.dart';
 
 class PlatformNetworkDetailScreen
     extends GetView<PlatformNetworkDetailController> {
@@ -22,8 +23,7 @@ class PlatformNetworkDetailScreen
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Padding(
-      padding: EdgeInsets.all(AppSpacing.lg),
+    return PlatformWorkspaceFrame(
       child: Obx(() {
         if (controller.isLoading.value) {
           return const CustomSkeletonGrid(
