@@ -30,6 +30,8 @@ class PlatformUserDetailController extends GetxController {
   final isStatusUpdating = false.obs;
   final errorMessage = ''.obs;
   final sessionsError = ''.obs;
+  int _detailGeneration = 0;
+  int _sessionsGeneration = 0;
 
   bool get canViewSecurity => PermissionService.to.can(AppPermissions.authView);
   bool get canEditUser => PermissionService.to.can(AppPermissions.usersEdit);
@@ -52,37 +54,50 @@ class PlatformUserDetailController extends GetxController {
   }
 
   Future<void> load() async {
+    final generation = ++_detailGeneration;
     isLoading.value = true;
     errorMessage.value = '';
     try {
       final result = await _getDetail(userId);
+      if (isClosed || generation != _detailGeneration) return;
       if (result == null) {
         throw Exception('لم يتم العثور على حساب المستخدم المطلوب.');
       }
       detail.value = result;
       if (canViewSecurity) await loadSessions();
     } catch (error) {
-      errorMessage.value = error.toString();
+      if (!isClosed && generation == _detailGeneration) {
+        errorMessage.value = error.toString();
+      }
     } finally {
-      isLoading.value = false;
+      if (!isClosed && generation == _detailGeneration) {
+        isLoading.value = false;
+      }
     }
   }
 
   Future<void> loadSessions() async {
-    if (!canViewSecurity) return;
+    if (!canViewSecurity || isClosed) return;
+    final generation = ++_sessionsGeneration;
     isSessionsLoading.value = true;
     sessionsError.value = '';
     try {
-      sessions.assignAll(await _getSessions(userId));
+      final result = await _getSessions(userId);
+      if (isClosed || generation != _sessionsGeneration) return;
+      sessions.assignAll(result);
     } catch (error) {
-      sessionsError.value = error.toString();
+      if (!isClosed && generation == _sessionsGeneration) {
+        sessionsError.value = error.toString();
+      }
     } finally {
-      isSessionsLoading.value = false;
+      if (!isClosed && generation == _sessionsGeneration) {
+        isSessionsLoading.value = false;
+      }
     }
   }
 
   Future<void> changeStatus() async {
-    if (!canChangeStatus || isStatusUpdating.value) return;
+    if (!canChangeStatus || isStatusUpdating.value || isClosed) return;
     final target = nextStatus;
     final targetLabel = target == UserStatus.active.wireValue
         ? 'التفعيل'
@@ -104,6 +119,7 @@ class PlatformUserDetailController extends GetxController {
         message: 'جارٍ تحديث حالة الحساب...',
       );
       await _updateStatus(userId, target);
+      if (isClosed) return;
       if (CustomAnimationOverlay.isShowing) {
         await CustomAnimationOverlay.hide();
       }
@@ -121,7 +137,14 @@ class PlatformUserDetailController extends GetxController {
         type: SnackType.error,
       );
     } finally {
-      isStatusUpdating.value = false;
+      if (!isClosed) isStatusUpdating.value = false;
     }
+  }
+
+  @override
+  void onClose() {
+    _detailGeneration++;
+    _sessionsGeneration++;
+    super.onClose();
   }
 }
