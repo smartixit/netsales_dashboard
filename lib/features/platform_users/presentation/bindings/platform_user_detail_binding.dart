@@ -9,6 +9,7 @@ import 'package:netsales_dashboard/features/platform_users/domain/usecases/get_p
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/create_platform_user_use_case.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/update_platform_user_use_case.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/update_platform_user_status_use_case.dart';
+import 'package:netsales_dashboard/features/platform_users/domain/usecases/manage_platform_user_security_use_case.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/controllers/platform_user_detail_controller.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/controllers/platform_user_form_controller.dart';
 
@@ -81,12 +82,18 @@ class PlatformUserDetailBinding extends Bindings {
         ),
       );
     }
+    if (!Get.isRegistered<ManagePlatformUserSecurityUseCase>()) {
+      Get.lazyPut<ManagePlatformUserSecurityUseCase>(
+        () => ManagePlatformUserSecurityUseCase(Get.find<PlatformUsersRepository>()),
+      );
+    }
     Get.lazyPut<PlatformUserDetailController>(
       () => PlatformUserDetailController(
         id,
         Get.find<GetPlatformUserDetailUseCase>(),
         Get.find<GetPlatformUserSessionsUseCase>(),
         Get.find<UpdatePlatformUserStatusUseCase>(),
+        Get.find<ManagePlatformUserSecurityUseCase>(),
       ),
     );
   }
