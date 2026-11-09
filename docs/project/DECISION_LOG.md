@@ -128,12 +128,6 @@
 - The Configuration Studio must adapt to actual constraints, offer only definition/template capabilities, and remain independent of GetX/host navigation.
 
 
-| DOC-009 | 2026-11-09 | Authorize M8 generic document-finishing primitives: host-supplied opaque QR rendering, presentation-only watermarks, explicit visual/approval signature metadata, and fixed-height 58/80 mm receipt page profiles. No QR cryptography/verification, legal digital signature, authoritative status mutation, or ESC/POS driver is authorized. | APPROVED |
-
-## DOC-009 — M8 Document Finishing
-- QR payloads are opaque host input. The engine only renders the QR and does not issue, sign, encrypt, decrypt, or verify it.
-- Watermarks are visual labels only. Backend status remains authoritative; the engine cannot turn a draft into an issued document or imply legal validity.
-- Visual signature images, printed signer identity/role, and server-supplied approval reference/time are distinct display elements. None is a cryptographic signature.
-- Visual signature image bytes are defensive copies with a 1 MiB bound.
-- 58 mm and 80 mm receipt profiles are fixed-height PDF geometries, not ESC/POS or printer-control implementations.
-- Required template capabilities are enforced. Newly introduced RTL-visible strings remain rejected by the production renderer until a shaping provider is separately approved.
+## DOC-010 — M9 additional acceptance evidence
+- The existing media-gallery PDF viewer is migrated to the shared raw-bytes preview primitive. Its source loading/cache and external-open behaviors are preserved.
+- A second sample Flutter host (Northstar Labs) must remain independent of GetX and NetSales-specific services; it demonstrates a different branding profile and host-owned output adapters.

@@ -351,22 +351,8 @@
 - Exact-head formatting, analysis, tests, and CI are pending; no verification outcome is claimed before those checks complete.
 
 
-## 2026-11-09 — Document Engine M8 QR, Watermark, Signature, and Receipt Primitives
-
-**Repository:** `smartixit/netsales_dashboard`  
-**Branch:** `feat/document-engine-m8-document-finishing`
-
-### Implemented
-- Added `DocumentQrCode` for opaque host-provided payloads with strict size bounds and PDF QR rendering.
-- Added `DocumentWatermark` presentation options and multi-page visual overlay with bounded opacity/rotation/color.
-- Added `DocumentSignatureArea` for supplied visual signature bytes and printed signer/role/approval metadata. Image bytes are defensively copied and limited to 1 MiB.
-- Added fixed-height 58 mm and 80 mm receipt PDF profiles, clearly separated from raw ESC/POS printing.
-- Added capability enforcement for QR, watermark, and signature areas; renderer version advanced to 1.2.0.
-- Added tests for QR bounds, defensive signature-image copies, watermark bounds, and receipt geometry.
-
-### Boundaries
-- No QR token creation/validation, cryptographic signature, trusted timestamp, regulatory seal, authoritative status mutation, or printer-specific command protocol.
-- Production RTL shaping remains unapproved; Arabic in newly added visible labels/captions/watermarks still fails closed.
-
-### Verification
-- Deferred until all planned implementation milestones are complete, per owner direction.
+### M9 migration and second-host reuse
+- Added `DocumentPdfBytesPreview` as the shared read-only preview primitive for raw existing PDF bytes. `DocumentArtifactPreview` now composes it.
+- Migrated the existing MediaPdfViewerCard preview from a direct PdfPreview instance to `DocumentPdfBytesPreview`; local/remote byte loading, cache behavior, and external-open behavior remain unchanged.
+- Added `packages/document_engine/example`, a second host app branded Northstar Labs. It demonstrates independent rendering and output adapters using Flutter Material without importing GetX or NetSales application services.
+- Added example run instructions. The example's Save/Share/Print actions are host implementations of the package ports.
