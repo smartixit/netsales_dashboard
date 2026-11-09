@@ -3,11 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/entities/platform_dashboard_overview_entity.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/domain/usecases/create_platform_overview_document_use_case.dart';
 
-PlatformDashboardOverviewEntity _overview({
-  DateTime? generatedAt = DateTime.utc(2026, 11, 9, 12),
-}) =>
+PlatformDashboardOverviewEntity _overview({bool includeTimestamp = true}) =>
     PlatformDashboardOverviewEntity(
-      generatedAt: generatedAt,
+      generatedAt: includeTimestamp ? DateTime.utc(2026, 11, 9, 12) : null,
       timezone: 'Asia/Aden',
       period: PlatformDashboardPeriodEntity(
         key: '30d',
@@ -67,7 +65,7 @@ void main() {
 
   test('fails closed when the API snapshot has no authoritative timestamp', () async {
     final result = await useCase.execute(
-      _overview(generatedAt: null),
+      _overview(includeTimestamp: false),
     );
     expect(result, isA<DocumentRenderFailure>());
   });
