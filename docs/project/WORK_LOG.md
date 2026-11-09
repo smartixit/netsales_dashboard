@@ -351,22 +351,25 @@
 - Exact-head formatting, analysis, tests, and CI are pending; no verification outcome is claimed before those checks complete.
 
 
-## 2026-11-09 — Document Engine M8 QR, Watermark, Signature, and Receipt Primitives
+## 2026-11-09 — Document Engine M9 Platform Overview Integration
 
 **Repository:** `smartixit/netsales_dashboard`  
-**Branch:** `feat/document-engine-m8-document-finishing`
+**Branch:** `feat/document-engine-m9-platform-overview-integration`
 
 ### Implemented
-- Added `DocumentQrCode` for opaque host-provided payloads with strict size bounds and PDF QR rendering.
-- Added `DocumentWatermark` presentation options and multi-page visual overlay with bounded opacity/rotation/color.
-- Added `DocumentSignatureArea` for supplied visual signature bytes and printed signer/role/approval metadata. Image bytes are defensively copied and limited to 1 MiB.
-- Added fixed-height 58 mm and 80 mm receipt PDF profiles, clearly separated from raw ESC/POS printing.
-- Added capability enforcement for QR, watermark, and signature areas; renderer version advanced to 1.2.0.
-- Added tests for QR bounds, defensive signature-image copies, watermark bounds, and receipt geometry.
+- Added `document_engine` as a local package dependency.
+- Added `CreatePlatformOverviewDocumentUseCase`, mapping only existing API-supplied overview metrics, chart points, and attention-group counts into a non-official snapshot.
+- Monetary values are preserved as strings; no arithmetic, aggregation, financial calculation, or client-side status derivation is performed.
+- Added the NetSales output adapter for independent save/share/print ports, reusing FileExportService, ShareService, and Printing.
+- Added a GetX controller, binding registration, custom preview dialog, and export action on the Platform Overview screen.
+- Added English/Arabic UI labels and a clear English-only PDF action label.
+- Added focused use-case tests for artifact generation and missing server timestamp rejection.
 
 ### Boundaries
-- No QR token creation/validation, cryptographic signature, trusted timestamp, regulatory seal, authoritative status mutation, or printer-specific command protocol.
-- Production RTL shaping remains unapproved; Arabic in newly added visible labels/captions/watermarks still fails closed.
+- This is an operational dashboard snapshot, not an invoice, statement, financial report, or official record.
+- No recent actor names or user-level activity details are copied into the report.
+- No API endpoint, Laravel code, tenant policy, or backend contract changed.
+- Arabic PDF generation remains fail-closed until the production shaping provider is separately approved.
 
 ### Verification
-- Deferred until all planned implementation milestones are complete, per owner direction.
+- Tests, formatting, analysis, platform builds, and GitHub Actions remain deferred until all planned milestones are implemented, per owner direction.

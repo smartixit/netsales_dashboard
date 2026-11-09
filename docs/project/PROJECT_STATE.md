@@ -321,15 +321,16 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - **Verification pending:** exact-head format, Dart analysis, unit/widget tests, Windows package compilation as required by the workflow, and PR CI.
 
 
-## Document Engine — M8 Finishing Primitives (2026-11-09)
+## Document Engine — M9 Platform Overview Host Integration (2026-11-09)
 
-**Status:** IN PROGRESS — generic renderer primitives implemented  
-**Branch:** `feat/document-engine-m8-document-finishing`
+**Status:** IN PROGRESS — first Dashboard host integration implemented  
+**Branch:** `feat/document-engine-m9-platform-overview-integration`
 
-- Added bounded opaque QR payload rendering; no token issuance, cryptography, decryption, or verification is performed by the engine.
-- Added constrained presentation watermark overlays. They do not change authoritative document status.
-- Added visual/manual signature areas with supplied signer identity, role, approval reference/time, and bounded defensive-copied visual signature bytes. These are not cryptographic signatures.
-- Added explicit fixed-height 58 mm and 80 mm receipt PDF page profiles. They define PDF geometry only; no ESC/POS or thermal printer driver is included.
-- Enforced declared template capabilities for QR, watermark, and signature areas.
-- RTL labels/captions/watermarks remain rejected by the production renderer pending separate shaping-provider approval.
+- Added the `document_engine` path dependency to the Dashboard application.
+- Integrated a non-official Platform Overview PDF built only from the existing server-provided overview snapshot.
+- Values are passed through without recalculation; monetary strings remain textual server values. The report excludes user-level activity details and uses aggregate metrics/series already returned by the API.
+- Added a custom preview dialog with NetSales custom buttons and host output adapters using existing FileExportService, ShareService, and Printing services.
+- Save/share/print operate on the same immutable artifact. Desktop saves to the NetSales export folder; Web uses the share_plus Web Share API/download fallback; print uses the existing artifact bytes with dynamic layout disabled.
+- The PDF content is currently English-only. Arabic UI labels remain localized; Arabic PDF generation stays unavailable until a production shaping provider is separately approved.
+- No invoice, financial ledger, official document, Laravel API, migration, or tenant permission changes.
 - **Verification deferred by owner direction** until all planned milestones are implemented.

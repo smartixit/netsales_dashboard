@@ -128,12 +128,13 @@
 - The Configuration Studio must adapt to actual constraints, offer only definition/template capabilities, and remain independent of GetX/host navigation.
 
 
-| DOC-009 | 2026-11-09 | Authorize M8 generic document-finishing primitives: host-supplied opaque QR rendering, presentation-only watermarks, explicit visual/approval signature metadata, and fixed-height 58/80 mm receipt page profiles. No QR cryptography/verification, legal digital signature, authoritative status mutation, or ESC/POS driver is authorized. | APPROVED |
+| DOC-010 | 2026-11-09 | Authorize the first host integration in NetSales Dashboard: a non-official Platform Overview PDF built only from the existing server-supplied overview snapshot, with a custom preview and existing save/share/print services. No financial recalculation, official invoice rendering, API/backend change, or Arabic shaping provider selection. | APPROVED |
 
-## DOC-009 — M8 Document Finishing
-- QR payloads are opaque host input. The engine only renders the QR and does not issue, sign, encrypt, decrypt, or verify it.
-- Watermarks are visual labels only. Backend status remains authoritative; the engine cannot turn a draft into an issued document or imply legal validity.
-- Visual signature images, printed signer identity/role, and server-supplied approval reference/time are distinct display elements. None is a cryptographic signature.
-- Visual signature image bytes are defensive copies with a 1 MiB bound.
-- 58 mm and 80 mm receipt profiles are fixed-height PDF geometries, not ESC/POS or printer-control implementations.
-- Required template capabilities are enforced. Newly introduced RTL-visible strings remain rejected by the production renderer until a shaping provider is separately approved.
+## DOC-010 — M9 Platform Overview Integration
+- The initial host integration is limited to the existing Platform Overview endpoint response and its aggregate metrics, chart points, and attention-group counts.
+- The client may map and present values but must not calculate totals, balances, financial values, or derive statuses. Monetary values remain exactly as server-supplied strings.
+- The report is explicitly non-official and must not be used as an invoice, financial statement, ledger, or canonical document.
+- The host preview uses the existing immutable artifact; save/share/print must not regenerate it.
+- Existing FileExportService, ShareService, and Printing services are the host adapters. Web save uses share_plus browser behavior; desktop save uses the NetSales export folder.
+- This initial PDF content is English-only. The Arabic interface may be localized, but the renderer's RTL rejection guard remains active.
+- No Laravel API, route, permission, migration, invoice workflow, or accounting integration is authorized by this decision.
