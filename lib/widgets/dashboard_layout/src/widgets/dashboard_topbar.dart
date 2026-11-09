@@ -32,10 +32,12 @@ class DashboardTopbar extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Container(
       height: height,
-      padding: EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.lg),
+      padding: EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.xl),
       decoration: BoxDecoration(
         color: layoutTheme.topbarBackground,
-        border: Border(bottom: BorderSide(color: layoutTheme.border)),
+        border: Border(
+          bottom: BorderSide(color: layoutTheme.border, width: 0.8),
+        ),
       ),
       child: Row(
         children: [

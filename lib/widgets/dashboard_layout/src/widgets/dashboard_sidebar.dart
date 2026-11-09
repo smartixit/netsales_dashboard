@@ -106,7 +106,7 @@ class DashboardSidebar extends StatelessWidget {
                       group.id == null ||
                       expandedGroupIds.contains(group.id))
                     AnimatedSize(
-                      duration: AppMotion.normal,
+                      duration: AppMotion.duration(context, AppMotion.normal),
                       curve: AppMotion.standard,
                       child: Column(
                         children: [
