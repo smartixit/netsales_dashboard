@@ -71,19 +71,19 @@ class CustomProfileMenu extends StatelessWidget {
       onSelected: onSelected,
       trigger: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: compact ? AppSpacing.xs : AppSpacing.sm,
+          horizontal: compact ? AppSpacing.xs : AppSpacing.md,
           vertical: AppSpacing.xs,
         ),
         decoration: BoxDecoration(
-          color: colors.surfaceContainerLow,
-          borderRadius: AppRadius.fullRadius,
-          border: Border.all(color: colors.outlineVariant),
+          color: colors.surfaceContainerLow.withValues(alpha: 0.65),
+          borderRadius: AppRadius.cardRadius,
+          border: Border.all(color: colors.outlineVariant.withValues(alpha: 0.35)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             CircleAvatar(
-              radius: 16,
+              radius: 17,
               backgroundColor: colors.primaryContainer,
               backgroundImage: avatarUrl == null || avatarUrl!.isEmpty
                   ? null
@@ -93,6 +93,7 @@ class CustomProfileMenu extends StatelessWidget {
                       initials ?? (name.isEmpty ? '?' : name.characters.first),
                       style: AppTypography.labelMedium.copyWith(
                         color: colors.onPrimaryContainer,
+                        fontWeight: FontWeight.w700,
                       ),
                     )
                   : null,
@@ -100,7 +101,7 @@ class CustomProfileMenu extends StatelessWidget {
             if (!compact) ...[
               AppSpacing.hSm,
               ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 150),
+                constraints: const BoxConstraints(maxWidth: 190),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -111,6 +112,7 @@ class CustomProfileMenu extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: AppTypography.labelMedium.copyWith(
                         color: colors.onSurface,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     Text(
@@ -119,13 +121,14 @@ class CustomProfileMenu extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: AppTypography.caption.copyWith(
                         color: colors.onSurfaceVariant,
+                        fontSize: 11,
                       ),
                     ),
                   ],
                 ),
               ),
               AppSpacing.hXs,
-              Icon(Icons.expand_more_rounded, color: colors.onSurfaceVariant),
+              Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: colors.onSurfaceVariant),
             ],
           ],
         ),

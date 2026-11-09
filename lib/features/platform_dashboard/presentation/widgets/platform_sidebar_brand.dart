@@ -21,14 +21,34 @@ class PlatformSidebarBrand extends StatelessWidget {
           width: AppSpacing.huge,
           height: AppSpacing.huge,
           decoration: BoxDecoration(
-            color: colors.primaryContainer,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                colors.primary,
+                colors.secondary,
+              ],
+            ),
             borderRadius: AppRadius.mdRadius,
+            boxShadow: [
+              BoxShadow(
+                color: colors.primary.withValues(alpha: 0.35),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           alignment: Alignment.center,
-          child: Icon(
-            Icons.hub_rounded,
-            color: colors.onPrimaryContainer,
-            size: 24,
+          child: Image.asset(
+            'assets/images/brand_icon.png',
+            width: 22,
+            height: 22,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) => const Icon(
+              Icons.hub_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
           ),
         ),
         if (!collapsed) ...[

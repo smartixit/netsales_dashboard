@@ -23,15 +23,22 @@ class PlatformNavigationFooter extends StatelessWidget {
       );
     }
     return Container(
-      padding: EdgeInsets.all(AppSpacing.md),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
+        color: colors.surfaceContainerLow.withValues(alpha: 0.6),
         borderRadius: AppRadius.mdRadius,
-        border: Border.all(color: colors.outlineVariant),
+        border: Border.all(color: colors.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Icon(Icons.verified_user_outlined, color: colors.primary, size: 20),
+          Container(
+            padding: EdgeInsets.all(AppSpacing.xs),
+            decoration: BoxDecoration(
+              color: colors.primaryContainer.withValues(alpha: 0.5),
+              borderRadius: AppRadius.smRadius,
+            ),
+            child: Icon(Icons.shield_outlined, color: colors.primary, size: 18),
+          ),
           AppSpacing.hSm,
           Expanded(
             child: Column(
@@ -41,12 +48,14 @@ class PlatformNavigationFooter extends StatelessWidget {
                   'NetSales Platform',
                   style: AppTypography.labelMedium.copyWith(
                     color: colors.onSurface,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
                   l10n.text('secure_administration'),
                   style: AppTypography.caption.copyWith(
                     color: colors.onSurfaceVariant,
+                    fontSize: 10.5,
                   ),
                 ),
               ],

@@ -93,8 +93,9 @@ Uint8List buildPayvSpecimen(Uint8List fontBytes) {
   pageNumber++;
   page = newPage('اختبار التفاف خلايا الجدول', pageNumber);
 
-  const rowHeight = 58.0;
-  const rowsPerPage = 10;
+  const normalRowHeight = 58.0;
+  const longDescriptionRowHeight = 140.0;
+  const rowsPerPage = 9;
   var rowTop = page.height - 94;
 
   void drawTableHeader() {
@@ -115,6 +116,9 @@ Uint8List buildPayvSpecimen(Uint8List fontBytes) {
 
     final row = ArabicPdfCorpus.tableRows[index];
     final description = index == 0 ? ArabicPdfCorpus.longTableCell : row.$1;
+    final rowHeight = index == 0
+        ? longDescriptionRowHeight
+        : normalRowHeight;
     final bottom = rowTop - rowHeight;
     page.graphics
       ..setStrokeColor(const PdfColor.gray(0.86))
