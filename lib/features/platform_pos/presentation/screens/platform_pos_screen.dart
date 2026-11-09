@@ -46,12 +46,15 @@ class PlatformPosScreen extends GetView<PlatformPosController> {
             ),
           ),
           SizedBox(height: AppSpacing.lg),
-          Obx(
-            () => PlatformPosMetricsSection(
-              metrics: dashboard.overview.value?.metrics.pos,
-              l10n: l10n,
-            ),
-          ),
+          Obx(() {
+            final metrics = dashboard.overview.value?.metrics.pos;
+            if (metrics == null) return const SizedBox.shrink();
+            return PlatformWorkspaceSection(
+              title: l10n.text('workspace_summary'),
+              description: l10n.text('server_aggregated_data'),
+              child: PlatformPosMetricsSection(metrics: metrics, l10n: l10n),
+            );
+          }),
           SizedBox(height: AppSpacing.lg),
           PlatformWorkspaceSurface(
             child: PlatformPosFilterBar(controller: controller, l10n: l10n),

@@ -46,12 +46,15 @@ class PlatformNetworksScreen extends GetView<PlatformNetworksController> {
             ),
           ),
           SizedBox(height: AppSpacing.lg),
-          Obx(
-            () => PlatformNetworkMetricsSection(
-              metrics: dashboardController.overview.value?.metrics.networks,
-              l10n: l10n,
-            ),
-          ),
+          Obx(() {
+            final metrics = dashboardController.overview.value?.metrics.networks;
+            if (metrics == null) return const SizedBox.shrink();
+            return PlatformWorkspaceSection(
+              title: l10n.text('workspace_summary'),
+              description: l10n.text('server_aggregated_data'),
+              child: PlatformNetworkMetricsSection(metrics: metrics, l10n: l10n),
+            );
+          }),
           SizedBox(height: AppSpacing.lg),
           PlatformWorkspaceSurface(
             child: PlatformNetworkFilterBar(controller: controller, l10n: l10n),
