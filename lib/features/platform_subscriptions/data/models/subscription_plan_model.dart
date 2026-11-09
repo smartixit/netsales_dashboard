@@ -6,8 +6,8 @@ class SubscriptionPlanModel extends SubscriptionPlanEntity {
   const SubscriptionPlanModel({
     required super.id, required super.name, required super.price,
     required super.discount, required super.validityDays, required super.isActive,
-    super.uuid, super.description, super.features = const [],
-    super.planFeatures = const [], super.createdAt, super.updatedAt,
+    super.uuid, super.description, super.features = const <SubscriptionFeatureEntity>[],
+    super.planFeatures = const <SubscriptionPlanFeatureEntity>[], super.createdAt, super.updatedAt,
   });
 
   factory SubscriptionPlanModel.fromJson(Map<String, dynamic> json) {
@@ -23,10 +23,10 @@ class SubscriptionPlanModel extends SubscriptionPlanEntity {
       description: json['plan_desc']?.toString(),
       isActive: json['status'] == true || json['status'] == 1 || json['status'] == '1',
       features: features is List
-          ? features.whereType<Map>().map((v) => SubscriptionFeatureModel.fromJson(_map(v))).toList(growable: false)
+          ? features.whereType<Map<Object?, Object?>>().map((v) => SubscriptionFeatureModel.fromJson(_map(v))).toList(growable: false)
           : const [],
       planFeatures: planFeatures is List
-          ? planFeatures.whereType<Map>().map((v) => SubscriptionPlanFeatureModel.fromJson(_map(v))).toList(growable: false)
+          ? planFeatures.whereType<Map<Object?, Object?>>().map((v) => SubscriptionPlanFeatureModel.fromJson(_map(v))).toList(growable: false)
           : const [],
       createdAt: _date(json['created_at']),
       updatedAt: _date(json['updated_at']),
