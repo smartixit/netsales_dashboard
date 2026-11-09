@@ -51,11 +51,19 @@ class PlatformUsersList extends StatelessWidget {
                   );
                 }
                 final user = controller.users[index];
-                return InkWell(
-                  onTap: () => Get.toNamed<void>(AppRoutes.userDetail(user.id)),
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  child: _UserRow(user: user, compact: compact),
-                );
+                return controller.isTrashView.value
+                    ? _UserRow(
+                        user: user,
+                        compact: compact,
+                        isTrashed: true,
+                        onRestore: () => controller.restoreUser(user.id),
+                        onForceDelete: () => controller.forceDeleteUser(user.id),
+                      )
+                    : InkWell(
+                        onTap: () => Get.toNamed<void>(AppRoutes.userDetail(user.id)),
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        child: _UserRow(user: user, compact: compact),
+                      );
               },
             ),
           ),
@@ -109,10 +117,13 @@ class _UsersTableHeader extends StatelessWidget {
 }
 
 class _UserRow extends StatelessWidget {
-  const _UserRow({required this.user, required this.compact});
+  const _UserRow({required this.user, required this.compact, this.isTrashed = false, this.onRestore, this.onForceDelete});
 
   final PlatformUserEntity user;
   final bool compact;
+  final bool isTrashed;
+  final VoidCallback? onRestore;
+  final VoidCallback? onForceDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -180,6 +191,10 @@ class _UserRow extends StatelessWidget {
                     Expanded(child: identity),
                     SizedBox(width: AppSpacing.sm),
                     badge,
+                    if (isTrashed) ...[
+                      CustomButton.icon(icon: Icons.restore_rounded, tooltip: 'استعادة', onPressed: onRestore, size: AppButtonSize.small),
+                      CustomButton.icon(icon: Icons.delete_forever_outlined, tooltip: 'حذف نهائي', onPressed: onForceDelete, foregroundColor: context.colors.error, size: AppButtonSize.small),
+                    ],
                   ],
                 ),
                 SizedBox(height: AppSpacing.sm),
@@ -221,6 +236,10 @@ class _UserRow extends StatelessWidget {
                   ),
                 ),
                 Expanded(flex: 1, child: badge),
+                if (isTrashed) ...[
+                  CustomButton.icon(icon: Icons.restore_rounded, tooltip: 'استعادة', onPressed: onRestore, size: AppButtonSize.small),
+                  CustomButton.icon(icon: Icons.delete_forever_outlined, tooltip: 'حذف نهائي', onPressed: onForceDelete, foregroundColor: context.colors.error, size: AppButtonSize.small),
+                ],
                 Expanded(
                   flex: 2,
                   child: Text(
