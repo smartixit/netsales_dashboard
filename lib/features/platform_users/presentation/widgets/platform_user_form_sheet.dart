@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:netsales_dashboard/core/constants/app_breakpoints.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_detail_entity.dart';
@@ -121,7 +120,7 @@ class PlatformUserFormFields extends StatelessWidget {
                 final phone = (value ?? '').trim();
                 if (phone.isEmpty) return l10n.text('field_required');
                 if (phone.length > 20 ||
-                    !RegExp(r'^[0-9+\\-\\s()]+$').hasMatch(phone)) {
+                    !RegExp(r'^[0-9+\-\s()]+$').hasMatch(phone)) {
                   return l10n.text('invalid_phone_number');
                 }
                 return null;
@@ -139,7 +138,7 @@ class PlatformUserFormFields extends StatelessWidget {
               validator: (value) {
                 final email = (value ?? '').trim();
                 if (email.isNotEmpty &&
-                    !RegExp(r'^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$')
+                    !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
                         .hasMatch(email)) {
                   return l10n.text('invalid_email');
                 }
