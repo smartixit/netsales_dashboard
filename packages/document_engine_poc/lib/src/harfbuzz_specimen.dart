@@ -61,7 +61,7 @@ Future<Uint8List> buildHarfBuzzSpecimen({
               child: ShapedText(value, style: style, language: 'ar'),
             ),
           ),
-          ...ArabicPdfCorpus.longParagraph.split('\\n\\n').map(
+          ...ArabicPdfCorpus.longParagraph.split('\n\n').map(
             (paragraph) => pw.Padding(
               padding: const pw.EdgeInsets.only(bottom: 8),
               child: ShapedText(paragraph, style: style, language: 'ar'),
