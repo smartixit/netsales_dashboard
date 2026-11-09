@@ -94,3 +94,15 @@
 - Artifact bytes are defensively copied and SHA-256 is computed at the artifact boundary. The digest is integrity detection, not a digital signature.
 - Complex RTL scripts are rejected explicitly until the separate Arabic typography POC selects and verifies a shaping implementation.
 - M2 does not implement official invoice rendering, financial calculations, Laravel APIs, report criteria, preview/printing UI, or host application integration.
+
+
+| DOC-004 | 2026-11-09 | Authorize an isolated M4 Arabic PDF typography POC comparing the plain pdf baseline, HarfBuzz-backed pdf_text_shaper, and pure-Dart payv across native Windows and Web compilation. No candidate is approved for production and no production dependency or renderer switch is authorized. | APPROVED |
+
+## DOC-004 — M4 Arabic PDF Typography Proof of Concept
+- Scope is restricted to packages/document_engine_poc, its POC CI workflow, and research fixtures/documentation.
+- Candidate A is the existing pdf package with embedded IBM Plex Sans Arabic and explicit RTL direction, without a dedicated shaping provider.
+- Candidate B is pdf_text_shaper 1.1.1 with HarfBuzz FFI. Its package metadata does not advertise Web; mixed bidi behavior requires visual validation.
+- Candidate D is payv 0.1.2, a pure-Dart OpenType shaper and independent PDF writer. Its early release maturity and separate PDF writer remain risks.
+- IBM Plex Sans Arabic and Vazirmatn fixtures are distributed with their respective SIL OFL 1.1 license texts.
+- Tests, PDF signature, and JS compilation are diagnostics, not visual acceptance. Actual viewer review and extraction/search checks remain mandatory.
+- This approval authorizes the isolated experiment only. A distinct owner decision is required before selecting or integrating any production provider.
