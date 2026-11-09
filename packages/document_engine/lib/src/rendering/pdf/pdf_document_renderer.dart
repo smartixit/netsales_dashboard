@@ -25,7 +25,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
   String get rendererId => 'document-engine.pdf';
 
   @override
-  String get rendererVersion => '1.1.0';
+  String get rendererVersion => '1.2.0';
 
   @override
   Future<DocumentRenderResult> render({
@@ -98,7 +98,23 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                   : null,
             );
           },
-          build: (_) => _buildContent(snapshot),
+          build: (_) => [
+            if (options.watermark != null)
+              pw.Watermark.text(
+                options.watermark!.text,
+                angle: options.watermark!.angleRadians,
+                style: pw.TextStyle(
+                  fontSize: 38,
+                  color: PdfColor(
+                    _pdfColor(options.watermark!.color).red,
+                    _pdfColor(options.watermark!.color).green,
+                    _pdfColor(options.watermark!.color).blue,
+                    options.watermark!.opacity,
+                  ),
+                ),
+              ),
+            ..._buildContent(snapshot),
+          ],
         ),
       );
 
@@ -188,6 +204,15 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (nodes.any((node) => node is DocumentChart)) {
       requiredCapabilities.add(TemplateCapability.charts);
     }
+    if (nodes.any((node) => node is DocumentQrCode)) {
+      requiredCapabilities.add(TemplateCapability.qrCodes);
+    }
+    if (nodes.any((node) => node is DocumentSignatureArea)) {
+      requiredCapabilities.add(TemplateCapability.signatureArea);
+    }
+    if (options.watermark != null) {
+      requiredCapabilities.add(TemplateCapability.watermark);
+    }
     if (!template.capabilities.supportsAll(requiredCapabilities)) {
       return const DocumentRenderFailure(
         code: DocumentRenderFailureCode.unsupportedCapability,
@@ -209,9 +234,10 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     return null;
   }
 
-  bool _containsUnshapedRtl(DocumentSnapshot snapshot) {
+  bool _containsUnshapedRtl(DocumentSnapshot snapshot, DocumentWatermark? watermark) {
     final rtlPattern = RegExp(r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]');
-    if (rtlPattern.hasMatch(snapshot.metadata.title) ||
+    if ((watermark != null && rtlPattern.hasMatch(watermark.text)) ||
+        rtlPattern.hasMatch(snapshot.metadata.title) ||
         (snapshot.metadata.subtitle != null &&
             rtlPattern.hasMatch(snapshot.metadata.subtitle!))) {
       return true;
@@ -268,6 +294,20 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                               rtlPattern.hasMatch(point.displayValue!)),
                     ),
               )) {
+            return true;
+          }
+        } else if (node case DocumentQrCode(:final caption)) {
+          if (caption != null && rtlPattern.hasMatch(caption)) return true;
+        } else if (node case DocumentSignatureArea(
+          :final label,
+          :final signerName,
+          :final roleLabel,
+          :final approvalReference,
+        )) {
+          if (rtlPattern.hasMatch(label) ||
+              (signerName != null && rtlPattern.hasMatch(signerName)) ||
+              (roleLabel != null && rtlPattern.hasMatch(roleLabel)) ||
+              (approvalReference != null && rtlPattern.hasMatch(approvalReference))) {
             return true;
           }
         } else if (node case DocumentTable(:final columns, :final rows)) {
@@ -328,12 +368,74 @@ final class PdfDocumentRenderer implements DocumentRenderer {
             widgets.add(_tableWidget(columns, rows, style));
           case DocumentChart():
             widgets.addAll(_chartWidgets(node));
+          case DocumentQrCode():
+            widgets.add(_qrCodeWidget(node));
+          case DocumentSignatureArea():
+            widgets.add(_signatureAreaWidget(node));
           case DocumentPageBreak():
             widgets.add(pw.NewPage());
         }
       }
     }
     return widgets;
+  }
+
+  pw.Widget _qrCodeWidget(DocumentQrCode node) => pw.Column(
+    mainAxisSize: pw.MainAxisSize.min,
+    crossAxisAlignment: pw.CrossAxisAlignment.center,
+    children: [
+      pw.BarcodeWidget(
+        barcode: pw.Barcode.qrCode(),
+        data: node.payload,
+        width: node.sizePoints,
+        height: node.sizePoints,
+      ),
+      if (node.caption != null)
+        pw.Padding(
+          padding: const pw.EdgeInsets.only(top: 4),
+          child: pw.Text(node.caption!, style: const pw.TextStyle(fontSize: 8)),
+        ),
+    ],
+  );
+
+  pw.Widget _signatureAreaWidget(DocumentSignatureArea node) {
+    final details = <pw.Widget>[
+      pw.Text(node.label, style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+      if (node.signerName != null) pw.Text(node.signerName!),
+      if (node.roleLabel != null) pw.Text(node.roleLabel!),
+      if (node.approvalReference != null)
+        pw.Text('Approval reference: ' + node.approvalReference!),
+      if (node.approvedAt != null)
+        pw.Text('Approved at: ' + node.approvedAt!.toIso8601String()),
+    ];
+    final imageBytes = node.visualSignatureBytes;
+    return pw.Container(
+      margin: const pw.EdgeInsets.symmetric(vertical: 8),
+      padding: const pw.EdgeInsets.all(10),
+      decoration: pw.BoxDecoration(
+        border: pw.Border.all(color: PdfColors.grey400, width: 0.6),
+      ),
+      child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.center,
+        children: [
+          pw.Expanded(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: details,
+            ),
+          ),
+          if (imageBytes != null)
+            pw.SizedBox(
+              width: 112,
+              height: 52,
+              child: pw.Image(
+                pw.MemoryImage(imageBytes),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   pw.Widget _coverWidget(DocumentRenderOptions options) {
