@@ -13,9 +13,11 @@ class PlatformUserDetailHeader extends StatelessWidget {
     super.key,
     required this.user,
     required this.l10n,
+    this.onEdit,
   });
   final PlatformUserEntity user;
   final AppLocalizations l10n;
+  final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -40,6 +42,14 @@ class PlatformUserDetailHeader extends StatelessWidget {
           ],
         ),
       ),
+      if (onEdit != null) ...[
+        SizedBox(width: AppSpacing.sm),
+        CustomButton.primary(
+          text: l10n.text('edit_platform_user'),
+          prefix: const Icon(Icons.edit_outlined, size: 18),
+          onPressed: onEdit,
+        ),
+      ],
     ],
   );
 }
