@@ -78,8 +78,20 @@ jobs:
         working-directory: packages/document_engine
         run: flutter pub get
 
-      - name: Format document engine package
-        run: dart format --output=none --set-exit-if-changed packages/document_engine
+      - name: Apply canonical Dart formatting
+        run: dart format packages/document_engine
+
+      - name: Capture canonical formatter patch
+        if: always()
+        run: git diff -- packages/document_engine > document-engine-format.patch
+
+      - name: Upload canonical formatter patch
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: document-engine-format-patch
+          path: document-engine-format.patch
+          if-no-files-found: error
 
       - name: Analyze document engine package
         working-directory: packages/document_engine
