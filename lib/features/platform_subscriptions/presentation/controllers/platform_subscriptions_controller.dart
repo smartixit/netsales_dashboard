@@ -42,8 +42,7 @@ class PlatformSubscriptionsController extends GetxController {
        _deletePlan = deletePlan,
        _approveRequest = approveRequest,
        _rejectRequest = rejectRequest,
-       _extendSubscription = extendSubscription,
-;
+       _extendSubscription = extendSubscription;
 
   final GetSubscriptionPlansUseCase _getPlans;
   final GetSubscriptionFeaturesUseCase _getFeatures;
