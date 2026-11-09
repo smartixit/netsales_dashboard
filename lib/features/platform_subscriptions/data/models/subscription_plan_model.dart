@@ -1,6 +1,8 @@
 import 'package:netsales_dashboard/features/platform_subscriptions/data/models/subscription_feature_model.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/data/models/subscription_plan_feature_model.dart';
 import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_plan_entity.dart';
+import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_feature_entity.dart';
+import 'package:netsales_dashboard/features/platform_subscriptions/domain/entities/subscription_plan_feature_entity.dart';
 
 class SubscriptionPlanModel extends SubscriptionPlanEntity {
   const SubscriptionPlanModel({
