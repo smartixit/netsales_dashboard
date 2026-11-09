@@ -159,7 +159,22 @@ final class DocumentOutputCoordinator {
 String? normalizePdfFileName(String value) {
   var name = value.trim();
   if (name.isEmpty) return null;
-  name = name.replaceAll(RegExp(r'\.pdf$', caseSensitive: false), '');
+  name = name.replaceAll(RegExp(r'(?:\.pdf)+, '');
+  name = name.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F]'), '_');
+  name = name.replaceAll(RegExp(r'\s+'), ' ').trim();
+  name = name.replaceAll(RegExp(r'^[. ]+|[. ]+$'), '');
+  if (name.isEmpty) return null;
+  if (name.length > 116) name = name.substring(0, 116).trim();
+  if (name.isEmpty) return null;
+  const reserved = {
+    'CON', 'PRN', 'AUX', 'NUL',
+    'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9',
+    'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9',
+  };
+  if (reserved.contains(name.toUpperCase())) name = '_$name';
+  return '$name.pdf';
+}
+, caseSensitive: false), '');
   name = name.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F]'), '_');
   name = name.replaceAll(RegExp(r'\s+'), ' ').trim();
   name = name.replaceAll(RegExp(r'^[. ]+|[. ]+$'), '');

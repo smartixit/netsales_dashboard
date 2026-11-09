@@ -7,6 +7,7 @@ import '../core/template_id.dart';
 import '../core/template_version.dart';
 import '../rendering/document_render_result.dart';
 import '../reports/report_id.dart';
+import 'output/document_output.dart';
 
 /// Server-owned asynchronous document generation state.
 enum RemoteDocumentJobStatus {
@@ -17,16 +18,15 @@ enum RemoteDocumentJobStatus {
   expired,
   cancelled;
 
-  static RemoteDocumentJobStatus fromWire(String value) =>
-      switch (value) {
-        'QUEUED' => queued,
-        'RUNNING' => running,
-        'SUCCEEDED' => succeeded,
-        'FAILED' => failed,
-        'EXPIRED' => expired,
-        'CANCELLED' => cancelled,
-        _ => throw FormatException('Unknown remote document job status.'),
-      };
+  static RemoteDocumentJobStatus fromWire(String value) => switch (value) {
+    'QUEUED' => queued,
+    'RUNNING' => running,
+    'SUCCEEDED' => succeeded,
+    'FAILED' => failed,
+    'EXPIRED' => expired,
+    'CANCELLED' => cancelled,
+    _ => throw FormatException('Unknown remote document job status.'),
+  };
 
   String get wireValue => switch (this) {
     queued => 'QUEUED',
@@ -44,10 +44,12 @@ final class RemoteDocumentJobRequest {
   RemoteDocumentJobRequest({
     required this.reportId,
     required this.reportSchemaVersion,
-    required this.idempotencyKey,
-    required this.correlationId,
+    required String idempotencyKey,
+    required String correlationId,
     required Map<String, Object?> payload,
-  }) : payload = _immutableJsonMap(payload) {
+  }) : idempotencyKey = _validateOpaqueKey(idempotencyKey, 'idempotencyKey'),
+       correlationId = _validateOpaqueKey(correlationId, 'correlationId'),
+       payload = _immutableJsonMap(payload) {
     if (reportSchemaVersion < 1) {
       throw ArgumentError.value(
         reportSchemaVersion,
@@ -55,8 +57,6 @@ final class RemoteDocumentJobRequest {
         'Must be positive.',
       );
     }
-    _validateOpaqueKey(idempotencyKey, 'idempotencyKey');
-    _validateOpaqueKey(correlationId, 'correlationId');
   }
 
   final ReportId reportId;
@@ -86,12 +86,16 @@ final class RemoteDocumentJobId {
 
 /// Submission receipt returned after the backend durably records a job.
 final class RemoteDocumentJobReceipt {
-  const RemoteDocumentJobReceipt({
+  RemoteDocumentJobReceipt({
     required this.jobId,
     required this.status,
     required this.submittedAt,
     this.pollAfterSeconds,
-  }) : assert(pollAfterSeconds == null || pollAfterSeconds > 0);
+  }) {
+    if (pollAfterSeconds != null && pollAfterSeconds! < 1) {
+      throw ArgumentError.value(pollAfterSeconds, 'pollAfterSeconds');
+    }
+  }
 
   final RemoteDocumentJobId jobId;
   final RemoteDocumentJobStatus status;
@@ -103,35 +107,43 @@ final class RemoteDocumentJobReceipt {
 /// stored here; retrieval must go through an authenticated host adapter.
 final class RemoteDocumentArtifactMetadata {
   RemoteDocumentArtifactMetadata({
-    required this.artifactId,
+    required String artifactId,
     required this.documentId,
-    required this.documentType,
+    required String documentType,
     required this.revision,
     required this.schemaVersion,
-    required this.officialDocumentId,
+    required String officialDocumentId,
     required this.templateId,
     required this.templateVersion,
-    required this.rendererId,
-    required this.rendererVersion,
+    required String rendererId,
+    required String rendererVersion,
     required this.generatedAt,
-    required this.sha256,
+    required String sha256,
     required this.byteLength,
-    required this.fileName,
+    required String fileName,
     this.pageCount,
     this.expiresAt,
-  }) {
-    _requiredText(artifactId, 'artifactId');
-    _requiredText(documentType, 'documentType');
-    _requiredText(officialDocumentId, 'officialDocumentId');
-    _requiredText(rendererId, 'rendererId');
-    _requiredText(rendererVersion, 'rendererVersion');
-    _requiredText(fileName, 'fileName');
-    if (revision < 1 || schemaVersion < 1 || byteLength < 1 ||
+  }) : artifactId = _requiredText(artifactId, 'artifactId'),
+       documentType = _requiredText(documentType, 'documentType'),
+       officialDocumentId = _requiredText(
+         officialDocumentId,
+         'officialDocumentId',
+       ),
+       rendererId = _requiredText(rendererId, 'rendererId'),
+       rendererVersion = _requiredText(rendererVersion, 'rendererVersion'),
+       sha256 = sha256.toLowerCase(),
+       fileName = _safeServerFileName(fileName) {
+    if (revision < 1 ||
+        schemaVersion < 1 ||
+        byteLength < 1 ||
         (pageCount != null && pageCount! < 1)) {
       throw ArgumentError('Invalid remote artifact metadata bounds.');
     }
-    if (!RegExp(r'^[a-fA-F0-9]{64}$').hasMatch(sha256)) {
+    if (!RegExp(r'^[a-f0-9]{64}$').hasMatch(this.sha256)) {
       throw ArgumentError.value(sha256, 'sha256', 'Expected a SHA-256 hex digest.');
+    }
+    if (expiresAt != null && !expiresAt!.isAfter(generatedAt)) {
+      throw ArgumentError.value(expiresAt, 'expiresAt', 'Must follow generatedAt.');
     }
   }
 
@@ -163,9 +175,11 @@ final class RemoteDocumentJobSnapshot {
     this.startedAt,
     this.completedAt,
     this.progressPercent,
-    this.failureCode,
+    String? failureCode,
     this.artifact,
-  }) {
+  }) : failureCode = failureCode == null
+           ? null
+           : _requiredText(failureCode, 'failureCode') {
     if (progressPercent != null &&
         (progressPercent! < 0 || progressPercent! > 100)) {
       throw ArgumentError.value(progressPercent, 'progressPercent');
@@ -176,9 +190,23 @@ final class RemoteDocumentJobSnapshot {
     if (status != RemoteDocumentJobStatus.succeeded && artifact != null) {
       throw ArgumentError('Only a succeeded job may expose artifact metadata.');
     }
-    if (status == RemoteDocumentJobStatus.failed &&
-        (failureCode == null || failureCode!.trim().isEmpty)) {
+    if (status == RemoteDocumentJobStatus.failed && this.failureCode == null) {
       throw ArgumentError('A failed job must include a stable failure code.');
+    }
+    if (status == RemoteDocumentJobStatus.succeeded &&
+        progressPercent != null &&
+        progressPercent != 100) {
+      throw ArgumentError('A succeeded job must have 100 percent progress.');
+    }
+    if (createdAt != null &&
+        startedAt != null &&
+        startedAt!.isBefore(createdAt!)) {
+      throw ArgumentError('startedAt cannot precede createdAt.');
+    }
+    if (startedAt != null &&
+        completedAt != null &&
+        completedAt!.isBefore(startedAt!)) {
+      throw ArgumentError('completedAt cannot precede startedAt.');
     }
   }
 
@@ -196,11 +224,9 @@ final class RemoteDocumentJobSnapshot {
 /// Authenticated API adapter for the remote job lifecycle.
 abstract interface class RemoteDocumentJobPort {
   Future<RemoteDocumentJobReceipt> submit(RemoteDocumentJobRequest request);
-
   Future<RemoteDocumentJobSnapshot> getStatus(RemoteDocumentJobId jobId);
 
-  /// Returns the authoritative post-cancellation state. The server decides
-  /// whether cancellation is still safe for the current job state.
+  /// The server decides whether cancellation remains safe for the current state.
   Future<RemoteDocumentJobSnapshot> cancel(RemoteDocumentJobId jobId);
 }
 
@@ -230,7 +256,7 @@ DocumentArtifact hydrateRemoteDocumentArtifact({
     throw const FormatException('Remote artifact byte length mismatch.');
   }
   final digest = crypto.sha256.convert(bytes).toString();
-  if (digest.toLowerCase() != metadata.sha256.toLowerCase()) {
+  if (digest != metadata.sha256) {
     throw const FormatException('Remote artifact SHA-256 mismatch.');
   }
   return DocumentArtifact(
@@ -246,16 +272,41 @@ DocumentArtifact hydrateRemoteDocumentArtifact({
   );
 }
 
-void _validateOpaqueKey(String value, String name) {
-  if (value.trim().length < 8 || value.trim().length > 128) {
+/// Loads and validates a remote artifact without caching access credentials or
+/// bypassing the host adapter's per-request authorization.
+final class RemoteDocumentArtifactLoader {
+  const RemoteDocumentArtifactLoader({required this.port});
+
+  final RemoteDocumentArtifactPort port;
+
+  Future<DocumentArtifact> load(
+    RemoteDocumentArtifactMetadata metadata,
+  ) async {
+    final bytes = await port.retrieveBytes(metadata.artifactId);
+    return hydrateRemoteDocumentArtifact(metadata: metadata, bytes: bytes);
+  }
+}
+
+String _validateOpaqueKey(String value, String name) {
+  final normalized = value.trim();
+  if (normalized.length < 8 || normalized.length > 128) {
     throw ArgumentError.value(value, name, 'Must contain 8 to 128 characters.');
   }
+  return normalized;
 }
 
 String _requiredText(String value, String name) {
   final normalized = value.trim();
   if (normalized.isEmpty || normalized.length > 200) {
     throw ArgumentError.value(value, name, 'Must contain 1 to 200 characters.');
+  }
+  return normalized;
+}
+
+String _safeServerFileName(String value) {
+  final normalized = normalizePdfFileName(value);
+  if (normalized == null) {
+    throw ArgumentError.value(value, 'fileName', 'Must be a valid PDF filename.');
   }
   return normalized;
 }
@@ -267,9 +318,9 @@ Map<String, Object?> _immutableJsonMap(Map<String, Object?> source) =>
     });
 
 Object? _immutableJsonValue(Object? value) {
-  if (value == null || value is String || value is num || value is bool) {
-    return value;
-  }
+  if (value == null || value is String || value is bool) return value;
+  if (value is int) return value;
+  if (value is double && value.isFinite) return value;
   if (value is List) {
     return List<Object?>.unmodifiable(value.map(_immutableJsonValue));
   }
@@ -284,19 +335,4 @@ Object? _immutableJsonValue(Object? value) {
     return Map<String, Object?>.unmodifiable(result);
   }
   throw ArgumentError('Payload must contain JSON-compatible values only.');
-}
-
-/// Loads and validates a remote artifact without caching access credentials or
-/// bypassing the host adapter's per-request authorization.
-final class RemoteDocumentArtifactLoader {
-  const RemoteDocumentArtifactLoader({required this.port});
-
-  final RemoteDocumentArtifactPort port;
-
-  Future<DocumentArtifact> load(
-    RemoteDocumentArtifactMetadata metadata,
-  ) async {
-    final bytes = await port.retrieveBytes(metadata.artifactId);
-    return hydrateRemoteDocumentArtifact(metadata: metadata, bytes: bytes);
-  }
 }

@@ -352,7 +352,7 @@ final class DocumentQrCode extends DocumentNode {
     this.sizePoints = 96,
   }) {
     if (payload.trim().isEmpty || utf8.encode(payload).length > 2048) {
-      throw ArgumentError.value(payload, 'payload', 'Must contain 1-2048 chars.');
+      throw ArgumentError.value(payload, 'payload', 'Must contain 1-2048 UTF-8 bytes.');
     }
     if (caption != null && caption!.trim().isEmpty) {
       throw ArgumentError.value(caption, 'caption', 'Must not be empty.');
