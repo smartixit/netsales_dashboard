@@ -216,12 +216,11 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
           id: 'support_tickets',
           title: l10n.text('support_tickets'),
           value: support.totalTickets.toString(),
-          variant: DashboardMetricVariant.status,
+          variant: DashboardMetricVariant.standard,
           icon: Icons.support_agent_outlined,
           tone: DashboardMetricTone.info,
           description:
               '${l10n.text('unread_messages')}: ${support.unreadMessages}',
-          statusLabel: l10n.text('server_aggregated_data'),
         ),
       if (metrics.sales case final sales?)
         DashboardMetricData(
