@@ -23,24 +23,48 @@ Future<void> main(List<String> args) async {
   };
 
   final measurements = <Map<String, Object>>[];
+  var failedCandidates = 0;
+
   for (final entry in candidates.entries) {
     final timer = Stopwatch()..start();
-    final bytes = await entry.value();
-    timer.stop();
-    await File(output.path + '/' + entry.key).writeAsBytes(bytes, flush: true);
-    measurements.add(<String, Object>{
-      'file': entry.key,
-      'bytes': bytes.length,
-      'elapsed_microseconds': timer.elapsedMicroseconds,
-      'pdf_signature_valid': bytes.length >= 5 &&
-          bytes[0] == 37 && bytes[1] == 80 && bytes[2] == 68 &&
-          bytes[3] == 70 && bytes[4] == 45,
-    });
+    try {
+      final bytes = await entry.value();
+      timer.stop();
+      if (bytes.length < 5 ||
+          bytes[0] != 37 ||
+          bytes[1] != 80 ||
+          bytes[2] != 68 ||
+          bytes[3] != 70 ||
+          bytes[4] != 45) {
+        throw StateError('Generator returned bytes without a PDF signature.');
+      }
+
+      await File(output.path + '/' + entry.key).writeAsBytes(bytes, flush: true);
+      measurements.add(<String, Object>{
+        'file': entry.key,
+        'status': 'success',
+        'bytes': bytes.length,
+        'elapsed_microseconds': timer.elapsedMicroseconds,
+        'pdf_signature_valid': true,
+      });
+    } catch (error) {
+      timer.stop();
+      failedCandidates++;
+      measurements.add(<String, Object>{
+        'file': entry.key,
+        'status': 'failed',
+        'elapsed_microseconds': timer.elapsedMicroseconds,
+        'error': error.toString(),
+      });
+      stderr.writeln('Candidate ' + entry.key + ' failed: ' + error.toString());
+    }
   }
 
   final report = <String, Object>{
     'purpose': 'Synthetic Arabic PDF POC; not production evidence',
     'runtime': Platform.operatingSystem,
+    'successful_candidates': candidates.length - failedCandidates,
+    'failed_candidates': failedCandidates,
     'candidates': measurements,
     'manual_visual_review_required': true,
     'text_extraction_is_not_visual_acceptance': true,
@@ -49,4 +73,9 @@ Future<void> main(List<String> args) async {
     const JsonEncoder.withIndent('  ').convert(report),
     flush: true,
   );
+
+  if (failedCandidates > 0) {
+    stderr.writeln('$failedCandidates candidate PDF generator(s) failed.');
+    exitCode = 1;
+  }
 }
