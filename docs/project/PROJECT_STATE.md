@@ -321,16 +321,15 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - **Verification pending:** exact-head format, Dart analysis, unit/widget tests, Windows package compilation as required by the workflow, and PR CI.
 
 
-## Document Engine — M7 Remote Jobs and Official Artifact Contracts (2026-11-09)
+## Document Engine — M8 Finishing Primitives (2026-11-09)
 
-**Status:** IN PROGRESS — generic client contracts implemented; Laravel API design/implementation remains a separate backend approval gate.  
-**Branch:** `feat/document-engine-m7-remote-artifact-contracts`  
-**Depends on:** M6 artifact preview/output contracts.
+**Status:** IN PROGRESS — generic renderer primitives implemented  
+**Branch:** `feat/document-engine-m8-document-finishing`
 
-- Added strict remote job lifecycle states: queued, running, succeeded, failed, expired, and cancelled.
-- Added schema-versioned report submission payloads with idempotency and correlation keys. Tenant identity and credentials are deliberately excluded; backend scope comes from the authenticated session.
-- Added typed job receipts/snapshots, progress bounds, explicit cancellation response, and successful-job artifact metadata requirements.
-- Added official artifact metadata with document identity/revision, schema version, template/renderer provenance, timestamps, digest, byte length, page count, and expiry.
-- Added host-owned authenticated retrieval ports and SHA-256/byte-length verification before hydrating an immutable DocumentArtifact.
-- No Laravel route, migration, permission, queue job, object-storage configuration, download controller, or API contract change has been made. These remain a separately reviewed backend implementation boundary.
+- Added bounded opaque QR payload rendering; no token issuance, cryptography, decryption, or verification is performed by the engine.
+- Added constrained presentation watermark overlays. They do not change authoritative document status.
+- Added visual/manual signature areas with supplied signer identity, role, approval reference/time, and bounded defensive-copied visual signature bytes. These are not cryptographic signatures.
+- Added explicit fixed-height 58 mm and 80 mm receipt PDF page profiles. They define PDF geometry only; no ESC/POS or thermal printer driver is included.
+- Enforced declared template capabilities for QR, watermark, and signature areas.
+- RTL labels/captions/watermarks remain rejected by the production renderer pending separate shaping-provider approval.
 - **Verification deferred by owner direction** until all planned milestones are implemented.
