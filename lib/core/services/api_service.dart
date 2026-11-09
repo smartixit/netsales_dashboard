@@ -104,7 +104,7 @@ class ApiService {
     CancelToken? cancelToken,
   }) async {
     try {
-      final response = await _dio.get<T>(
+      final response = await _dio.get<dynamic>(
         endpoint,
         queryParameters: queryParameters,
         options: options,
@@ -135,7 +135,7 @@ class ApiService {
         'per_page': ?perPage,
       };
 
-      final response = await _dio.get<T>(
+      final response = await _dio.get<dynamic>(
         endpoint,
         queryParameters: params.isEmpty ? null : params,
         options: options,
@@ -186,7 +186,7 @@ class ApiService {
         extra: {...?options?.extra, 'idempotency_key': ?idempotencyKey},
       );
 
-      final response = await _dio.post<T>(
+      final response = await _dio.post<dynamic>(
         endpoint,
         data: data,
         queryParameters: queryParameters,
@@ -196,6 +196,9 @@ class ApiService {
       );
       return _processResponse<T>(response, fromJson);
     } on DioException catch (e) {
+      log(
+        '⚠️ DioException on [$endpoint]: type=${e.type}, error=${e.error}, message=${e.message}, status=${e.response?.statusCode} -> data=${e.response?.data}',
+      );
       return _handleDioError<T>(e, endpoint);
     } catch (e) {
       return _handleUnexpectedError<T>(e, endpoint);
@@ -217,7 +220,7 @@ class ApiService {
         extra: {...?options?.extra, 'idempotency_key': ?idempotencyKey},
       );
 
-      final response = await _dio.put<T>(
+      final response = await _dio.put<dynamic>(
         endpoint,
         data: data,
         queryParameters: queryParameters,
@@ -247,7 +250,7 @@ class ApiService {
         extra: {...?options?.extra, 'idempotency_key': ?idempotencyKey},
       );
 
-      final response = await _dio.patch<T>(
+      final response = await _dio.patch<dynamic>(
         endpoint,
         data: data,
         queryParameters: queryParameters,
@@ -277,7 +280,7 @@ class ApiService {
         extra: {...?options?.extra, 'idempotency_key': ?idempotencyKey},
       );
 
-      final response = await _dio.delete<T>(
+      final response = await _dio.delete<dynamic>(
         endpoint,
         data: data,
         queryParameters: queryParameters,
