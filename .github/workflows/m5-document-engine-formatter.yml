@@ -1,0 +1,35 @@
+name: M5 Document Engine Formatter Patch
+
+on:
+  push:
+    branches:
+      - feat/document-engine-m5-report-configuration
+    paths:
+      - 'packages/document_engine/**'
+      - '.github/workflows/m5-document-engine-formatter.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.9'
+      - name: Apply pinned Dart formatter and export patch
+        shell: bash
+        run: |
+          dart --version
+          dart format packages/document_engine
+          git diff --binary -- packages/document_engine > /tmp/document-engine-m5-format.patch
+          test -s /tmp/document-engine-m5-format.patch
+      - uses: actions/upload-artifact@v4
+        with:
+          name: document-engine-m5-format-patch
+          path: /tmp/document-engine-m5-format.patch
+          retention-days: 3
