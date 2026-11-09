@@ -28,4 +28,4 @@ export 'src/reports/report_criteria.dart';
 export 'src/reports/report_presentation_options.dart';
 export 'src/reports/saved_report_preset.dart';
 
-export 'src/output/document_output.dart';
+export 'src/remote/remote_document_job.dart';

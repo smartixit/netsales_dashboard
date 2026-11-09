@@ -128,12 +128,13 @@
 - The Configuration Studio must adapt to actual constraints, offer only definition/template capabilities, and remain independent of GetX/host navigation.
 
 
-| DOC-007 | 2026-11-09 | Authorize M6 implementation of a custom artifact preview and same-artifact save/share/print ports. The package defines independent host-owned ports and typed output lifecycle results; the host owns platform I/O, destinations, permissions, and UI controls. Preview must disable the printing package's built-in toolbar and prohibit page geometry mutation for an already-rendered artifact. | APPROVED |
+| DOC-008 | 2026-11-09 | Authorize M7 generic remote document-job and official artifact client contracts: typed job lifecycle, idempotent submission metadata, host-owned authenticated retrieval, immutable artifact hydration, and digest verification. No Laravel route, migration, permission, queue job, storage policy, or download endpoint is authorized by this package decision. | APPROVED |
 
-## DOC-007 — M6 Preview and Output Lifecycle
-- `DocumentArtifactPreview` displays an existing immutable `DocumentArtifact`; it must not call the renderer or regenerate bytes.
-- Built-in `PdfPreview` actions, print/share buttons, debug mode, page-format selection, and orientation selection are disabled. The host owns a single custom toolbar.
-- Save, share, and print are independent ports. Every operation receives the same artifact bytes and digest.
-- Save cancellation is a distinct non-error result. Unsupported host operations are explicit; duplicate in-flight actions are rejected.
-- The engine does not implement app filesystem policy, user-selected destinations, browser download, native permissions, durable storage, Laravel APIs, or official invoice workflows.
-- The existing RTL rejection guard remains unchanged; M6 does not approve a production shaping provider.
+## DOC-008 — M7 Remote Job and Official Artifact Contracts
+- Job submission payloads contain schema-versioned report criteria/presentation only. Tenant scope is derived and checked by the authenticated backend, not trusted from generic client payloads.
+- Job states are strict and include queued, running, succeeded, failed, expired, and cancelled. A succeeded job must expose artifact metadata; failed jobs must expose a stable failure code.
+- Submission carries idempotency and correlation keys. Cancellation returns the authoritative server state; the client does not assume cancellation succeeded.
+- Official artifact metadata binds document type/identity/revision, document schema, template version, renderer identity/version, generation time, byte length, SHA-256, and optional expiry.
+- Every artifact retrieval is performed through a host-authenticated port. No permanent public URL or signed URL is stored in generic models.
+- Downloaded bytes must match declared length and SHA-256 before becoming a DocumentArtifact. The exact stored backend PDF remains canonical for official records.
+- Laravel endpoints, policies, permissions, persistence, queues, private object storage, retention, retry/idempotency implementation, and download authorization require a separate API decision before backend code is changed.

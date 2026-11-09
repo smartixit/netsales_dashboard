@@ -351,21 +351,21 @@
 - Exact-head formatting, analysis, tests, and CI are pending; no verification outcome is claimed before those checks complete.
 
 
-## 2026-11-09 — Document Engine M6 Preview and Output Lifecycle
+## 2026-11-09 — Document Engine M7 Remote Job and Official Artifact Contracts
 
 **Repository:** `smartixit/netsales_dashboard`  
-**Branch:** `feat/document-engine-m6-preview-output`
+**Branch:** `feat/document-engine-m7-remote-artifact-contracts`
 
 ### Implemented
-- Added independent `DocumentSavePort`, `DocumentSharePort`, and `DocumentPrintPort` contracts with typed success, cancellation, unsupported, and failure outcomes.
-- Added `DocumentOutputCoordinator` with per-operation concurrency guards, empty-artifact/name validation, Unicode-safe PDF filename normalization, and adapter exception containment.
-- Added a custom `DocumentArtifactPreview` over `PdfPreview`; built-in actions and page-format/orientation mutation are disabled. Host-owned toolbar and metadata slots preserve application design-system ownership.
-- Preview/save/share/print all receive the same existing immutable artifact; no output action regenerates a PDF.
-- Added focused unit tests for filename normalization, shared artifact identity/bytes, unsupported output, and empty artifact rejection.
+- Added strict typed remote job states, submission receipt, status snapshot, cancellation contract, and host-owned job port.
+- Added schema-versioned report submission payload with idempotency/correlation identifiers and recursive immutable JSON payload handling. Tenant IDs, credentials, signed URLs, result rows, and permission grants are excluded.
+- Added private remote artifact metadata with official document ID/type/revision, document schema version, exact template/renderer provenance, SHA-256, byte length, page count, and optional expiry.
+- Added host-owned authenticated artifact retrieval and an artifact loader that validates exact byte length and SHA-256 before creating an immutable DocumentArtifact.
+- Added tests for deep payload immutability, strict status parsing, succeeded-job artifact requirements, and digest/length validation.
 
-### Boundaries
-- No platform filesystem, Save As, browser download, native share, printer integration, durable storage, backend jobs, or official invoice path is implemented here. These remain host adapter and later integration responsibilities.
-- No Arabic provider is selected and the production RTL rejection behavior remains unchanged.
+### Backend boundary
+- No Laravel endpoint, database migration/model, permission, queue dispatch, retry policy, private storage, retention, or download controller was added.
+- The architecture blueprint identifies these as separately approved API design candidates. The package now has the generic client contracts needed by a later host/API integration.
 
 ### Verification
-- Deferred intentionally until the planned implementation milestones are complete, per project owner direction. No test, analyzer, platform build, or Actions pass is claimed.
+- Deferred until the planned implementation milestones are complete, per owner direction. No test/analyzer/Actions pass is claimed.

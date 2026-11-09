@@ -321,14 +321,16 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - **Verification pending:** exact-head format, Dart analysis, unit/widget tests, Windows package compilation as required by the workflow, and PR CI.
 
 
-## Document Engine — M6 Preview and Output Lifecycle (2026-11-09)
+## Document Engine — M7 Remote Jobs and Official Artifact Contracts (2026-11-09)
 
-**Status:** IN PROGRESS — implementation branch created  
-**Branch:** `feat/document-engine-m6-preview-output`
+**Status:** IN PROGRESS — generic client contracts implemented; Laravel API design/implementation remains a separate backend approval gate.  
+**Branch:** `feat/document-engine-m7-remote-artifact-contracts`  
+**Depends on:** M6 artifact preview/output contracts.
 
-- Added independent host-owned save, share, and print ports plus a typed output coordinator.
-- The coordinator passes the same immutable `DocumentArtifact` to every operation, normalizes safe PDF filenames while preserving Unicode/Arabic, rejects duplicate in-flight operations per action, distinguishes unsupported actions and cancellation, and contains adapter failures.
-- Added `DocumentArtifactPreview` over the pinned `printing` package. Its built-in action bar, print/share controls, debug mode, page-format changes, and orientation changes are disabled. The host supplies its own toolbar and metadata panel.
-- Preview consumes the existing artifact bytes; it never calls the renderer. Page count and document identity are surfaced in the default header.
-- No platform I/O implementation, save destination policy, storage persistence, Laravel endpoint, or official invoice integration is included in this package milestone.
-- **Verification deferred by owner direction:** formatting, analysis, tests, platform builds, and GitHub Actions are intentionally postponed until all planned milestones are implemented.
+- Added strict remote job lifecycle states: queued, running, succeeded, failed, expired, and cancelled.
+- Added schema-versioned report submission payloads with idempotency and correlation keys. Tenant identity and credentials are deliberately excluded; backend scope comes from the authenticated session.
+- Added typed job receipts/snapshots, progress bounds, explicit cancellation response, and successful-job artifact metadata requirements.
+- Added official artifact metadata with document identity/revision, schema version, template/renderer provenance, timestamps, digest, byte length, page count, and expiry.
+- Added host-owned authenticated retrieval ports and SHA-256/byte-length verification before hydrating an immutable DocumentArtifact.
+- No Laravel route, migration, permission, queue job, object-storage configuration, download controller, or API contract change has been made. These remain a separately reviewed backend implementation boundary.
+- **Verification deferred by owner direction** until all planned milestones are implemented.
