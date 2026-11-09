@@ -191,8 +191,9 @@ void main() {
       start: DateTime.utc(2026, 1, 1),
       end: null,
     );
-    final decoded = ReportFilterValue.fromJson(startOnly.toJson())
-        as ReportDateRangeFilterValue;
+    final decoded = ReportFilterValue.fromJson(
+      startOnly.toJson(),
+    ) as ReportDateRangeFilterValue;
     expect(decoded.start, DateTime.utc(2026, 1, 1));
     expect(decoded.end, isNull);
 
@@ -200,9 +201,9 @@ void main() {
       start: null,
       end: DateTime.utc(2026, 1, 31),
     );
-    final decodedEndOnly =
-        ReportFilterValue.fromJson(endOnly.toJson())
-            as ReportDateRangeFilterValue;
+    final decodedEndOnly = ReportFilterValue.fromJson(
+      endOnly.toJson(),
+    ) as ReportDateRangeFilterValue;
     expect(decodedEndOnly.start, isNull);
     expect(decodedEndOnly.end, DateTime.utc(2026, 1, 31));
     expect(
@@ -210,5 +211,4 @@ void main() {
       throwsArgumentError,
     );
   });
-
 }

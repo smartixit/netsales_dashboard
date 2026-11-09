@@ -386,9 +386,7 @@ class ReportConfigurationStudio extends StatelessWidget {
     final start = normalizedStart.isEmpty
         ? null
         : DateTime.tryParse(normalizedStart);
-    final end = normalizedEnd.isEmpty
-        ? null
-        : DateTime.tryParse(normalizedEnd);
+    final end = normalizedEnd.isEmpty ? null : DateTime.tryParse(normalizedEnd);
 
     // Keep the last valid selection while the user is midway through typing.
     if ((normalizedStart.isNotEmpty && start == null) ||
