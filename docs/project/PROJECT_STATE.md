@@ -305,3 +305,17 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - M5 is independent of production Arabic provider selection.
 - No server endpoints, storage adapter, tenant ownership policy, or financial calculations are included.
 - Next: implement pure report contracts and validation first, then framework-neutral preset serialization/migration contracts, followed by the Flutter Configuration Studio entry point and responsive widget tests.
+
+
+## Document Engine — M5 Report Configuration (2026-11-09)
+
+**Status:** IN PROGRESS — first contract and Studio implementation on branch  
+**Branch:** `feat/document-engine-m5-report-configuration`
+
+- Added the initial typed report schema model: report identity/version, allowed filters and choices, output columns, server-provided metric slots, template references, locales/page profiles, execution policy, and an optional explicit client row bound.
+- Added typed filter criteria and validation against the schema allowlist; criteria contain selections only, never report result records.
+- Added presentation options and schema validation for column visibility, sort/group permissions, template, locale, page profile, and metric/chart capability toggles.
+- Added versioned SavedReportPreset JSON serialization and compatibility assessment. Unsupported preset schemas or changed report schemas require explicit review rather than silent migration.
+- Added a controlled, responsive Flutter Configuration Studio entry point independent of GetX, application routing, API execution, and persistence.
+- No Laravel endpoint/schema, user/tenant ownership policy, preset persistence implementation, financial computation, or production Arabic PDF provider integration is included.
+- **Verification pending:** exact-head format, Dart analysis, unit/widget tests, Windows package compilation as required by the workflow, and PR CI.

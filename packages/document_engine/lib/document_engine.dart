@@ -19,3 +19,11 @@ export 'src/rendering/document_render_options.dart';
 export 'src/rendering/document_render_result.dart';
 export 'src/rendering/document_renderer.dart';
 export 'src/rendering/pdf/pdf_document_renderer.dart';
+
+export 'src/reports/report_id.dart';
+export 'src/reports/report_filter_value.dart';
+export 'src/reports/report_definition.dart';
+export 'src/reports/report_definition_registry.dart';
+export 'src/reports/report_criteria.dart';
+export 'src/reports/report_presentation_options.dart';
+export 'src/reports/saved_report_preset.dart';

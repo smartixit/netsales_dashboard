@@ -79,3 +79,25 @@ flutter pub get
 dart analyze packages/document_engine
 flutter test packages/document_engine/test
 ```
+
+
+## M5 — Report definitions and configuration contracts
+
+- `ReportDefinitionRegistry` registers immutable schema versions and requires exact ID/version lookup; it never falls back to latest.
+- Application-supplied `ReportDefinition` schemas declare the only available
+  filters, output columns, metric slots, chart availability, templates,
+  locales, page profiles, execution policy, and optional client row bound.
+- `ReportCriteria` stores typed filter values only. It validates against the
+  report's allowlist; it does not hold result rows or execute queries.
+- `ReportPresentationOptions` stores visible columns, sort order, grouping,
+  template, locale, page profile, and optional metrics/charts toggles. Each
+  selection is validated against the same definition.
+- `SavedReportPreset` serializes criteria and presentation with independent
+  preset-schema and report-schema versions. Unsupported versions or changed
+  definitions require explicit review; fields are never silently dropped.
+- `document_engine_flutter.dart` exposes a controlled responsive
+  `ReportConfigurationStudio`. The host owns state, localization, navigation,
+  API calls, execution, and persistence; no GetX or backend dependency is used.
+- A client-capable report must declare its own bounded row limit. Large reports
+  can be marked server-only. Laravel remains the authorization and query
+  authority, and the engine never calculates or aggregates report values.
