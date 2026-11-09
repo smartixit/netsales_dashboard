@@ -1,107 +1,65 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+/// Desktop-first spacing tokens expressed in Flutter logical pixels (dp).
+///
+/// These values are intentionally independent of the physical window size.
+/// Use AppBreakpoints and layout constraints to adapt composition; never scale
+/// the shared spacing scale linearly with the desktop window dimensions.
 class AppSpacing {
   AppSpacing._();
 
-  /// Zero spacing
-  static double get zero => 0.w;
+  static const double zero = 0;
+  static const double xxs = 2;
+  static const double xs = 4;
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16;
+  static const double xl = 20;
+  static const double xxl = 24;
+  static const double xxxl = 32;
+  static const double huge = 40;
+  static const double giant = 48;
+  static const double section = 56;
+  static const double sectionLg = 64;
+  static const double sectionXl = 80;
 
-  /// Micro spacing (2)
-  static double get xxs => 2.w;
+  /// Default content inset. Wider windows should use AppBreakpoints.screenMargin.
+  static const double screenPadding = 24;
+  static const double cardPadding = 16;
 
-  /// Extra small spacing (4)
-  static double get xs => 4.w;
+  /// Compact desktop controls follow a 40 dp minimum height.
+  static const double buttonHeight = 40;
+  static const double buttonPaddingH = 16;
+  static const double buttonPaddingV = 8;
+  static const double inputPadding = 12;
+  static const double listItemSpacing = 12;
+  static const double gridSpacing = 16;
+  static const double dialogPadding = 24;
+  static const double bottomSheetPadding = 24;
 
-  /// Small spacing (8)
-  static double get sm => 8.w;
+  /// Desktop shell dimensions, all in stable logical pixels.
+  static const double appBarHeight = 64;
+  static const double bottomNavHeight = 56;
+  static const double kpiStripHeight = 72;
 
-  /// Medium spacing (12)
-  static double get md => 12.w;
+  /// Compatibility token only; prefer the actual MediaQuery safe-area inset.
+  static const double statusBarHeight = 24;
 
-  /// Large spacing (16)
-  static double get lg => 16.w;
+  static const SizedBox hXxs = SizedBox(width: xxs);
+  static const SizedBox hXs = SizedBox(width: xs);
+  static const SizedBox hSm = SizedBox(width: sm);
+  static const SizedBox hMd = SizedBox(width: md);
+  static const SizedBox hLg = SizedBox(width: lg);
+  static const SizedBox hXl = SizedBox(width: xl);
+  static const SizedBox hXxl = SizedBox(width: xxl);
 
-  /// Extra large spacing (20)
-  static double get xl => 20.w;
-
-  /// Double extra large spacing (24)
-  static double get xxl => 24.w;
-
-  /// Triple extra large spacing (32)
-  static double get xxxl => 32.w;
-
-  /// Huge spacing (40)
-  static double get huge => 40.w;
-
-  /// Giant spacing (48)
-  static double get giant => 48.w;
-
-  /// Section spacing (56)
-  static double get section => 56.w;
-
-  /// Large section spacing (64)
-  static double get sectionLg => 64.w;
-
-  /// Extra large section spacing (80)
-  static double get sectionXl => 80.w;
-
-  /// Screen padding horizontal
-  static double get screenPadding => 24.w;
-
-  /// Card padding
-  static double get cardPadding => 16.w;
-
-  /// Button padding horizontal
-  static double get buttonPaddingH => 24.w;
-
-  /// Button padding vertical
-  static double get buttonPaddingV => 14.h;
-
-  /// Input padding
-  static double get inputPadding => 14.w;
-
-  /// List item spacing
-  static double get listItemSpacing => 12.w;
-
-  /// Grid spacing
-  static double get gridSpacing => 16.w;
-
-  /// Dialog padding
-  static double get dialogPadding => 24.w;
-
-  /// Bottom sheet padding
-  static double get bottomSheetPadding => 24.w;
-
-  /// App bar height
-  static double get appBarHeight => 100.h;
-
-  /// Bottom nav height
-  static double get bottomNavHeight => 80.h;
-
-  /// ارتفاع شريط مؤشرات الأداء (KPI) (80)
-  static double get kpiStripHeight => 80.h;
-
-  /// Status bar height
-  static double get statusBarHeight => 24.h;
-
-  /// Horizontal spacing shortcuts
-  static SizedBox get hXxs => SizedBox(width: xxs);
-  static SizedBox get hXs => SizedBox(width: xs);
-  static SizedBox get hSm => SizedBox(width: sm);
-  static SizedBox get hMd => SizedBox(width: md);
-  static SizedBox get hLg => SizedBox(width: lg);
-  static SizedBox get hXl => SizedBox(width: xl);
-  static SizedBox get hXxl => SizedBox(width: xxl);
-
-  /// Vertical spacing shortcuts
-  static SizedBox get vXxs => SizedBox(height: xxs);
-  static SizedBox get vXs => SizedBox(height: xs);
-  static SizedBox get vSm => SizedBox(height: sm);
-  static SizedBox get vMd => SizedBox(height: md);
-  static SizedBox get vLg => SizedBox(height: lg);
-  static SizedBox get vXl => SizedBox(height: xl);
-  static SizedBox get vXxl => SizedBox(height: xxl);
-  static SizedBox get vHuge => SizedBox(height: huge);
-  static SizedBox get vGiant => SizedBox(height: giant);
+  static const SizedBox vXxs = SizedBox(height: xxs);
+  static const SizedBox vXs = SizedBox(height: xs);
+  static const SizedBox vSm = SizedBox(height: sm);
+  static const SizedBox vMd = SizedBox(height: md);
+  static const SizedBox vLg = SizedBox(height: lg);
+  static const SizedBox vXl = SizedBox(height: xl);
+  static const SizedBox vXxl = SizedBox(height: xxl);
+  static const SizedBox vHuge = SizedBox(height: huge);
+  static const SizedBox vGiant = SizedBox(height: giant);
 }

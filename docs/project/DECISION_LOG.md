@@ -53,3 +53,11 @@
 - Feature consumption is fetched from the dedicated consumption endpoint and displayed as returned. No client-side quota usage or financial calculations are performed.
 - The platform dashboard does not expose operational `consume` or `activate-early` actions; those remain in the network workspace context.
 - Subscription and feature catalogue endpoints must enforce server-side permission middleware. UI-only permission hiding is insufficient.
+
+
+| DS-001 | 2026-11-09 | The standalone Windows Dashboard and responsive Web use fixed Flutter logical-pixel design tokens. Shared typography, spacing, radii, and theme geometry must not be scaled against the full window. Adaptive composition is handled by AppBreakpoints and actual layout constraints. ScreenUtil may remain temporarily as a compatibility shim for legacy leaf widgets, but width/height/text scaling is disabled globally. | APPROVED |
+
+## DS-001 — Desktop Logical-Pixel Design System
+- `AppTypography`, `AppSpacing`, `AppRadius`, and `AppThemes` are expressed in stable logical pixels; TextStyle line-height remains a unitless multiplier.
+- ScreenUtil is not a responsive layout engine for this desktop product. It is retained only until all legacy leaf-widget imports are migrated, with all scale factors disabled in the app bootstrap.
+- Responsive behavior must select layouts, columns, margins, and bounded content widths through `AppBreakpoints` and actual constraints, never by multiplying all dimensions by the entire window width/height.

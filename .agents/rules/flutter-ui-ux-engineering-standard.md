@@ -37,6 +37,7 @@ Before writing any UI widgets:
 ## 5. Design System Token Invariants
 - **Colors:** Mandatory use of `AppColors.primary`, `AppColors.secondary`, `AppColors.tertiary`, and Material 3 surface hierarchy.
 - **Typography:** Mandatory use of `AppTypography` styles (`badgeText`, `bodyLarge`, `titleMedium`, etc.).
+- **Desktop/Web scale:** Shared design tokens use stable Flutter logical pixels (dp). Never put `.w`, `.h`, `.sp`, or `.r` inside AppTypography, AppSpacing, AppRadius, or AppThemes. Desktop and responsive Web composition adapts through AppBreakpoints, LayoutBuilder constraints, and bounded content widths—not proportional scaling against the full window size. If ScreenUtil remains for legacy leaf widgets, disable its width/height/text scaling for this product.
 - **Radii & Spacing:** Strict adherence to `AppRadius` and `AppSpacing`. Never hardcode raw numeric margins or paddings.
 - **Motion & Interactions:** Reuse `AppMotion`, `AppElevation`, and `CustomInteractiveBounce`. Keep animations purposeful and responsive.
 

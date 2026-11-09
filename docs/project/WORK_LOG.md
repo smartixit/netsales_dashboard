@@ -138,3 +138,26 @@
 
 ### Verification
 - No local Flutter analyzer/test/Windows build or live rendered visual QA is claimed. PR CI is pending.
+
+
+## 2026-11-09 — Desktop Design-System Scale Correction
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `fix/desktop-design-token-scaling`
+
+### Root cause
+- The app initialized `flutter_screenutil` with a mobile design size of 375×812 while the Windows dashboard opens at 1440×900.
+- Shared `AppSpacing`, `AppRadius`, `AppTypography`, and portions of `AppThemes` multiplied logical-pixel values by ScreenUtil scale factors. This caused spacing and radii to grow with the desktop window and also enlarged typography.
+- Typography had been reverted from the previously reviewed desktop logical-pixel scale in commit `49846d9`.
+
+### Implemented
+- Restored fixed desktop typography tokens and unitless line-height multipliers.
+- Converted spacing and radius tokens to immutable logical-pixel values; set compact desktop control dimensions and shell heights.
+- Removed ScreenUtil from `AppThemes` and replaced scaled strokes, paddings, slider, tooltip, and FAB dimensions with fixed values / shared spacing tokens.
+- Kept ScreenUtil temporarily only for compatibility with older leaf widgets, but disabled width, height, and text scaling globally. Responsive composition remains the responsibility of `AppBreakpoints` and actual layout constraints.
+- Added a permanent UI engineering rule prohibiting screen-relative units in shared desktop tokens.
+- Added regression tests proving typography, spacing, radii, and theme construction do not require ScreenUtil initialization.
+
+### Verification
+- Regression tests added; GitHub Actions analyzer, full tests, and Windows build are pending PR CI.
+- No live rendered Windows/Web visual QA is claimed from this execution context.
