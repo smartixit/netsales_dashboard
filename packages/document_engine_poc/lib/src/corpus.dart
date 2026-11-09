@@ -53,6 +53,24 @@ abstract final class ArabicPdfCorpus {
     isolateExample,
   ];
 
+  /// Samples that should map to printable glyphs in the two baseline renderers.
+  /// Bidi isolates remain a dedicated Payv probe because pdf_text_shaper 1.1.1
+  /// currently attempts font fallback for U+2066/U+2069 control characters.
+  static const List<String> glyphMappedCases = <String>[
+    joiningAndDiacritics,
+    lamAlefForms,
+    mixedHeading,
+    invoiceReference,
+    phone,
+    suppliedAmounts,
+    westernDigits,
+    arabicIndicDigits,
+    dateAndTime,
+    uuid,
+    bracketAndPunctuation,
+    latinInsideArabic,
+  ];
+
   static const List<(String, String, String)> tableRows =
       <(String, String, String)>[
     ('خدمة توريد وتشغيل الشبكة المحلية مع وصف عربي طويل نسبيًا لاختبار التفاف الخلايا.', 'NET-001/A', '1,250.50 YER'),
