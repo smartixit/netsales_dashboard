@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/features/auth/presentation/controllers/two_factor_auth_controller.dart';
+import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_flow_progress.dart';
 import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_scaffold.dart';
 import 'package:netsales_dashboard/features/auth/presentation/widgets/two_factor_form_card.dart';
 
-/// واجهة المصادقة الثنائية (TwoFactorAuthScreen)
+/// Device confirmation screen for two-factor authentication.
 class TwoFactorAuthScreen extends GetView<TwoFactorAuthController> {
   const TwoFactorAuthScreen({super.key});
 
@@ -14,7 +15,12 @@ class TwoFactorAuthScreen extends GetView<TwoFactorAuthController> {
       icon: Icons.phonelink_lock_rounded,
       title: 'تأكيد تسجيل الدخول',
       subtitle:
-          'أدخل رمز التحقق المرسل إلى ${controller.maskedPhone} لتأكيد هويتك وحماية حسابك.',
+          'نحتاج إلى خطوة تحقق إضافية لتأكيد هويتك وربط جلسة العمل بهذا الجهاز.',
+      progress: const AuthFlowProgress(
+        currentStep: 2,
+        totalSteps: 2,
+        label: 'الخطوة الأخيرة · التحقق من الجهاز',
+      ),
       child: const TwoFactorFormCard(),
     );
   }

@@ -6,7 +6,7 @@ import 'package:netsales_dashboard/features/auth/domain/usecases/request_passwor
 import 'package:netsales_dashboard/widgets/dialogs/custom_animation_overlay.dart';
 import 'package:netsales_dashboard/widgets/toasts/custom_snackbar.dart';
 
-/// متحكم شاشة طلب استعادة كلمة المرور (ForgotPasswordController)
+/// Controller for requesting a password recovery code.
 class ForgotPasswordController extends GetxController {
   ForgotPasswordController({required this.requestPasswordResetUseCase});
 
@@ -17,7 +17,6 @@ class ForgotPasswordController extends GetxController {
 
   final RxBool isLoading = false.obs;
 
-  /// إرسال طلب رمز التحقق
   Future<void> submit() async {
     final form = formKey.currentState;
     if (form == null || !form.validate()) {
@@ -31,17 +30,14 @@ class ForgotPasswordController extends GetxController {
       final phone = phoneController.text.trim();
       await requestPasswordResetUseCase.execute(phone);
 
-      // الحارس يمنع عرض النجاح والتنقّل بعد إغلاق الشاشة أثناء الطلب.
       if (isClosed) return;
 
       await CustomAnimationOverlay.showSuccess(
         message: 'تم إرسال رمز التحقق بنجاح!',
       );
 
-      // الحارس يمنع التنقّل إذا أُغلقت الشاشة أثناء عرض النجاح.
       if (isClosed) return;
 
-      // الانتقال لشاشة التحقق من الرمز مع تمرير رقم الهاتف
       await Get.toNamed<void>(AppRoutes.verifyOtp, arguments: {'phone': phone});
     } catch (error) {
       await CustomAnimationOverlay.hide();
@@ -60,8 +56,18 @@ class ForgotPasswordController extends GetxController {
     }
   }
 
+  /// Reveal the existing login route instead of creating a second login page.
+  ///
+  /// LoginController owns the login Form GlobalKey. Pushing another login route
+  /// while the original remains below recovery would mount that same key twice.
   void goToLogin() {
-    Get.offNamed<void>(AppRoutes.login);
+    if (Get.currentRoute == AppRoutes.forgotPassword &&
+        Get.previousRoute == AppRoutes.login) {
+      Get.back<void>();
+      return;
+    }
+
+    Get.offAllNamed<void>(AppRoutes.login);
   }
 
   @override

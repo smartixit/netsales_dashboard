@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_motion.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
 
-/// عنصر متناسق لعرض شروط ومعايير قوة كلمة المرور بالاعتماد الكامل على ScreenUtil
+/// عنصر متناسق لعرض شروط ومعايير قوة كلمة المرور باستخدام قياسات ثابتة.
 class CustomPasswordRequirementItem extends StatelessWidget {
   const CustomPasswordRequirementItem({
     super.key,
@@ -27,8 +26,8 @@ class CustomPasswordRequirementItem extends StatelessWidget {
           AnimatedContainer(
             duration: AppMotion.fast,
             curve: AppMotion.standard,
-            width: 18.w,
-            height: 18.w,
+            width: 18,
+            height: 18,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isValid
@@ -37,7 +36,7 @@ class CustomPasswordRequirementItem extends StatelessWidget {
             ),
             child: Icon(
               isValid ? Icons.check_rounded : Icons.circle_outlined,
-              size: 13.r,
+              size: 13,
               color: isValid ? colors.success : colors.onSurfaceVariant,
             ),
           ),

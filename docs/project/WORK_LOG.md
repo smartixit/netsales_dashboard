@@ -256,3 +256,23 @@
 - Diagnostic CI on the formatted working tree completed document-engine dependency resolution, static analysis, and tests successfully.
 - Strict exact-head CI is running separately; final conclusion and each job outcome must be captured before claiming the milestone fully verified.
 - No local Flutter runtime or manual visual PDF review is claimed.
+
+## 2026-11-09 — Premium Authentication Flow and Duplicate Login Route Repair
+
+**Repository:** \`smartixit/netsales_dashboard\`  
+**Branch:** \`feat/premium-authentication-experience\`
+
+### Implemented
+- Extended the shared \`AuthScaffold\` with an optional flow-progress region while preserving the premium Login brand/form composition and responsive layout.
+- Added reusable \`AuthFlowProgress\`, \`AuthNoticeBanner\`, and \`AuthStatusPanel\` components.
+- Redesigned Forgot Password, OTP verification, Two-Factor Authentication, Password Reset, Success, and Unauthorized screens with purpose-specific hierarchy and security guidance.
+- Fixed Forgot Password → Login navigation: pop to the already-mounted Login route when it is directly underneath recovery, instead of replacing recovery with a second Login route. If that route ancestry is absent, clear the stack before creating Login. This prevents duplicate mounting of the Login form key.
+- Removed ScreenUtil scaling from the shared password-requirement item to preserve stable desktop logical-pixel dimensions.
+- Added a route-stack regression test and extended responsive authentication layout coverage for the progress component.
+
+### Scope boundaries
+- Authentication use cases, repository contracts, API calls, token/session handling, and backend authorization were not changed.
+- No runtime dependency was added. Windows WNS/Reverb remains deferred.
+
+### Verification status
+- Exact-head Flutter formatting, analyzer, focused/full tests, Windows Debug build, GitHub Actions, and rendered Windows/Web visual QA remain pending.

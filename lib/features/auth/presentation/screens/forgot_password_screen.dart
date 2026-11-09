@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/features/auth/presentation/controllers/forgot_password_controller.dart';
+import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_flow_progress.dart';
 import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_scaffold.dart';
 import 'package:netsales_dashboard/features/auth/presentation/widgets/forgot_password_form_card.dart';
 
-/// واجهة استعادة كلمة المرور (ForgotPasswordScreen)
+/// Password recovery entry screen.
 class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
   const ForgotPasswordScreen({super.key});
 
@@ -13,7 +14,13 @@ class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
     return const AuthScaffold(
       icon: Icons.key_rounded,
       title: 'استعادة كلمة المرور',
-      subtitle: 'أدخل رقم الهاتف المرتبط بحسابك، وسنرسل إليه رمز تحقق لإكمال استعادة الحساب.',
+      subtitle:
+          'سنساعدك على استعادة الوصول إلى حسابك بخطوات واضحة وآمنة دون كشف بياناتك.',
+      progress: AuthFlowProgress(
+        currentStep: 1,
+        totalSteps: 3,
+        label: 'الخطوة الأولى · استعادة الحساب',
+      ),
       child: ForgotPasswordFormCard(),
     );
   }

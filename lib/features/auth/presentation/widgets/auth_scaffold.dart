@@ -22,6 +22,7 @@ class AuthScaffold extends StatelessWidget {
     required this.icon,
     required this.child,
     this.footer,
+    this.progress,
   });
 
   final String title;
@@ -29,6 +30,7 @@ class AuthScaffold extends StatelessWidget {
   final IconData icon;
   final Widget child;
   final Widget? footer;
+  final Widget? progress;
 
   @override
   Widget build(BuildContext context) {
@@ -158,6 +160,13 @@ class AuthScaffold extends StatelessWidget {
                       ),
                       textAlign: TextAlign.start,
                     ),
+
+                    if (progress != null) ...[
+                      SizedBox(
+                        height: compactHeight ? AppSpacing.md : AppSpacing.lg,
+                      ),
+                      progress!,
+                    ],
 
                     SizedBox(
                       height: compactHeight

@@ -6,6 +6,7 @@ import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
 import 'package:netsales_dashboard/core/utils/form_validators.dart';
 import 'package:netsales_dashboard/features/auth/presentation/controllers/verify_otp_controller.dart';
+import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_notice_banner.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_pin_field.dart';
 import 'package:netsales_dashboard/widgets/interactions/custom_interactive_bounce.dart';
@@ -47,6 +48,13 @@ class VerifyOtpFormCard extends GetView<VerifyOtpController> {
               ),
             ),
             AppSpacing.vXl,
+            AuthNoticeBanner(
+              icon: Icons.sms_outlined,
+              title: 'رمز تحقق مؤقت',
+              message: 'لا تشارك الرمز مع أي شخص. فريق NetSales لن يطلبه منك عبر الهاتف.',
+              accentColor: colors.primary,
+            ),
+            AppSpacing.vLg,
             Obx(
               () => CustomPinField(
                 controller: controller.otpController,

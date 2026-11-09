@@ -6,6 +6,7 @@ import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
 import 'package:netsales_dashboard/core/utils/form_validators.dart';
 import 'package:netsales_dashboard/features/auth/presentation/controllers/forgot_password_controller.dart';
+import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_notice_banner.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_phone_field.dart';
 import 'package:netsales_dashboard/widgets/interactions/custom_interactive_bounce.dart';
@@ -47,6 +48,13 @@ class ForgotPasswordFormCard extends GetView<ForgotPasswordController> {
               ),
             ),
             AppSpacing.vXl,
+            AuthNoticeBanner(
+              icon: Icons.lock_outline_rounded,
+              title: 'خصوصيتك أولويتنا',
+              message: 'لن نكشف ما إذا كان الرقم مسجلاً. اتبع خطوات التحقق لإثبات ملكية الحساب.',
+              accentColor: colors.primary,
+            ),
+            AppSpacing.vLg,
             CustomPhoneField(
               controller: controller.phoneController,
               label: 'رقم الهاتف المسجل',

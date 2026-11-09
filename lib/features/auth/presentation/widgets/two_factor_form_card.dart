@@ -7,6 +7,7 @@ import 'package:netsales_dashboard/core/themes/app_typography.dart';
 import 'package:netsales_dashboard/core/utils/form_validators.dart';
 import 'package:netsales_dashboard/features/auth/presentation/controllers/two_factor_auth_controller.dart';
 import 'package:netsales_dashboard/features/auth/presentation/widgets/two_factor_device_info_card.dart';
+import 'package:netsales_dashboard/features/auth/presentation/widgets/auth_notice_banner.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_pin_field.dart';
 import 'package:netsales_dashboard/widgets/interactions/custom_interactive_bounce.dart';
@@ -38,6 +39,13 @@ class TwoFactorFormCard extends GetView<TwoFactorAuthController> {
               initialMessage: controller.initialMessage,
             ),
             AppSpacing.vXl,
+            AuthNoticeBanner(
+              icon: Icons.phonelink_lock_rounded,
+              title: 'تحقق من الجهاز الجديد',
+              message: 'هذه الخطوة تمنع إنشاء جلسة على جهاز غير معتمد دون موافقتك.',
+              accentColor: colors.primary,
+            ),
+            AppSpacing.vLg,
             Text(
               'رمز التحقق (OTP)',
               style: AppTypography.titleSmall.copyWith(
