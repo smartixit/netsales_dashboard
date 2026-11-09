@@ -4,6 +4,9 @@ import 'package:netsales_dashboard/features/platform_users/domain/entities/platf
 import 'package:netsales_dashboard/features/platform_users/domain/entities/platform_user_detail_entity.dart';
 
 abstract interface class PlatformUsersRepository {
+  Future<ApiResponse<List<PlatformUserEntity>>> getTrashedUsers({String? search, String? cursor, int perPage = 20});
+  Future<void> restoreUser(int userId);
+  Future<void> forceDeleteUser(int userId);
   Future<ApiResponse<List<PlatformUserEntity>>> getUsers({
     String? search, String? status, String? cursor, int perPage,
   });
