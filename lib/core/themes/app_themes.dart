@@ -541,7 +541,7 @@ class AppThemes {
       foregroundColor: colors.onPrimaryContainer,
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: AppRadius.fullRadius),
-      sizeConstraints: BoxConstraints.tightFor(width: 56.0, height: AppSpacing.buttonHeight),
+      sizeConstraints: BoxConstraints.tightFor(width: 56.0, height: 56.0),
     );
   }
 
