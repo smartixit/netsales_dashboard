@@ -20,6 +20,11 @@ class PlatformUserSecuritySection extends StatelessWidget {
     required this.isLoading,
     required this.error,
     required this.onRetry,
+    required this.canManageSecurity,
+    required this.onTerminateSession,
+    required this.onBanUser,
+    required this.onBanDevice,
+    required this.onUnban,
     required this.l10n,
   });
   final PlatformUserDetailEntity detail;
@@ -27,6 +32,11 @@ class PlatformUserSecuritySection extends StatelessWidget {
   final bool isLoading;
   final String error;
   final VoidCallback onRetry;
+  final bool canManageSecurity;
+  final ValueChanged<int> onTerminateSession;
+  final VoidCallback onBanUser;
+  final ValueChanged<int> onBanDevice;
+  final ValueChanged<int> onUnban;
   final AppLocalizations l10n;
 
   @override
@@ -37,7 +47,16 @@ class PlatformUserSecuritySection extends StatelessWidget {
         title: l10n.text('security_overview'),
         description: l10n.text('security_overview_description'),
       ),
-      SizedBox(height: AppSpacing.md),
+      if (canManageSecurity && detail.user.status == 'ACTIVE') ...[
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: CustomButton.danger(
+            text: 'حظر المستخدم أمنياً',
+            onPressed: onBanUser,
+          ),
+        ),
+        SizedBox(height: AppSpacing.md),
+      ],
       _Surface(
         title: l10n.text('registered_devices'),
         count: detail.devices.length,
@@ -81,6 +100,12 @@ class PlatformUserSecuritySection extends StatelessWidget {
                           ),
                       ],
                     ),
+                    if (canManageSecurity && device.status == 'ACTIVE')
+                      IconButton(
+                        tooltip: 'حظر الجهاز',
+                        onPressed: () => onBanDevice(device.id),
+                        icon: Icon(Icons.gpp_bad_outlined, color: context.colors.error),
+                      ),
                   );
                 }).toList(),
               ),
@@ -127,6 +152,13 @@ class PlatformUserSecuritySection extends StatelessWidget {
                         subtitle: Text(
                           '${session.ipAddress ?? l10n.text('not_available')} · ${session.lastActivityAt?.toLocal().toString() ?? l10n.text('not_available')}',
                         ),
+                        trailing: canManageSecurity
+                            ? CustomButton.danger(
+                                text: 'إنهاء',
+                                onPressed: () => onTerminateSession(session.id),
+                                size: CustomButtonSize.small,
+                              )
+                            : null,
                       ),
                     )
                     .toList(),
@@ -155,11 +187,16 @@ class PlatformUserSecuritySection extends StatelessWidget {
                           ? ban.reason!
                           : l10n.text('no_ban_reason'),
                     ),
-                    trailing: Text(
-                      ban.endsAt?.toLocal().toString() ??
-                          l10n.text('permanent'),
-                      style: AppTypography.caption,
-                    ),
+                    trailing: canManageSecurity
+                        ? CustomButton.secondary(
+                            text: 'رفع الحظر',
+                            onPressed: () => onUnban(ban.id),
+                            size: CustomButtonSize.small,
+                          )
+                        : Text(
+                            ban.endsAt?.toLocal().toString() ?? l10n.text('permanent'),
+                            style: AppTypography.caption,
+                          ),
                   ),
                 )
                 .toList(),
