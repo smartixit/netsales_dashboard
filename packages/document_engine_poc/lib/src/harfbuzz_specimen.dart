@@ -55,7 +55,7 @@ Future<Uint8List> buildHarfBuzzSpecimen({
           ),
           ShapedText(ArabicPdfCorpus.joiningAndDiacritics, style: style),
           ShapedText(ArabicPdfCorpus.lamAlefForms, style: style),
-          ...ArabicPdfCorpus.cases.map(
+          ...ArabicPdfCorpus.glyphMappedCases.map(
             (value) => pw.Padding(
               padding: const pw.EdgeInsets.only(bottom: 8),
               child: ShapedText(value, style: style, language: 'ar'),
