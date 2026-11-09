@@ -128,13 +128,12 @@
 - The Configuration Studio must adapt to actual constraints, offer only definition/template capabilities, and remain independent of GetX/host navigation.
 
 
-| DOC-008 | 2026-11-09 | Authorize M7 generic remote document-job and official artifact client contracts: typed job lifecycle, idempotent submission metadata, host-owned authenticated retrieval, immutable artifact hydration, and digest verification. No Laravel route, migration, permission, queue job, storage policy, or download endpoint is authorized by this package decision. | APPROVED |
+| DOC-009 | 2026-11-09 | Authorize M8 generic document-finishing primitives: host-supplied opaque QR rendering, presentation-only watermarks, explicit visual/approval signature metadata, and fixed-height 58/80 mm receipt page profiles. No QR cryptography/verification, legal digital signature, authoritative status mutation, or ESC/POS driver is authorized. | APPROVED |
 
-## DOC-008 — M7 Remote Job and Official Artifact Contracts
-- Job submission payloads contain schema-versioned report criteria/presentation only. Tenant scope is derived and checked by the authenticated backend, not trusted from generic client payloads.
-- Job states are strict and include queued, running, succeeded, failed, expired, and cancelled. A succeeded job must expose artifact metadata; failed jobs must expose a stable failure code.
-- Submission carries idempotency and correlation keys. Cancellation returns the authoritative server state; the client does not assume cancellation succeeded.
-- Official artifact metadata binds document type/identity/revision, document schema, template version, renderer identity/version, generation time, byte length, SHA-256, and optional expiry.
-- Every artifact retrieval is performed through a host-authenticated port. No permanent public URL or signed URL is stored in generic models.
-- Downloaded bytes must match declared length and SHA-256 before becoming a DocumentArtifact. The exact stored backend PDF remains canonical for official records.
-- Laravel endpoints, policies, permissions, persistence, queues, private object storage, retention, retry/idempotency implementation, and download authorization require a separate API decision before backend code is changed.
+## DOC-009 — M8 Document Finishing
+- QR payloads are opaque host input. The engine only renders the QR and does not issue, sign, encrypt, decrypt, or verify it.
+- Watermarks are visual labels only. Backend status remains authoritative; the engine cannot turn a draft into an issued document or imply legal validity.
+- Visual signature images, printed signer identity/role, and server-supplied approval reference/time are distinct display elements. None is a cryptographic signature.
+- Visual signature image bytes are defensive copies with a 1 MiB bound.
+- 58 mm and 80 mm receipt profiles are fixed-height PDF geometries, not ESC/POS or printer-control implementations.
+- Required template capabilities are enforced. Newly introduced RTL-visible strings remain rejected by the production renderer until a shaping provider is separately approved.

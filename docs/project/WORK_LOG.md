@@ -351,21 +351,22 @@
 - Exact-head formatting, analysis, tests, and CI are pending; no verification outcome is claimed before those checks complete.
 
 
-## 2026-11-09 — Document Engine M7 Remote Job and Official Artifact Contracts
+## 2026-11-09 — Document Engine M8 QR, Watermark, Signature, and Receipt Primitives
 
 **Repository:** `smartixit/netsales_dashboard`  
-**Branch:** `feat/document-engine-m7-remote-artifact-contracts`
+**Branch:** `feat/document-engine-m8-document-finishing`
 
 ### Implemented
-- Added strict typed remote job states, submission receipt, status snapshot, cancellation contract, and host-owned job port.
-- Added schema-versioned report submission payload with idempotency/correlation identifiers and recursive immutable JSON payload handling. Tenant IDs, credentials, signed URLs, result rows, and permission grants are excluded.
-- Added private remote artifact metadata with official document ID/type/revision, document schema version, exact template/renderer provenance, SHA-256, byte length, page count, and optional expiry.
-- Added host-owned authenticated artifact retrieval and an artifact loader that validates exact byte length and SHA-256 before creating an immutable DocumentArtifact.
-- Added tests for deep payload immutability, strict status parsing, succeeded-job artifact requirements, and digest/length validation.
+- Added `DocumentQrCode` for opaque host-provided payloads with strict size bounds and PDF QR rendering.
+- Added `DocumentWatermark` presentation options and multi-page visual overlay with bounded opacity/rotation/color.
+- Added `DocumentSignatureArea` for supplied visual signature bytes and printed signer/role/approval metadata. Image bytes are defensively copied and limited to 1 MiB.
+- Added fixed-height 58 mm and 80 mm receipt PDF profiles, clearly separated from raw ESC/POS printing.
+- Added capability enforcement for QR, watermark, and signature areas; renderer version advanced to 1.2.0.
+- Added tests for QR bounds, defensive signature-image copies, watermark bounds, and receipt geometry.
 
-### Backend boundary
-- No Laravel endpoint, database migration/model, permission, queue dispatch, retry policy, private storage, retention, or download controller was added.
-- The architecture blueprint identifies these as separately approved API design candidates. The package now has the generic client contracts needed by a later host/API integration.
+### Boundaries
+- No QR token creation/validation, cryptographic signature, trusted timestamp, regulatory seal, authoritative status mutation, or printer-specific command protocol.
+- Production RTL shaping remains unapproved; Arabic in newly added visible labels/captions/watermarks still fails closed.
 
 ### Verification
-- Deferred until the planned implementation milestones are complete, per owner direction. No test/analyzer/Actions pass is claimed.
+- Deferred until all planned implementation milestones are complete, per owner direction.

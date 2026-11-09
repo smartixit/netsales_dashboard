@@ -63,6 +63,39 @@ final class DocumentPageProfile {
     marginLeft: marginLeft,
   );
 
+  /// Fixed-height receipt page profile for 58 mm thermal paper.
+  /// This controls PDF geometry only; it is not an ESC/POS printer driver.
+  factory DocumentPageProfile.receipt58mm({
+    required double heightPoints,
+    double marginTop = 10,
+    double marginRight = 8,
+    double marginBottom = 10,
+    double marginLeft = 8,
+  }) => DocumentPageProfile(
+    widthPoints: 58 * 72 / 25.4,
+    heightPoints: _validateReceiptHeight(heightPoints),
+    marginTop: marginTop,
+    marginRight: marginRight,
+    marginBottom: marginBottom,
+    marginLeft: marginLeft,
+  );
+
+  /// Fixed-height receipt page profile for 80 mm thermal paper.
+  factory DocumentPageProfile.receipt80mm({
+    required double heightPoints,
+    double marginTop = 10,
+    double marginRight = 8,
+    double marginBottom = 10,
+    double marginLeft = 8,
+  }) => DocumentPageProfile(
+    widthPoints: 80 * 72 / 25.4,
+    heightPoints: _validateReceiptHeight(heightPoints),
+    marginTop: marginTop,
+    marginRight: marginRight,
+    marginBottom: marginBottom,
+    marginLeft: marginLeft,
+  );
+
   factory DocumentPageProfile.letterPortrait({
     double marginTop = 36,
     double marginRight = 36,
@@ -84,6 +117,13 @@ final class DocumentPageProfile {
   final double marginRight;
   final double marginBottom;
   final double marginLeft;
+
+  static double _validateReceiptHeight(double value) {
+    if (!value.isFinite || value < 144 || value > 14400) {
+      throw ArgumentError.value(value, 'heightPoints', 'Must be 144-14400 points.');
+    }
+    return value;
+  }
 
   static bool _isPositiveFinite(double value) => value.isFinite && value > 0;
 
