@@ -20,6 +20,7 @@ void main() {
       capabilities: TemplateCapabilities({
         TemplateCapability.tables,
         TemplateCapability.pageNumbering,
+        TemplateCapability.portraitPage,
       }),
       isDefault: isDefault,
     );
