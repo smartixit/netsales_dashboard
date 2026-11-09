@@ -47,4 +47,48 @@ class PlatformUsersRemoteDataSourceImpl implements PlatformUsersRemoteDataSource
   Future<ApiResponse<PlatformUserModel>> updateUserStatus(int userId, String status) =>
       _apiService.post<PlatformUserModel>(ApiConstants.userStatus(userId),
         data: {'status': status}, fromJson: (json) => PlatformUserModel.fromJson(Map<String, dynamic>.from(json as Map)));
+  @override
+  Future<ApiResponse<dynamic>> terminateSession(int sessionId) =>
+      _apiService.post<dynamic>(
+        ApiConstants.securityTerminateSession(sessionId),
+      );
+
+  @override
+  Future<ApiResponse<dynamic>> banUser(
+    int userId, {
+    required String type,
+    required String reason,
+    DateTime? endsAt,
+  }) =>
+      _apiService.post<dynamic>(
+        ApiConstants.securityBanUser,
+        data: {
+          'user_id': userId,
+          'ban_type': type,
+          'ban_reason': reason,
+          if (endsAt != null) 'end_at': endsAt.toIso8601String(),
+        },
+      );
+
+  @override
+  Future<ApiResponse<dynamic>> banDevice(
+    int deviceId, {
+    required String type,
+    required String reason,
+    DateTime? endsAt,
+  }) =>
+      _apiService.post<dynamic>(
+        ApiConstants.securityBanDevice,
+        data: {
+          'device_id': deviceId,
+          'ban_type': type,
+          'ban_reason': reason,
+          if (endsAt != null) 'end_at': endsAt.toIso8601String(),
+        },
+      );
+
+  @override
+  Future<ApiResponse<dynamic>> unban(int banId) =>
+      _apiService.delete<dynamic>(ApiConstants.securityUnban(banId));
+
 }
