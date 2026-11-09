@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 
-import '../output/document_output.dart';
 import '../rendering/document_render_result.dart';
 
-/// Read-only preview for an already-rendered artifact.
+/// Custom preview surface for a previously generated immutable artifact.
 ///
-/// Page size and orientation are intentionally locked: this widget displays
-/// the exact bytes produced by the renderer. Save/share/print are exposed
-/// through [DocumentOutputCoordinator] so the host can use its own design
-/// system and platform adapters.
+/// The printing package's built-in action bar is disabled. The host supplies
+/// its own toolbar and metadata UI, then routes actions through
+/// DocumentOutputCoordinator. This widget never invokes the renderer.
 class DocumentArtifactPreview extends StatelessWidget {
   const DocumentArtifactPreview({
     required this.artifact,
-    required this.fileName,
-    this.actions = const [],
+    this.title,
+    this.toolbar,
+    this.metadataPanel,
     this.loadingWidget,
     this.errorBuilder,
+    this.headerBuilder,
     this.padding = const EdgeInsets.all(16),
     this.previewPageMargin = const EdgeInsets.all(12),
     this.maxPageWidth = 900,
@@ -24,32 +24,111 @@ class DocumentArtifactPreview extends StatelessWidget {
   });
 
   final DocumentArtifact artifact;
-  final String fileName;
-  final List<Widget> actions;
+  final String? title;
+  final Widget? toolbar;
+  final Widget? metadataPanel;
   final Widget? loadingWidget;
   final Widget Function(BuildContext context, Object error)? errorBuilder;
+  final Widget Function(BuildContext context, DocumentArtifact artifact)?
+      headerBuilder;
   final EdgeInsets padding;
   final EdgeInsets previewPageMargin;
   final double maxPageWidth;
 
   @override
   Widget build(BuildContext context) {
-    return PdfPreview(
+    final preview = PdfPreview(
       build: (_) async => artifact.bytes,
-      pdfFileName: normalizePdfFileName(fileName) ?? 'document.pdf',
+      pdfFileName: 'document.pdf',
       allowPrinting: false,
       allowSharing: false,
       canChangePageFormat: false,
       canChangeOrientation: false,
       canDebug: false,
-      useActions: true,
-      actions: actions,
+      useActions: false,
       loadingWidget: loadingWidget,
       onError: errorBuilder,
       padding: padding,
       previewPageMargin: previewPageMargin,
       maxPageWidth: maxPageWidth,
       dynamicLayout: false,
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth >= 960 && metadataPanel != null;
+        final header = headerBuilder?.call(context, artifact) ??
+            _DefaultHeader(
+              title: title ?? artifact.documentId.value,
+              pageCount: artifact.pageCount,
+              toolbar: toolbar,
+            );
+
+        if (wide) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              header,
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(child: preview),
+                    SizedBox(width: 280, child: metadataPanel),
+                  ],
+                ),
+              ),
+            ],
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            header,
+            Expanded(child: preview),
+            if (metadataPanel != null) metadataPanel!,
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _DefaultHeader extends StatelessWidget {
+  const _DefaultHeader({
+    required this.title,
+    required this.pageCount,
+    this.toolbar,
+  });
+
+  final String title;
+  final int? pageCount;
+  final Widget? toolbar;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: textTheme.titleMedium),
+                if (pageCount != null)
+                  Text(
+                    '$pageCount pages',
+                    style: textTheme.bodySmall,
+                  ),
+              ],
+            ),
+          ),
+          if (toolbar != null) toolbar!,
+        ],
+      ),
     );
   }
 }
