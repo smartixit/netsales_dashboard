@@ -9,65 +9,38 @@ import 'package:netsales_dashboard/features/platform_users/domain/usecases/get_p
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/create_platform_user_use_case.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/update_platform_user_use_case.dart';
 import 'package:netsales_dashboard/features/platform_users/domain/usecases/update_platform_user_status_use_case.dart';
-import 'package:netsales_dashboard/features/platform_users/presentation/controllers/platform_user_form_controller.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/controllers/platform_user_detail_controller.dart';
+import 'package:netsales_dashboard/features/platform_users/presentation/controllers/platform_user_form_controller.dart';
 
 class PlatformUserDetailBinding extends Bindings {
   @override
   void dependencies() {
     final id = int.tryParse(Get.parameters['id'] ?? '');
     if (id == null || id <= 0) {
-      throw ArgumentError.value(
-        Get.parameters['id'],
-        'id',
-        'Invalid platform user ID',
-      );
+      throw ArgumentError.value(Get.parameters['id'], 'id', 'Invalid platform user ID');
     }
-
     if (!Get.isRegistered<PlatformUsersRemoteDataSource>()) {
-      Get.lazyPut<PlatformUsersRemoteDataSource>(
-        PlatformUsersRemoteDataSourceImpl.new,
-      );
+      Get.lazyPut<PlatformUsersRemoteDataSource>(PlatformUsersRemoteDataSourceImpl.new);
     }
     if (!Get.isRegistered<PlatformUsersRepository>()) {
-      Get.lazyPut<PlatformUsersRepository>(
-        () => PlatformUsersRepositoryImpl(
-          Get.find<PlatformUsersRemoteDataSource>(),
-        ),
-      );
+      Get.lazyPut<PlatformUsersRepository>(() => PlatformUsersRepositoryImpl(Get.find<PlatformUsersRemoteDataSource>()));
     }
-    Get.lazyPut<GetPlatformRolesUseCase>(
-      () => GetPlatformRolesUseCase(Get.find<PlatformUsersRepository>()),
-    );
-    Get.lazyPut<CreatePlatformUserUseCase>(
-      () => CreatePlatformUserUseCase(Get.find<PlatformUsersRepository>()),
-    );
-    Get.lazyPut<UpdatePlatformUserUseCase>(
-      () => UpdatePlatformUserUseCase(Get.find<PlatformUsersRepository>()),
-    );
-    Get.lazyPut<PlatformUserFormController>(
-      () => PlatformUserFormController(
-        getRoles: Get.find<GetPlatformRolesUseCase>(),
-        createUser: Get.find<CreatePlatformUserUseCase>(),
-        updateUser: Get.find<UpdatePlatformUserUseCase>(),
-      ),
-    );
-    Get.lazyPut<UpdatePlatformUserStatusUseCase>(
-      () => UpdatePlatformUserStatusUseCase(Get.find<PlatformUsersRepository>()),
-    );
-    Get.lazyPut<GetPlatformUserDetailUseCase>(
-      () => GetPlatformUserDetailUseCase(Get.find<PlatformUsersRepository>()),
-    );
-    Get.lazyPut<GetPlatformUserSessionsUseCase>(
-      () => GetPlatformUserSessionsUseCase(Get.find<PlatformUsersRepository>()),
-    );
-    Get.lazyPut<PlatformUserDetailController>(
-      () => PlatformUserDetailController(
-        id,
-        Get.find<GetPlatformUserDetailUseCase>(),
-        Get.find<GetPlatformUserSessionsUseCase>(),
-        Get.find<UpdatePlatformUserStatusUseCase>(),
-      ),
-    );
+    Get.lazyPut<GetPlatformRolesUseCase>(() => GetPlatformRolesUseCase(Get.find<PlatformUsersRepository>()));
+    Get.lazyPut<CreatePlatformUserUseCase>(() => CreatePlatformUserUseCase(Get.find<PlatformUsersRepository>()));
+    Get.lazyPut<UpdatePlatformUserUseCase>(() => UpdatePlatformUserUseCase(Get.find<PlatformUsersRepository>()));
+    Get.lazyPut<UpdatePlatformUserStatusUseCase>(() => UpdatePlatformUserStatusUseCase(Get.find<PlatformUsersRepository>()));
+    Get.lazyPut<PlatformUserFormController>(() => PlatformUserFormController(
+      getRoles: Get.find<GetPlatformRolesUseCase>(),
+      createUser: Get.find<CreatePlatformUserUseCase>(),
+      updateUser: Get.find<UpdatePlatformUserUseCase>(),
+    ));
+    Get.lazyPut<GetPlatformUserDetailUseCase>(() => GetPlatformUserDetailUseCase(Get.find<PlatformUsersRepository>()));
+    Get.lazyPut<GetPlatformUserSessionsUseCase>(() => GetPlatformUserSessionsUseCase(Get.find<PlatformUsersRepository>()));
+    Get.lazyPut<PlatformUserDetailController>(() => PlatformUserDetailController(
+      id,
+      Get.find<GetPlatformUserDetailUseCase>(),
+      Get.find<GetPlatformUserSessionsUseCase>(),
+      Get.find<UpdatePlatformUserStatusUseCase>(),
+    ));
   }
 }
