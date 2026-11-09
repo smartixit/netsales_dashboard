@@ -41,3 +41,15 @@
 - Status is a boolean, not a fabricated enum. Visual status is resolved through `EnumPresentationRegistry.resolveLinkStatus()`.
 - Unlink deletes only the NetworkPos relation; the inspected service does not delete the associated POS wallet. The confirmation must state this clearly.
 - Network/POS memberships are tenant operational concerns and are not exposed in this global platform feature.
+
+| SUB-001 | 2026-11-09 | Deliver platform subscription plan management, provider subscription monitoring, and subscription request review as one feature-first module using the existing Laravel resources and endpoints. Keep feature entitlements and consumption values server-authoritative. | APPROVED |
+
+## SUB-001 — Platform Subscription Management
+- The module contains three nested destinations: plan catalogue, provider subscriptions, and subscription requests. All require `subscriptions.view`.
+- Plan creation/update sends the exact `plan_name`, `plan_price`, `plan_discount`, `plan_validity`, `plan_desc`, and nested `features[{feature_id, plan_feature_value, status}]` fields. A feature quota of `-1` means unlimited per the API model.
+- Plan enable/disable is gated by `subscriptions.delete` because the seeded permission description explicitly includes deactivation/deletion; plan editing requires `subscriptions.edit`.
+- Request approval and rejection are separately gated by `subscriptions.approve` and `subscriptions.reject`. Rejection requires `rejection_reason`; approval uses optional `request_note`.
+- Provider subscription extension uses `POST /provider-subscriptions/{id}/extend` with `additional_days` and requires `subscriptions.edit`.
+- Feature consumption is fetched from the dedicated consumption endpoint and displayed as returned. No client-side quota usage or financial calculations are performed.
+- The platform dashboard does not expose operational `consume` or `activate-early` actions; those remain in the network workspace context.
+- Subscription and feature catalogue endpoints must enforce server-side permission middleware. UI-only permission hiding is insufficient.

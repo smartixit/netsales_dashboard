@@ -172,3 +172,26 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 ### Verification boundary
 - Implementation and focused model/route tests are committed to the feature branch.
 - Flutter analyzer, tests, Windows build, CI, and rendered visual QA have not yet been verified in this execution context.
+
+## M12 — Platform Subscription Management (In Progress)
+
+**Branch:** `feat/platform-subscriptions-center`
+
+- Added a dedicated `platform_subscriptions` feature covering subscription plan catalogue, provider subscriptions, and subscription approval requests.
+- Implemented exact API response Models inheriting pure-Dart Domain Entities for plans, plan features, feature catalogue entries, provider subscriptions, feature consumption, and subscription requests.
+- Added separate `PlatformSubscriptionsRemoteDataSource` and `PlatformSubscriptionsRemoteDataSourceImpl`, repository contract/implementation, and Use Cases for list/detail/create/update/status/delete, request review, subscription extension, and consumption reads.
+- Added GetX controller and Binding with independent cursor state, debounced server search only where the API supports it, stale-response protection, and append loading state.
+- Replaced the three subscription placeholders with real permission-guarded nested routes.
+- Built a responsive subscription workspace with premium plan cards, interactive plan editor including per-feature quotas, provider subscription lifecycle cards with expandable server-sourced consumption, and approval/rejection request cards.
+- Plan quotas use the API's `plan_feature_value` contract; `-1` is rendered and submitted as unlimited. Prices and discounts are rendered from server values only; no financial totals are calculated client-side.
+- Request approval and rejection are permission-specific; rejection requires the server-required reason. Approval calls the existing endpoint that atomically creates the subscription and initializes quotas.
+- Provider subscription extension uses the existing `additional_days` endpoint contract. Operational early activation and consumption are not exposed as platform actions.
+- Added Arabic/English localization and focused model/route tests.
+
+### Security finding and API dependency
+- Inspection found that subscription API routes lacked explicit `subscriptions.*` permission middleware despite the seeded permission matrix. Flutter guards are not a security boundary.
+- A companion API hardening branch `fix/subscription-api-permissions` adds least-privilege route middleware for plan, feature catalogue, request review, provider subscription read, and extension endpoints. Provider request submission and operational quota consumption/activation remain outside the platform permission gates.
+- Dashboard route and action visibility follows the same seeded permission keys.
+
+### Verification boundary
+- Flutter analyzer, full tests, Windows build, GitHub Actions, and rendered visual QA are pending PR verification. No local run or visual inspection is claimed.
