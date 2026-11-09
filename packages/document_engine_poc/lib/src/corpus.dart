@@ -100,7 +100,7 @@ abstract final class ArabicPdfCorpus {
       suppliedAmounts,
       latinInsideArabic,
       bracketAndPunctuation,
-      isolateExample,
+      westernDigits,
     ].join(' — ');
     return List<String>.filled(42, block).join('\n\n');
   }
