@@ -10,6 +10,7 @@ import 'package:netsales_dashboard/features/platform_pos/presentation/widgets/pl
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/dashboard_layout/src/widgets/dashboard_page_header.dart';
 import 'package:netsales_dashboard/widgets/data_grid/models/app_data_grid_state.dart';
+import 'package:netsales_dashboard/widgets/platform_workspace/platform_workspace.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_empty_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
@@ -21,8 +22,7 @@ class PlatformPosScreen extends GetView<PlatformPosController> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final dashboard = Get.find<PlatformDashboardController>();
-    return Padding(
-      padding: EdgeInsets.all(AppSpacing.lg),
+    return PlatformWorkspaceFrame(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -53,7 +53,9 @@ class PlatformPosScreen extends GetView<PlatformPosController> {
             ),
           ),
           SizedBox(height: AppSpacing.lg),
-          PlatformPosFilterBar(controller: controller, l10n: l10n),
+          PlatformWorkspaceSurface(
+            child: PlatformPosFilterBar(controller: controller, l10n: l10n),
+          ),
           SizedBox(height: AppSpacing.md),
           Expanded(
             child: Obx(() {
