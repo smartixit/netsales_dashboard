@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constants/app_radius.dart';
 import '../../../core/constants/app_spacing.dart';
@@ -14,10 +13,7 @@ class NetSalesChartsThemeAdapter {
 
   static ChartsTheme of(BuildContext context) {
     final colors = AppColors.of(context);
-    final screenUtil = ScreenUtil();
-    final widthScale = screenUtil.scaleWidth == 0 ? 1.0 : screenUtil.scaleWidth;
-    final radiusScale = screenUtil.radius(1) == 0 ? 1.0 : screenUtil.radius(1);
-
+    
     return ChartsTheme(
       primary: colors.primary,
       text: colors.onSurface,
@@ -33,13 +29,13 @@ class NetSalesChartsThemeAdapter {
         colors.secondary,
         colors.tertiary,
         colors.info,
+        colors.success,
         colors.warning,
         colors.error,
-        colors.success,
       ],
-      cardRadius: AppRadius.card / radiusScale,
-      cardPadding: AppSpacing.cardPadding / widthScale,
-      cardElevation: AppElevation.level1(context),
+      cardRadius: AppRadius.card,
+      cardPadding: AppSpacing.xl,
+      cardElevation: AppElevation.level2(context),
       motionDuration: AppMotion.duration(context, AppMotion.fast),
     );
   }

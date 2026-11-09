@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constants/app_radius.dart';
 import '../../../core/constants/app_spacing.dart';
@@ -18,36 +17,23 @@ class NetSalesDashboardThemeAdapter {
     final colors = AppColors.of(context);
     final isDesktop = AppBreakpoints.isDesktop(context);
 
-    // Convert ScreenUtil-backed design tokens back to their logical baseline.
-    // This preserves the established token source without scaling desktop
-    // navigation geometry by the mobile 375dp design width.
-    final screenUtil = ScreenUtil();
-    final widthScale = screenUtil.scaleWidth == 0 ? 1.0 : screenUtil.scaleWidth;
-    final radiusScale = screenUtil.radius(1) == 0 ? 1.0 : screenUtil.radius(1);
-
     return DashboardLayoutTheme(
-      sidebarBackground: colors.surfaceContainerLowest,
+      sidebarBackground: colors.surfaceContainerLow,
       sidebarForeground: colors.onSurface,
       sidebarMuted: colors.onSurfaceVariant,
       sidebarSelectedBackground: colors.primaryContainer.withValues(alpha: 0.65),
       sidebarSelectedForeground: colors.primary,
-      sidebarHoverBackground: colors.surfaceContainerLow.withValues(alpha: 0.7),
+      sidebarHoverBackground: colors.surfaceContainerHigh,
       topbarBackground: colors.surfaceContainerLowest,
-      contentBackground: colors.surfaceContainerLow.withValues(alpha: 0.35),
-      border: colors.outlineVariant.withValues(alpha: 0.35),
+      contentBackground: colors.background,
+      border: colors.outlineVariant.withValues(alpha: 0.52),
       badgeBackground: colors.primary,
       badgeForeground: colors.onPrimary,
-      itemRadius: AppRadius.md / radiusScale,
-      sidebarPadding: isDesktop
-          ? AppSpacing.lg / widthScale
-          : AppSpacing.md / widthScale,
-      itemSpacing: AppSpacing.xs / widthScale,
-      sectionSpacing: isDesktop
-          ? AppSpacing.xl / widthScale
-          : AppSpacing.lg / widthScale,
-      contentPadding: isDesktop
-          ? AppSpacing.xxl / widthScale
-          : AppSpacing.lg / widthScale,
+      itemRadius: AppRadius.md,
+      sidebarPadding: isDesktop ? AppSpacing.lg : AppSpacing.md,
+      itemSpacing: AppSpacing.xs,
+      sectionSpacing: isDesktop ? AppSpacing.xl : AppSpacing.lg,
+      contentPadding: isDesktop ? AppSpacing.xxl : AppSpacing.lg,
       motionDuration: AppMotion.duration(context, AppMotion.normal),
       motionCurve: AppMotion.standard,
     );
