@@ -1,4 +1,3 @@
-import 'package:crypto/crypto.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -126,7 +125,6 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       );
 
       final bytes = await document.save();
-      final digest = sha256.convert(bytes).toString();
       return DocumentRenderSuccess(
         DocumentArtifact(
           documentId: snapshot.metadata.id,
@@ -137,7 +135,6 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           rendererVersion: rendererVersion,
           generatedAt: options.generatedAt,
           bytes: bytes,
-          sha256: digest,
           pageCount: pageCount,
         ),
       );

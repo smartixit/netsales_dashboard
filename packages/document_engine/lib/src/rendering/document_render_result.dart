@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart' as crypto;
+
 import '../core/document_id.dart';
 import '../core/template_id.dart';
 import '../core/template_version.dart';
@@ -50,9 +52,9 @@ final class DocumentArtifact {
     required this.rendererVersion,
     required this.generatedAt,
     required Uint8List bytes,
-    required this.sha256,
     this.pageCount,
-  }) : _bytes = Uint8List.fromList(bytes);
+  })  : _bytes = Uint8List.fromList(bytes),
+        sha256 = crypto.sha256.convert(bytes).toString();
 
   final DocumentId documentId;
   final TemplateId templateId;
