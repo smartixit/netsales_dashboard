@@ -32,7 +32,7 @@ final class ReportPresetCompatibility {
 /// authorization grants, tenant identity, tokens, signed URLs, or API payloads.
 final class SavedReportPreset {
   SavedReportPreset({
-    required this.id,
+    required String id,
     required String name,
     required this.reportId,
     required this.reportSchemaVersion,
@@ -159,4 +159,4 @@ final class SavedReportPreset {
 }
 
 bool _hasOnlyKeys(Map<String, Object?> value, Set<String> allowed) =>
-    value.keys.every((key) => key is String && allowed.contains(key));
+    value.keys.every(allowed.contains);

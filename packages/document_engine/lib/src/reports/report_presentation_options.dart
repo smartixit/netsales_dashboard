@@ -299,4 +299,4 @@ final class ReportPresentationOptions {
 }
 
 bool _hasOnlyKeys(Map<String, Object?> value, Set<String> allowed) =>
-    value.keys.every((key) => key is String && allowed.contains(key));
+    value.keys.every(allowed.contains);

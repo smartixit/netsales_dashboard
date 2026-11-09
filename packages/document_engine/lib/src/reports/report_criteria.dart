@@ -49,10 +49,7 @@ final class ReportCriteria {
     final rawFilters = json['filters'] as Map<String, Object?>;
     final parsed = <String, ReportFilterValue>{};
     for (final entry in rawFilters.entries) {
-      if (entry.key is! String) {
-        throw const FormatException('Report filter IDs must be strings.');
-      }
-      parsed[entry.key as String] = ReportFilterValue.fromJson(entry.value);
+      parsed[entry.key] = ReportFilterValue.fromJson(entry.value);
     }
     return ReportCriteria(filters: parsed);
   }
@@ -164,4 +161,4 @@ bool _matchesKind(ReportFilterKind kind, ReportFilterValue value) =>
     };
 
 bool _hasOnlyKeys(Map<String, Object?> value, Set<String> allowed) =>
-    value.keys.every((key) => key is String && allowed.contains(key));
+    value.keys.every(allowed.contains);
