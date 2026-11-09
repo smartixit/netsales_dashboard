@@ -58,8 +58,8 @@ class PlatformWelcomePanel extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.white.withValues(alpha: 0.24),
-                      Colors.white.withValues(alpha: 0.08),
+                      Colors.black.withValues(alpha: 0.16),
+                      Colors.black.withValues(alpha: 0.08),
                     ],
                   ),
                   borderRadius: AppRadius.cardRadius,
