@@ -273,3 +273,17 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 - Authentication API/domain behavior and backend security authority are unchanged. WNS/Reverb remains deferred.
 - **Verification pending:** exact-head formatting, analyzer, tests, Windows Debug build, and rendered Windows/Web QA.
 - Next: evaluate CI on the final PR head, fix any diagnostics, then halt for user review and merge.
+
+
+## Document Engine M4 — Arabic PDF Typography POC (2026-11-09)
+
+**Status:** ACTIVE — isolated research harness; provider not selected.  
+**Branch:** feat/document-engine-arabic-typography-m4-poc  
+**PR:** #36
+
+- Added packages/document_engine_poc as an isolated research package outside the Dashboard app and production document_engine dependency graph.
+- The harness contains a fixed synthetic Arabic/mixed-direction corpus, baseline pdf rendering, a HarfBuzz/pdf_text_shaper candidate, and a pure-Dart payv candidate.
+- IBM Plex Sans Arabic Regular and Vazirmatn Regular are byte-for-byte test fixtures with their SIL OFL 1.1 licenses.
+- Native Ubuntu/Windows CI and a Dart-to-JavaScript compile job are configured. Run 42635009795 was in progress at the latest check.
+- Production renderer behavior remains unchanged; complex RTL is still rejected.
+- Next: fix any exact-head CI failures; obtain and inspect candidate PDF artifacts in Windows and Web viewers; record extraction/copy/search, shaping, glyph coverage, font embedding, mixed bidi, pagination, size, and timing; then prepare a separate provider recommendation for explicit owner review.
