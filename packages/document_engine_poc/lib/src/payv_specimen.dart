@@ -56,7 +56,7 @@ Uint8List buildPayvSpecimen(Uint8List fontBytes) {
   var page = newPage('اختبار تشكيل النص العربي واتجاهه', pageNumber);
   var y = page.height - 104;
 
-  for (final value in ArabicPdfCorpus.cases) {
+  for (final value in <String>[...ArabicPdfCorpus.cases, ...ArabicPdfCorpus.payvIsolatedBidiCases]) {
     final remainder = page.textBox(
       value,
       rect: PdfRect(48, y - 30, page.width - 96, 26),
@@ -92,15 +92,29 @@ Uint8List buildPayvSpecimen(Uint8List fontBytes) {
 
   pageNumber++;
   page = newPage('اختبار التفاف خلايا الجدول', pageNumber);
-  const rowHeight = 34.0;
+
+  const rowHeight = 58.0;
+  const rowsPerPage = 10;
   var rowTop = page.height - 94;
 
-  for (final row in ArabicPdfCorpus.tableRows) {
-    if (rowTop - rowHeight < 55) {
+  void drawTableHeader() {
+    page.text('وصف البند', x: page.width - 50, y: rowTop, style: small, direction: PayvTextDirection.rtl);
+    page.text('المرجع', x: 386, y: rowTop, style: small, direction: PayvTextDirection.rtl);
+    page.text('القيمة', x: 540, y: rowTop, style: small, direction: PayvTextDirection.rtl);
+    rowTop -= 24;
+  }
+
+  drawTableHeader();
+  for (var index = 0; index < ArabicPdfCorpus.tableRows.length; index++) {
+    if (index > 0 && index % rowsPerPage == 0) {
       pageNumber++;
       page = newPage('استكمال جدول الاختبار', pageNumber);
-      rowTop = page.height - 90;
+      rowTop = page.height - 94;
+      drawTableHeader();
     }
+
+    final row = ArabicPdfCorpus.tableRows[index];
+    final description = index == 0 ? ArabicPdfCorpus.longTableCell : row.$1;
     final bottom = rowTop - rowHeight;
     page.graphics
       ..setStrokeColor(const PdfColor.gray(0.86))
@@ -110,32 +124,40 @@ Uint8List buildPayvSpecimen(Uint8List fontBytes) {
       ..stroke();
 
     final overflow = page.textBox(
-      row.$1,
+      description,
       rect: PdfRect(44, bottom + 3, 286, rowHeight - 5),
       style: small,
       align: PayvTextAlign.start,
       direction: PayvTextDirection.auto,
     );
-    if (overflow != null) {
-      throw StateError('A table description overflowed its cell.');
-    }
+    if (overflow != null) throw StateError('A table description overflowed its cell.');
 
-    page.textBox(
+    final referenceOverflow = page.textBox(
       row.$2,
       rect: PdfRect(350, bottom + 3, 76, rowHeight - 5),
       style: small,
       align: PayvTextAlign.end,
       direction: PayvTextDirection.ltr,
     );
-    page.textBox(
+    if (referenceOverflow != null) throw StateError('A table reference overflowed its cell.');
+
+    final amountOverflow = page.textBox(
       row.$3,
       rect: PdfRect(438, bottom + 3, 112, rowHeight - 5),
       style: numeric,
       align: PayvTextAlign.end,
       direction: PayvTextDirection.ltr,
     );
+    if (amountOverflow != null) throw StateError('A table amount overflowed its cell.');
     rowTop = bottom;
   }
+
+  page.graphics
+    ..setStrokeColor(const PdfColor.gray(0.86))
+    ..setLineWidth(0.35)
+    ..moveTo(44, rowTop)
+    ..lineTo(page.width - 44, rowTop)
+    ..stroke();
 
   return document.save();
 }
