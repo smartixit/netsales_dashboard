@@ -34,7 +34,7 @@ class PlatformUsersScreen extends GetView<PlatformUsersController> {
               icon: Icons.manage_accounts_rounded,
               actions: [
                 Obx(() => CustomButton.secondary(
-                  text: controller.isTrashView.value ? 'العودة للمستخدمين' : 'سلة المحذوفات',
+                  text: controller.isTrashView.value ? l10n.text('users_back_to_list') : l10n.text('users_trash'),
                   prefix: Icon(controller.isTrashView.value ? Icons.people_alt_outlined : Icons.delete_sweep_outlined, size: 18),
                   onPressed: controller.toggleTrashView,
                 )),
