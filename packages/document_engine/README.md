@@ -1,6 +1,6 @@
 # document_engine
 
-Reusable, framework-agnostic document contracts, template registry, and PDF renderer for Dart/Flutter hosts.
+Reusable, framework-agnostic document contracts, template registry, and bounded PDF renderer for Dart/Flutter hosts.
 
 ## M1 — Core contracts
 
@@ -21,14 +21,25 @@ Reusable, framework-agnostic document contracts, template registry, and PDF rend
 - Template/document type, locale, capability, and orientation validation before rendering.
 - Complex RTL scripts are explicitly rejected until the Arabic shaping milestone; this renderer does not claim Arabic PDF support.
 
-## Deliberate non-goals in M2
+## M3 — Reusable visual components
 
-- No printing/preview widgets or platform output adapters.
+- Styled multipage tables with repeated headers, compact density, optional alternating rows, border control, and validated relative column weights.
+- Metric grids composed only from supplied values; no totals or aggregates are calculated by the engine.
+- Native vector bar, line, pie, and donut charts generated from caller-supplied series and categories.
+- Chart inputs are bounded (up to eight series, 24 Cartesian points per series, and twelve pie/donut slices) and validated before rendering.
+- Chart source labels and optional exact display values are retained in a companion data table; numeric chart coordinates are presentation-only.
+- Optional standalone cover page, cover metadata, and first-content-page-specific headers/footers.
+- Cover pages are included in the configured maximum page budget.
+
+## Deliberate non-goals
+
 - No Arabic shaping provider selection or RTL PDF output.
+- No printing/preview widgets or platform output adapters.
 - No Flutter widgets, GetX, routing, or application-specific models.
 - No Laravel client, API endpoint, authorization policy, or persistence adapter.
 - No financial arithmetic, totals, currency conversion, or data aggregation.
 - No implicit clock, document numbering, template-version upgrade, or default selection.
+- No reliance on Syncfusion/Flutter UI widget capture for vector PDF charts.
 
 ## Usage
 
@@ -43,23 +54,21 @@ final definition = DocumentTemplateDefinition(
   version: TemplateVersion(major: 1, minor: 0, patch: 0),
   documentTypeId: documentType,
   displayName: 'Standard invoice',
-  supportedLocaleTags: const ['ar', 'en'],
+  supportedLocaleTags: const ['en'],
   capabilities: TemplateCapabilities({
     TemplateCapability.tables,
+    TemplateCapability.metrics,
+    TemplateCapability.charts,
+    TemplateCapability.coverPage,
     TemplateCapability.pageNumbering,
+    TemplateCapability.portraitPage,
   }),
-  isDefault: true,
 );
 
 final registry = TemplateRegistry()..register(definition);
-
-final selected = registry.require(
-  id: templateId,
-  version: TemplateVersion(major: 1, minor: 0, patch: 0),
-);
 ```
 
-Decimal values remain canonical base-10 strings and are never converted to floating-point numbers.
+Decimal business values remain canonical base-10 strings. The chart model accepts numeric coordinates only for plotting and retains optional exact display strings separately. The engine does not calculate or aggregate source values.
 
 ## Verification
 
