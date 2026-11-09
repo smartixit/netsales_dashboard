@@ -58,9 +58,11 @@ class PlatformUsersScreen extends GetView<PlatformUsersController> {
             ),
           ),
           SizedBox(height: AppSpacing.lg),
-          Obx(() => controller.isTrashView.value
-              ? const SizedBox.shrink()
-              : PlatformUsersFilterBar(controller: controller, l10n: l10n)),
+          Obx(() => PlatformUsersFilterBar(
+            controller: controller,
+            l10n: l10n,
+            showStatusFilters: !controller.isTrashView.value,
+          )),
           SizedBox(height: AppSpacing.md),
           Expanded(
             child: Obx(() {
