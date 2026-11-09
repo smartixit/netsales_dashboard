@@ -6,7 +6,8 @@ import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/controllers/platform_overview_document_controller.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 
-class PlatformOverviewDocumentPreviewDialog extends GetView<PlatformOverviewDocumentController> {
+class PlatformOverviewDocumentPreviewDialog
+    extends GetView<PlatformOverviewDocumentController> {
   const PlatformOverviewDocumentPreviewDialog({
     required this.artifact,
     super.key,
@@ -17,62 +18,67 @@ class PlatformOverviewDocumentPreviewDialog extends GetView<PlatformOverviewDocu
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final title = l10n.isArabic ? 'تقرير نظرة عامة على المنصة' : 'Platform overview report';
+    final title = l10n.isArabic
+        ? 'تقرير نظرة عامة على المنصة'
+        : 'Platform overview report';
 
-    return Dialog(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: 1120,
-          maxHeight: 820,
-          minWidth: 320,
-          minHeight: 420,
-        ),
-        child: DocumentArtifactPreview(
-          artifact: artifact,
-          title: title,
-          toolbar: Obx(
-            () => Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.end,
-              children: [
-                CustomButton.outline(
-                  text: l10n.text('save_pdf'),
-                  prefix: const Icon(Icons.download_outlined, size: 16),
-                  size: AppButtonSize.small,
-                  loading: controller.isSaving.value,
-                  onPressed: controller.isSaving.value
-                      ? null
-                      : () => controller.save(artifact),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = (constraints.maxWidth - 32).clamp(240, 1120).toDouble();
+        final height = (constraints.maxHeight - 32).clamp(300, 820).toDouble();
+        return Dialog(
+          insetPadding: const EdgeInsets.all(16),
+          child: SizedBox(
+            width: width,
+            height: height,
+            child: DocumentArtifactPreview(
+              artifact: artifact,
+              title: title,
+              toolbar: Obx(
+                () => Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.end,
+                  children: [
+                    CustomButton.outline(
+                      text: l10n.text('save_pdf'),
+                      prefix: const Icon(Icons.download_outlined, size: 16),
+                      size: AppButtonSize.small,
+                      loading: controller.isSaving.value,
+                      onPressed: controller.isSaving.value
+                          ? null
+                          : () => controller.save(artifact),
+                    ),
+                    CustomButton.outline(
+                      text: l10n.text('share_pdf'),
+                      prefix: const Icon(Icons.share_outlined, size: 16),
+                      size: AppButtonSize.small,
+                      loading: controller.isSharing.value,
+                      onPressed: controller.isSharing.value
+                          ? null
+                          : () => controller.share(artifact),
+                    ),
+                    CustomButton.outline(
+                      text: l10n.text('print_pdf'),
+                      prefix: const Icon(Icons.print_outlined, size: 16),
+                      size: AppButtonSize.small,
+                      loading: controller.isPrinting.value,
+                      onPressed: controller.isPrinting.value
+                          ? null
+                          : () => controller.print(artifact),
+                    ),
+                    CustomButton.text(
+                      text: l10n.text('close'),
+                      onPressed: () => Get.back<void>(),
+                      size: AppButtonSize.small,
+                    ),
+                  ],
                 ),
-                CustomButton.outline(
-                  text: l10n.text('share_pdf'),
-                  prefix: const Icon(Icons.share_outlined, size: 16),
-                  size: AppButtonSize.small,
-                  loading: controller.isSharing.value,
-                  onPressed: controller.isSharing.value
-                      ? null
-                      : () => controller.share(artifact),
-                ),
-                CustomButton.outline(
-                  text: l10n.text('print_pdf'),
-                  prefix: const Icon(Icons.print_outlined, size: 16),
-                  size: AppButtonSize.small,
-                  loading: controller.isPrinting.value,
-                  onPressed: controller.isPrinting.value
-                      ? null
-                      : () => controller.print(artifact),
-                ),
-                CustomButton.text(
-                  text: l10n.text('close'),
-                  onPressed: Get.back<void>,
-                  size: AppButtonSize.small,
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
