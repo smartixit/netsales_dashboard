@@ -128,13 +128,6 @@
 - The Configuration Studio must adapt to actual constraints, offer only definition/template capabilities, and remain independent of GetX/host navigation.
 
 
-| DOC-010 | 2026-11-09 | Authorize the first host integration in NetSales Dashboard: a non-official Platform Overview PDF built only from the existing server-supplied overview snapshot, with a custom preview and existing save/share/print services. No financial recalculation, official invoice rendering, API/backend change, or Arabic shaping provider selection. | APPROVED |
-
-## DOC-010 — M9 Platform Overview Integration
-- The initial host integration is limited to the existing Platform Overview endpoint response and its aggregate metrics, chart points, and attention-group counts.
-- The client may map and present values but must not calculate totals, balances, financial values, or derive statuses. Monetary values remain exactly as server-supplied strings.
-- The report is explicitly non-official and must not be used as an invoice, financial statement, ledger, or canonical document.
-- The host preview uses the existing immutable artifact; save/share/print must not regenerate it.
-- Existing FileExportService, ShareService, and Printing services are the host adapters. Web save uses share_plus browser behavior; desktop save uses the NetSales export folder.
-- This initial PDF content is English-only. The Arabic interface may be localized, but the renderer's RTL rejection guard remains active.
-- No Laravel API, route, permission, migration, invoice workflow, or accounting integration is authorized by this decision.
+## DOC-010 — M9 additional acceptance evidence
+- The existing media-gallery PDF viewer is migrated to the shared raw-bytes preview primitive. Its source loading/cache and external-open behaviors are preserved.
+- A second sample Flutter host (Northstar Labs) must remain independent of GetX and NetSales-specific services; it demonstrates a different branding profile and host-owned output adapters.

@@ -351,25 +351,8 @@
 - Exact-head formatting, analysis, tests, and CI are pending; no verification outcome is claimed before those checks complete.
 
 
-## 2026-11-09 — Document Engine M9 Platform Overview Integration
-
-**Repository:** `smartixit/netsales_dashboard`  
-**Branch:** `feat/document-engine-m9-platform-overview-integration`
-
-### Implemented
-- Added `document_engine` as a local package dependency.
-- Added `CreatePlatformOverviewDocumentUseCase`, mapping only existing API-supplied overview metrics, chart points, and attention-group counts into a non-official snapshot.
-- Monetary values are preserved as strings; no arithmetic, aggregation, financial calculation, or client-side status derivation is performed.
-- Added the NetSales output adapter for independent save/share/print ports, reusing FileExportService, ShareService, and Printing.
-- Added a GetX controller, binding registration, custom preview dialog, and export action on the Platform Overview screen.
-- Added English/Arabic UI labels and a clear English-only PDF action label.
-- Added focused use-case tests for artifact generation and missing server timestamp rejection.
-
-### Boundaries
-- This is an operational dashboard snapshot, not an invoice, statement, financial report, or official record.
-- No recent actor names or user-level activity details are copied into the report.
-- No API endpoint, Laravel code, tenant policy, or backend contract changed.
-- Arabic PDF generation remains fail-closed until the production shaping provider is separately approved.
-
-### Verification
-- Tests, formatting, analysis, platform builds, and GitHub Actions remain deferred until all planned milestones are implemented, per owner direction.
+### M9 migration and second-host reuse
+- Added `DocumentPdfBytesPreview` as the shared read-only preview primitive for raw existing PDF bytes. `DocumentArtifactPreview` now composes it.
+- Migrated the existing MediaPdfViewerCard preview from a direct PdfPreview instance to `DocumentPdfBytesPreview`; local/remote byte loading, cache behavior, and external-open behavior remain unchanged.
+- Added `packages/document_engine/example`, a second host app branded Northstar Labs. It demonstrates independent rendering and output adapters using Flutter Material without importing GetX or NetSales application services.
+- Added example run instructions. The example's Save/Share/Print actions are host implementations of the package ports.
