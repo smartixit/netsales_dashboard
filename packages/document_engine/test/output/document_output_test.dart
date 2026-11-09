@@ -30,7 +30,7 @@ final class _RecordingAdapter implements DocumentOutputAdapter {
 DocumentArtifact _artifact() => DocumentArtifact(
   documentId: DocumentId('doc-1'),
   templateId: TemplateId('invoice.standard'),
-  templateVersion: TemplateVersion(1, 0, 0),
+  templateVersion: TemplateVersion(major: 1, minor: 0, patch: 0),
   schemaVersion: 1,
   rendererId: 'test',
   rendererVersion: '1',
@@ -89,7 +89,7 @@ void main() {
     final artifact = DocumentArtifact(
       documentId: DocumentId('doc-1'),
       templateId: TemplateId('invoice.standard'),
-      templateVersion: TemplateVersion(1, 0, 0),
+      templateVersion: TemplateVersion(major: 1, minor: 0, patch: 0),
       schemaVersion: 1,
       rendererId: 'test',
       rendererVersion: '1',
