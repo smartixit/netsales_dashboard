@@ -224,3 +224,35 @@
 
 ### Verification
 - CI is configured but must be evaluated on the exact PR head SHA. No local Flutter/Dart runtime is available through this GitHub-only execution, so no local analyzer/test outcome is claimed.
+
+## 2026-11-09 — Repair M1 and Implement M2 PDF Renderer
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/document-engine-pdf-renderer-final`  
+**PR:** [#32](https://github.com/smartixit/netsales_dashboard/pull/32)  
+**Base HEAD:** `69c7ad41d4ef94431c80075808b2580c1d19ad2c`
+
+### M1 repair
+- Identified the original M1 CI failure as a canonical Dart formatting failure affecting 13 Dart files; the original formatter step stopped before analysis and tests.
+- Used the pinned Flutter 3.47.9 / Dart 3.13.7 formatter to produce the canonical changes.
+- Repaired two locale/template validator files after the first formatting diagnostic exposed malformed source; the complete validators were restored and rechecked.
+- Added the package-specific `pubspec.lock` to pin the resolved internal package dependency graph.
+- Restored the strict non-mutating formatter check.
+
+### M2 implementation
+- Added the framework-neutral renderer port and typed rendering outcomes.
+- Added validated PDF page profiles for A4 portrait, A4 landscape, and Letter portrait.
+- Added explicit render options, bounded page count, and explicit generated-at timestamp.
+- Added the `pdf` backend for multipage semantic content, metrics, structured tables with repeated headings, page breaks, repeating header/footer, and page numbering.
+- Added defensive artifact byte access, provenance fields, and SHA-256 calculation at the artifact boundary.
+- Added template/document, locale, capability, and orientation validation.
+- Added tests for PDF signature, artifact digest/provenance/immutability, RTL rejection, template mismatch, orientation capability, printable area, and page-limit input validation.
+
+### Scope boundaries
+- No Arabic shaping provider is selected. RTL/complex scripts fail explicitly until the typography POC is completed.
+- No report studio, charts, preview/print/share adapters, Laravel API, official invoice migration, business/financial calculations, or Dashboard host integration was added.
+
+### Verification
+- Diagnostic CI on the formatted working tree completed document-engine dependency resolution, static analysis, and tests successfully.
+- Strict exact-head CI is running separately; final conclusion and each job outcome must be captured before claiming the milestone fully verified.
+- No local Flutter runtime or manual visual PDF review is claimed.
