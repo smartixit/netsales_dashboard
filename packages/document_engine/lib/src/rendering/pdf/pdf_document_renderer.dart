@@ -2,6 +2,7 @@ import 'package:crypto/crypto.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../document/document_locale.dart';
 import '../../document/document_node.dart';
 import '../../document/document_snapshot.dart';
 import '../../document/document_value.dart';
@@ -229,7 +230,15 @@ final class PdfDocumentRenderer implements DocumentRenderer {
 
   bool _containsUnshapedRtl(DocumentSnapshot snapshot) {
     final rtlPattern = RegExp(r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]');
+    if (rtlPattern.hasMatch(snapshot.metadata.title) ||
+        (snapshot.metadata.subtitle != null &&
+            rtlPattern.hasMatch(snapshot.metadata.subtitle!))) {
+      return true;
+    }
     for (final section in snapshot.sections) {
+      if (section.title != null && rtlPattern.hasMatch(section.title!)) {
+        return true;
+      }
       for (final node in section.nodes) {
         if (node case DocumentParagraph(:final text, :final direction)) {
           if (direction == DocumentTextDirection.rightToLeft ||
@@ -242,7 +251,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
             return true;
           }
         } else if (node case DocumentMetric(:final label, :final value)) {
-          if (rtlPattern.hasMatch(label) || rtlPattern.hasMatch(_valueText(value))) {
+          if (rtlPattern.hasMatch(label) ||
+              rtlPattern.hasMatch(_valueText(value)) ||
+              (caption != null && rtlPattern.hasMatch(caption))) {
             return true;
           }
         } else if (node case DocumentTable(:final columns, :final rows)) {
@@ -408,6 +419,6 @@ final class PdfDocumentRenderer implements DocumentRenderer {
         DocumentIntegerValue(:final value) => value.toString(),
         DocumentDecimalValue(:final value) => value,
         DocumentDateTimeValue(:final value) => value.toIso8601String(),
-        DocumentBooleanValue(:final value) => value ? 'Yes' : 'No',
+        DocumentBooleanValue(:final value) => value.toString(),
       };
 }
