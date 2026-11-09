@@ -22,18 +22,28 @@ import 'package:netsales_dashboard/features/platform_subscriptions/domain/usecas
 
 class PlatformSubscriptionsController extends GetxController {
   PlatformSubscriptionsController({
-    required this.getPlans,
-    required this.getFeatures,
-    required this.getSubscriptions,
-    required this.getRequests,
-    required this.getRequestReceipt,
-    required this.savePlan,
-    required this.togglePlan,
-    required this.deletePlan,
-    required this.approveRequest,
-    required this.rejectRequest,
-    required this.extendSubscription,
-  });
+    required GetSubscriptionPlansUseCase getPlans,
+    required GetSubscriptionFeaturesUseCase getFeatures,
+    required GetProviderSubscriptionsUseCase getSubscriptions,
+    required GetSubscriptionRequestsUseCase getRequests,
+    required GetSubscriptionRequestReceiptUseCase getRequestReceipt,
+    required SaveSubscriptionPlanUseCase savePlan,
+    required ToggleSubscriptionPlanStatusUseCase togglePlan,
+    required DeleteSubscriptionPlanUseCase deletePlan,
+    required ApproveSubscriptionRequestUseCase approveRequest,
+    required RejectSubscriptionRequestUseCase rejectRequest,
+    required ExtendProviderSubscriptionUseCase extendSubscription,
+  }) : _getPlans = getPlans,
+       _getFeatures = getFeatures,
+       _getSubscriptions = getSubscriptions,
+       _getRequests = getRequests,
+       _getRequestReceipt = getRequestReceipt,
+       _savePlan = savePlan,
+       _togglePlan = togglePlan,
+       _deletePlan = deletePlan,
+       _approveRequest = approveRequest,
+       _rejectRequest = rejectRequest,
+       _extendSubscription = extendSubscription;
 
   final GetSubscriptionPlansUseCase _getPlans;
   final GetSubscriptionFeaturesUseCase _getFeatures;
