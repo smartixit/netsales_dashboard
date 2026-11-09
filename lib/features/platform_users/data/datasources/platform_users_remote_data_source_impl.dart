@@ -33,6 +33,10 @@ class PlatformUsersRemoteDataSourceImpl implements PlatformUsersRemoteDataSource
       );
 
   @override
+  Future<ApiResponse<dynamic>> deleteUser(int userId) =>
+      _apiService.delete<dynamic>(ApiConstants.user(userId));
+
+  @override
   Future<ApiResponse<dynamic>> restoreUser(int userId) =>
       _apiService.post<dynamic>(ApiConstants.userRestore(userId));
 
