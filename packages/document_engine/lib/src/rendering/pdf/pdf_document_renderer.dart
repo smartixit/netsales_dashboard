@@ -250,7 +250,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
               rtlPattern.hasMatch(text)) {
             return true;
           }
-        } else if (node case DocumentMetric(:final label, :final value)) {
+        } else if (node case DocumentMetric(:final label, :final value, :final caption)) {
           if (rtlPattern.hasMatch(label) ||
               rtlPattern.hasMatch(_valueText(value)) ||
               (caption != null && rtlPattern.hasMatch(caption))) {
