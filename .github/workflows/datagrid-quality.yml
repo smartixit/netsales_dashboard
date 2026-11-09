@@ -121,7 +121,7 @@ jobs:
           flutter pub get --enforce-lockfile
 
       - name: Analyze complete dashboard
-        run: flutter analyze lib test
+        run: flutter analyze lib test integration_test
 
       - name: Analyze Splash and Authentication delivery scope
         if: ${{ !cancelled() && steps.resolve_dependencies.outcome == 'success' }}
