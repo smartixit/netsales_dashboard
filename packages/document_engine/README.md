@@ -103,15 +103,18 @@ flutter test packages/document_engine/test
   authority, and the engine never calculates or aggregates report values.
 
 
-## M6 — Artifact preview and output lifecycle
+## M7 — Remote jobs and official artifact contracts
 
-- `DocumentArtifactPreview` previews the immutable bytes of an existing
-  artifact. It does not invoke the renderer and does not permit the preview
-  surface to silently change page size or orientation.
-- `DocumentOutputCoordinator` routes save, share, and print requests to
-  host-owned adapters using the same artifact and SHA-256 identity.
-- Output results are typed; duplicate in-flight operations are rejected per
-  action, adapter exceptions are contained, and PDF filenames are normalized
-  without stripping Arabic or other Unicode letters.
-- Platform I/O, permissions, destinations, printer selection, feedback, and
-  application design-system controls remain the responsibility of the host.
+- Defines a typed asynchronous job lifecycle with strict wire states, submission
+  idempotency/correlation keys, progress bounds, and explicit cancellation.
+- Job requests carry only schema-versioned criteria/presentation payloads;
+  tenant identity and credentials are never accepted in the generic payload.
+- Successful jobs expose private artifact metadata, including official
+  document identity/revision, template and renderer provenance, byte length,
+  SHA-256, page count, and expiry.
+- Host adapters retrieve opaque artifact IDs through authenticated requests.
+  The package verifies byte length and SHA-256 before creating an immutable
+  `DocumentArtifact`.
+- These are client contracts only. Laravel routes, migrations, permissions,
+  queue jobs, object storage, retention, and download controllers require
+  separate backend authorization and are not created by this milestone.
