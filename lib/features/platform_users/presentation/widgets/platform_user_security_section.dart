@@ -51,7 +51,7 @@ class PlatformUserSecuritySection extends StatelessWidget {
         Align(
           alignment: AlignmentDirectional.centerEnd,
           child: CustomButton.danger(
-            text: 'حظر المستخدم أمنياً',
+            text: l10n.text('security_ban_user'),
             onPressed: onBanUser,
           ),
         ),
@@ -106,7 +106,7 @@ class PlatformUserSecuritySection extends StatelessWidget {
                         if (canManageSecurity && device.status == 'ACTIVE')
                           CustomButton.icon(
                             icon: Icons.gpp_bad_outlined,
-                            tooltip: 'حظر الجهاز',
+                            tooltip: l10n.text('security_ban_device'),
                             onPressed: () => onBanDevice(device.id),
                             foregroundColor: context.colors.error,
                             size: AppButtonSize.small,
@@ -161,7 +161,7 @@ class PlatformUserSecuritySection extends StatelessWidget {
                         ),
                         trailing: canManageSecurity
                             ? CustomButton.danger(
-                                text: 'إنهاء',
+                                text: l10n.text('security_terminate_session'),
                                 onPressed: () => onTerminateSession(session.id),
                                 size: AppButtonSize.small,
                               )
@@ -196,7 +196,7 @@ class PlatformUserSecuritySection extends StatelessWidget {
                     ),
                     trailing: canManageSecurity
                         ? CustomButton.secondary(
-                            text: 'رفع الحظر',
+                            text: l10n.text('security_unban'),
                             onPressed: () => onUnban(ban.id),
                             size: AppButtonSize.small,
                           )
