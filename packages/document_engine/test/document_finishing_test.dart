@@ -9,10 +9,7 @@ void main() {
     final qr = DocumentQrCode(payload: 'https://verify.example/d/opaque-id');
     expect(qr.payload, 'https://verify.example/d/opaque-id');
     expect(qr.sizePoints, 96);
-    expect(
-      () => DocumentQrCode(payload: ' '),
-      throwsArgumentError,
-    );
+    expect(() => DocumentQrCode(payload: ' '), throwsArgumentError);
     expect(
       () => DocumentQrCode(payload: List<String>.filled(2049, 'x').join()),
       throwsArgumentError,
@@ -20,7 +17,11 @@ void main() {
   });
 
   test('signature image bytes are defensively copied', () {
-    final expected = Uint8List.fromList(base64.decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j5ZkAAAAASUVORK5CYII='));
+    final expected = Uint8List.fromList(
+      base64.decode(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j5ZkAAAAASUVORK5CYII=',
+      ),
+    );
     final source = Uint8List.fromList(expected);
     final signature = DocumentSignatureArea(
       label: 'Authorized by',
@@ -38,10 +39,7 @@ void main() {
   });
 
   test('watermark is bounded presentation metadata', () {
-    final watermark = DocumentWatermark(
-      text: 'DRAFT',
-      opacity: 0.1,
-    );
+    final watermark = DocumentWatermark(text: 'DRAFT', opacity: 0.1);
     expect(watermark.text, 'DRAFT');
     expect(
       () => DocumentWatermark(text: 'DRAFT', opacity: 0.9),

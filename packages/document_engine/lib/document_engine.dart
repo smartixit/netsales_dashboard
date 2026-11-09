@@ -17,6 +17,7 @@ export 'src/templates/template_registry.dart';
 export 'src/rendering/document_page_profile.dart';
 export 'src/rendering/document_render_options.dart';
 export 'src/rendering/document_render_result.dart';
+export 'src/output/document_output.dart';
 export 'src/rendering/document_renderer.dart';
 export 'src/rendering/pdf/pdf_document_renderer.dart';
 

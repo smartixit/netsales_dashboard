@@ -234,7 +234,10 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     return null;
   }
 
-  bool _containsUnshapedRtl(DocumentSnapshot snapshot, DocumentWatermark? watermark) {
+  bool _containsUnshapedRtl(
+    DocumentSnapshot snapshot,
+    DocumentWatermark? watermark,
+  ) {
     final rtlPattern = RegExp(r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]');
     if ((watermark != null && rtlPattern.hasMatch(watermark.text)) ||
         rtlPattern.hasMatch(snapshot.metadata.title) ||
@@ -307,7 +310,8 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           if (rtlPattern.hasMatch(label) ||
               (signerName != null && rtlPattern.hasMatch(signerName)) ||
               (roleLabel != null && rtlPattern.hasMatch(roleLabel)) ||
-              (approvalReference != null && rtlPattern.hasMatch(approvalReference))) {
+              (approvalReference != null &&
+                  rtlPattern.hasMatch(approvalReference))) {
             return true;
           }
         } else if (node case DocumentTable(:final columns, :final rows)) {

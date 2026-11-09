@@ -1,14 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
-import 'package:document_engine/src/output/document_output.dart';
 
 import '../core/document_id.dart';
 import '../core/template_id.dart';
 import '../core/template_version.dart';
 import '../rendering/document_render_result.dart';
 import '../reports/report_id.dart';
-import 'output/document_output.dart';
+import '../output/document_output.dart';
 
 /// Server-owned asynchronous document generation state.
 enum RemoteDocumentJobStatus {
@@ -141,10 +140,18 @@ final class RemoteDocumentArtifactMetadata {
       throw ArgumentError('Invalid remote artifact metadata bounds.');
     }
     if (!RegExp(r'^[a-f0-9]{64}$').hasMatch(this.sha256)) {
-      throw ArgumentError.value(sha256, 'sha256', 'Expected a SHA-256 hex digest.');
+      throw ArgumentError.value(
+        sha256,
+        'sha256',
+        'Expected a SHA-256 hex digest.',
+      );
     }
     if (expiresAt != null && !expiresAt!.isAfter(generatedAt)) {
-      throw ArgumentError.value(expiresAt, 'expiresAt', 'Must follow generatedAt.');
+      throw ArgumentError.value(
+        expiresAt,
+        'expiresAt',
+        'Must follow generatedAt.',
+      );
     }
   }
 
@@ -280,9 +287,7 @@ final class RemoteDocumentArtifactLoader {
 
   final RemoteDocumentArtifactPort port;
 
-  Future<DocumentArtifact> load(
-    RemoteDocumentArtifactMetadata metadata,
-  ) async {
+  Future<DocumentArtifact> load(RemoteDocumentArtifactMetadata metadata) async {
     final bytes = await port.retrieveBytes(metadata.artifactId);
     return hydrateRemoteDocumentArtifact(metadata: metadata, bytes: bytes);
   }
@@ -307,7 +312,11 @@ String _requiredText(String value, String name) {
 String _safeServerFileName(String value) {
   final normalized = normalizePdfFileName(value);
   if (normalized == null) {
-    throw ArgumentError.value(value, 'fileName', 'Must be a valid PDF filename.');
+    throw ArgumentError.value(
+      value,
+      'fileName',
+      'Must be a valid PDF filename.',
+    );
   }
   return normalized;
 }

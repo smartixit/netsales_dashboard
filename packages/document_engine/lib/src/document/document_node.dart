@@ -342,17 +342,16 @@ final class DocumentPageBreak extends DocumentNode {
   const DocumentPageBreak();
 }
 
-
 /// Opaque QR content supplied by the host. The engine renders but never
 /// encrypts, signs, validates, or interprets this payload.
 final class DocumentQrCode extends DocumentNode {
-  DocumentQrCode({
-    required this.payload,
-    this.caption,
-    this.sizePoints = 96,
-  }) {
+  DocumentQrCode({required this.payload, this.caption, this.sizePoints = 96}) {
     if (payload.trim().isEmpty || utf8.encode(payload).length > 2048) {
-      throw ArgumentError.value(payload, 'payload', 'Must contain 1-2048 UTF-8 bytes.');
+      throw ArgumentError.value(
+        payload,
+        'payload',
+        'Must contain 1-2048 UTF-8 bytes.',
+      );
     }
     if (caption != null && caption!.trim().isEmpty) {
       throw ArgumentError.value(caption, 'caption', 'Must not be empty.');
@@ -390,7 +389,11 @@ final class DocumentSignatureArea extends DocumentNode {
     }.entries) {
       if (entry.value != null &&
           (entry.value!.trim().isEmpty || entry.value!.length > 160)) {
-        throw ArgumentError.value(entry.value, entry.key, 'Invalid text length.');
+        throw ArgumentError.value(
+          entry.value,
+          entry.key,
+          'Invalid text length.',
+        );
       }
     }
     if (_visualSignatureBytes != null) {
@@ -398,7 +401,8 @@ final class DocumentSignatureArea extends DocumentNode {
       if (bytes.isEmpty || bytes.length > 1024 * 1024) {
         throw ArgumentError('Visual signature image must be 1 byte to 1 MiB.');
       }
-      final isPng = bytes.length >= 8 &&
+      final isPng =
+          bytes.length >= 8 &&
           bytes[0] == 0x89 &&
           bytes[1] == 0x50 &&
           bytes[2] == 0x4E &&
@@ -407,7 +411,8 @@ final class DocumentSignatureArea extends DocumentNode {
           bytes[5] == 0x0A &&
           bytes[6] == 0x1A &&
           bytes[7] == 0x0A;
-      final isJpeg = bytes.length >= 3 &&
+      final isJpeg =
+          bytes.length >= 3 &&
           bytes[0] == 0xFF &&
           bytes[1] == 0xD8 &&
           bytes[2] == 0xFF;
@@ -424,8 +429,7 @@ final class DocumentSignatureArea extends DocumentNode {
   final DateTime? approvedAt;
   final Uint8List? _visualSignatureBytes;
 
-  Uint8List? get visualSignatureBytes =>
-      _visualSignatureBytes == null
-          ? null
-          : Uint8List.fromList(_visualSignatureBytes);
+  Uint8List? get visualSignatureBytes => _visualSignatureBytes == null
+      ? null
+      : Uint8List.fromList(_visualSignatureBytes);
 }

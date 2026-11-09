@@ -37,10 +37,7 @@ final class DocumentOutputFailure extends DocumentOutputResult {
 }
 
 final class DocumentOutputRequest {
-  const DocumentOutputRequest({
-    required this.artifact,
-    required this.fileName,
-  });
+  const DocumentOutputRequest({required this.artifact, required this.fileName});
 
   final DocumentArtifact artifact;
   final String fileName;
@@ -61,11 +58,7 @@ abstract interface class DocumentPrintPort {
 
 /// Coordinates all output operations against the exact same immutable artifact.
 final class DocumentOutputCoordinator {
-  DocumentOutputCoordinator({
-    this.savePort,
-    this.sharePort,
-    this.printPort,
-  });
+  DocumentOutputCoordinator({this.savePort, this.sharePort, this.printPort});
 
   final DocumentSavePort? savePort;
   final DocumentSharePort? sharePort;
@@ -78,39 +71,26 @@ final class DocumentOutputCoordinator {
   Future<DocumentOutputResult> save({
     required DocumentArtifact artifact,
     required String fileName,
-  }) => _run(
-    DocumentOutputOperation.save,
-    artifact,
-    fileName,
-    savePort?.save,
-  );
+  }) => _run(DocumentOutputOperation.save, artifact, fileName, savePort?.save);
 
   Future<DocumentOutputResult> share({
     required DocumentArtifact artifact,
     required String fileName,
-  }) => _run(
-    DocumentOutputOperation.share,
-    artifact,
-    fileName,
-    sharePort?.share,
-  );
+  }) =>
+      _run(DocumentOutputOperation.share, artifact, fileName, sharePort?.share);
 
   Future<DocumentOutputResult> print({
     required DocumentArtifact artifact,
     required String fileName,
-  }) => _run(
-    DocumentOutputOperation.print,
-    artifact,
-    fileName,
-    printPort?.print,
-  );
+  }) =>
+      _run(DocumentOutputOperation.print, artifact, fileName, printPort?.print);
 
   Future<DocumentOutputResult> _run(
     DocumentOutputOperation operation,
     DocumentArtifact artifact,
     String requestedName,
     Future<DocumentOutputResult> Function(DocumentOutputRequest request)?
-        invoke,
+    invoke,
   ) async {
     if (artifact.byteLength == 0) {
       return const DocumentOutputFailure(
@@ -167,9 +147,28 @@ String? normalizePdfFileName(String value) {
   if (name.length > 116) name = name.substring(0, 116).trim();
   if (name.isEmpty) return null;
   const reserved = {
-    'CON', 'PRN', 'AUX', 'NUL',
-    'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9',
-    'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9',
+    'CON',
+    'PRN',
+    'AUX',
+    'NUL',
+    'COM1',
+    'COM2',
+    'COM3',
+    'COM4',
+    'COM5',
+    'COM6',
+    'COM7',
+    'COM8',
+    'COM9',
+    'LPT1',
+    'LPT2',
+    'LPT3',
+    'LPT4',
+    'LPT5',
+    'LPT6',
+    'LPT7',
+    'LPT8',
+    'LPT9',
   };
   if (reserved.contains(name.toUpperCase())) name = '_$name';
   return '$name.pdf';

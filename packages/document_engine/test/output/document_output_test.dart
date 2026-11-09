@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:document_engine/document_engine.dart';
-import 'package:document_engine/src/output/document_output.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 final class _RecordingSavePort implements DocumentSavePort {

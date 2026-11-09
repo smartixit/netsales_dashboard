@@ -341,7 +341,7 @@ void main() {
       final artifact = (result as DocumentRenderSuccess).artifact;
       expect(artifact.bytes.take(5), [37, 80, 68, 70, 45]);
       expect(artifact.byteLength, greaterThan(500));
-      expect(artifact.rendererVersion, '1.1.0');
+      expect(artifact.rendererVersion, '1.2.0');
     },
   );
 

@@ -4,29 +4,31 @@ import 'package:document_engine/document_engine.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('remote job request freezes nested JSON and omits tenant credentials', () {
-    final filters = <String, Object?>{'status': 'ACTIVE'};
-    final request = RemoteDocumentJobRequest(
-      reportId: ReportId('reports.sales'),
-      reportSchemaVersion: 2,
-      idempotencyKey: 'idempotency-123',
-      correlationId: 'correlation-123',
-      payload: {
-        'criteria': {'filters': filters},
-        'presentation': {'locale': 'ar'},
-      },
-    );
-    filters['status'] = 'BANNED';
+  test(
+    'remote job request freezes nested JSON and omits tenant credentials',
+    () {
+      final filters = <String, Object?>{'status': 'ACTIVE'};
+      final request = RemoteDocumentJobRequest(
+        reportId: ReportId('reports.sales'),
+        reportSchemaVersion: 2,
+        idempotencyKey: 'idempotency-123',
+        correlationId: 'correlation-123',
+        payload: {
+          'criteria': {'filters': filters},
+          'presentation': {'locale': 'ar'},
+        },
+      );
+      filters['status'] = 'BANNED';
 
-    final json = request.toJson();
-    final criteria = json['payload'] as Map<String, Object?>;
-    final nested = criteria['criteria'] as Map<String, Object?>;
-    final frozenFilters =
-        (nested['filters'] as Map<String, Object?>);
-    expect(frozenFilters['status'], 'ACTIVE');
-    expect(json, isNot(contains('tenant_id')));
-    expect(json, isNot(contains('access_token')));
-  });
+      final json = request.toJson();
+      final criteria = json['payload'] as Map<String, Object?>;
+      final nested = criteria['criteria'] as Map<String, Object?>;
+      final frozenFilters = (nested['filters'] as Map<String, Object?>);
+      expect(frozenFilters['status'], 'ACTIVE');
+      expect(json, isNot(contains('tenant_id')));
+      expect(json, isNot(contains('access_token')));
+    },
+  );
 
   test('job status wire values are strict', () {
     expect(

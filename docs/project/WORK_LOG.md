@@ -356,3 +356,29 @@
 - Migrated the existing MediaPdfViewerCard preview from a direct PdfPreview instance to `DocumentPdfBytesPreview`; local/remote byte loading, cache behavior, and external-open behavior remain unchanged.
 - Added `packages/document_engine/example`, a second host app branded Northstar Labs. It demonstrates independent rendering and output adapters using Flutter Material without importing GetX or NetSales application services.
 - Added example run instructions. The example's Save/Share/Print actions are host implementations of the package ports.
+
+
+## 2026-11-10 — Document Output Public API and Dashboard Analyzer Diagnostics
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `fix/document-output-integration-analyzer-errors`  
+**Pull Request:** #44
+
+### Root causes and corrections
+- Exported `src/output/document_output.dart` from the `document_engine.dart` public barrel so host applications, examples, and tests can consume the output ports, result types, request, and coordinator through the supported package API.
+- Corrected `remote_document_job.dart` to import the sibling output contract with `../output/document_output.dart`, removing the duplicate package-internal import and the invalid relative URI.
+- Removed the output test's direct import of the package-private implementation path; it now tests through the public barrel.
+- Added the explicit document-engine public import to `PlatformDashboardBinding` for `DocumentOutputCoordinator`.
+- Added the missing `AppRadius` token import to `PlatformOverviewScreen`.
+- Added and forwarded the optional `backgroundColor` argument through `CustomButton.outline`, preserving the welcome-panel's intended translucent button surface.
+- Applied the repository-pinned Dart formatter to the nine files previously identified by the strict document-engine formatting gate. The one-time helper workflow was removed in the same formatter commit and is not part of the final tree.
+
+### Scope boundaries
+- Dashboard Flutter and the reusable document-engine package only.
+- No Laravel/API, database, authorization, tenant, or financial behavior changed.
+- No temporary workflow remains in the branch.
+
+### Verification status
+- GitHub Actions run [42711215313](https://github.com/smartixit/netsales_dashboard/actions/runs/42711215313) completed successfully: Flutter 3.47.9 / Dart 3.13.7 setup and `dart format packages/document_engine` succeeded; nine files were formatted.
+- The follow-up PR checks on the formatter bot commit entered `action_required` without creating jobs. A repository-authored documentation commit is being used to trigger the exact-head PR checks again.
+- No local `flutter analyze` or `flutter test` result is claimed; the local execution environment has no Flutter/Dart SDK. Await exact-head GitHub Actions for package analysis/tests, full dashboard analysis/tests, and Windows compilation.
