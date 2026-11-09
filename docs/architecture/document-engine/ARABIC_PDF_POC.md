@@ -1,6 +1,6 @@
 # Arabic PDF Typography — Proof of Concept Plan
 
-**Status:** PROPOSED — research plan only
+**Status:** ACTIVE — isolated POC harness opened in PR #36; exact-head CI and manual visual review pending
 **Package:** packages/document_engine
 **Date:** 2026-11-09
 **Purpose:** Determine whether the selected PDF rendering stack can produce correct Arabic and mixed-direction output across required application targets. This plan does not add a dependency or create production templates.
@@ -23,7 +23,7 @@
 |---|---|---|---|
 | A | Existing pdf 3.13.1 renderer with embedded IBM Plex Sans Arabic and RTL direction | Lowest dependency cost; already used in the ecosystem | Baseline, not presumed correct |
 | B | pdf plus a HarfBuzz-backed shaping provider, including evaluation of pdf_text_shaper | May improve complex-script shaping | Research candidate only; platform/API/license evidence required |
-| C | Backend-generated PDF using a separately chosen server renderer | Useful for official artifacts and a possible Web fallback | Compare output and accessibility; not a replacement decision yet |
+| C | Backend-generated PDF using a separately chosen server renderer | Useful for official artifacts and a possible Web fallback | Architecture alternative only; no Laravel/API work in this POC |\n| D | Pure-Dart OpenType shaper and independent PDF writer (payv 0.1.2) | Claims GSUB/GPOS, UAX #9, searchable vector text, Windows and Web without FFI | Isolated POC candidate only; early version, separate PDF writer, not approved |
 
 No candidate is approved solely from its package description or a simple Arabic sentence.
 
@@ -116,4 +116,4 @@ At the end of the POC, record:
 - Required dependency/version and licensing evidence.
 - Explicit approval required before adding the dependency or implementation code.
 
-Until this decision is approved, pdf_text_shaper and every other shaping package remain unselected research candidates.
+## 8. Executable POC harness\n\nAn isolated package at packages/document_engine_poc now contains the synthetic corpus, the existing pdf baseline, a HarfBuzz-backed pdf_text_shaper candidate, and a pure-Dart payv candidate. IBM Plex Sans Arabic and Vazirmatn are included as byte-for-byte OFL 1.1 test fixtures. PR #36 adds native Ubuntu/Windows tests and a Dart-to-JavaScript compile check.\n\nNo production dependency or renderer change is included. Actual PDF visual inspection, extraction/copy/search, font embedding, mixed bidi, pagination, output size, and performance remain pending.\n\nUntil a separate provider decision is approved, all shaping packages remain unselected research candidates.
