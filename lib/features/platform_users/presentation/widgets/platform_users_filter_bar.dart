@@ -11,9 +11,11 @@ class PlatformUsersFilterBar extends StatelessWidget {
     super.key,
     required this.controller,
     required this.l10n,
+    this.showStatusFilters = true,
   });
   final PlatformUsersController controller;
   final AppLocalizations l10n;
+  final bool showStatusFilters;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -34,23 +36,23 @@ class PlatformUsersFilterBar extends StatelessWidget {
           spacing: AppSpacing.xs,
           runSpacing: AppSpacing.xs,
           children: [
-            _Filter(label: l10n.text('all'), value: '', controller: controller),
-            _Filter(
+            if (showStatusFilters) _Filter(label: l10n.text('all'), value: '', controller: controller),
+            if (showStatusFilters) _Filter(
               label: l10n.text('user_status_active'),
               value: 'ACTIVE',
               controller: controller,
             ),
-            _Filter(
+            if (showStatusFilters) _Filter(
               label: l10n.text('user_status_inactive'),
               value: 'INACTIVE',
               controller: controller,
             ),
-            _Filter(
+            if (showStatusFilters) _Filter(
               label: l10n.text('user_status_pending'),
               value: 'PENDING',
               controller: controller,
             ),
-            _Filter(
+            if (showStatusFilters) _Filter(
               label: l10n.text('user_status_banned'),
               value: 'BANNED',
               controller: controller,
