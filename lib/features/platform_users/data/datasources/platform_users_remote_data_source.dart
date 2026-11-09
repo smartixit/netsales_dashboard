@@ -5,6 +5,9 @@ import 'package:netsales_dashboard/features/platform_users/data/models/platform_
 import 'package:netsales_dashboard/features/platform_users/data/models/platform_user_session_model.dart';
 
 abstract interface class PlatformUsersRemoteDataSource {
+  Future<ApiResponse<List<PlatformUserModel>>> getTrashedUsers({String? search, String? cursor, int perPage = 20});
+  Future<ApiResponse<dynamic>> restoreUser(int userId);
+  Future<ApiResponse<dynamic>> forceDeleteUser(int userId);
   Future<ApiResponse<List<PlatformUserModel>>> getUsers({
     String? search,
     String? status,
