@@ -4,6 +4,7 @@ import 'package:netsales_dashboard/core/constants/app_radius.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/core/themes/app_typography.dart';
+import 'package:netsales_dashboard/widgets/dashboard_layout/src/theme/dashboard_layout_theme.dart';
 
 class AppThemes {
   AppThemes._();
@@ -35,6 +36,28 @@ class AppThemes {
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
+      extensions: <ThemeExtension<dynamic>>[
+        DashboardLayoutTheme(
+          sidebarBackground: c.surfaceContainerLowest,
+          sidebarForeground: c.onSurface,
+          sidebarMuted: c.onSurfaceVariant,
+          sidebarSelectedBackground: c.primaryContainer,
+          sidebarSelectedForeground: c.onPrimaryContainer,
+          sidebarHoverBackground: c.surfaceContainerLow,
+          topbarBackground: c.surfaceContainerLowest,
+          contentBackground: c.background,
+          border: c.outlineVariant,
+          badgeBackground: c.primary,
+          badgeForeground: c.onPrimary,
+          sidebarPadding: 18,
+          itemRadius: 12,
+          itemSpacing: 5,
+          sectionSpacing: 22,
+          contentPadding: 24,
+          motionDuration: const Duration(milliseconds: 220),
+          motionCurve: Curves.easeOutCubic,
+        ),
+      ],
 
       // ── Color Scheme ──
       colorScheme: ColorScheme(
