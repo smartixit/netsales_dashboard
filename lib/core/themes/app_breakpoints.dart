@@ -66,6 +66,9 @@ class AppBreakpoints {
   /// الارتفاع المتوسط للشاشات
   static const double mediumHeightMax = 900.0;
 
+  /// Below this available desktop height, authentication layouts use compact vertical rhythm.
+  static const double desktopCompactHeightMax = 760.0;
+
   // ═══════════════════════════════════════════════════════════════════════════
   // 3. سقوف أبعاد المحتوى والنوافذ (Design Constraints in dp)
   // ═══════════════════════════════════════════════════════════════════════════

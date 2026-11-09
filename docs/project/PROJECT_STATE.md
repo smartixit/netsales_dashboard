@@ -195,3 +195,12 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 
 ### Verification boundary
 - Flutter analyzer, full tests, Windows build, GitHub Actions, and rendered visual QA are pending PR verification. No local run or visual inspection is claimed.
+
+
+## Premium Desktop Authentication Polish — 2026-11-09
+
+- Refined the existing Login brand/form composition without changing authentication or API behavior.
+- The brand panel now has a clearer identity headline and supporting product descriptor, with one emphasized security pillar and quieter financial-governance / desktop-stability supporting items.
+- The form column is vertically centered when available space permits and switches to compact spacing at the centralized desktop height breakpoint; scrolling remains available for short windows.
+- Responsive widget coverage has been added for compact, standard, and wide desktop sizes, both themes, and RTL/LTR. CI verification is pending the corresponding PR.
+- Live rendered Windows/Web visual QA is still required before declaring the visual delivery fully accepted.
