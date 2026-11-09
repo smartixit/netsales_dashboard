@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
@@ -47,6 +48,18 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
             ),
             AppSpacing.vMd,
             _PeriodSelector(controller: controller),
+            if (data?.generatedAt case final generatedAt?) ...[
+              AppSpacing.vXs,
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: Text(
+                  '${l10n.text('updated_at')}: ${DateFormat.Hm(l10n.isArabic ? 'ar' : 'en').format(generatedAt.toLocal())}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
             if (data != null) ...[
               AppSpacing.vSm,
               Align(
@@ -111,7 +124,7 @@ class PlatformOverviewScreen extends GetView<PlatformDashboardController> {
               title: l10n.text('performance_overview'),
               description: data == null
                   ? l10n.text('overview_api_unavailable')
-                  : l10n.text('overview_period_${data.period.key}'),
+                  : l10n.text('period_${data.period.key}'),
               leading: Icon(Icons.insights_rounded, color: colors.primary),
             ),
             AppSpacing.vMd,
