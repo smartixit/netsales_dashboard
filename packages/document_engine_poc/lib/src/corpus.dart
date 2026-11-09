@@ -37,6 +37,27 @@ abstract final class ArabicPdfCorpus {
   static const String isolateExample =
       'التقرير: \u2066INV-2026/0017\u2069 — تم الاعتماد';
 
+  // Explicit LTR isolates for values embedded inside Arabic paragraphs.
+  // Compare these with the plain auto-direction cases in the generated PDF.
+  static const String isolatedPhone =
+      'الهاتف: \u2066+967 777 123 456\u2069';
+
+  static const String isolatedInvoiceReference =
+      'رقم الفاتورة: \u2066(INV-2026/0017)\u2069 — الحالة: مدفوعة';
+
+  static const String isolatedUuid =
+      'معرّف السجل: \u2066550e8400-e29b-41d4-a716-446655440000\u2069';
+
+  static const String isolatedAmount =
+      'الإجمالي: \u2066YER 1,250.50\u2069 / \u2066١٬٢٥٠٫٥٠ YER\u2069';
+
+  static const List<String> payvIsolatedBidiCases = <String>[
+    isolatedPhone,
+    isolatedInvoiceReference,
+    isolatedUuid,
+    isolatedAmount,
+  ];
+
   static const List<String> cases = <String>[
     joiningAndDiacritics,
     lamAlefForms,
