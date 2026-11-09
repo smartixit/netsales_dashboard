@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/core/constants/app_permissions.dart';
 import 'package:netsales_dashboard/core/enums/user_status.dart';
 import 'package:netsales_dashboard/core/services/permission_service.dart';
@@ -35,6 +37,8 @@ class PlatformUserDetailController extends GetxController {
   final sessionsError = ''.obs;
   int _detailGeneration = 0;
   int _sessionsGeneration = 0;
+
+  String _t(String key) => AppLocalizations(Get.locale ?? const Locale('ar')).text(key);
 
   bool get canViewSecurity => PermissionService.to.can(AppPermissions.authView);
   bool get canEditUser => PermissionService.to.can(AppPermissions.usersEdit);
@@ -104,26 +108,26 @@ class PlatformUserDetailController extends GetxController {
   Future<void> terminateSession(int sessionId) async {
     if (!canManageSecurity || isClosed) return;
     final confirmed = await CustomDialog.showConfirmation(
-      title: 'إنهاء الجلسة',
-      message: 'سيتم إنهاء هذه الجلسة فوراً ومنع استخدامها مجدداً. هل تريد المتابعة؟',
-      confirmLabel: 'إنهاء الجلسة',
+      title: _t('security_terminate_session'),
+      message: _t('security_terminate_confirmation'),
+      confirmLabel: _t('security_terminate_session'),
       cancelLabel: 'إلغاء',
     );
     if (confirmed != true) return;
     try {
       await _manageSecurity.terminateSession(sessionId);
       await loadSessions();
-      CustomSnackbar.show(title: 'تم إنهاء الجلسة', message: 'تم إبطال الجلسة المحددة بنجاح.', type: SnackType.success);
+      CustomSnackbar.show(title: _t('security_terminate_session'), message: _t('security_session_terminated'), type: SnackType.success);
     } catch (error) {
-      CustomSnackbar.show(title: 'تعذر إنهاء الجلسة', message: error.toString(), type: SnackType.error);
+      CustomSnackbar.show(title: _t('security_terminate_session'), message: error.toString(), type: SnackType.error);
     }
   }
 
   Future<void> banUser() async {
     if (!canManageSecurity || isClosed || detail.value == null) return;
     final confirmed = await CustomDialog.showConfirmation(
-      title: 'حظر المستخدم أمنياً',
-      message: 'سيتم حظر الحساب وإبطال جميع جلساته النشطة. هل تريد المتابعة؟',
+      title: _t('security_ban_user'),
+      message: _t('security_ban_user_confirmation'),
       confirmLabel: 'حظر المستخدم',
       cancelLabel: 'إلغاء',
     );
@@ -131,35 +135,35 @@ class PlatformUserDetailController extends GetxController {
     try {
       await _manageSecurity.banUser(userId, type: 'PERMANENT', reason: 'حظر أمني من لوحة تحكم المنصة');
       await load();
-      CustomSnackbar.show(title: 'تم الحظر', message: 'تم حظر المستخدم وإبطال جلساته.', type: SnackType.success);
+      CustomSnackbar.show(title: _t('security_ban_user'), message: _t('security_user_banned'), type: SnackType.success);
     } catch (error) {
-      CustomSnackbar.show(title: 'تعذر الحظر', message: error.toString(), type: SnackType.error);
+      CustomSnackbar.show(title: _t('security_ban_user'), message: error.toString(), type: SnackType.error);
     }
   }
 
   Future<void> banDevice(int deviceId) async {
     if (!canManageSecurity || isClosed) return;
     final confirmed = await CustomDialog.showConfirmation(
-      title: 'حظر الجهاز',
-      message: 'سيتم حظر الجهاز وإبطال الجلسات المرتبطة به. هل تريد المتابعة؟',
-      confirmLabel: 'حظر الجهاز',
+      title: _t('security_ban_device'),
+      message: _t('security_ban_device_confirmation'),
+      confirmLabel: _t('security_ban_device'),
       cancelLabel: 'إلغاء',
     );
     if (confirmed != true) return;
     try {
       await _manageSecurity.banDevice(deviceId, type: 'PERMANENT', reason: 'حظر أمني من لوحة تحكم المنصة');
       await load();
-      CustomSnackbar.show(title: 'تم حظر الجهاز', message: 'تم تطبيق الحظر الأمني على الجهاز.', type: SnackType.success);
+      CustomSnackbar.show(title: _t('security_ban_device'), message: _t('security_device_banned'), type: SnackType.success);
     } catch (error) {
-      CustomSnackbar.show(title: 'تعذر حظر الجهاز', message: error.toString(), type: SnackType.error);
+      CustomSnackbar.show(title: _t('security_ban_device'), message: error.toString(), type: SnackType.error);
     }
   }
 
   Future<void> unban(int banId) async {
     if (!canManageSecurity || isClosed) return;
     final confirmed = await CustomDialog.showConfirmation(
-      title: 'رفع الحظر الأمني',
-      message: 'سيتم رفع سجل الحظر المحدد. هل تريد المتابعة؟',
+      title: _t('security_unban'),
+      message: _t('security_unban_confirmation'),
       confirmLabel: 'رفع الحظر',
       cancelLabel: 'إلغاء',
     );
@@ -167,9 +171,9 @@ class PlatformUserDetailController extends GetxController {
     try {
       await _manageSecurity.unban(banId);
       await load();
-      CustomSnackbar.show(title: 'تم رفع الحظر', message: 'تم تحديث حالة الحظر.', type: SnackType.success);
+      CustomSnackbar.show(title: _t('security_unban'), message: _t('security_unbanned'), type: SnackType.success);
     } catch (error) {
-      CustomSnackbar.show(title: 'تعذر رفع الحظر', message: error.toString(), type: SnackType.error);
+      CustomSnackbar.show(title: _t('security_unban'), message: error.toString(), type: SnackType.error);
     }
   }
 
