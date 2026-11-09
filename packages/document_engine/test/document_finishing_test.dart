@@ -20,7 +20,8 @@ void main() {
   });
 
   test('signature image bytes are defensively copied', () {
-    final source = Uint8List.fromList(base64.decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j5ZkAAAAASUVORK5CYII='));
+    final expected = Uint8List.fromList(base64.decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j5ZkAAAAASUVORK5CYII='));
+    final source = Uint8List.fromList(expected);
     final signature = DocumentSignatureArea(
       label: 'Authorized by',
       signerName: 'Example User',
@@ -30,10 +31,10 @@ void main() {
       visualSignatureBytes: source,
     );
     source[0] = 99;
-    expect(signature.visualSignatureBytes, source);
+    expect(signature.visualSignatureBytes, expected);
     final copy = signature.visualSignatureBytes!;
     copy[1] = 99;
-    expect(signature.visualSignatureBytes, isNotNull);
+    expect(signature.visualSignatureBytes, expected);
   });
 
   test('watermark is bounded presentation metadata', () {
