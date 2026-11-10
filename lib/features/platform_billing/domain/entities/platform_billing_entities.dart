@@ -104,6 +104,8 @@ class BillingPriceEntity {
     this.unitAmount,
     this.setupFee,
     required this.isActive,
+    this.trialPolicyVersionId,
+    this.dunningPolicyVersionId,
     this.currency,
   });
 
@@ -116,6 +118,8 @@ class BillingPriceEntity {
   final String? unitAmount;
   final String? setupFee;
   final bool isActive;
+  final int? trialPolicyVersionId;
+  final int? dunningPolicyVersionId;
   final BillingCurrencyEntity? currency;
 }
 
