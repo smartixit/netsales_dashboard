@@ -66,6 +66,8 @@ class BillingPriceModel extends BillingPriceEntity {
     unitAmount: _nullableString(json['unit_amount']),
     setupFee: _nullableString(json['setup_fee']),
     isActive: _bool(json['is_active']),
+    trialPolicyVersionId: _nullableInt(json['trial_policy_version_id']),
+    dunningPolicyVersionId: _nullableInt(json['dunning_policy_version_id']),
     currency: json['currency'] is Map ? BillingCurrencyModel.fromJson(_map(json['currency'])) : null,
   );
 }
