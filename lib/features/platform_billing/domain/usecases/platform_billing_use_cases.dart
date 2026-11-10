@@ -74,6 +74,137 @@ class PublishBillingPlanVersionUseCase {
   Future<ApiResponse<BillingPlanEntity>> call(int versionId) => _repository.publishPlanVersion(versionId);
 }
 
+class GetBillingTrialPoliciesUseCase {
+  const GetBillingTrialPoliciesUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<List<BillingTrialPolicyEntity>>> call({String? search, String? cursor, int perPage = 20}) =>
+      _repository.getTrialPolicies(search: search, cursor: cursor, perPage: perPage);
+}
+
+class GetBillingTrialPolicyVersionsUseCase {
+  const GetBillingTrialPolicyVersionsUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<List<BillingTrialPolicyVersionEntity>>> call(int policyId, {String? cursor, int perPage = 20}) =>
+      _repository.getTrialPolicyVersions(policyId, cursor: cursor, perPage: perPage);
+}
+
+class GetBillingDunningPoliciesUseCase {
+  const GetBillingDunningPoliciesUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<List<BillingDunningPolicyEntity>>> call({String? search, String? cursor, int perPage = 20}) =>
+      _repository.getDunningPolicies(search: search, cursor: cursor, perPage: perPage);
+}
+
+class GetBillingDunningPolicyVersionsUseCase {
+  const GetBillingDunningPolicyVersionsUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<List<BillingDunningPolicyVersionEntity>>> call(int policyId, {String? cursor, int perPage = 20}) =>
+      _repository.getDunningPolicyVersions(policyId, cursor: cursor, perPage: perPage);
+}
+
+class GetBillingPendingTrialRedemptionsUseCase {
+  const GetBillingPendingTrialRedemptionsUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<List<BillingTrialRedemptionEntity>>> call({String? cursor, int perPage = 20}) =>
+      _repository.getPendingTrialRedemptions(cursor: cursor, perPage: perPage);
+}
+
+class CreateBillingTrialPolicyUseCase {
+  const CreateBillingTrialPolicyUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<Map<String, dynamic>>> call(Map<String, dynamic> data) => _repository.createTrialPolicy(data);
+}
+
+class CreateBillingDunningPolicyUseCase {
+  const CreateBillingDunningPolicyUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<Map<String, dynamic>>> call(Map<String, dynamic> data) => _repository.createDunningPolicy(data);
+}
+
+class CreateBillingTrialPolicyVersionUseCase {
+  const CreateBillingTrialPolicyVersionUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<Map<String, dynamic>>> call(int policyId, Map<String, dynamic> data) =>
+      _repository.createTrialPolicyVersion(policyId, data);
+}
+
+class CreateBillingDunningPolicyVersionUseCase {
+  const CreateBillingDunningPolicyVersionUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<Map<String, dynamic>>> call(int policyId, Map<String, dynamic> data) =>
+      _repository.createDunningPolicyVersion(policyId, data);
+}
+
+class PublishBillingTrialPolicyVersionUseCase {
+  const PublishBillingTrialPolicyVersionUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<Map<String, dynamic>>> call(int versionId) => _repository.publishTrialPolicyVersion(versionId);
+}
+
+class PublishBillingDunningPolicyVersionUseCase {
+  const PublishBillingDunningPolicyVersionUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<Map<String, dynamic>>> call(int versionId) => _repository.publishDunningPolicyVersion(versionId);
+}
+
+class AssignBillingPlanPoliciesUseCase {
+  const AssignBillingPlanPoliciesUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<Map<String, dynamic>>> call(
+    int versionId, {
+    int? trialPolicyVersionId,
+    int? dunningPolicyVersionId,
+  }) => _repository.assignPlanVersionPolicies(
+    versionId,
+    trialPolicyVersionId: trialPolicyVersionId,
+    dunningPolicyVersionId: dunningPolicyVersionId,
+  );
+}
+
+class AssignBillingPricePoliciesUseCase {
+  const AssignBillingPricePoliciesUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<Map<String, dynamic>>> call(
+    int priceId, {
+    int? trialPolicyVersionId,
+    int? dunningPolicyVersionId,
+  }) => _repository.assignPricePolicies(
+    priceId,
+    trialPolicyVersionId: trialPolicyVersionId,
+    dunningPolicyVersionId: dunningPolicyVersionId,
+  );
+}
+
+class ApproveBillingTrialRedemptionUseCase {
+  const ApproveBillingTrialRedemptionUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<Map<String, dynamic>>> call(int redemptionId) =>
+      _repository.approveTrialRedemption(redemptionId);
+}
+
+class RejectBillingTrialRedemptionUseCase {
+  const RejectBillingTrialRedemptionUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<Map<String, dynamic>>> call(int redemptionId, {required String reason}) =>
+      _repository.rejectTrialRedemption(redemptionId, reason: reason);
+}
+
+class AdjustBillingSubscriptionTrialUseCase {
+  const AdjustBillingSubscriptionTrialUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<Map<String, dynamic>>> call(
+    int subscriptionId, {
+    required String adjustmentType,
+    int? days,
+    required String reason,
+  }) => _repository.adjustSubscriptionTrial(
+    subscriptionId,
+    adjustmentType: adjustmentType,
+    days: days,
+    reason: reason,
+  );
+}
+
 class GetBillingPlanVersionsUseCase {
   const GetBillingPlanVersionsUseCase(this._repository);
   final PlatformBillingRepository _repository;
