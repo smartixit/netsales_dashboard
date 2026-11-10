@@ -488,23 +488,31 @@ class BillingCurrencyFinancialSummaryEntity {
     required this.currency,
     required this.pendingPaymentCount,
     required this.pendingPaymentAmountMinor,
+    this.pendingPaymentAmount,
     required this.openInvoiceCount,
     required this.openInvoiceOutstandingMinor,
+    this.openInvoiceOutstanding,
     required this.overdueInvoiceCount,
     required this.overdueInvoiceOutstandingMinor,
+    this.overdueInvoiceOutstanding,
     required this.verifiedCollectionCount,
     required this.verifiedCollectionsMinor,
+    this.verifiedCollections,
   });
 
   final BillingCurrencyEntity currency;
   final int pendingPaymentCount;
   final int pendingPaymentAmountMinor;
+  final String? pendingPaymentAmount;
   final int openInvoiceCount;
   final int openInvoiceOutstandingMinor;
+  final String? openInvoiceOutstanding;
   final int overdueInvoiceCount;
   final int overdueInvoiceOutstandingMinor;
+  final String? overdueInvoiceOutstanding;
   final int verifiedCollectionCount;
   final int verifiedCollectionsMinor;
+  final String? verifiedCollections;
 }
 
 class BillingStatusCountsEntity {
