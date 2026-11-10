@@ -167,6 +167,190 @@ class BillingPlanModel extends BillingPlanEntity {
   }
 }
 
+class BillingTrialPolicyVersionModel extends BillingTrialPolicyVersionEntity {
+  const BillingTrialPolicyVersionModel({
+    required super.id,
+    required super.policyId,
+    required super.versionNumber,
+    required super.status,
+    required super.isEnabled,
+    required super.durationValue,
+    required super.durationUnit,
+    required super.startTrigger,
+    required super.redemptionScope,
+    required super.eligibilityMode,
+    required super.requiresManualApproval,
+    required super.endBehavior,
+    required super.entitlementMode,
+    super.policyKey,
+    super.entitlementConfig,
+    super.publishedAt,
+  });
+
+  factory BillingTrialPolicyVersionModel.fromJson(Map<String, dynamic> json) =>
+      BillingTrialPolicyVersionModel(
+        id: _int(json['trial_policy_version_id']),
+        policyId: _int(json['trial_policy_id']),
+        versionNumber: _int(json['version_number']),
+        status: _string(json['status'], fallback: 'UNKNOWN'),
+        isEnabled: _bool(json['is_enabled']),
+        durationValue: _int(json['duration_value']),
+        durationUnit: _string(json['duration_unit'], fallback: 'DAY'),
+        startTrigger: _string(json['start_trigger'], fallback: 'PURCHASE'),
+        redemptionScope: _string(json['redemption_scope'], fallback: 'NETWORK'),
+        eligibilityMode: _string(json['eligibility_mode'], fallback: 'NEW_BILLING_ACCOUNT'),
+        requiresManualApproval: _bool(json['requires_manual_approval']),
+        endBehavior: _string(json['end_behavior'], fallback: 'CREATE_INVOICE'),
+        entitlementMode: _string(json['entitlement_mode'], fallback: 'FULL_PLAN'),
+        policyKey: _nullableString(json['policy_key']),
+        entitlementConfig: json['entitlement_config'] is Map
+            ? _map(json['entitlement_config'])
+            : null,
+        publishedAt: _date(json['published_at']),
+      );
+}
+
+class BillingDunningPolicyVersionModel extends BillingDunningPolicyVersionEntity {
+  const BillingDunningPolicyVersionModel({
+    required super.id,
+    required super.policyId,
+    required super.versionNumber,
+    required super.status,
+    required super.gracePeriodDays,
+    required super.autoSuspendAfterGrace,
+    required super.reminderScheduleDays,
+    required super.preRenewalAlertDays,
+    super.policyKey,
+    super.publishedAt,
+  });
+
+  factory BillingDunningPolicyVersionModel.fromJson(Map<String, dynamic> json) =>
+      BillingDunningPolicyVersionModel(
+        id: _int(json['dunning_policy_version_id']),
+        policyId: _int(json['dunning_policy_id']),
+        versionNumber: _int(json['version_number']),
+        status: _string(json['status'], fallback: 'UNKNOWN'),
+        gracePeriodDays: _int(json['grace_period_days']),
+        autoSuspendAfterGrace: _bool(json['auto_suspend_after_grace']),
+        reminderScheduleDays: _intList(json['reminder_schedule_days']),
+        preRenewalAlertDays: _intList(json['pre_renewal_alert_days']),
+        policyKey: _nullableString(json['policy_key']),
+        publishedAt: _date(json['published_at']),
+      );
+}
+
+class BillingTrialPolicyModel extends BillingTrialPolicyEntity {
+  const BillingTrialPolicyModel({
+    required super.id,
+    required super.key,
+    required super.name,
+    required super.isActive,
+    super.description,
+    super.currentVersion,
+  });
+
+  factory BillingTrialPolicyModel.fromJson(Map<String, dynamic> json) {
+    final current = json['current_version'];
+    return BillingTrialPolicyModel(
+      id: _int(json['trial_policy_id']),
+      key: _string(json['policy_key']),
+      name: _string(json['name']),
+      description: _nullableString(json['description']),
+      isActive: _bool(json['is_active']),
+      currentVersion: current is Map
+          ? BillingTrialPolicyVersionModel.fromJson({
+              ..._map(current),
+              'trial_policy_id': _map(current)['trial_policy_id'] ?? json['trial_policy_id'],
+              'policy_key': _map(current)['policy_key'] ?? json['policy_key'],
+            })
+          : null,
+    );
+  }
+}
+
+class BillingDunningPolicyModel extends BillingDunningPolicyEntity {
+  const BillingDunningPolicyModel({
+    required super.id,
+    required super.key,
+    required super.name,
+    required super.isActive,
+    super.description,
+    super.currentVersion,
+  });
+
+  factory BillingDunningPolicyModel.fromJson(Map<String, dynamic> json) {
+    final current = json['current_version'];
+    return BillingDunningPolicyModel(
+      id: _int(json['dunning_policy_id']),
+      key: _string(json['policy_key']),
+      name: _string(json['name']),
+      description: _nullableString(json['description']),
+      isActive: _bool(json['is_active']),
+      currentVersion: current is Map
+          ? BillingDunningPolicyVersionModel.fromJson({
+              ..._map(current),
+              'dunning_policy_id': _map(current)['dunning_policy_id'] ?? json['dunning_policy_id'],
+              'policy_key': _map(current)['policy_key'] ?? json['policy_key'],
+            })
+          : null,
+    );
+  }
+}
+
+class BillingTrialRedemptionModel extends BillingTrialRedemptionEntity {
+  const BillingTrialRedemptionModel({
+    required super.id,
+    required super.subscriptionId,
+    required super.policyId,
+    required super.policyVersionId,
+    required super.status,
+    required super.redemptionScope,
+    required super.redemptionSubjectKey,
+    super.policyKey,
+    super.policyName,
+    super.versionNumber,
+    super.networkId,
+    super.networkName,
+    super.billingAccountId,
+    super.accountNumber,
+    super.reservedAt,
+    super.startedAt,
+    super.completedAt,
+    super.trialEnd,
+    super.metadata,
+  });
+
+  factory BillingTrialRedemptionModel.fromJson(Map<String, dynamic> json) {
+    final policy = _map(json['policy']);
+    final policyVersion = _map(json['policy_version']);
+    final subscription = _map(json['subscription']);
+    final account = _map(subscription['billing_account']);
+    final network = _map(account['network']);
+    final metadata = json['metadata'];
+    return BillingTrialRedemptionModel(
+      id: _int(json['trial_redemption_id']),
+      subscriptionId: _int(json['billing_subscription_id']),
+      policyId: _int(json['trial_policy_id']),
+      policyVersionId: _int(json['trial_policy_version_id']),
+      status: _string(json['status'], fallback: 'UNKNOWN'),
+      redemptionScope: _string(json['redemption_scope'], fallback: 'NETWORK'),
+      redemptionSubjectKey: _string(json['redemption_subject_key']),
+      policyKey: _nullableString(policy['policy_key']),
+      policyName: _nullableString(policy['name']),
+      versionNumber: _nullableInt(policyVersion['version_number']),
+      networkId: _nullableInt(json['network_id'] ?? account['network_id']),
+      networkName: _nullableString(network['network_name']),
+      billingAccountId: _nullableInt(json['billing_account_id'] ?? account['billing_account_id']),
+      accountNumber: _nullableString(account['account_number']),
+      reservedAt: _date(json['reserved_at']),
+      startedAt: _date(json['started_at']),
+      completedAt: _date(json['completed_at']),
+      trialEnd: _date(subscription['trial_end']),
+      metadata: metadata is Map ? _map(metadata) : null,
+    );
+  }
+}
+
 class BillingAccountModel extends BillingAccountEntity {
   const BillingAccountModel({
     required super.id,
