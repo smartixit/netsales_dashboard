@@ -21,6 +21,13 @@ class GetBillingPlansUseCase {
       _repository.getPlans(search: search, status: status, cursor: cursor, perPage: perPage);
 }
 
+class GetBillingPlanVersionsUseCase {
+  const GetBillingPlanVersionsUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<List<BillingPlanVersionEntity>>> call(int planId, {String? status, String? cursor, int perPage = 20}) =>
+      _repository.getPlanVersions(planId, status: status, cursor: cursor, perPage: perPage);
+}
+
 class GetBillingAccountsUseCase {
   const GetBillingAccountsUseCase(this._repository);
   final PlatformBillingRepository _repository;
