@@ -142,6 +142,7 @@ class BillingPlanVersionEntity {
     required this.status,
     this.statusLabel,
     this.trialPolicy,
+    this.trialPolicyVersionId,
     this.dunningPolicyVersionId,
     this.prices = const [],
     this.features = const [],
@@ -152,6 +153,7 @@ class BillingPlanVersionEntity {
   final String status;
   final String? statusLabel;
   final BillingTrialPolicySummaryEntity? trialPolicy;
+  final int? trialPolicyVersionId;
   final int? dunningPolicyVersionId;
   final List<BillingPriceEntity> prices;
   final List<BillingFeatureEntity> features;
