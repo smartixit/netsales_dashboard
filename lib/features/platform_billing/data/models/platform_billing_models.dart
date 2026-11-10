@@ -497,12 +497,16 @@ class BillingCurrencyFinancialSummaryModel extends BillingCurrencyFinancialSumma
       currency: BillingCurrencyModel.fromJson(currencyJson),
       pendingPaymentCount: _int(pending['count']),
       pendingPaymentAmountMinor: _int(pending['amount_minor']),
+      pendingPaymentAmount: _nullableString(pending['amount']),
       openInvoiceCount: _int(open['count']),
       openInvoiceOutstandingMinor: _int(open['outstanding_minor']),
+      openInvoiceOutstanding: _nullableString(open['outstanding']),
       overdueInvoiceCount: _int(overdue['count']),
       overdueInvoiceOutstandingMinor: _int(overdue['outstanding_minor']),
+      overdueInvoiceOutstanding: _nullableString(overdue['outstanding']),
       verifiedCollectionCount: _int(collected['count']),
       verifiedCollectionsMinor: _int(collected['amount_minor']),
+      verifiedCollections: _nullableString(collected['amount']),
     );
   }
 }
