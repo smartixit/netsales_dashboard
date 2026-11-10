@@ -24,6 +24,24 @@ class BillingCurrencyModel extends BillingCurrencyEntity {
   );
 }
 
+class BillingProductModel extends BillingProductEntity {
+  const BillingProductModel({
+    required super.id,
+    required super.key,
+    required super.name,
+    required super.isActive,
+    super.description,
+  });
+
+  factory BillingProductModel.fromJson(Map<String, dynamic> json) => BillingProductModel(
+    id: _int(json['product_id']),
+    key: _string(json['product_key']),
+    name: _string(json['name']),
+    description: _nullableString(json['description']),
+    isActive: _bool(json['is_active']),
+  );
+}
+
 class BillingPriceModel extends BillingPriceEntity {
   const BillingPriceModel({
     required super.id,
