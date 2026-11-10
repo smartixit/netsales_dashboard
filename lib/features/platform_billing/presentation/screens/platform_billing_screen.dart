@@ -149,7 +149,7 @@ class _OverviewContent extends StatelessWidget {
         type: ErrorStateType.server,
       );
     }
-    final active = data.subscriptions.countFor('active') + data.subscriptions.countFor('trialing');
+    final active = data.subscriptions.countFor('ACTIVE') + data.subscriptions.countFor('TRIALING');
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Wrap(spacing: 12, runSpacing: 12, children: [
         _MetricCard(title: 'حسابات الفوترة', value: data.billingAccountsCount.toString(), icon: Icons.account_balance_outlined),
@@ -210,7 +210,6 @@ class _CurrencyFinancialCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currency = item.currency;
-    String money(int minor) => '${currency.code} · ${(minor / _pow10(currency.decimalPlaces)).toStringAsFixed(currency.decimalPlaces)}';
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -222,20 +221,15 @@ class _CurrencyFinancialCard extends StatelessWidget {
         Text('${currency.name} (${currency.code})', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
         const SizedBox(height: 14),
         Wrap(spacing: 28, runSpacing: 16, children: [
-          _FinancialValue(label: 'تحصيلات الشهر', value: money(item.verifiedCollectionsMinor), count: item.verifiedCollectionCount),
-          _FinancialValue(label: 'ذمم الفواتير المفتوحة', value: money(item.openInvoiceOutstandingMinor), count: item.openInvoiceCount),
-          _FinancialValue(label: 'المتأخرات', value: money(item.overdueInvoiceOutstandingMinor), count: item.overdueInvoiceCount),
-          _FinancialValue(label: 'مدفوعات قيد المراجعة', value: money(item.pendingPaymentAmountMinor), count: item.pendingPaymentCount),
+          _FinancialValue(label: 'تحصيلات الشهر', value: '${currency.code} · ${item.verifiedCollections ?? '—'}', count: item.verifiedCollectionCount),
+          _FinancialValue(label: 'ذمم الفواتير المفتوحة', value: '${currency.code} · ${item.openInvoiceOutstanding ?? '—'}', count: item.openInvoiceCount),
+          _FinancialValue(label: 'المتأخرات', value: '${currency.code} · ${item.overdueInvoiceOutstanding ?? '—'}', count: item.overdueInvoiceCount),
+          _FinancialValue(label: 'مدفوعات قيد المراجعة', value: '${currency.code} · ${item.pendingPaymentAmount ?? '—'}', count: item.pendingPaymentCount),
         ]),
       ]),
     );
   }
 
-  int _pow10(int places) {
-    var value = 1;
-    for (var i = 0; i < places; i++) { value *= 10; }
-    return value;
-  }
 }
 
 class _FinancialValue extends StatelessWidget {
