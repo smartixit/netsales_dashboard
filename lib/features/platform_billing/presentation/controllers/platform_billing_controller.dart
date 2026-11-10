@@ -657,62 +657,7 @@ class PlatformBillingController extends GetxController {
 
     final amount = unitAmount.trim();
     final fee = setupFee.trim().isEmpty ? '0' : setupFee.trim();
-    final decimalPattern = RegExp(r'^\\d+(?:\\.\\d{1,4})?    if (isPlanPublishInProgress.value) return false;
-    isPlanPublishInProgress.value = true;
-    try {
-      return await _runBillingMutation(
-        loadingMessage: 'التحقق من شروط النشر...',
-        successMessage: 'تم نشر إصدار الخطة وتثبيت شروطه.',
-        action: () async {
-          final response = await _publishPlanVersion(versionId);
-          _requireSuccessful(response, 'لم يتم نشر إصدار الخطة.');
-          await loadPlans();
-          await loadPlanVersions(planId);
-        },
-      );
-    } finally {
-      isPlanPublishInProgress.value = false;
-    }
-  }
-
-  void _resetPlanEditor() {
-    planKeyController.clear();
-    planNameController.clear();
-    planDescriptionController.clear();
-    planUnitAmountController.clear();
-    planSetupFeeController.text = '0';
-    planFeatureKeyController.clear();
-    planFeatureNameController.clear();
-    planFeatureValueController.text = '-1';
-    planFeatureUnitController.clear();
-    selectedPlanBillingInterval.value = 'MONTH';
-    selectedPlanFeatureType.value = 'RESOURCE_LIMIT';
-  }
-
-  Future<void> refresh() => loadInitial();
-
-  @override
-  void onClose() {
-    productKeyController.dispose();
-    productNameController.dispose();
-    productDescriptionController.dispose();
-    planKeyController.dispose();
-    planNameController.dispose();
-    planDescriptionController.dispose();
-    planUnitAmountController.dispose();
-    planSetupFeeController.dispose();
-    planFeatureKeyController.dispose();
-    planFeatureNameController.dispose();
-    planFeatureValueController.dispose();
-    planFeatureUnitController.dispose();
-    selectedProductId.dispose();
-    selectedPlanCurrencyId.dispose();
-    selectedPlanBillingInterval.dispose();
-    selectedPlanFeatureType.dispose();
-    super.onClose();
-  }
-}
-);
+    final decimalPattern = RegExp(r'^\d+(?:\.\d{1,4})?$');
     if (!decimalPattern.hasMatch(amount) || !decimalPattern.hasMatch(fee)) {
       CustomSnackbar.show(
         title: 'قيمة سعر غير صالحة',
@@ -726,7 +671,7 @@ class PlatformBillingController extends GetxController {
     if (amountPlaces > currency.decimalPlaces || feePlaces > currency.decimalPlaces) {
       CustomSnackbar.show(
         title: 'دقة العملة غير مطابقة',
-        message: 'العملة ' + currency.code + ' تسمح بـ ' + currency.decimalPlaces.toString() + ' منازل عشرية فقط.',
+        message: 'العملة \${currency.code} تسمح بـ \${currency.decimalPlaces} منازل عشرية فقط.',
         type: SnackType.warning,
       );
       return false;
