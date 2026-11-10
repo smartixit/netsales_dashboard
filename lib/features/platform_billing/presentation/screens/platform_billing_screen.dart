@@ -277,6 +277,46 @@ class _PlansContent extends StatelessWidget {
               if (plan.currentVersion!.trialPolicy case final trial?)
                 Text(trial.isEnabled ? 'تجربة: ${trial.durationValue} ${trial.durationUnit}' : 'التجربة غير مفعلة'),
             ] else const Text('لا يوجد إصدار حالي'),
+            const SizedBox(height: 12),
+            CustomButton.outline(
+              text: controller.loadingPlanVersions.contains(plan.id)
+                  ? 'تحميل سجل الإصدارات...'
+                  : 'سجل الإصدارات',
+              size: AppButtonSize.small,
+              onPressed: () => controller.loadPlanVersions(plan.id),
+            ),
+            if (controller.planVersions.containsKey(plan.id)) ...[
+              const Divider(height: 24),
+              Text('الإصدارات السابقة والحالية', style: Theme.of(context).textTheme.titleSmall),
+              const SizedBox(height: 8),
+              for (final version in controller.planVersions[plan.id]!)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(child: Text('الإصدار ${version.versionNumber}')),
+                          CustomStatusBadge(
+                            label: version.statusLabel ?? version.status,
+                            tone: version.typedStatus == BillingPlanVersionStatus.published
+                                ? SemanticTone.success
+                                : version.typedStatus == BillingPlanVersionStatus.draft
+                                    ? SemanticTone.warning
+                                    : SemanticTone.neutral,
+                            isCompact: true,
+                          ),
+                        ],
+                      ),
+                      for (final price in version.prices)
+                        Text('${price.currency?.code ?? ''} · ${price.unitAmount ?? '—'} / ${price.billingInterval}'),
+                      for (final feature in version.features)
+                        Text('${feature.name}: ${feature.value ?? '—'}'),
+                    ],
+                  ),
+                ),
+            ],
           ]),
         ),
     ]);
