@@ -52,10 +52,11 @@ class PlatformBillingRemoteDataSourceImpl implements PlatformBillingRemoteDataSo
       }, cursor: cursor, perPage: perPage);
 
   @override
-  Future<ApiResponse<List<Map<String, dynamic>>>> getSubscriptions({int? networkId, int? accountId, int? currencyId, String? status, String? cursor, int perPage = 20}) =>
+  Future<ApiResponse<List<Map<String, dynamic>>>> getSubscriptions({int? networkId, int? accountId, int? currencyId, String? status, String? search, String? cursor, int perPage = 20}) =>
       _list(ApiConstants.billingSubscriptions, filters: {
         'network_id': ?networkId, 'billing_account_id': ?accountId, 'currency_id': ?currencyId,
         if (status?.isNotEmpty == true) 'status': status,
+        if (search?.trim().isNotEmpty == true) 'search': search!.trim(),
       }, cursor: cursor, perPage: perPage);
 
   @override
