@@ -609,6 +609,235 @@ class PlatformBillingController extends GetxController {
     return result;
   }
 
+  void prepareDraftPriceEditor() {
+    planUnitAmountController.clear();
+    planSetupFeeController.text = '0';
+    selectedPlanCurrencyId.value = null;
+    selectedPlanBillingInterval.value = 'MONTH';
+  }
+
+  void prepareDraftFeatureEditor() {
+    planFeatureKeyController.clear();
+    planFeatureNameController.clear();
+    planFeatureValueController.text = '-1';
+    planFeatureUnitController.clear();
+    selectedPlanFeatureType.value = 'RESOURCE_LIMIT';
+  }
+
+  BillingPlanVersionEntity? _findPlanVersion(int planId, int versionId) {
+    for (final version in planVersions[planId] ?? const <BillingPlanVersionEntity>[]) {
+      if (version.id == versionId) return version;
+    }
+    return null;
+  }
+
+  Future<bool> addPriceToDraft({
+    required int planId,
+    required int versionId,
+    required int currencyId,
+    required String billingInterval,
+    required String unitAmount,
+    required String setupFee,
+  }) async {
+    BillingCurrencyEntity? currency;
+    for (final item in currencies) {
+      if (item.id == currencyId && item.isActive) {
+        currency = item;
+        break;
+      }
+    }
+    if (currency == null) {
+      CustomSnackbar.show(
+        title: 'العملة غير متاحة',
+        message: 'اختر عملة نشطة من قائمة العملات.',
+        type: SnackType.warning,
+      );
+      return false;
+    }
+
+    final amount = unitAmount.trim();
+    final fee = setupFee.trim().isEmpty ? '0' : setupFee.trim();
+    final decimalPattern = RegExp(r'^\\d+(?:\\.\\d{1,4})?    if (isPlanPublishInProgress.value) return false;
+    isPlanPublishInProgress.value = true;
+    try {
+      return await _runBillingMutation(
+        loadingMessage: 'التحقق من شروط النشر...',
+        successMessage: 'تم نشر إصدار الخطة وتثبيت شروطه.',
+        action: () async {
+          final response = await _publishPlanVersion(versionId);
+          _requireSuccessful(response, 'لم يتم نشر إصدار الخطة.');
+          await loadPlans();
+          await loadPlanVersions(planId);
+        },
+      );
+    } finally {
+      isPlanPublishInProgress.value = false;
+    }
+  }
+
+  void _resetPlanEditor() {
+    planKeyController.clear();
+    planNameController.clear();
+    planDescriptionController.clear();
+    planUnitAmountController.clear();
+    planSetupFeeController.text = '0';
+    planFeatureKeyController.clear();
+    planFeatureNameController.clear();
+    planFeatureValueController.text = '-1';
+    planFeatureUnitController.clear();
+    selectedPlanBillingInterval.value = 'MONTH';
+    selectedPlanFeatureType.value = 'RESOURCE_LIMIT';
+  }
+
+  Future<void> refresh() => loadInitial();
+
+  @override
+  void onClose() {
+    productKeyController.dispose();
+    productNameController.dispose();
+    productDescriptionController.dispose();
+    planKeyController.dispose();
+    planNameController.dispose();
+    planDescriptionController.dispose();
+    planUnitAmountController.dispose();
+    planSetupFeeController.dispose();
+    planFeatureKeyController.dispose();
+    planFeatureNameController.dispose();
+    planFeatureValueController.dispose();
+    planFeatureUnitController.dispose();
+    selectedProductId.dispose();
+    selectedPlanCurrencyId.dispose();
+    selectedPlanBillingInterval.dispose();
+    selectedPlanFeatureType.dispose();
+    super.onClose();
+  }
+}
+);
+    if (!decimalPattern.hasMatch(amount) || !decimalPattern.hasMatch(fee)) {
+      CustomSnackbar.show(
+        title: 'قيمة سعر غير صالحة',
+        message: 'أدخل مبالغ عشرية صحيحة وغير سالبة.',
+        type: SnackType.warning,
+      );
+      return false;
+    }
+    final amountPlaces = amount.contains('.') ? amount.split('.').last.length : 0;
+    final feePlaces = fee.contains('.') ? fee.split('.').last.length : 0;
+    if (amountPlaces > currency.decimalPlaces || feePlaces > currency.decimalPlaces) {
+      CustomSnackbar.show(
+        title: 'دقة العملة غير مطابقة',
+        message: 'العملة ' + currency.code + ' تسمح بـ ' + currency.decimalPlaces.toString() + ' منازل عشرية فقط.',
+        type: SnackType.warning,
+      );
+      return false;
+    }
+
+    var version = _findPlanVersion(planId, versionId);
+    if (version == null) {
+      await loadPlanVersions(planId);
+      version = _findPlanVersion(planId, versionId);
+    }
+    if (version == null || version.typedStatus != BillingPlanVersionStatus.draft) {
+      CustomSnackbar.show(
+        title: 'الإصدار غير قابل للتعديل',
+        message: 'يمكن إضافة الأسعار إلى إصدار مسودة فقط.',
+        type: SnackType.warning,
+      );
+      return false;
+    }
+    final duplicate = version.prices.any((price) =>
+        price.currencyId == currencyId &&
+        price.billingInterval == billingInterval &&
+        price.intervalCount == 1);
+    if (duplicate) {
+      CustomSnackbar.show(
+        title: 'السعر موجود مسبقاً',
+        message: 'هذا الإصدار يحتوي بالفعل على سعر بهذه العملة ودورة الفوترة.',
+        type: SnackType.warning,
+      );
+      return false;
+    }
+
+    return _runBillingMutation(
+      loadingMessage: 'إضافة السعر إلى إصدار المسودة...',
+      successMessage: 'تمت إضافة السعر إلى إصدار المسودة.',
+      action: () async {
+        final response = await _addPlanPrice(versionId, {
+          'currency_id': currencyId,
+          'billing_interval': billingInterval,
+          'interval_count': 1,
+          'unit_amount': amount,
+          'setup_fee': fee,
+          'tax_behavior': 'EXCLUSIVE',
+        });
+        _requireSuccessful(response, 'تعذر إضافة السعر إلى الإصدار.');
+        await loadPlanVersions(planId);
+      },
+    );
+  }
+
+  Future<bool> addFeatureToDraft({
+    required int planId,
+    required int versionId,
+    required String featureKey,
+    required String name,
+    required String featureType,
+    required String value,
+    String? unit,
+  }) async {
+    final key = featureKey.trim();
+    final featureName = name.trim();
+    final featureValue = value.trim();
+    if (key.isEmpty || featureName.isEmpty || featureValue.isEmpty) {
+      CustomSnackbar.show(
+        title: 'بيانات الميزة ناقصة',
+        message: 'أدخل معرف الميزة واسمها وقيمتها.',
+        type: SnackType.warning,
+      );
+      return false;
+    }
+
+    var version = _findPlanVersion(planId, versionId);
+    if (version == null) {
+      await loadPlanVersions(planId);
+      version = _findPlanVersion(planId, versionId);
+    }
+    if (version == null || version.typedStatus != BillingPlanVersionStatus.draft) {
+      CustomSnackbar.show(
+        title: 'الإصدار غير قابل للتعديل',
+        message: 'يمكن إضافة المزايا إلى إصدار مسودة فقط.',
+        type: SnackType.warning,
+      );
+      return false;
+    }
+    if (version.features.any((feature) => feature.key == key)) {
+      CustomSnackbar.show(
+        title: 'معرف الميزة مستخدم',
+        message: 'يوجد في الإصدار ميزة تحمل هذا المعرف بالفعل.',
+        type: SnackType.warning,
+      );
+      return false;
+    }
+
+    return _runBillingMutation(
+      loadingMessage: 'إضافة الميزة إلى إصدار المسودة...',
+      successMessage: 'تمت إضافة الميزة إلى إصدار المسودة.',
+      action: () async {
+        final response = await _addPlanFeature(versionId, {
+          'feature_key': key,
+          'name': featureName,
+          'feature_type': featureType,
+          'value': featureValue,
+          if (unit?.trim().isNotEmpty == true) 'unit': unit!.trim(),
+          'aggregation': 'SUM',
+          'overage_behavior': 'BLOCK',
+        });
+        _requireSuccessful(response, 'تعذر إضافة الميزة إلى الإصدار.');
+        await loadPlanVersions(planId);
+      },
+    );
+  }
+
   Future<bool> publishPlanDraft(int planId, int versionId) async {
     if (isPlanPublishInProgress.value) return false;
     isPlanPublishInProgress.value = true;
