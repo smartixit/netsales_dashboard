@@ -98,6 +98,110 @@ class PlatformBillingRemoteDataSourceImpl implements PlatformBillingRemoteDataSo
       );
 
   @override
+  Future<ApiResponse<List<Map<String, dynamic>>>> getTrialPolicies({String? search, String? cursor, int perPage = 20}) =>
+      _list(ApiConstants.billingTrialPolicies, filters: {
+        if (search?.trim().isNotEmpty == true) 'search': search!.trim(),
+      }, cursor: cursor, perPage: perPage);
+
+  @override
+  Future<ApiResponse<List<Map<String, dynamic>>>> getTrialPolicyVersions(int policyId, {String? cursor, int perPage = 20}) =>
+      _list(ApiConstants.billingTrialPolicyVersions(policyId), cursor: cursor, perPage: perPage);
+
+  @override
+  Future<ApiResponse<List<Map<String, dynamic>>>> getDunningPolicies({String? search, String? cursor, int perPage = 20}) =>
+      _list(ApiConstants.billingDunningPolicies, filters: {
+        if (search?.trim().isNotEmpty == true) 'search': search!.trim(),
+      }, cursor: cursor, perPage: perPage);
+
+  @override
+  Future<ApiResponse<List<Map<String, dynamic>>>> getDunningPolicyVersions(int policyId, {String? cursor, int perPage = 20}) =>
+      _list(ApiConstants.billingDunningPolicyVersions(policyId), cursor: cursor, perPage: perPage);
+
+  @override
+  Future<ApiResponse<List<Map<String, dynamic>>>> getPendingTrialRedemptions({String? cursor, int perPage = 20}) =>
+      _list(ApiConstants.billingPendingTrialRedemptions, cursor: cursor, perPage: perPage);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> createTrialPolicy(Map<String, dynamic> data) =>
+      _api.post<Map<String, dynamic>>(ApiConstants.billingTrialPolicies, data: data, fromJson: _map);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> createDunningPolicy(Map<String, dynamic> data) =>
+      _api.post<Map<String, dynamic>>(ApiConstants.billingDunningPolicies, data: data, fromJson: _map);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> createTrialPolicyVersion(int policyId, Map<String, dynamic> data) =>
+      _api.post<Map<String, dynamic>>(ApiConstants.billingCreateTrialPolicyVersion(policyId), data: data, fromJson: _map);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> createDunningPolicyVersion(int policyId, Map<String, dynamic> data) =>
+      _api.post<Map<String, dynamic>>(ApiConstants.billingCreateDunningPolicyVersion(policyId), data: data, fromJson: _map);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> publishTrialPolicyVersion(int versionId) =>
+      _api.post<Map<String, dynamic>>(ApiConstants.billingPublishTrialPolicyVersion(versionId), data: const {}, fromJson: _map);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> publishDunningPolicyVersion(int versionId) =>
+      _api.post<Map<String, dynamic>>(ApiConstants.billingPublishDunningPolicyVersion(versionId), data: const {}, fromJson: _map);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> assignPlanVersionPolicies(
+    int versionId, {
+    int? trialPolicyVersionId,
+    int? dunningPolicyVersionId,
+  }) => _api.put<Map<String, dynamic>>(
+    ApiConstants.billingAssignPlanPolicies(versionId),
+    data: {
+      if (trialPolicyVersionId != null) 'trial_policy_version_id': trialPolicyVersionId,
+      if (dunningPolicyVersionId != null) 'dunning_policy_version_id': dunningPolicyVersionId,
+    },
+    fromJson: _map,
+  );
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> assignPricePolicies(
+    int priceId, {
+    int? trialPolicyVersionId,
+    int? dunningPolicyVersionId,
+  }) => _api.put<Map<String, dynamic>>(
+    ApiConstants.billingAssignPricePolicies(priceId),
+    data: {
+      if (trialPolicyVersionId != null) 'trial_policy_version_id': trialPolicyVersionId,
+      if (dunningPolicyVersionId != null) 'dunning_policy_version_id': dunningPolicyVersionId,
+    },
+    fromJson: _map,
+  );
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> approveTrialRedemption(int redemptionId) =>
+      _api.post<Map<String, dynamic>>(ApiConstants.billingApproveTrialRedemption(redemptionId), data: const {}, fromJson: _map);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> rejectTrialRedemption(int redemptionId, {required String reason}) =>
+      _api.post<Map<String, dynamic>>(
+        ApiConstants.billingRejectTrialRedemption(redemptionId),
+        data: {'reason': reason},
+        fromJson: _map,
+      );
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> adjustSubscriptionTrial(
+    int subscriptionId, {
+    required String adjustmentType,
+    int? days,
+    required String reason,
+  }) => _api.post<Map<String, dynamic>>(
+    ApiConstants.billingAdjustSubscriptionTrial(subscriptionId),
+    data: {
+      'adjustment_type': adjustmentType,
+      if (days != null) 'days': days,
+      'reason': reason,
+    },
+    fromJson: _map,
+  );
+
+  @override
   Future<ApiResponse<List<Map<String, dynamic>>>> getPlanVersions(int planId, {String? status, String? cursor, int perPage = 20}) =>
       _list(ApiConstants.billingPlanVersions(planId), filters: {if (status?.isNotEmpty == true) 'status': status}, cursor: cursor, perPage: perPage);
 
