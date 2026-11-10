@@ -166,7 +166,17 @@ class PlatformBillingController extends GetxController {
     isCurrenciesLoading.value = true;
     try {
       final response = await _getCurrencies();
-      if (response.success) currencies.assignAll(response.data ?? const []);
+      if (response.success) {
+        currencies.assignAll(response.data ?? const []);
+        if (selectedPlanCurrencyId.value == null) {
+          for (final currency in currencies) {
+            if (currency.isActive) {
+              selectedPlanCurrencyId.value = currency.id;
+              break;
+            }
+          }
+        }
+      }
     } finally {
       isCurrenciesLoading.value = false;
     }
@@ -575,6 +585,13 @@ class PlatformBillingController extends GetxController {
         await loadPlanVersions(_pendingPlanId!);
       },
     );
+
+    if (!result && _pendingPlanId != null) {
+      await loadPlans();
+      if (_pendingDraftVersionId != null) {
+        await loadPlanVersions(_pendingPlanId!);
+      }
+    }
 
     if (result) {
       _pendingPlanId = null;
