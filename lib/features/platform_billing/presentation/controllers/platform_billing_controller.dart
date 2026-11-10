@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/models/api_response.dart';
@@ -136,6 +134,7 @@ class PlatformBillingController extends GetxController {
   final dunningPreRenewalDaysController = TextEditingController(text: '3');
   final trialDecisionReasonController = TextEditingController();
   final trialAdjustmentDaysController = TextEditingController(text: '7');
+  final trialAdjustmentType = ValueNotifier<String?>('EXTEND');
   final trialDurationUnit = ValueNotifier<String?>('DAY');
   final trialStartTrigger = ValueNotifier<String?>('PURCHASE');
   final trialRedemptionScope = ValueNotifier<String?>('BILLING_ACCOUNT');
@@ -1456,6 +1455,12 @@ class PlatformBillingController extends GetxController {
     }
   }
 
+  void prepareTrialAdjustmentEditor() {
+    trialDecisionReasonController.clear();
+    trialAdjustmentDaysController.text = '7';
+    trialAdjustmentType.value = 'EXTEND';
+  }
+
   void resetPolicyForms() {
     trialDecisionReasonController.clear();
     trialAdjustmentDaysController.text = '7';
@@ -1851,6 +1856,7 @@ class PlatformBillingController extends GetxController {
     dunningPreRenewalDaysController.dispose();
     trialDecisionReasonController.dispose();
     trialAdjustmentDaysController.dispose();
+    trialAdjustmentType.dispose();
     trialDurationUnit.dispose();
     trialStartTrigger.dispose();
     trialRedemptionScope.dispose();
