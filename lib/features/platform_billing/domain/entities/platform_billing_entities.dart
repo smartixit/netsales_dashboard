@@ -77,6 +77,22 @@ class BillingCurrencyEntity {
   final bool isActive;
 }
 
+class BillingProductEntity {
+  const BillingProductEntity({
+    required this.id,
+    required this.key,
+    required this.name,
+    required this.isActive,
+    this.description,
+  });
+
+  final int id;
+  final String key;
+  final String name;
+  final String? description;
+  final bool isActive;
+}
+
 class BillingPriceEntity {
   const BillingPriceEntity({
     required this.id,
