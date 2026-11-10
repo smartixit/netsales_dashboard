@@ -483,12 +483,16 @@ class BillingCurrencyFinancialSummaryModel extends BillingCurrencyFinancialSumma
     required super.currency,
     required super.pendingPaymentCount,
     required super.pendingPaymentAmountMinor,
+    super.pendingPaymentAmount,
     required super.openInvoiceCount,
     required super.openInvoiceOutstandingMinor,
+    super.openInvoiceOutstanding,
     required super.overdueInvoiceCount,
     required super.overdueInvoiceOutstandingMinor,
+    super.overdueInvoiceOutstanding,
     required super.verifiedCollectionCount,
     required super.verifiedCollectionsMinor,
+    super.verifiedCollections,
   });
 
   factory BillingCurrencyFinancialSummaryModel.fromJson(Map<String, dynamic> json) {
