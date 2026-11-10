@@ -480,8 +480,7 @@ class PlatformBillingController extends GetxController {
       );
       return false;
     }
-    final decimalPattern = RegExp(r'^\\d+(?:\\.\\d{1,4})?
-);
+    final decimalPattern = RegExp(r'^\d+(?:\.\d{1,4})?$');
     if (!decimalPattern.hasMatch(amount) || !decimalPattern.hasMatch(setupFee)) {
       CustomSnackbar.show(
         title: 'قيمة سعر غير صالحة',
