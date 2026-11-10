@@ -31,6 +31,8 @@ class PlatformPlanCatalogSection extends StatelessWidget {
 
   bool get _canPublish => PermissionService.to.can(AppPermissions.billingManage);
 
+  bool get _canAssignPolicies => PermissionService.to.can(AppPermissions.billingManage);
+
   bool get _canEditDraft => PermissionService.to.can(AppPermissions.billingEdit);
 
   Future<bool?> _showProductDialog() => CustomDialog.show(
@@ -217,6 +219,7 @@ class PlatformPlanCatalogSection extends StatelessWidget {
                     versions: controller.planVersions[plan.id] ?? const [],
                     isLoadingVersions: controller.loadingPlanVersions.contains(plan.id),
                     canPublish: _canPublish,
+                    canAssignPolicies: _canAssignPolicies,
                     canEditDraft: _canEditDraft,
                     onLoadVersions: () => controller.loadPlanVersions(plan.id),
                     onPublish: (version) => _confirmPublish(plan, version),
@@ -239,6 +242,7 @@ class _PlanCard extends StatelessWidget {
     required this.versions,
     required this.isLoadingVersions,
     required this.canPublish,
+    required this.canAssignPolicies,
     required this.canEditDraft,
     required this.onLoadVersions,
     required this.onPublish,
@@ -253,6 +257,7 @@ class _PlanCard extends StatelessWidget {
   final List<BillingPlanVersionEntity> versions;
   final bool isLoadingVersions;
   final bool canPublish;
+  final bool canAssignPolicies;
   final bool canEditDraft;
   final VoidCallback onLoadVersions;
   final ValueChanged<BillingPlanVersionEntity> onPublish;
@@ -369,7 +374,7 @@ class _PlanCard extends StatelessWidget {
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ),
-                              if (version.typedStatus == BillingPlanVersionStatus.draft && canEditDraft)
+                              if (version.typedStatus == BillingPlanVersionStatus.draft && canAssignPolicies)
                                 CustomButton.text(
                                   text: 'السياسات',
                                   size: AppButtonSize.small,
@@ -383,14 +388,15 @@ class _PlanCard extends StatelessWidget {
                           feature.name + ': ' + (feature.value ?? '—'),
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
-                      if (version.typedStatus == BillingPlanVersionStatus.draft && canEditDraft) ...[
-                        const SizedBox(height: 8),
+                      if (version.typedStatus == BillingPlanVersionStatus.draft && canAssignPolicies)
                         CustomButton.text(
                           text: 'ربط سياسات الاشتراك',
                           size: AppButtonSize.small,
                           icon: Icons.rule_folder_outlined,
                           onPressed: () => onAssignVersionPolicies(version),
                         ),
+                      if (version.typedStatus == BillingPlanVersionStatus.draft && canEditDraft) ...[
+                        const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
