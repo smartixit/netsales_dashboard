@@ -131,6 +131,7 @@ class PlatformBillingController extends GetxController {
       final response = await _getSubscriptions(
         currencyId: selectedCurrencyId.value,
         status: status ?? subscriptionStatusFilter.value,
+        search: searchQuery.value.trim(),
         cursor: reset ? null : _subscriptionsCursor,
         perPage: 25,
       );
@@ -274,7 +275,7 @@ class PlatformBillingController extends GetxController {
 
   Future<void> applySearch(String value) async {
     searchQuery.value = value;
-    await Future.wait([loadInvoices(reset: true), loadPayments(reset: true)]);
+    await Future.wait([loadSubscriptions(reset: true), loadInvoices(reset: true), loadPayments(reset: true)]);
   }
 
   Future<void> refresh() => loadInitial();
