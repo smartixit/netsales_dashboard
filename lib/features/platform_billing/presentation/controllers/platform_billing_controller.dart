@@ -131,7 +131,6 @@ class PlatformBillingController extends GetxController {
       final response = await _getSubscriptions(
         currencyId: selectedCurrencyId.value,
         status: status ?? subscriptionStatusFilter.value,
-        search: null,
         cursor: reset ? null : _subscriptionsCursor,
         perPage: 25,
       );
