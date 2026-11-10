@@ -114,7 +114,7 @@ class PlatformBillingController extends GetxController {
   Map<String, dynamic>? _pendingPricePayload;
   Map<String, dynamic>? _pendingFeaturePayload;
 
-  bool get hasPendingPlanWorkflow => _pendingPlanId != null || _pendingDraftVersionId != null;
+  bool get hasPendingPlanWorkflow => lastCreatedPlanId.value != null || lastCreatedDraftVersionId.value != null;
 
   final selectedCurrencyId = RxnInt();
   final subscriptionStatusFilter = RxnString();
