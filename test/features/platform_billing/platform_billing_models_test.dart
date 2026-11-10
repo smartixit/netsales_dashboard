@@ -40,7 +40,9 @@ void main() {
                 'is_active': true,
               },
               'unit_amount_minor': 125000,
+              'unit_amount': '1250.00',
               'setup_fee_minor': 0,
+              'setup_fee': '0.00',
               'billing_interval': 'MONTH',
               'interval_count': 1,
               'is_active': true,
@@ -51,7 +53,7 @@ void main() {
               'plan_feature_id': 3,
               'feature_key': 'max_users',
               'name': 'Maximum users',
-              'feature_type': 'LIMIT',
+              'feature_type': 'RESOURCE_LIMIT',
               'value': '25',
             },
           ],
@@ -61,7 +63,56 @@ void main() {
       expect(plan.currentVersion?.typedStatus, BillingPlanVersionStatus.published);
       expect(plan.currentVersion?.prices.single.currency?.code, 'YER');
       expect(plan.currentVersion?.prices.single.unitAmountMinor, 125000);
+      expect(plan.currentVersion?.prices.single.unitAmount, '1250.00');
+      expect(plan.currentVersion?.prices.single.setupFee, '0.00');
       expect(plan.currentVersion?.features.single.key, 'max_users');
+    });
+
+    test('plan version history maps immutable draft and archived versions with complete prices', () {
+      final version = BillingPlanVersionModel.fromJson({
+        'plan_version_id': 44,
+        'plan_id': 7,
+        'version_number': 4,
+        'status': 'DRAFT',
+        'status_label': 'مسودة',
+        'trial_policy_version_id': 9,
+        'dunning_policy_version_id': 10,
+        'prices': [
+          {
+            'price_id': 201,
+            'currency': {
+              'currency_id': 4,
+              'code': 'YER',
+              'name': 'Yemeni Rial',
+              'decimal_places': 2,
+            },
+            'unit_amount_minor': 500000,
+            'unit_amount': '5000.00',
+            'setup_fee_minor': 25000,
+            'setup_fee': '250.00',
+            'billing_interval': 'MONTH',
+            'interval_count': 1,
+            'is_active': true,
+          },
+        ],
+        'features': [
+          {
+            'plan_feature_id': 8,
+            'feature_key': 'max_networks',
+            'name': 'Maximum networks',
+            'feature_type': 'RESOURCE_LIMIT',
+            'value': '-1',
+          },
+        ],
+      });
+
+      expect(version.id, 44);
+      expect(version.typedStatus, BillingPlanVersionStatus.draft);
+      expect(version.trialPolicyVersionId, 9);
+      expect(version.dunningPolicyVersionId, 10);
+      expect(version.prices.single.unitAmount, '5000.00');
+      expect(version.prices.single.setupFee, '250.00');
+      expect(version.features.single.value, '-1');
     });
 
     test('overview keeps financial figures partitioned by currency and uses server formatted values', () {
