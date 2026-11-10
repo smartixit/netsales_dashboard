@@ -51,6 +51,8 @@ class BillingPriceModel extends BillingPriceEntity {
     required super.unitAmountMinor,
     required super.setupFeeMinor,
     required super.isActive,
+    super.trialPolicyVersionId,
+    super.dunningPolicyVersionId,
     super.currency,
     super.unitAmount,
     super.setupFee,
