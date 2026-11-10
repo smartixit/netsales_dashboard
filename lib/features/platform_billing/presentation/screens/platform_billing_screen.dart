@@ -273,7 +273,7 @@ class _PlansContent extends StatelessWidget {
               Text('الإصدار ${plan.currentVersion!.versionNumber} · ${plan.currentVersion!.statusLabel ?? plan.currentVersion!.status}'),
               const SizedBox(height: 8),
               for (final price in plan.currentVersion!.prices)
-                Text('${price.currency?.code ?? ''} · ${price.unitAmountMinor} وحدة صغرى / ${price.billingInterval}'),
+                Text('${price.currency?.code ?? ''} · ${price.unitAmount ?? '—'} / ${price.billingInterval}'),
               if (plan.currentVersion!.trialPolicy case final trial?)
                 Text(trial.isEnabled ? 'تجربة: ${trial.durationValue} ${trial.durationUnit}' : 'التجربة غير مفعلة'),
             ] else const Text('لا يوجد إصدار حالي'),
