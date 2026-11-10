@@ -535,6 +535,7 @@ class PlatformBillingController extends GetxController {
     required String successMessage,
     required Future<void> Function() action,
   }) async {
+    if (isPlanMutationInProgress.value) return false;
     isPlanMutationInProgress.value = true;
     var succeeded = false;
     try {
