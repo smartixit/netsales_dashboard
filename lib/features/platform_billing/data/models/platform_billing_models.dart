@@ -146,6 +146,7 @@ class BillingPlanModel extends BillingPlanEntity {
     required super.isActive,
     super.description,
     super.productName,
+    super.productId,
     super.currentVersion,
   });
 
@@ -160,6 +161,7 @@ class BillingPlanModel extends BillingPlanEntity {
       isPublic: _bool(json['is_public']),
       isActive: _bool(json['is_active']),
       productName: product is Map ? _nullableString(_map(product)['name']) : null,
+      productId: product is Map ? _nullableInt(_map(product)['product_id']) : null,
       currentVersion: version is Map ? BillingPlanVersionModel.fromJson(_map(version)) : null,
     );
   }
