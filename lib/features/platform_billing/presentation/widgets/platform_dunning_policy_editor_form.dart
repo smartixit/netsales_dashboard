@@ -4,9 +4,10 @@ import 'package:netsales_dashboard/widgets/inputs/custom_switch_list_tile.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_text_field.dart';
 
 class PlatformDunningPolicyEditorForm extends StatelessWidget {
-  const PlatformDunningPolicyEditorForm({super.key, required this.controller});
+  const PlatformDunningPolicyEditorForm({super.key, required this.controller, this.showIdentityFields = true});
 
   final PlatformBillingController controller;
+  final bool showIdentityFields;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -20,6 +21,7 @@ class PlatformDunningPolicyEditorForm extends StatelessWidget {
                 ),
           ),
           const SizedBox(height: 16),
+          if (showIdentityFields) ...[
           CustomTextField(
             controller: controller.dunningPolicyKeyController,
             label: 'المعرف البرمجي',
@@ -42,6 +44,7 @@ class PlatformDunningPolicyEditorForm extends StatelessWidget {
             maxLines: 3,
           ),
           const SizedBox(height: 12),
+          ],
           CustomTextField(
             controller: controller.dunningGraceDaysController,
             label: 'مهلة السماح بالأيام',
