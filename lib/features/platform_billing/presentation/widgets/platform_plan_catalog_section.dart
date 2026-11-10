@@ -8,6 +8,7 @@ import 'package:netsales_dashboard/core/services/permission_service.dart';
 import 'package:netsales_dashboard/features/platform_billing/domain/entities/platform_billing_entities.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/controllers/platform_billing_controller.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_plan_editor_form.dart';
+import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_policy_assignment_form.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_draft_price_editor_form.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_draft_feature_editor_form.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_product_editor_form.dart';
@@ -102,6 +103,42 @@ class PlatformPlanCatalogSection extends StatelessWidget {
     );
   }
 
+  Future<bool?> _showVersionPolicyAssignment(BillingPlanVersionEntity version) {
+    controller.selectedTrialPolicyVersionId.value = version.trialPolicyVersionId;
+    controller.selectedDunningPolicyVersionId.value = version.dunningPolicyVersionId;
+    return CustomDialog.show(
+      type: DialogType.custom,
+      title: 'ربط السياسات بإصدار الخطة ' + version.versionNumber.toString(),
+      content: PlatformPolicyAssignmentForm(controller: controller),
+      confirmLabel: 'حفظ الارتباط',
+      cancelLabel: 'إلغاء',
+      maxWidth: 620,
+      onConfirm: () => unawaited(controller.assignPlanPolicies(
+        version.id,
+        trialPolicyVersionId: controller.selectedTrialPolicyVersionId.value,
+        dunningPolicyVersionId: controller.selectedDunningPolicyVersionId.value,
+      )),
+    );
+  }
+
+  Future<bool?> _showPricePolicyAssignment(BillingPriceEntity price) {
+    controller.selectedTrialPolicyVersionId.value = price.trialPolicyVersionId;
+    controller.selectedDunningPolicyVersionId.value = price.dunningPolicyVersionId;
+    return CustomDialog.show(
+      type: DialogType.custom,
+      title: 'ربط السياسات بسعر ' + (price.currency?.code ?? ''),
+      content: PlatformPolicyAssignmentForm(controller: controller),
+      confirmLabel: 'حفظ الارتباط',
+      cancelLabel: 'إلغاء',
+      maxWidth: 620,
+      onConfirm: () => unawaited(controller.assignPricePolicies(
+        price.id,
+        trialPolicyVersionId: controller.selectedTrialPolicyVersionId.value,
+        dunningPolicyVersionId: controller.selectedDunningPolicyVersionId.value,
+      )),
+    );
+  }
+
   Future<bool?> _confirmPublish(BillingPlanEntity plan, BillingPlanVersionEntity version) =>
       CustomDialog.showConfirmation(
         title: 'نشر إصدار الخطة',
@@ -173,6 +210,7 @@ class PlatformPlanCatalogSection extends StatelessWidget {
                 for (final plan in controller.plans)
                   _PlanCard(
                     plan: plan,
+                    controller: controller,
                     versions: controller.planVersions[plan.id] ?? const [],
                     isLoadingVersions: controller.loadingPlanVersions.contains(plan.id),
                     canPublish: _canPublish,
@@ -181,6 +219,8 @@ class PlatformPlanCatalogSection extends StatelessWidget {
                     onPublish: (version) => _confirmPublish(plan, version),
                     onAddPrice: (version) => _showDraftPriceDialog(plan, version),
                     onAddFeature: (version) => _showDraftFeatureDialog(plan, version),
+                    onAssignVersionPolicies: (version) => _showVersionPolicyAssignment(version),
+                    onAssignPricePolicies: (price) => _showPricePolicyAssignment(price),
                   ),
               ],
             );
@@ -192,6 +232,7 @@ class PlatformPlanCatalogSection extends StatelessWidget {
 class _PlanCard extends StatelessWidget {
   const _PlanCard({
     required this.plan,
+    required this.controller,
     required this.versions,
     required this.isLoadingVersions,
     required this.canPublish,
@@ -200,9 +241,12 @@ class _PlanCard extends StatelessWidget {
     required this.onPublish,
     required this.onAddPrice,
     required this.onAddFeature,
+    required this.onAssignVersionPolicies,
+    required this.onAssignPricePolicies,
   });
 
   final BillingPlanEntity plan;
+  final PlatformBillingController controller;
   final List<BillingPlanVersionEntity> versions;
   final bool isLoadingVersions;
   final bool canPublish;
@@ -211,6 +255,8 @@ class _PlanCard extends StatelessWidget {
   final ValueChanged<BillingPlanVersionEntity> onPublish;
   final ValueChanged<BillingPlanVersionEntity> onAddPrice;
   final ValueChanged<BillingPlanVersionEntity> onAddFeature;
+  final ValueChanged<BillingPlanVersionEntity> onAssignVersionPolicies;
+  final ValueChanged<BillingPriceEntity> onAssignPricePolicies;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -310,9 +356,24 @@ class _PlanCard extends StatelessWidget {
                         ],
                       ),
                       for (final price in version.prices)
-                        Text(
-                          (price.currency?.code ?? '') + ' · ' + (price.unitAmount ?? '—') + ' / ' + price.billingInterval,
-                          style: Theme.of(context).textTheme.bodySmall,
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  (price.currency?.code ?? '') + ' · ' + (price.unitAmount ?? '—') + ' / ' + price.billingInterval,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ),
+                              if (version.typedStatus == BillingPlanVersionStatus.draft && canEditDraft)
+                                CustomButton.text(
+                                  text: 'السياسات',
+                                  size: AppButtonSize.small,
+                                  onPressed: () => onAssignPricePolicies(price),
+                                ),
+                            ],
+                          ),
                         ),
                       for (final feature in version.features)
                         Text(
@@ -321,6 +382,12 @@ class _PlanCard extends StatelessWidget {
                         ),
                       if (version.typedStatus == BillingPlanVersionStatus.draft && canEditDraft) ...[
                         const SizedBox(height: 8),
+                        CustomButton.text(
+                          text: 'ربط سياسات الاشتراك',
+                          size: AppButtonSize.small,
+                          icon: Icons.rule_folder_outlined,
+                          onPressed: () => onAssignVersionPolicies(version),
+                        ),
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
