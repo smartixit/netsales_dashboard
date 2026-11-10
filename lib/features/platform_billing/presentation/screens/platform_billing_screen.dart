@@ -6,7 +6,9 @@ import 'package:netsales_dashboard/features/platform_billing/domain/entities/pla
 import 'package:netsales_dashboard/features/platform_billing/presentation/controllers/platform_billing_controller.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_plan_catalog_section.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_billing_policies_section.dart';
+import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_trial_adjustment_form.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
+import 'package:netsales_dashboard/widgets/dialogs/custom_dialog.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
 import 'package:netsales_dashboard/widgets/badges/custom_status_badge.dart';
@@ -262,7 +264,7 @@ class _SubscriptionsContent extends StatelessWidget {
     if (controller.subscriptionsError.value != null && controller.subscriptions.isEmpty) return CustomErrorState.boxed(title: 'تعذر تحميل الاشتراكات', subtitle: controller.subscriptionsError.value!, retryLabel: 'إعادة المحاولة', onRetry: () => controller.loadSubscriptions(reset: true), type: ErrorStateType.server);
     if (controller.subscriptions.isEmpty) return const _EmptyPanel(message: 'لا توجد اشتراكات تطابق المرشحات الحالية.');
     return Column(children: [
-      for (final item in controller.subscriptions) _SubscriptionRow(subscription: item),
+      for (final item in controller.subscriptions) _SubscriptionRow(subscription: item, controller: controller),
       if (controller.canLoadMoreSubscriptions) Align(alignment: AlignmentDirectional.centerEnd, child: CustomButton.outline(text: 'تحميل المزيد', size: AppButtonSize.small, loading: controller.isSubscriptionsLoadingMore.value, onPressed: () => controller.loadSubscriptions())),
     ]);
   });
@@ -318,21 +320,67 @@ class _TreasuryContent extends StatelessWidget {
 }
 
 class _SubscriptionRow extends StatelessWidget {
-  const _SubscriptionRow({required this.subscription});
+  const _SubscriptionRow({required this.subscription, required this.controller});
+
   final BillingSubscriptionEntity subscription;
+  final PlatformBillingController controller;
+
+  Future<bool?> _showTrialAdjustment() {
+    controller.prepareTrialAdjustmentEditor();
+    return CustomDialog.show(
+      type: DialogType.custom,
+      title: 'تعديل فترة التجربة',
+      content: PlatformTrialAdjustmentForm(controller: controller),
+      confirmLabel: 'حفظ التعديل',
+      cancelLabel: 'إلغاء',
+      maxWidth: 560,
+      onConfirm: () {
+        final type = controller.trialAdjustmentType.value;
+        final days = int.tryParse(controller.trialAdjustmentDaysController.text.trim());
+        if (type == null) return;
+        unawaited(controller.adjustSubscriptionTrial(
+          subscriptionId: subscription.id,
+          adjustmentType: type,
+          days: type == 'END_EARLY' ? null : days,
+          reason: controller.trialDecisionReasonController.text,
+        ));
+      },
+    );
+  }
+
   @override
-  Widget build(BuildContext context) => _RowCard(
-    title: subscription.planName ?? 'اشتراك #${subscription.id}',
-    subtitle: '${subscription.networkName ?? 'شبكة غير محددة'} · ${subscription.currency?.code ?? ''}',
-    status: subscription.statusLabel ?? subscription.status,
-    statusTone: switch (subscription.typedStatus) {
-      BillingSubscriptionStatus.active || BillingSubscriptionStatus.trialing => SemanticTone.success,
-      BillingSubscriptionStatus.pastDue || BillingSubscriptionStatus.suspended => SemanticTone.warning,
-      BillingSubscriptionStatus.canceled || BillingSubscriptionStatus.expired => SemanticTone.neutral,
-      _ => SemanticTone.info,
-    },
-    trailing: subscription.currentPeriodEnd == null ? '—' : 'حتى ${subscription.currentPeriodEnd!.toLocal().toString().split(' ').first}',
-  );
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _RowCard(
+            title: subscription.planName ?? 'اشتراك #' + subscription.id.toString(),
+            subtitle: (subscription.networkName ?? 'شبكة غير محددة') + ' · ' + (subscription.currency?.code ?? ''),
+            status: subscription.statusLabel ?? subscription.status,
+            statusTone: switch (subscription.typedStatus) {
+              BillingSubscriptionStatus.active || BillingSubscriptionStatus.trialing => SemanticTone.success,
+              BillingSubscriptionStatus.pastDue || BillingSubscriptionStatus.suspended => SemanticTone.warning,
+              BillingSubscriptionStatus.canceled || BillingSubscriptionStatus.expired => SemanticTone.neutral,
+              _ => SemanticTone.info,
+            },
+            trailing: subscription.currentPeriodEnd == null
+                ? '—'
+                : 'حتى ' + subscription.currentPeriodEnd!.toLocal().toString().split(' ').first,
+          ),
+          if (subscription.typedStatus == BillingSubscriptionStatus.trialing)
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: Padding(
+                padding: const EdgeInsetsDirectional.only(end: 8, bottom: 8),
+                child: CustomButton.text(
+                  text: 'تعديل التجربة',
+                  size: AppButtonSize.small,
+                  icon: Icons.edit_calendar_outlined,
+                  onPressed: () => unawaited(_showTrialAdjustment()),
+                ),
+              ),
+            ),
+        ],
+      );
 }
 
 class _InvoiceRow extends StatelessWidget {
