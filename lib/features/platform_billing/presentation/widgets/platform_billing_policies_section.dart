@@ -187,6 +187,12 @@ class PlatformBillingPoliciesSection extends StatelessWidget {
                     onNewVersion: () => _showTrialPolicyDialog(policy: policy),
                     onPublish: (version) => _confirmPublishTrial(policy, version),
                   ),
+                if (controller.canLoadMoreTrialPolicies)
+                  CustomButton.outline(
+                    text: 'تحميل المزيد من السياسات',
+                    size: AppButtonSize.small,
+                    onPressed: () => controller.loadTrialPolicies(),
+                  ),
               ],
             );
           }),
@@ -218,6 +224,12 @@ class PlatformBillingPoliciesSection extends StatelessWidget {
                     onLoadVersions: () => controller.loadDunningPolicyVersions(policy.id),
                     onNewVersion: () => _showDunningPolicyDialog(policy: policy),
                     onPublish: (version) => _confirmPublishDunning(policy, version),
+                  ),
+                if (controller.canLoadMoreDunningPolicies)
+                  CustomButton.outline(
+                    text: 'تحميل المزيد من السياسات',
+                    size: AppButtonSize.small,
+                    onPressed: () => controller.loadDunningPolicies(),
                   ),
               ],
             );
