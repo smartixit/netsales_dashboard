@@ -28,7 +28,7 @@ class PlatformPlanCatalogSection extends StatelessWidget {
 
   bool get _canPublish => PermissionService.to.can(AppPermissions.billingManage);
 
-  Future<void> _showProductDialog() => CustomDialog.show(
+  Future<bool?> _showProductDialog() => CustomDialog.show(
         type: DialogType.custom,
         title: 'إضافة منتج فوترة',
         content: PlatformProductEditorForm(controller: controller),
@@ -42,7 +42,7 @@ class PlatformPlanCatalogSection extends StatelessWidget {
         )),
       );
 
-  Future<void> _showPlanDialog() => CustomDialog.show(
+  Future<bool?> _showPlanDialog() => CustomDialog.show(
         type: DialogType.custom,
         title: controller.hasPendingPlanWorkflow ? 'استكمال إنشاء الخطة' : 'إنشاء خطة وإصدار مسودة',
         content: PlatformPlanEditorForm(controller: controller),
@@ -52,7 +52,7 @@ class PlatformPlanCatalogSection extends StatelessWidget {
         onConfirm: () => unawaited(controller.createPlanWithInitialPrice()),
       );
 
-  Future<void> _confirmPublish(BillingPlanEntity plan, BillingPlanVersionEntity version) =>
+  Future<bool?> _confirmPublish(BillingPlanEntity plan, BillingPlanVersionEntity version) =>
       CustomDialog.showConfirmation(
         title: 'نشر إصدار الخطة',
         message: 'سيتم اعتماد الإصدار ' +
@@ -67,7 +67,7 @@ class PlatformPlanCatalogSection extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
+          Obx(() => Row(
             children: [
               Expanded(
                 child: Column(
@@ -103,7 +103,7 @@ class PlatformPlanCatalogSection extends StatelessWidget {
                   onPressed: () => unawaited(_showPlanDialog()),
                 ),
             ],
-          ),
+          )),
           const SizedBox(height: 18),
           Obx(() {
             if (controller.isPlansLoading.value && controller.plans.isEmpty) {
