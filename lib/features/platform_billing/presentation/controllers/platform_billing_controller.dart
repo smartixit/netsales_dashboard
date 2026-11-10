@@ -198,7 +198,7 @@ class PlatformBillingController extends GetxController {
   final planSetupFeeController = TextEditingController(text: '0');
   final planFeatureKeyController = TextEditingController();
   final planFeatureNameController = TextEditingController();
-  final planFeatureValueController = TextEditingController(text: '-1');
+  final planFeatureValueController = TextEditingController();
   final planFeatureUnitController = TextEditingController();
   final selectedProductId = ValueNotifier<int?>(null);
   final selectedPlanCurrencyId = ValueNotifier<int?>(null);
@@ -1812,7 +1812,7 @@ class PlatformBillingController extends GetxController {
     planSetupFeeController.text = '0';
     planFeatureKeyController.clear();
     planFeatureNameController.clear();
-    planFeatureValueController.text = '-1';
+    planFeatureValueController.clear();
     planFeatureUnitController.clear();
     selectedPlanBillingInterval.value = 'MONTH';
     selectedPlanFeatureType.value = 'RESOURCE_LIMIT';
