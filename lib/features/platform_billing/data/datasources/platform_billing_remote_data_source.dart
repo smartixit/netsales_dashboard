@@ -5,7 +5,7 @@ abstract interface class PlatformBillingRemoteDataSource {
   Future<ApiResponse<List<Map<String, dynamic>>>> getCurrencies();
   Future<ApiResponse<List<Map<String, dynamic>>>> getPlans({String? search, String? status, String? cursor, int perPage = 20});
   Future<ApiResponse<List<Map<String, dynamic>>>> getAccounts({int? networkId, int? currencyId, String? status, String? cursor, int perPage = 20});
-  Future<ApiResponse<List<Map<String, dynamic>>>> getSubscriptions({int? networkId, int? accountId, int? currencyId, String? status, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getSubscriptions({int? networkId, int? accountId, int? currencyId, String? status, String? search, String? cursor, int perPage = 20});
   Future<ApiResponse<Map<String, dynamic>>> getSubscription(int id);
   Future<ApiResponse<List<Map<String, dynamic>>>> getInvoices({int? networkId, int? accountId, int? currencyId, String? status, String? search, String? cursor, int perPage = 20});
   Future<ApiResponse<List<Map<String, dynamic>>>> getPayments({int? networkId, int? accountId, int? invoiceId, int? currencyId, String? status, String? search, String? cursor, int perPage = 20});
