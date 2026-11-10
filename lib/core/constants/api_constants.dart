@@ -320,6 +320,9 @@ abstract final class ApiConstants {
   static String billingPlanVersionPrices(int versionId) => '/platform/billing/plan-versions/$versionId/prices';
   static String billingPlanVersionFeatures(int versionId) => '/platform/billing/plan-versions/$versionId/features';
   static String billingPublishPlanVersion(int versionId) => '/platform/billing/plan-versions/$versionId/publish';
+  static String billingPlanVersionPrices(int versionId) => '/platform/billing/plan-versions/$versionId/prices';
+  static String billingPlanVersionFeatures(int versionId) => '/platform/billing/plan-versions/$versionId/features';
+  static String billingPublishPlanVersion(int versionId) => '/platform/billing/plan-versions/$versionId/publish';
   static String billingVerifyPayment(int id) => '/platform/billing/payments/$id/verify';
   static String billingRejectPayment(int id) => '/platform/billing/payments/$id/reject';
   static String billingVoidInvoice(int id) => '/platform/billing/invoices/$id/void';
