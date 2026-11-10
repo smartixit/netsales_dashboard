@@ -43,6 +43,8 @@ class BillingPriceModel extends BillingPriceEntity {
     intervalCount: _int(json['interval_count'], fallback: 1),
     unitAmountMinor: _int(json['unit_amount_minor']),
     setupFeeMinor: _int(json['setup_fee_minor']),
+    unitAmount: _nullableString(json['unit_amount']),
+    setupFee: _nullableString(json['setup_fee']),
     isActive: _bool(json['is_active']),
     currency: json['currency'] is Map ? BillingCurrencyModel.fromJson(_map(json['currency'])) : null,
   );
