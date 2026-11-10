@@ -19,6 +19,22 @@ class PlatformBillingController extends GetxController {
     required AddBillingPlanFeatureUseCase addPlanFeature,
     required PublishBillingPlanVersionUseCase publishPlanVersion,
     required GetBillingPlanVersionsUseCase getPlanVersions,
+    required GetBillingTrialPoliciesUseCase getTrialPolicies,
+    required GetBillingTrialPolicyVersionsUseCase getTrialPolicyVersions,
+    required GetBillingDunningPoliciesUseCase getDunningPolicies,
+    required GetBillingDunningPolicyVersionsUseCase getDunningPolicyVersions,
+    required GetBillingPendingTrialRedemptionsUseCase getPendingTrialRedemptions,
+    required CreateBillingTrialPolicyUseCase createTrialPolicy,
+    required CreateBillingDunningPolicyUseCase createDunningPolicy,
+    required CreateBillingTrialPolicyVersionUseCase createTrialPolicyVersion,
+    required CreateBillingDunningPolicyVersionUseCase createDunningPolicyVersion,
+    required PublishBillingTrialPolicyVersionUseCase publishTrialPolicyVersion,
+    required PublishBillingDunningPolicyVersionUseCase publishDunningPolicyVersion,
+    required AssignBillingPlanPoliciesUseCase assignPlanPolicies,
+    required AssignBillingPricePoliciesUseCase assignPricePolicies,
+    required ApproveBillingTrialRedemptionUseCase approveTrialRedemption,
+    required RejectBillingTrialRedemptionUseCase rejectTrialRedemption,
+    required AdjustBillingSubscriptionTrialUseCase adjustSubscriptionTrial,
     required GetBillingSubscriptionsUseCase getSubscriptions,
     required GetBillingInvoicesUseCase getInvoices,
     required GetBillingPaymentsUseCase getPayments,
@@ -34,6 +50,22 @@ class PlatformBillingController extends GetxController {
        _addPlanFeature = addPlanFeature,
        _publishPlanVersion = publishPlanVersion,
        _getPlanVersions = getPlanVersions,
+       _getTrialPolicies = getTrialPolicies,
+       _getTrialPolicyVersions = getTrialPolicyVersions,
+       _getDunningPolicies = getDunningPolicies,
+       _getDunningPolicyVersions = getDunningPolicyVersions,
+       _getPendingTrialRedemptions = getPendingTrialRedemptions,
+       _createTrialPolicy = createTrialPolicy,
+       _createDunningPolicy = createDunningPolicy,
+       _createTrialPolicyVersion = createTrialPolicyVersion,
+       _createDunningPolicyVersion = createDunningPolicyVersion,
+       _publishTrialPolicyVersion = publishTrialPolicyVersion,
+       _publishDunningPolicyVersion = publishDunningPolicyVersion,
+       _assignPlanPolicies = assignPlanPolicies,
+       _assignPricePolicies = assignPricePolicies,
+       _approveTrialRedemption = approveTrialRedemption,
+       _rejectTrialRedemption = rejectTrialRedemption,
+       _adjustSubscriptionTrial = adjustSubscriptionTrial,
        _getSubscriptions = getSubscriptions,
        _getInvoices = getInvoices,
        _getPayments = getPayments,
@@ -50,6 +82,22 @@ class PlatformBillingController extends GetxController {
   final AddBillingPlanFeatureUseCase _addPlanFeature;
   final PublishBillingPlanVersionUseCase _publishPlanVersion;
   final GetBillingPlanVersionsUseCase _getPlanVersions;
+  final GetBillingTrialPoliciesUseCase _getTrialPolicies;
+  final GetBillingTrialPolicyVersionsUseCase _getTrialPolicyVersions;
+  final GetBillingDunningPoliciesUseCase _getDunningPolicies;
+  final GetBillingDunningPolicyVersionsUseCase _getDunningPolicyVersions;
+  final GetBillingPendingTrialRedemptionsUseCase _getPendingTrialRedemptions;
+  final CreateBillingTrialPolicyUseCase _createTrialPolicy;
+  final CreateBillingDunningPolicyUseCase _createDunningPolicy;
+  final CreateBillingTrialPolicyVersionUseCase _createTrialPolicyVersion;
+  final CreateBillingDunningPolicyVersionUseCase _createDunningPolicyVersion;
+  final PublishBillingTrialPolicyVersionUseCase _publishTrialPolicyVersion;
+  final PublishBillingDunningPolicyVersionUseCase _publishDunningPolicyVersion;
+  final AssignBillingPlanPoliciesUseCase _assignPlanPolicies;
+  final AssignBillingPricePoliciesUseCase _assignPricePolicies;
+  final ApproveBillingTrialRedemptionUseCase _approveTrialRedemption;
+  final RejectBillingTrialRedemptionUseCase _rejectTrialRedemption;
+  final AdjustBillingSubscriptionTrialUseCase _adjustSubscriptionTrial;
   final GetBillingSubscriptionsUseCase _getSubscriptions;
   final GetBillingInvoicesUseCase _getInvoices;
   final GetBillingPaymentsUseCase _getPayments;
