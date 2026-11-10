@@ -432,3 +432,13 @@
 - Search refresh now resets the cursor and reloads subscriptions, invoices, and payments; server-side search is authoritative and existing request-generation guards prevent stale results from replacing newer results.
 - The Laravel contract was extended in the paired API branch to search subscriptions by account/network/plan identifiers and names.
 - Verification: no Flutter SDK command execution, analyzer, tests, desktop build, or visual QA was available in this GitHub-only session. Exact-head validation remains mandatory.
+
+
+## Platform billing plan version history integration — 2026-11-11
+
+- Added the Dashboard data/domain contract for cursor-paginated plan version history and connected it to Laravel's `GET /platform/billing/plans/{planId}/versions` endpoint through RemoteDataSource, Repository, UseCase, and GetX Binding.
+- Added an expandable version-history view to plan catalogue cards, showing exact server-sourced status, currency-specific decimal prices, and plan feature values. The client does not calculate or convert amounts.
+- Corrected model constructors so price decimal strings and per-currency financial summary decimal strings are accepted and mapped consistently. Added the trial policy version ID to the plan-version entity/model.
+- Expanded model tests for version history, unlimited resource limit values, and server-formatted price amounts.
+- Relevant commits: `e1bb4b59`, `8324ffca`, `64dc5532`, `42163e83`, `b3734805`, `318d32c0`, `2cc17d75`, `b246f0d2`, `546783e0`, `8152a712`, `b2aef067`, `18ffd387`, `99f2298c`.
+- Commands executed: GitHub source reads and file/commit operations only. Flutter format/analyzer/tests/Windows build and rendered visual QA were not executed.
