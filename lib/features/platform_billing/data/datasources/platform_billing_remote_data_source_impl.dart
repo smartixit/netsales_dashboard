@@ -45,6 +45,59 @@ class PlatformBillingRemoteDataSourceImpl implements PlatformBillingRemoteDataSo
       }, cursor: cursor, perPage: perPage);
 
   @override
+  Future<ApiResponse<List<Map<String, dynamic>>>> getProducts({String? search, String? cursor, int perPage = 20}) =>
+      _list(ApiConstants.billingProducts, filters: {
+        if (search?.trim().isNotEmpty == true) 'search': search!.trim(),
+        'is_active': true,
+      }, cursor: cursor, perPage: perPage);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> createProduct(Map<String, dynamic> data) =>
+      _api.post<Map<String, dynamic>>(ApiConstants.billingProducts, data: data, fromJson: _map);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> createPlan(Map<String, dynamic> data) =>
+      _api.post<Map<String, dynamic>>(ApiConstants.billingPlans, data: data, fromJson: _map);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> createDraftVersion(
+    int planId, {
+    int? trialPolicyVersionId,
+    int? dunningPolicyVersionId,
+  }) => _api.post<Map<String, dynamic>>(
+    ApiConstants.billingPlanVersions(planId),
+    data: {
+      if (trialPolicyVersionId != null) 'trial_policy_version_id': trialPolicyVersionId,
+      if (dunningPolicyVersionId != null) 'dunning_policy_version_id': dunningPolicyVersionId,
+    },
+    fromJson: _map,
+  );
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> addPlanPrice(int versionId, Map<String, dynamic> data) =>
+      _api.post<Map<String, dynamic>>(
+        ApiConstants.billingPlanVersionPrices(versionId),
+        data: data,
+        fromJson: _map,
+      );
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> addPlanFeature(int versionId, Map<String, dynamic> data) =>
+      _api.post<Map<String, dynamic>>(
+        ApiConstants.billingPlanVersionFeatures(versionId),
+        data: data,
+        fromJson: _map,
+      );
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> publishPlanVersion(int versionId) =>
+      _api.post<Map<String, dynamic>>(
+        ApiConstants.billingPublishPlanVersion(versionId),
+        data: const {},
+        fromJson: _map,
+      );
+
+  @override
   Future<ApiResponse<List<Map<String, dynamic>>>> getPlanVersions(int planId, {String? status, String? cursor, int perPage = 20}) =>
       _list(ApiConstants.billingPlanVersions(planId), filters: {if (status?.isNotEmpty == true) 'status': status}, cursor: cursor, perPage: perPage);
 
