@@ -6,9 +6,10 @@ import 'package:netsales_dashboard/widgets/inputs/custom_switch_list_tile.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_text_field.dart';
 
 class PlatformTrialPolicyEditorForm extends StatelessWidget {
-  const PlatformTrialPolicyEditorForm({super.key, required this.controller});
+  const PlatformTrialPolicyEditorForm({super.key, required this.controller, this.showIdentityFields = true});
 
   final PlatformBillingController controller;
+  final bool showIdentityFields;
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +62,7 @@ class PlatformTrialPolicyEditorForm extends StatelessWidget {
               ),
         ),
         const SizedBox(height: 16),
+        if (showIdentityFields) ...[
         CustomTextField(
           controller: controller.trialPolicyKeyController,
           label: 'المعرف البرمجي',
@@ -83,6 +85,7 @@ class PlatformTrialPolicyEditorForm extends StatelessWidget {
           maxLines: 3,
         ),
         const SizedBox(height: 12),
+        ],
         ValueListenableBuilder<bool>(
           valueListenable: controller.trialIsEnabled,
           builder: (context, value, _) => CustomSwitchListTile(
