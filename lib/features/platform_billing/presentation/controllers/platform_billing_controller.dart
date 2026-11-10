@@ -511,23 +511,6 @@ class PlatformBillingController extends GetxController {
       return false;
     }
 
-    _pendingPlanPayload ??= {
-      'product_id': selectedProductId.value,
-      'plan_key': planKey,
-      'name': planName,
-      if (planDescriptionController.text.trim().isNotEmpty) 'description': planDescriptionController.text.trim(),
-      'is_public': true,
-      'is_active': true,
-    };
-    _pendingPricePayload ??= {
-      'currency_id': selectedPlanCurrencyId.value,
-      'billing_interval': interval,
-      'interval_count': 1,
-      'unit_amount': amount,
-      'setup_fee': setupFee,
-      'tax_behavior': 'EXCLUSIVE',
-    };
-
     final featureKey = planFeatureKeyController.text.trim();
     final featureName = planFeatureNameController.text.trim();
     final featureValue = planFeatureValueController.text.trim();
@@ -550,6 +533,23 @@ class PlatformBillingController extends GetxController {
         'overage_behavior': 'BLOCK',
       };
     }
+
+    _pendingPlanPayload ??= {
+      'product_id': selectedProductId.value,
+      'plan_key': planKey,
+      'name': planName,
+      if (planDescriptionController.text.trim().isNotEmpty) 'description': planDescriptionController.text.trim(),
+      'is_public': true,
+      'is_active': true,
+    };
+    _pendingPricePayload ??= {
+      'currency_id': selectedPlanCurrencyId.value,
+      'billing_interval': interval,
+      'interval_count': 1,
+      'unit_amount': amount,
+      'setup_fee': setupFee,
+      'tax_behavior': 'EXCLUSIVE',
+    };
 
     final result = await _runBillingMutation(
       loadingMessage: 'حفظ الخطة وإصدارها الأول...',
