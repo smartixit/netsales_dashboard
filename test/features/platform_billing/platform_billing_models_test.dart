@@ -145,6 +145,7 @@ void main() {
       expect(product.id, 12);
       expect(product.key, 'netsales-platform');
       expect(product.isActive, isTrue);
+      expect(price.id, 91);
       expect(price.trialPolicyVersionId, 7);
       expect(price.dunningPolicyVersionId, 8);
       expect(price.currencyId, 4);
