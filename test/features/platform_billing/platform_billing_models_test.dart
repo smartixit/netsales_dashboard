@@ -115,6 +115,133 @@ void main() {
       expect(version.features.single.value, '-1');
     });
 
+    test('product and price models preserve product keys and policy version links', () {
+      final product = BillingProductModel.fromJson({
+        'product_id': 12,
+        'product_key': 'netsales-platform',
+        'name': 'NetSales Platform',
+        'description': 'Subscription product',
+        'is_active': true,
+      });
+      final price = BillingPriceModel.fromJson({
+        'price_id': 91,
+        'currency': {
+          'currency_id': 4,
+          'code': 'YER',
+          'name': 'Yemeni Rial',
+          'decimal_places': 2,
+        },
+        'unit_amount_minor': 125000,
+        'unit_amount': '1250.00',
+        'setup_fee_minor': 0,
+        'setup_fee': '0.00',
+        'billing_interval': 'MONTH',
+        'interval_count': 1,
+        'trial_policy_version_id': 7,
+        'dunning_policy_version_id': 8,
+        'is_active': true,
+      });
+
+      expect(product.id, 12);
+      expect(product.key, 'netsales-platform');
+      expect(product.isActive, isTrue);
+      expect(price.trialPolicyVersionId, 7);
+      expect(price.dunningPolicyVersionId, 8);
+      expect(price.currencyId, 4);
+    });
+
+    test('trial and dunning policy models map immutable current versions', () {
+      final trial = BillingTrialPolicyModel.fromJson({
+        'trial_policy_id': 3,
+        'policy_key': 'new-network-trial',
+        'name': 'New network trial',
+        'is_active': true,
+        'current_version': {
+          'trial_policy_version_id': 31,
+          'version_number': 2,
+          'status': 'PUBLISHED',
+          'is_enabled': true,
+          'duration_value': 14,
+          'duration_unit': 'DAY',
+          'start_trigger': 'PURCHASE',
+          'redemption_scope': 'BILLING_ACCOUNT',
+          'eligibility_mode': 'NEW_BILLING_ACCOUNT',
+          'requires_manual_approval': true,
+          'end_behavior': 'CREATE_INVOICE',
+          'entitlement_mode': 'FULL_PLAN',
+          'entitlement_config': {'max_pos_count': 1},
+          'published_at': '2026-11-01 10:00:00',
+        },
+      });
+      final dunning = BillingDunningPolicyModel.fromJson({
+        'dunning_policy_id': 5,
+        'policy_key': 'standard-collection',
+        'name': 'Standard collection',
+        'is_active': true,
+        'current_version': {
+          'dunning_policy_version_id': 51,
+          'version_number': 3,
+          'status': 'PUBLISHED',
+          'grace_period_days': 7,
+          'auto_suspend_after_grace': true,
+          'reminder_schedule_days': [0, 1, 3, 7],
+          'pre_renewal_alert_days': [7, 3],
+        },
+      });
+
+      expect(trial.currentVersion?.id, 31);
+      expect(trial.currentVersion?.policyId, 3);
+      expect(trial.currentVersion?.requiresManualApproval, isTrue);
+      expect(trial.currentVersion?.entitlementConfig?['max_pos_count'], 1);
+      expect(trial.currentVersion?.isPublished, isTrue);
+      expect(dunning.currentVersion?.id, 51);
+      expect(dunning.currentVersion?.policyId, 5);
+      expect(dunning.currentVersion?.reminderScheduleDays, [0, 1, 3, 7]);
+      expect(dunning.currentVersion?.autoSuspendAfterGrace, isTrue);
+    });
+
+    test('trial redemption joins policy and billing account context from nested resources', () {
+      final redemption = BillingTrialRedemptionModel.fromJson({
+        'trial_redemption_id': 19,
+        'billing_subscription_id': 27,
+        'trial_policy_id': 3,
+        'trial_policy_version_id': 31,
+        'network_id': 77,
+        'billing_account_id': 88,
+        'redemption_scope': 'BILLING_ACCOUNT',
+        'redemption_subject_key': 'account:88',
+        'status': 'PENDING_APPROVAL',
+        'reserved_at': '2026-11-10 12:00:00',
+        'policy': {
+          'policy_key': 'new-network-trial',
+          'name': 'New network trial',
+        },
+        'policy_version': {
+          'version_number': 2,
+        },
+        'subscription': {
+          'trial_end': null,
+          'billing_account': {
+            'billing_account_id': 88,
+            'account_number': 'BA-000088',
+            'network_id': 77,
+            'network': {
+              'network_name': 'North Network',
+            },
+          },
+        },
+        'metadata': {'source': 'signup'},
+      });
+
+      expect(redemption.id, 19);
+      expect(redemption.subscriptionId, 27);
+      expect(redemption.policyName, 'New network trial');
+      expect(redemption.versionNumber, 2);
+      expect(redemption.networkName, 'North Network');
+      expect(redemption.accountNumber, 'BA-000088');
+      expect(redemption.metadata?['source'], 'signup');
+    });
+
     test('overview keeps financial figures partitioned by currency and uses server formatted values', () {
       final overview = BillingOverviewModel.fromJson({
         'period': {'from': '2026-11-01', 'to': '2026-11-30', 'as_of': '2026-11-11 10:00:00', 'timezone': 'Asia/Aden'},
