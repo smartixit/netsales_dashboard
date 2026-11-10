@@ -5,6 +5,7 @@ abstract interface class PlatformBillingRepository {
   Future<ApiResponse<BillingOverviewEntity>> getOverview({int? currencyId});
   Future<ApiResponse<List<BillingCurrencyEntity>>> getCurrencies();
   Future<ApiResponse<List<BillingPlanEntity>>> getPlans({String? search, String? status, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<BillingPlanVersionEntity>>> getPlanVersions(int planId, {String? status, String? cursor, int perPage = 20});
   Future<ApiResponse<List<BillingAccountEntity>>> getAccounts({int? networkId, int? currencyId, String? status, String? cursor, int perPage = 20});
   Future<ApiResponse<List<BillingSubscriptionEntity>>> getSubscriptions({int? networkId, int? accountId, int? currencyId, String? status, String? search, String? cursor, int perPage = 20});
   Future<ApiResponse<BillingSubscriptionEntity>> getSubscription(int id);
