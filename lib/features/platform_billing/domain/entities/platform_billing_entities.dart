@@ -186,6 +186,7 @@ class BillingPlanEntity {
     required this.isActive,
     this.description,
     this.productName,
+    this.productId,
     this.currentVersion,
   });
 
@@ -196,6 +197,7 @@ class BillingPlanEntity {
   final bool isPublic;
   final bool isActive;
   final String? productName;
+  final int? productId;
   final BillingPlanVersionEntity? currentVersion;
 }
 
