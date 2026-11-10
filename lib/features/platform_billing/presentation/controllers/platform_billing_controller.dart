@@ -671,7 +671,7 @@ class PlatformBillingController extends GetxController {
     if (amountPlaces > currency.decimalPlaces || feePlaces > currency.decimalPlaces) {
       CustomSnackbar.show(
         title: 'دقة العملة غير مطابقة',
-        message: 'العملة \${currency.code} تسمح بـ \${currency.decimalPlaces} منازل عشرية فقط.',
+        message: 'العملة ${currency.code} تسمح بـ ${currency.decimalPlaces} منازل عشرية فقط.',
         type: SnackType.warning,
       );
       return false;
