@@ -8,6 +8,8 @@ import 'package:netsales_dashboard/core/services/permission_service.dart';
 import 'package:netsales_dashboard/features/platform_billing/domain/entities/platform_billing_entities.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/controllers/platform_billing_controller.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_plan_editor_form.dart';
+import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_draft_price_editor_form.dart';
+import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_draft_feature_editor_form.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_product_editor_form.dart';
 import 'package:netsales_dashboard/widgets/badges/custom_status_badge.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
@@ -27,6 +29,8 @@ class PlatformPlanCatalogSection extends StatelessWidget {
   bool get _canCreateProduct => PermissionService.to.can(AppPermissions.billingCreate);
 
   bool get _canPublish => PermissionService.to.can(AppPermissions.billingManage);
+
+  bool get _canEditDraft => PermissionService.to.can(AppPermissions.billingEdit);
 
   Future<bool?> _showProductDialog() => CustomDialog.show(
         type: DialogType.custom,
@@ -51,6 +55,52 @@ class PlatformPlanCatalogSection extends StatelessWidget {
         maxWidth: 760,
         onConfirm: () => unawaited(controller.createPlanWithInitialPrice()),
       );
+
+  Future<bool?> _showDraftPriceDialog(BillingPlanEntity plan, BillingPlanVersionEntity version) {
+    controller.prepareDraftPriceEditor();
+    return CustomDialog.show(
+      type: DialogType.custom,
+      title: 'إضافة سعر إلى الإصدار ' + version.versionNumber.toString(),
+      content: PlatformDraftPriceEditorForm(controller: controller),
+      confirmLabel: 'إضافة السعر',
+      cancelLabel: 'إلغاء',
+      maxWidth: 620,
+      onConfirm: () {
+        final currencyId = controller.selectedPlanCurrencyId.value;
+        final interval = controller.selectedPlanBillingInterval.value;
+        if (currencyId == null || interval == null) return;
+        unawaited(controller.addPriceToDraft(
+          planId: plan.id,
+          versionId: version.id,
+          currencyId: currencyId,
+          billingInterval: interval,
+          unitAmount: controller.planUnitAmountController.text,
+          setupFee: controller.planSetupFeeController.text,
+        ));
+      },
+    );
+  }
+
+  Future<bool?> _showDraftFeatureDialog(BillingPlanEntity plan, BillingPlanVersionEntity version) {
+    controller.prepareDraftFeatureEditor();
+    return CustomDialog.show(
+      type: DialogType.custom,
+      title: 'إضافة ميزة إلى الإصدار ' + version.versionNumber.toString(),
+      content: PlatformDraftFeatureEditorForm(controller: controller),
+      confirmLabel: 'إضافة الميزة',
+      cancelLabel: 'إلغاء',
+      maxWidth: 620,
+      onConfirm: () => unawaited(controller.addFeatureToDraft(
+        planId: plan.id,
+        versionId: version.id,
+        featureKey: controller.planFeatureKeyController.text,
+        name: controller.planFeatureNameController.text,
+        featureType: controller.selectedPlanFeatureType.value ?? 'RESOURCE_LIMIT',
+        value: controller.planFeatureValueController.text,
+        unit: controller.planFeatureUnitController.text,
+      )),
+    );
+  }
 
   Future<bool?> _confirmPublish(BillingPlanEntity plan, BillingPlanVersionEntity version) =>
       CustomDialog.showConfirmation(
@@ -126,8 +176,11 @@ class PlatformPlanCatalogSection extends StatelessWidget {
                     versions: controller.planVersions[plan.id] ?? const [],
                     isLoadingVersions: controller.loadingPlanVersions.contains(plan.id),
                     canPublish: _canPublish,
+                    canEditDraft: _canEditDraft,
                     onLoadVersions: () => controller.loadPlanVersions(plan.id),
                     onPublish: (version) => _confirmPublish(plan, version),
+                    onAddPrice: (version) => _showDraftPriceDialog(plan, version),
+                    onAddFeature: (version) => _showDraftFeatureDialog(plan, version),
                   ),
               ],
             );
@@ -142,16 +195,22 @@ class _PlanCard extends StatelessWidget {
     required this.versions,
     required this.isLoadingVersions,
     required this.canPublish,
+    required this.canEditDraft,
     required this.onLoadVersions,
     required this.onPublish,
+    required this.onAddPrice,
+    required this.onAddFeature,
   });
 
   final BillingPlanEntity plan;
   final List<BillingPlanVersionEntity> versions;
   final bool isLoadingVersions;
   final bool canPublish;
+  final bool canEditDraft;
   final VoidCallback onLoadVersions;
   final ValueChanged<BillingPlanVersionEntity> onPublish;
+  final ValueChanged<BillingPlanVersionEntity> onAddPrice;
+  final ValueChanged<BillingPlanVersionEntity> onAddFeature;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -260,6 +319,27 @@ class _PlanCard extends StatelessWidget {
                           feature.name + ': ' + (feature.value ?? '—'),
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
+                      if (version.typedStatus == BillingPlanVersionStatus.draft && canEditDraft) ...[
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            CustomButton.outline(
+                              text: 'إضافة سعر',
+                              size: AppButtonSize.small,
+                              prefix: const Icon(Icons.add_card_outlined, size: 16),
+                              onPressed: () => onAddPrice(version),
+                            ),
+                            CustomButton.outline(
+                              text: 'إضافة ميزة',
+                              size: AppButtonSize.small,
+                              prefix: const Icon(Icons.extension_outlined, size: 16),
+                              onPressed: () => onAddFeature(version),
+                            ),
+                          ],
+                        ),
+                      ],
                       if (canPublish && version.typedStatus == BillingPlanVersionStatus.draft)
                         Align(
                           alignment: AlignmentDirectional.centerEnd,
