@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/models/api_response.dart';
@@ -132,6 +134,8 @@ class PlatformBillingController extends GetxController {
   final dunningGraceDaysController = TextEditingController(text: '7');
   final dunningReminderDaysController = TextEditingController(text: '0,1,3,7');
   final dunningPreRenewalDaysController = TextEditingController(text: '3');
+  final trialDecisionReasonController = TextEditingController();
+  final trialAdjustmentDaysController = TextEditingController(text: '7');
   final trialDurationUnit = ValueNotifier<String?>('DAY');
   final trialStartTrigger = ValueNotifier<String?>('PURCHASE');
   final trialRedemptionScope = ValueNotifier<String?>('BILLING_ACCOUNT');
@@ -1292,6 +1296,173 @@ class PlatformBillingController extends GetxController {
     return succeeded;
   }
 
+  void prepareTrialPolicyEditor({BillingTrialPolicyEntity? policy}) {
+    trialPolicyKeyController.text = policy?.key ?? '';
+    trialPolicyNameController.text = policy?.name ?? '';
+    trialPolicyDescriptionController.text = policy?.description ?? '';
+    final version = policy?.currentVersion;
+    trialDurationController.text = version?.durationValue.toString() ?? '14';
+    trialDurationUnit.value = version?.durationUnit ?? 'DAY';
+    trialStartTrigger.value = version?.startTrigger ?? 'PURCHASE';
+    trialRedemptionScope.value = version?.redemptionScope ?? 'BILLING_ACCOUNT';
+    trialEligibilityMode.value = version?.eligibilityMode ?? 'NEW_BILLING_ACCOUNT';
+    trialRequiresApproval.value = version?.requiresManualApproval ?? false;
+    trialIsEnabled.value = version?.isEnabled ?? true;
+    trialEndBehavior.value = version?.endBehavior ?? 'CREATE_INVOICE';
+    trialEntitlementMode.value = version?.entitlementMode ?? 'FULL_PLAN';
+    trialEntitlementConfigController.text = version?.entitlementConfig == null
+        ? ''
+        : jsonEncode(version!.entitlementConfig);
+  }
+
+  void prepareDunningPolicyEditor({BillingDunningPolicyEntity? policy}) {
+    dunningPolicyKeyController.text = policy?.key ?? '';
+    dunningPolicyNameController.text = policy?.name ?? '';
+    dunningPolicyDescriptionController.text = policy?.description ?? '';
+    final version = policy?.currentVersion;
+    dunningGraceDaysController.text = version?.gracePeriodDays.toString() ?? '7';
+    dunningAutoSuspend.value = version?.autoSuspendAfterGrace ?? true;
+    dunningReminderDaysController.text = (version?.reminderScheduleDays ?? const [0, 1, 3, 7]).join(',');
+    dunningPreRenewalDaysController.text = (version?.preRenewalAlertDays ?? const [3]).join(',');
+  }
+
+  Map<String, dynamic>? _parsePolicyJson(String value, String fieldName) {
+    if (value.trim().isEmpty) return null;
+    try {
+      final decoded = jsonDecode(value);
+      if (decoded is! Map) {
+        throw const FormatException('يجب أن تكون القيمة كائناً JSON.');
+      }
+      return Map<String, dynamic>.from(decoded);
+    } on FormatException catch (error) {
+      throw FormatException('$fieldName: ${error.message}');
+    }
+  }
+
+  List<int> _parseScheduleDays(String value, String fieldName) {
+    final parts = value.split(',');
+    final parsed = <int>[];
+    for (final part in parts) {
+      final normalized = part.trim();
+      final day = int.tryParse(normalized);
+      if (normalized.isEmpty || day == null || day < 0 || day > 90) {
+        throw FormatException('$fieldName يجب أن يحتوي أرقاماً صحيحة من 0 إلى 90 مفصولة بفواصل.');
+      }
+      parsed.add(day);
+    }
+    if (parsed.length > 10 || parsed.toSet().length != parsed.length) {
+      throw FormatException('$fieldName يجب ألا يتجاوز 10 قيماً وألا يحتوي أرقاماً مكررة.');
+    }
+    parsed.sort();
+    return parsed;
+  }
+
+  Future<bool> saveTrialPolicy({int? policyId}) async {
+    try {
+      final duration = int.tryParse(trialDurationController.text.trim());
+      if (duration == null || duration < 0 || duration > 3650) {
+        throw const FormatException('مدة التجربة يجب أن تكون بين 0 و3650.');
+      }
+      if (trialDurationUnit.value == null ||
+          trialStartTrigger.value == null ||
+          trialRedemptionScope.value == null ||
+          trialEligibilityMode.value == null ||
+          trialEndBehavior.value == null ||
+          trialEntitlementMode.value == null) {
+        throw const FormatException('أكمل جميع خيارات سياسة التجربة.');
+      }
+      final data = <String, dynamic>{
+        'is_enabled': trialIsEnabled.value,
+        'duration_value': duration,
+        'duration_unit': trialDurationUnit.value,
+        'start_trigger': trialStartTrigger.value,
+        'redemption_scope': trialRedemptionScope.value,
+        'eligibility_mode': trialEligibilityMode.value,
+        'requires_manual_approval': trialRequiresApproval.value,
+        'end_behavior': trialEndBehavior.value,
+        'entitlement_mode': trialEntitlementMode.value,
+        'entitlement_config': _parsePolicyJson(
+          trialEntitlementConfigController.text,
+          'إعدادات الصلاحيات',
+        ),
+      };
+      if (policyId == null) {
+        final key = trialPolicyKeyController.text.trim();
+        final name = trialPolicyNameController.text.trim();
+        if (key.isEmpty || name.isEmpty) {
+          throw const FormatException('أدخل معرف السياسة واسمها.');
+        }
+        data.addAll({
+          'policy_key': key,
+          'name': name,
+          if (trialPolicyDescriptionController.text.trim().isNotEmpty)
+            'description': trialPolicyDescriptionController.text.trim(),
+        });
+        return createTrialPolicy(data);
+      }
+      return createTrialPolicyVersion(policyId, data);
+    } on FormatException catch (error) {
+      CustomSnackbar.show(
+        title: 'راجع بيانات سياسة التجربة',
+        message: error.message,
+        type: SnackType.warning,
+      );
+      return false;
+    }
+  }
+
+  Future<bool> saveDunningPolicy({int? policyId}) async {
+    try {
+      final graceDays = int.tryParse(dunningGraceDaysController.text.trim());
+      if (graceDays == null || graceDays < 0 || graceDays > 90) {
+        throw const FormatException('مهلة السماح يجب أن تكون بين 0 و90 يوماً.');
+      }
+      final reminderDays = _parseScheduleDays(
+        dunningReminderDaysController.text,
+        'أيام التذكير',
+      );
+      final preRenewalDays = _parseScheduleDays(
+        dunningPreRenewalDaysController.text,
+        'أيام تنبيه التجديد',
+      );
+      final data = <String, dynamic>{
+        'grace_period_days': graceDays,
+        'auto_suspend_after_grace': dunningAutoSuspend.value,
+        'reminder_schedule_days': reminderDays,
+        'pre_renewal_alert_days': preRenewalDays,
+      };
+      if (policyId == null) {
+        final key = dunningPolicyKeyController.text.trim();
+        final name = dunningPolicyNameController.text.trim();
+        if (key.isEmpty || name.isEmpty) {
+          throw const FormatException('أدخل معرف السياسة واسمها.');
+        }
+        data.addAll({
+          'policy_key': key,
+          'name': name,
+          if (dunningPolicyDescriptionController.text.trim().isNotEmpty)
+            'description': dunningPolicyDescriptionController.text.trim(),
+        });
+        return createDunningPolicy(data);
+      }
+      return createDunningPolicyVersion(policyId, data);
+    } on FormatException catch (error) {
+      CustomSnackbar.show(
+        title: 'راجع بيانات سياسة التحصيل',
+        message: error.message,
+        type: SnackType.warning,
+      );
+      return false;
+    }
+  }
+
+  void resetPolicyForms() {
+    trialDecisionReasonController.clear();
+    trialAdjustmentDaysController.text = '7';
+    prepareTrialPolicyEditor();
+    prepareDunningPolicyEditor();
+  }
+
   Future<bool> createTrialPolicy(Map<String, dynamic> data) async =>
       _runPolicyMutation(
         loadingMessage: 'إنشاء سياسة التجربة كمسودة...',
@@ -1678,6 +1849,8 @@ class PlatformBillingController extends GetxController {
     dunningGraceDaysController.dispose();
     dunningReminderDaysController.dispose();
     dunningPreRenewalDaysController.dispose();
+    trialDecisionReasonController.dispose();
+    trialAdjustmentDaysController.dispose();
     trialDurationUnit.dispose();
     trialStartTrigger.dispose();
     trialRedemptionScope.dispose();
