@@ -45,6 +45,10 @@ class PlatformBillingRemoteDataSourceImpl implements PlatformBillingRemoteDataSo
       }, cursor: cursor, perPage: perPage);
 
   @override
+  Future<ApiResponse<List<Map<String, dynamic>>>> getPlanVersions(int planId, {String? status, String? cursor, int perPage = 20}) =>
+      _list(ApiConstants.billingPlanVersions(planId), filters: {if (status?.isNotEmpty == true) 'status': status}, cursor: cursor, perPage: perPage);
+
+  @override
   Future<ApiResponse<List<Map<String, dynamic>>>> getAccounts({int? networkId, int? currencyId, String? status, String? cursor, int perPage = 20}) =>
       _list(ApiConstants.billingAccounts, filters: {
         'network_id': ?networkId, 'currency_id': ?currencyId,
