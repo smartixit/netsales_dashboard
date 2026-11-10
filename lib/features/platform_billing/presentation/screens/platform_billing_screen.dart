@@ -5,13 +5,14 @@ import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/features/platform_billing/domain/entities/platform_billing_entities.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/controllers/platform_billing_controller.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_plan_catalog_section.dart';
+import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_billing_policies_section.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
 import 'package:netsales_dashboard/widgets/badges/custom_status_badge.dart';
 import 'package:netsales_dashboard/core/presentation/enums/semantic_tone.dart';
 
-enum _BillingSection { overview, plans, subscriptions, invoices, payments, treasury }
+enum _BillingSection { overview, plans, policies, subscriptions, invoices, payments, treasury }
 
 class PlatformBillingScreen extends GetView<PlatformBillingController> {
   const PlatformBillingScreen({super.key});
@@ -36,6 +37,7 @@ class PlatformBillingScreen extends GetView<PlatformBillingController> {
           switch (selected) {
             _BillingSection.overview => _OverviewContent(controller: controller),
             _BillingSection.plans => PlatformPlanCatalogSection(controller: controller),
+            _BillingSection.policies => PlatformBillingPoliciesSection(controller: controller),
             _BillingSection.subscriptions => _SubscriptionsContent(controller: controller),
             _BillingSection.invoices => _InvoicesContent(controller: controller),
             _BillingSection.payments => _PaymentsContent(controller: controller),
@@ -80,6 +82,7 @@ class _BillingNavigation extends StatelessWidget {
     const labels = {
       _BillingSection.overview: 'نظرة عامة',
       _BillingSection.plans: 'الخطط والأسعار',
+      _BillingSection.policies: 'سياسات الاشتراك',
       _BillingSection.subscriptions: 'الاشتراكات',
       _BillingSection.invoices: 'الفواتير',
       _BillingSection.payments: 'المدفوعات',
