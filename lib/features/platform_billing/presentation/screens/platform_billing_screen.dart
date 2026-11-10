@@ -4,6 +4,7 @@ import 'package:netsales_dashboard/core/constants/app_spacing.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/features/platform_billing/domain/entities/platform_billing_entities.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/controllers/platform_billing_controller.dart';
+import 'package:netsales_dashboard/features/platform_billing/presentation/widgets/platform_plan_catalog_section.dart';
 import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_error_state.dart';
 import 'package:netsales_dashboard/widgets/feedback/custom_skeleton_grid.dart';
@@ -34,7 +35,7 @@ class PlatformBillingScreen extends GetView<PlatformBillingController> {
           AppSpacing.vLg,
           switch (selected) {
             _BillingSection.overview => _OverviewContent(controller: controller),
-            _BillingSection.plans => _PlansContent(controller: controller),
+            _BillingSection.plans => PlatformPlanCatalogSection(controller: controller),
             _BillingSection.subscriptions => _SubscriptionsContent(controller: controller),
             _BillingSection.invoices => _InvoicesContent(controller: controller),
             _BillingSection.payments => _PaymentsContent(controller: controller),
@@ -247,80 +248,6 @@ class _FinancialValue extends StatelessWidget {
       Text('$count عملية', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: context.colors.onSurfaceVariant)),
     ]),
   );
-}
-
-class _PlansContent extends StatelessWidget {
-  const _PlansContent({required this.controller});
-  final PlatformBillingController controller;
-  @override
-  Widget build(BuildContext context) => Obx(() {
-    if (controller.isPlansLoading.value && controller.plans.isEmpty) return const CustomSkeletonGrid(count: 4, crossAxisCount: 2, itemHeight: 150);
-    if (controller.plans.isEmpty) return const _EmptyPanel(message: 'لا توجد خطط منشورة أو معرفة حتى الآن.');
-    return Wrap(spacing: 12, runSpacing: 12, children: [
-      for (final plan in controller.plans)
-        Container(
-          width: 320,
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(color: context.colors.surfaceContainerLow, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.colors.outlineVariant.withValues(alpha: .5))),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(plan.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-            const SizedBox(height: 4),
-            Text(plan.key, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: context.colors.onSurfaceVariant)),
-            const SizedBox(height: 12),
-            CustomStatusBadge(label: plan.isActive ? 'نشطة' : 'متوقفة', tone: plan.isActive ? SemanticTone.success : SemanticTone.neutral),
-            const SizedBox(height: 12),
-            if (plan.currentVersion != null) ...[
-              Text('الإصدار ${plan.currentVersion!.versionNumber} · ${plan.currentVersion!.statusLabel ?? plan.currentVersion!.status}'),
-              const SizedBox(height: 8),
-              for (final price in plan.currentVersion!.prices)
-                Text('${price.currency?.code ?? ''} · ${price.unitAmount ?? '—'} / ${price.billingInterval}'),
-              if (plan.currentVersion!.trialPolicy case final trial?)
-                Text(trial.isEnabled ? 'تجربة: ${trial.durationValue} ${trial.durationUnit}' : 'التجربة غير مفعلة'),
-            ] else const Text('لا يوجد إصدار حالي'),
-            const SizedBox(height: 12),
-            CustomButton.outline(
-              text: controller.loadingPlanVersions.contains(plan.id)
-                  ? 'تحميل سجل الإصدارات...'
-                  : 'سجل الإصدارات',
-              size: AppButtonSize.small,
-              onPressed: () => controller.loadPlanVersions(plan.id),
-            ),
-            if (controller.planVersions.containsKey(plan.id)) ...[
-              const Divider(height: 24),
-              Text('الإصدارات السابقة والحالية', style: Theme.of(context).textTheme.titleSmall),
-              const SizedBox(height: 8),
-              for (final version in controller.planVersions[plan.id]!)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(child: Text('الإصدار ${version.versionNumber}')),
-                          CustomStatusBadge(
-                            label: version.statusLabel ?? version.status,
-                            tone: version.typedStatus == BillingPlanVersionStatus.published
-                                ? SemanticTone.success
-                                : version.typedStatus == BillingPlanVersionStatus.draft
-                                    ? SemanticTone.warning
-                                    : SemanticTone.neutral,
-                            isCompact: true,
-                          ),
-                        ],
-                      ),
-                      for (final price in version.prices)
-                        Text('${price.currency?.code ?? ''} · ${price.unitAmount ?? '—'} / ${price.billingInterval}'),
-                      for (final feature in version.features)
-                        Text('${feature.name}: ${feature.value ?? '—'}'),
-                    ],
-                  ),
-                ),
-            ],
-          ]),
-        ),
-    ]);
-  });
 }
 
 class _SubscriptionsContent extends StatelessWidget {
