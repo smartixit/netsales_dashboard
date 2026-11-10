@@ -781,6 +781,9 @@ int _int(Object? value, {int fallback = 0}) =>
 
 int? _nullableInt(Object? value) => value == null ? null : _int(value);
 
+List<int> _intList(Object? value) =>
+    value is List ? value.map((item) => _int(item)).toList(growable: false) : const [];
+
 bool _bool(Object? value) => value == true || value == 1 || value == '1';
 
 String _string(Object? value, {String fallback = ''}) => value?.toString() ?? fallback;
