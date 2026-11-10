@@ -22,6 +22,7 @@ class PlatformBillingBinding extends Bindings {
     Get.lazyPut(() => GetBillingOverviewUseCase(repository()));
     Get.lazyPut(() => GetBillingCurrenciesUseCase(repository()));
     Get.lazyPut(() => GetBillingPlansUseCase(repository()));
+    Get.lazyPut(() => GetBillingPlanVersionsUseCase(repository()));
     Get.lazyPut(() => GetBillingAccountsUseCase(repository()));
     Get.lazyPut(() => GetBillingSubscriptionsUseCase(repository()));
     Get.lazyPut(() => GetBillingSubscriptionUseCase(repository()));
@@ -42,6 +43,7 @@ class PlatformBillingBinding extends Bindings {
         getOverview: Get.find<GetBillingOverviewUseCase>(),
         getCurrencies: Get.find<GetBillingCurrenciesUseCase>(),
         getPlans: Get.find<GetBillingPlansUseCase>(),
+        getPlanVersions: Get.find<GetBillingPlanVersionsUseCase>(),
         getSubscriptions: Get.find<GetBillingSubscriptionsUseCase>(),
         getInvoices: Get.find<GetBillingInvoicesUseCase>(),
         getPayments: Get.find<GetBillingPaymentsUseCase>(),
