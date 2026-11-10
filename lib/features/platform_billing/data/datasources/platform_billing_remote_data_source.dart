@@ -4,6 +4,13 @@ abstract interface class PlatformBillingRemoteDataSource {
   Future<ApiResponse<Map<String, dynamic>>> getOverview({int? currencyId});
   Future<ApiResponse<List<Map<String, dynamic>>>> getCurrencies();
   Future<ApiResponse<List<Map<String, dynamic>>>> getPlans({String? search, String? status, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getProducts({String? search, String? cursor, int perPage = 20});
+  Future<ApiResponse<Map<String, dynamic>>> createProduct(Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> createPlan(Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> createDraftVersion(int planId, {int? trialPolicyVersionId, int? dunningPolicyVersionId});
+  Future<ApiResponse<Map<String, dynamic>>> addPlanPrice(int versionId, Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> addPlanFeature(int versionId, Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> publishPlanVersion(int versionId);
   Future<ApiResponse<List<Map<String, dynamic>>>> getPlanVersions(int planId, {String? status, String? cursor, int perPage = 20});
   Future<ApiResponse<List<Map<String, dynamic>>>> getAccounts({int? networkId, int? currencyId, String? status, String? cursor, int perPage = 20});
   Future<ApiResponse<List<Map<String, dynamic>>>> getSubscriptions({int? networkId, int? accountId, int? currencyId, String? status, String? search, String? cursor, int perPage = 20});
