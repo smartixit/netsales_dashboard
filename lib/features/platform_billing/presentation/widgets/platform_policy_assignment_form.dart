@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/controllers/platform_billing_controller.dart';
 import 'package:netsales_dashboard/widgets/inputs/custom_dropdown.dart';
+import 'package:netsales_dashboard/widgets/buttons/custom_button.dart';
 
 class PlatformPolicyAssignmentForm extends StatelessWidget {
   const PlatformPolicyAssignmentForm({
@@ -57,6 +58,14 @@ class PlatformPolicyAssignmentForm extends StatelessWidget {
           isRequired: false,
           searchEnabled: true,
         ),
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: CustomButton.text(
+            text: 'إزالة ارتباط سياسة التجربة',
+            size: AppButtonSize.small,
+            onPressed: () => controller.selectedTrialPolicyVersionId.value = null,
+          ),
+        ),
         const SizedBox(height: 12),
         CustomDropdown<int>(
           items: dunningItems,
@@ -67,6 +76,14 @@ class PlatformPolicyAssignmentForm extends StatelessWidget {
           hint: dunningItems.isEmpty ? 'لا توجد سياسة تحصيل منشورة' : 'بدون سياسة تحصيل',
           isRequired: false,
           searchEnabled: true,
+        ),
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: CustomButton.text(
+            text: 'إزالة ارتباط سياسة التحصيل',
+            size: AppButtonSize.small,
+            onPressed: () => controller.selectedDunningPolicyVersionId.value = null,
+          ),
         ),
       ],
     );
