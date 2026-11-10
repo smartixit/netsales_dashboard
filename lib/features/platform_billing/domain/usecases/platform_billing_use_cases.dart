@@ -21,6 +21,59 @@ class GetBillingPlansUseCase {
       _repository.getPlans(search: search, status: status, cursor: cursor, perPage: perPage);
 }
 
+class GetBillingProductsUseCase {
+  const GetBillingProductsUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<List<BillingProductEntity>>> call({String? search, String? cursor, int perPage = 20}) =>
+      _repository.getProducts(search: search, cursor: cursor, perPage: perPage);
+}
+
+class CreateBillingProductUseCase {
+  const CreateBillingProductUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<BillingProductEntity>> call(Map<String, dynamic> data) => _repository.createProduct(data);
+}
+
+class CreateBillingPlanUseCase {
+  const CreateBillingPlanUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<BillingPlanEntity>> call(Map<String, dynamic> data) => _repository.createPlan(data);
+}
+
+class CreateBillingDraftVersionUseCase {
+  const CreateBillingDraftVersionUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<BillingPlanVersionEntity>> call(
+    int planId, {
+    int? trialPolicyVersionId,
+    int? dunningPolicyVersionId,
+  }) => _repository.createDraftVersion(
+    planId,
+    trialPolicyVersionId: trialPolicyVersionId,
+    dunningPolicyVersionId: dunningPolicyVersionId,
+  );
+}
+
+class AddBillingPlanPriceUseCase {
+  const AddBillingPlanPriceUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<BillingPriceEntity>> call(int versionId, Map<String, dynamic> data) =>
+      _repository.addPlanPrice(versionId, data);
+}
+
+class AddBillingPlanFeatureUseCase {
+  const AddBillingPlanFeatureUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<BillingFeatureEntity>> call(int versionId, Map<String, dynamic> data) =>
+      _repository.addPlanFeature(versionId, data);
+}
+
+class PublishBillingPlanVersionUseCase {
+  const PublishBillingPlanVersionUseCase(this._repository);
+  final PlatformBillingRepository _repository;
+  Future<ApiResponse<BillingPlanEntity>> call(int versionId) => _repository.publishPlanVersion(versionId);
+}
+
 class GetBillingPlanVersionsUseCase {
   const GetBillingPlanVersionsUseCase(this._repository);
   final PlatformBillingRepository _repository;
