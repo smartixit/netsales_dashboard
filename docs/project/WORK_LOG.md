@@ -442,3 +442,6 @@
 - Expanded model tests for version history, unlimited resource limit values, and server-formatted price amounts.
 - Relevant commits: `e1bb4b59`, `8324ffca`, `64dc5532`, `42163e83`, `b3734805`, `318d32c0`, `2cc17d75`, `b246f0d2`, `546783e0`, `8152a712`, `b2aef067`, `18ffd387`, `99f2298c`.
 - Commands executed: GitHub source reads and file/commit operations only. Flutter format/analyzer/tests/Windows build and rendered visual QA were not executed.
+
+
+- Follow-up constructor inspection corrected model/entity wiring for server-formatted price amounts, financial summary decimal strings, and trial policy version IDs. Added a model test for version history and authoritative decimal strings. These tests have been authored but not executed.
