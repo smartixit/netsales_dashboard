@@ -54,8 +54,8 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
       _mapList(await _remote.getAccounts(networkId: networkId, currencyId: currencyId, status: status, cursor: cursor, perPage: perPage), BillingAccountModel.fromJson);
 
   @override
-  Future<ApiResponse<List<BillingSubscriptionEntity>>> getSubscriptions({int? networkId, int? accountId, int? currencyId, String? status, String? cursor, int perPage = 20}) async =>
-      _mapList(await _remote.getSubscriptions(networkId: networkId, accountId: accountId, currencyId: currencyId, status: status, cursor: cursor, perPage: perPage), BillingSubscriptionModel.fromJson);
+  Future<ApiResponse<List<BillingSubscriptionEntity>>> getSubscriptions({int? networkId, int? accountId, int? currencyId, String? status, String? search, String? cursor, int perPage = 20}) async =>
+      _mapList(await _remote.getSubscriptions(networkId: networkId, accountId: accountId, currencyId: currencyId, status: status, search: search, cursor: cursor, perPage: perPage), BillingSubscriptionModel.fromJson);
 
   @override
   Future<ApiResponse<BillingSubscriptionEntity>> getSubscription(int id) async =>
