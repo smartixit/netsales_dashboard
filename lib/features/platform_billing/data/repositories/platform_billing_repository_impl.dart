@@ -93,6 +93,93 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
           (value) => value == null ? null : BillingPlanModel.fromJson(_unwrap(value)));
 
   @override
+  Future<ApiResponse<List<BillingTrialPolicyEntity>>> getTrialPolicies({String? search, String? cursor, int perPage = 20}) async =>
+      _mapList(await _remote.getTrialPolicies(search: search, cursor: cursor, perPage: perPage), BillingTrialPolicyModel.fromJson);
+
+  @override
+  Future<ApiResponse<List<BillingTrialPolicyVersionEntity>>> getTrialPolicyVersions(int policyId, {String? cursor, int perPage = 20}) async =>
+      _mapList(await _remote.getTrialPolicyVersions(policyId, cursor: cursor, perPage: perPage), BillingTrialPolicyVersionModel.fromJson);
+
+  @override
+  Future<ApiResponse<List<BillingDunningPolicyEntity>>> getDunningPolicies({String? search, String? cursor, int perPage = 20}) async =>
+      _mapList(await _remote.getDunningPolicies(search: search, cursor: cursor, perPage: perPage), BillingDunningPolicyModel.fromJson);
+
+  @override
+  Future<ApiResponse<List<BillingDunningPolicyVersionEntity>>> getDunningPolicyVersions(int policyId, {String? cursor, int perPage = 20}) async =>
+      _mapList(await _remote.getDunningPolicyVersions(policyId, cursor: cursor, perPage: perPage), BillingDunningPolicyVersionModel.fromJson);
+
+  @override
+  Future<ApiResponse<List<BillingTrialRedemptionEntity>>> getPendingTrialRedemptions({String? cursor, int perPage = 20}) async =>
+      _mapList(await _remote.getPendingTrialRedemptions(cursor: cursor, perPage: perPage), BillingTrialRedemptionModel.fromJson);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> createTrialPolicy(Map<String, dynamic> data) =>
+      _remote.createTrialPolicy(data);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> createDunningPolicy(Map<String, dynamic> data) =>
+      _remote.createDunningPolicy(data);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> createTrialPolicyVersion(int policyId, Map<String, dynamic> data) =>
+      _remote.createTrialPolicyVersion(policyId, data);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> createDunningPolicyVersion(int policyId, Map<String, dynamic> data) =>
+      _remote.createDunningPolicyVersion(policyId, data);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> publishTrialPolicyVersion(int versionId) =>
+      _remote.publishTrialPolicyVersion(versionId);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> publishDunningPolicyVersion(int versionId) =>
+      _remote.publishDunningPolicyVersion(versionId);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> assignPlanVersionPolicies(
+    int versionId, {
+    int? trialPolicyVersionId,
+    int? dunningPolicyVersionId,
+  }) => _remote.assignPlanVersionPolicies(
+    versionId,
+    trialPolicyVersionId: trialPolicyVersionId,
+    dunningPolicyVersionId: dunningPolicyVersionId,
+  );
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> assignPricePolicies(
+    int priceId, {
+    int? trialPolicyVersionId,
+    int? dunningPolicyVersionId,
+  }) => _remote.assignPricePolicies(
+    priceId,
+    trialPolicyVersionId: trialPolicyVersionId,
+    dunningPolicyVersionId: dunningPolicyVersionId,
+  );
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> approveTrialRedemption(int redemptionId) =>
+      _remote.approveTrialRedemption(redemptionId);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> rejectTrialRedemption(int redemptionId, {required String reason}) =>
+      _remote.rejectTrialRedemption(redemptionId, reason: reason);
+
+  @override
+  Future<ApiResponse<Map<String, dynamic>>> adjustSubscriptionTrial(
+    int subscriptionId, {
+    required String adjustmentType,
+    int? days,
+    required String reason,
+  }) => _remote.adjustSubscriptionTrial(
+    subscriptionId,
+    adjustmentType: adjustmentType,
+    days: days,
+    reason: reason,
+  );
+
+  @override
   Future<ApiResponse<List<BillingPlanVersionEntity>>> getPlanVersions(int planId, {String? status, String? cursor, int perPage = 20}) async =>
       _mapList(await _remote.getPlanVersions(planId, status: status, cursor: cursor, perPage: perPage), BillingPlanVersionModel.fromJson);
 
