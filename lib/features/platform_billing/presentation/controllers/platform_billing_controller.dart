@@ -107,6 +107,48 @@ class PlatformBillingController extends GetxController {
   final currencies = <BillingCurrencyEntity>[].obs;
   final plans = <BillingPlanEntity>[].obs;
   final products = <BillingProductEntity>[].obs;
+  final trialPolicies = <BillingTrialPolicyEntity>[].obs;
+  final dunningPolicies = <BillingDunningPolicyEntity>[].obs;
+  final trialPolicyVersions = <int, List<BillingTrialPolicyVersionEntity>>{}.obs;
+  final dunningPolicyVersions = <int, List<BillingDunningPolicyVersionEntity>>{}.obs;
+  final pendingTrialRedemptions = <BillingTrialRedemptionEntity>[].obs;
+  final isTrialPoliciesLoading = false.obs;
+  final isDunningPoliciesLoading = false.obs;
+  final isPendingRedemptionsLoading = false.obs;
+  final isPolicyMutationInProgress = false.obs;
+  final isTrialPolicyVersionsLoading = <int>{}.obs;
+  final isDunningPolicyVersionsLoading = <int>{}.obs;
+
+  final trialPolicyKeyController = TextEditingController();
+  final trialPolicyNameController = TextEditingController();
+  final trialPolicyDescriptionController = TextEditingController();
+  final trialDurationController = TextEditingController(text: '14');
+  final trialEntitlementConfigController = TextEditingController();
+  final dunningPolicyKeyController = TextEditingController();
+  final dunningPolicyNameController = TextEditingController();
+  final dunningPolicyDescriptionController = TextEditingController();
+  final dunningGraceDaysController = TextEditingController(text: '7');
+  final dunningReminderDaysController = TextEditingController(text: '0,1,3,7');
+  final dunningPreRenewalDaysController = TextEditingController(text: '3');
+  final trialDurationUnit = ValueNotifier<String?>('DAY');
+  final trialStartTrigger = ValueNotifier<String?>('PURCHASE');
+  final trialRedemptionScope = ValueNotifier<String?>('BILLING_ACCOUNT');
+  final trialEligibilityMode = ValueNotifier<String?>('NEW_BILLING_ACCOUNT');
+  final trialRequiresApproval = ValueNotifier<bool>(false);
+  final trialIsEnabled = ValueNotifier<bool>(true);
+  final trialEndBehavior = ValueNotifier<String?>('CREATE_INVOICE');
+  final trialEntitlementMode = ValueNotifier<String?>('FULL_PLAN');
+  final dunningAutoSuspend = ValueNotifier<bool>(true);
+  final selectedTrialPolicyVersionId = ValueNotifier<int?>(null);
+  final selectedDunningPolicyVersionId = ValueNotifier<int?>(null);
+
+  String? _trialPoliciesCursor;
+  String? _dunningPoliciesCursor;
+  String? _pendingRedemptionsCursor;
+  bool get canLoadMoreTrialPolicies => _trialPoliciesCursor != null && !isTrialPoliciesLoading.value;
+  bool get canLoadMoreDunningPolicies => _dunningPoliciesCursor != null && !isDunningPoliciesLoading.value;
+  bool get canLoadMorePendingRedemptions => _pendingRedemptionsCursor != null && !isPendingRedemptionsLoading.value;
+
   final planVersions = <int, List<BillingPlanVersionEntity>>{}.obs;
   final loadingPlanVersions = <int>{}.obs;
   final subscriptions = <BillingSubscriptionEntity>[].obs;
@@ -193,6 +235,9 @@ class PlatformBillingController extends GetxController {
       loadCurrencies(),
       loadPlans(),
       loadProducts(),
+      loadTrialPolicies(reset: true),
+      loadDunningPolicies(reset: true),
+      loadPendingTrialRedemptions(reset: true),
       loadSubscriptions(reset: true),
       loadInvoices(reset: true),
       loadPayments(reset: true),
@@ -884,6 +929,28 @@ class PlatformBillingController extends GetxController {
     selectedPlanCurrencyId.dispose();
     selectedPlanBillingInterval.dispose();
     selectedPlanFeatureType.dispose();
+    trialPolicyKeyController.dispose();
+    trialPolicyNameController.dispose();
+    trialPolicyDescriptionController.dispose();
+    trialDurationController.dispose();
+    trialEntitlementConfigController.dispose();
+    dunningPolicyKeyController.dispose();
+    dunningPolicyNameController.dispose();
+    dunningPolicyDescriptionController.dispose();
+    dunningGraceDaysController.dispose();
+    dunningReminderDaysController.dispose();
+    dunningPreRenewalDaysController.dispose();
+    trialDurationUnit.dispose();
+    trialStartTrigger.dispose();
+    trialRedemptionScope.dispose();
+    trialEligibilityMode.dispose();
+    trialRequiresApproval.dispose();
+    trialIsEnabled.dispose();
+    trialEndBehavior.dispose();
+    trialEntitlementMode.dispose();
+    dunningAutoSuspend.dispose();
+    selectedTrialPolicyVersionId.dispose();
+    selectedDunningPolicyVersionId.dispose();
     super.onClose();
   }
 }
