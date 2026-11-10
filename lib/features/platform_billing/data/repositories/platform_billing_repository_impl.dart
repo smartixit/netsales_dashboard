@@ -50,6 +50,49 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
       _mapList(await _remote.getPlans(search: search, status: status, cursor: cursor, perPage: perPage), BillingPlanModel.fromJson);
 
   @override
+  Future<ApiResponse<List<BillingProductEntity>>> getProducts({String? search, String? cursor, int perPage = 20}) async =>
+      _mapList(await _remote.getProducts(search: search, cursor: cursor, perPage: perPage), BillingProductModel.fromJson);
+
+  @override
+  Future<ApiResponse<BillingProductEntity>> createProduct(Map<String, dynamic> data) async =>
+      _mapResponse(await _remote.createProduct(data),
+          (value) => value == null ? null : BillingProductModel.fromJson(value));
+
+  @override
+  Future<ApiResponse<BillingPlanEntity>> createPlan(Map<String, dynamic> data) async =>
+      _mapResponse(await _remote.createPlan(data),
+          (value) => value == null ? null : BillingPlanModel.fromJson(_unwrap(value)));
+
+  @override
+  Future<ApiResponse<BillingPlanVersionEntity>> createDraftVersion(
+    int planId, {
+    int? trialPolicyVersionId,
+    int? dunningPolicyVersionId,
+  }) async => _mapResponse(
+    await _remote.createDraftVersion(
+      planId,
+      trialPolicyVersionId: trialPolicyVersionId,
+      dunningPolicyVersionId: dunningPolicyVersionId,
+    ),
+    (value) => value == null ? null : BillingPlanVersionModel.fromJson(value),
+  );
+
+  @override
+  Future<ApiResponse<BillingPriceEntity>> addPlanPrice(int versionId, Map<String, dynamic> data) async =>
+      _mapResponse(await _remote.addPlanPrice(versionId, data),
+          (value) => value == null ? null : BillingPriceModel.fromJson(value));
+
+  @override
+  Future<ApiResponse<BillingFeatureEntity>> addPlanFeature(int versionId, Map<String, dynamic> data) async =>
+      _mapResponse(await _remote.addPlanFeature(versionId, data),
+          (value) => value == null ? null : BillingFeatureModel.fromJson(value));
+
+  @override
+  Future<ApiResponse<BillingPlanEntity>> publishPlanVersion(int versionId) async =>
+      _mapResponse(await _remote.publishPlanVersion(versionId),
+          (value) => value == null ? null : BillingPlanModel.fromJson(_unwrap(value)));
+
+  @override
   Future<ApiResponse<List<BillingPlanVersionEntity>>> getPlanVersions(int planId, {String? status, String? cursor, int perPage = 20}) async =>
       _mapList(await _remote.getPlanVersions(planId, status: status, cursor: cursor, perPage: perPage), BillingPlanVersionModel.fromJson);
 
