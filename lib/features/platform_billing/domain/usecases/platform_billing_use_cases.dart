@@ -31,8 +31,8 @@ class GetBillingAccountsUseCase {
 class GetBillingSubscriptionsUseCase {
   const GetBillingSubscriptionsUseCase(this._repository);
   final PlatformBillingRepository _repository;
-  Future<ApiResponse<List<BillingSubscriptionEntity>>> call({int? networkId, int? accountId, int? currencyId, String? status, String? cursor, int perPage = 20}) =>
-      _repository.getSubscriptions(networkId: networkId, accountId: accountId, currencyId: currencyId, status: status, cursor: cursor, perPage: perPage);
+  Future<ApiResponse<List<BillingSubscriptionEntity>>> call({int? networkId, int? accountId, int? currencyId, String? status, String? search, String? cursor, int perPage = 20}) =>
+      _repository.getSubscriptions(networkId: networkId, accountId: accountId, currencyId: currencyId, status: status, search: search, cursor: cursor, perPage: perPage);
 }
 
 class GetBillingSubscriptionUseCase {
