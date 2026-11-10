@@ -201,6 +201,156 @@ class BillingPlanEntity {
   final BillingPlanVersionEntity? currentVersion;
 }
 
+class BillingTrialPolicyVersionEntity {
+  const BillingTrialPolicyVersionEntity({
+    required this.id,
+    required this.policyId,
+    required this.versionNumber,
+    required this.status,
+    required this.isEnabled,
+    required this.durationValue,
+    required this.durationUnit,
+    required this.startTrigger,
+    required this.redemptionScope,
+    required this.eligibilityMode,
+    required this.requiresManualApproval,
+    required this.endBehavior,
+    required this.entitlementMode,
+    this.policyKey,
+    this.entitlementConfig,
+    this.publishedAt,
+  });
+
+  final int id;
+  final int policyId;
+  final int versionNumber;
+  final String status;
+  final bool isEnabled;
+  final int durationValue;
+  final String durationUnit;
+  final String startTrigger;
+  final String redemptionScope;
+  final String eligibilityMode;
+  final bool requiresManualApproval;
+  final String endBehavior;
+  final String entitlementMode;
+  final String? policyKey;
+  final Map<String, dynamic>? entitlementConfig;
+  final DateTime? publishedAt;
+
+  bool get isDraft => status == 'DRAFT';
+  bool get isPublished => status == 'PUBLISHED';
+}
+
+class BillingDunningPolicyVersionEntity {
+  const BillingDunningPolicyVersionEntity({
+    required this.id,
+    required this.policyId,
+    required this.versionNumber,
+    required this.status,
+    required this.gracePeriodDays,
+    required this.autoSuspendAfterGrace,
+    required this.reminderScheduleDays,
+    required this.preRenewalAlertDays,
+    this.policyKey,
+    this.publishedAt,
+  });
+
+  final int id;
+  final int policyId;
+  final int versionNumber;
+  final String status;
+  final int gracePeriodDays;
+  final bool autoSuspendAfterGrace;
+  final List<int> reminderScheduleDays;
+  final List<int> preRenewalAlertDays;
+  final String? policyKey;
+  final DateTime? publishedAt;
+
+  bool get isDraft => status == 'DRAFT';
+  bool get isPublished => status == 'PUBLISHED';
+}
+
+class BillingTrialPolicyEntity {
+  const BillingTrialPolicyEntity({
+    required this.id,
+    required this.key,
+    required this.name,
+    required this.isActive,
+    this.description,
+    this.currentVersion,
+  });
+
+  final int id;
+  final String key;
+  final String name;
+  final bool isActive;
+  final String? description;
+  final BillingTrialPolicyVersionEntity? currentVersion;
+}
+
+class BillingDunningPolicyEntity {
+  const BillingDunningPolicyEntity({
+    required this.id,
+    required this.key,
+    required this.name,
+    required this.isActive,
+    this.description,
+    this.currentVersion,
+  });
+
+  final int id;
+  final String key;
+  final String name;
+  final bool isActive;
+  final String? description;
+  final BillingDunningPolicyVersionEntity? currentVersion;
+}
+
+class BillingTrialRedemptionEntity {
+  const BillingTrialRedemptionEntity({
+    required this.id,
+    required this.subscriptionId,
+    required this.policyId,
+    required this.policyVersionId,
+    required this.status,
+    required this.redemptionScope,
+    required this.redemptionSubjectKey,
+    this.policyKey,
+    this.policyName,
+    this.versionNumber,
+    this.networkId,
+    this.networkName,
+    this.billingAccountId,
+    this.accountNumber,
+    this.reservedAt,
+    this.startedAt,
+    this.completedAt,
+    this.trialEnd,
+    this.metadata,
+  });
+
+  final int id;
+  final int subscriptionId;
+  final int policyId;
+  final int policyVersionId;
+  final String status;
+  final String redemptionScope;
+  final String redemptionSubjectKey;
+  final String? policyKey;
+  final String? policyName;
+  final int? versionNumber;
+  final int? networkId;
+  final String? networkName;
+  final int? billingAccountId;
+  final String? accountNumber;
+  final DateTime? reservedAt;
+  final DateTime? startedAt;
+  final DateTime? completedAt;
+  final DateTime? trialEnd;
+  final Map<String, dynamic>? metadata;
+}
+
 class BillingAccountEntity {
   const BillingAccountEntity({
     required this.id,
