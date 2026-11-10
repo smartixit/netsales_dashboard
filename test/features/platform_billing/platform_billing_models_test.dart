@@ -1,0 +1,102 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:netsales_dashboard/features/platform_billing/data/models/platform_billing_models.dart';
+import 'package:netsales_dashboard/features/platform_billing/domain/entities/platform_billing_entities.dart';
+
+void main() {
+  group('Platform billing wire contracts', () {
+    test('subscription statuses preserve exact Laravel wire values', () {
+      expect(BillingSubscriptionStatus.fromWire('ACTIVE'), BillingSubscriptionStatus.active);
+      expect(BillingSubscriptionStatus.fromWire('TRIALING'), BillingSubscriptionStatus.trialing);
+      expect(BillingSubscriptionStatus.fromWire('PAST_DUE'), BillingSubscriptionStatus.pastDue);
+      expect(BillingSubscriptionStatus.fromWire('future_value'), BillingSubscriptionStatus.unknown);
+    });
+
+    test('invoice and payment statuses have forward-compatible unknown cases', () {
+      expect(BillingInvoiceStatus.fromWire('PARTIALLY_PAID'), BillingInvoiceStatus.partiallyPaid);
+      expect(BillingInvoiceStatus.fromWire('VOID'), BillingInvoiceStatus.voided);
+      expect(BillingPaymentStatus.fromWire('PENDING_REVIEW'), BillingPaymentStatus.pendingReview);
+      expect(BillingPaymentStatus.fromWire('NEW_STATUS'), BillingPaymentStatus.unknown);
+    });
+
+    test('plan model maps published version, currency-specific prices and features', () {
+      final plan = BillingPlanModel.fromJson({
+        'plan_id': 7,
+        'plan_key': 'pro',
+        'name': 'Professional',
+        'is_public': true,
+        'is_active': true,
+        'current_version': {
+          'plan_version_id': 12,
+          'version_number': 3,
+          'status': 'PUBLISHED',
+          'prices': [
+            {
+              'price_id': 91,
+              'currency': {
+                'currency_id': 4,
+                'code': 'YER',
+                'name': 'Yemeni Rial',
+                'decimal_places': 2,
+                'is_active': true,
+              },
+              'unit_amount_minor': 125000,
+              'setup_fee_minor': 0,
+              'billing_interval': 'MONTH',
+              'interval_count': 1,
+              'is_active': true,
+            },
+          ],
+          'features': [
+            {
+              'plan_feature_id': 3,
+              'feature_key': 'max_users',
+              'name': 'Maximum users',
+              'feature_type': 'LIMIT',
+              'value': '25',
+            },
+          ],
+        },
+      });
+
+      expect(plan.currentVersion?.typedStatus, BillingPlanVersionStatus.published);
+      expect(plan.currentVersion?.prices.single.currency?.code, 'YER');
+      expect(plan.currentVersion?.prices.single.unitAmountMinor, 125000);
+      expect(plan.currentVersion?.features.single.key, 'max_users');
+    });
+
+    test('overview keeps financial figures partitioned by currency and uses server formatted values', () {
+      final overview = BillingOverviewModel.fromJson({
+        'period': {'from': '2026-11-01', 'to': '2026-11-30', 'as_of': '2026-11-11 10:00:00', 'timezone': 'Asia/Aden'},
+        'counts': {
+          'billing_accounts': 8,
+          'subscriptions': {'total': 5, 'ACTIVE': 3, 'TRIALING': 2},
+          'invoices': {'total': 9, 'PAID': 4, 'OPEN': 5},
+        },
+        'financials_by_currency': [
+          {
+            'currency': {'currency_id': 1, 'code': 'YER', 'name': 'Yemeni Rial', 'decimal_places': 2},
+            'pending_payments': {'count': 1, 'amount_minor': 12500, 'amount': '125.00'},
+            'open_invoices': {'count': 2, 'outstanding_minor': 30000, 'outstanding': '300.00'},
+            'overdue_invoices': {'count': 1, 'outstanding_minor': 10000, 'outstanding': '100.00'},
+            'verified_collections_this_month': {'count': 4, 'amount_minor': 50000, 'amount': '500.00'},
+          },
+          {
+            'currency': {'currency_id': 2, 'code': 'USD', 'name': 'US Dollar', 'decimal_places': 2},
+            'pending_payments': {'count': 0, 'amount_minor': 0, 'amount': '0.00'},
+            'open_invoices': {'count': 1, 'outstanding_minor': 900, 'outstanding': '9.00'},
+            'overdue_invoices': {'count': 0, 'outstanding_minor': 0, 'outstanding': '0.00'},
+            'verified_collections_this_month': {'count': 1, 'amount_minor': 2000, 'amount': '20.00'},
+          },
+        ],
+        'payment_review_queue': [],
+      });
+
+      expect(overview.billingAccountsCount, 8);
+      expect(overview.subscriptions.countFor('ACTIVE'), 3);
+      expect(overview.financialsByCurrency, hasLength(2));
+      expect(overview.financialsByCurrency[0].verifiedCollections, '500.00');
+      expect(overview.financialsByCurrency[1].currency.code, 'USD');
+      expect(overview.financialsByCurrency[1].verifiedCollections, '20.00');
+    });
+  });
+}
