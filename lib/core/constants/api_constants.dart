@@ -329,6 +329,19 @@ abstract final class ApiConstants {
   static String billingInvoiceCreditNotes(int id) => '/platform/billing/invoices/$id/credit-notes';
   static String billingPaymentRefunds(int id) => '/platform/billing/payments/$id/refunds';
   static const String billingTrialPolicies = '/platform/billing/policies/trials';
+  static String billingTrialPolicyVersions(int policyId) => '/platform/billing/policies/trials/$policyId/versions';
+  static const String billingDunningPolicies = '/platform/billing/policies/dunning';
+  static String billingDunningPolicyVersions(int policyId) => '/platform/billing/policies/dunning/$policyId/versions';
+  static const String billingPendingTrialRedemptions = '/platform/billing/policies/trial-redemptions/pending';
+  static String billingApproveTrialRedemption(int redemptionId) => '/platform/billing/policies/trial-redemptions/$redemptionId/approve';
+  static String billingRejectTrialRedemption(int redemptionId) => '/platform/billing/policies/trial-redemptions/$redemptionId/reject';
+  static String billingAdjustSubscriptionTrial(int subscriptionId) => '/platform/billing/policies/subscriptions/$subscriptionId/trial-adjustments';
+  static String billingCreateTrialPolicyVersion(int policyId) => '/platform/billing/policies/trials/$policyId/versions';
+  static String billingPublishTrialPolicyVersion(int versionId) => '/platform/billing/policies/trial-versions/$versionId/publish';
+  static String billingCreateDunningPolicyVersion(int policyId) => '/platform/billing/policies/dunning/$policyId/versions';
+  static String billingPublishDunningPolicyVersion(int versionId) => '/platform/billing/policies/dunning-versions/$versionId/publish';
+  static String billingAssignPlanPolicies(int versionId) => '/platform/billing/policies/plan-versions/$versionId';
+  static String billingAssignPricePolicies(int priceId) => '/platform/billing/policies/prices/$priceId';
   static const String billingDunningPolicies = '/platform/billing/policies/dunning';
   static const String billingPendingTrialRedemptions = '/platform/billing/policies/trial-redemptions/pending';
 
