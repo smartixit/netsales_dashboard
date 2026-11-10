@@ -445,3 +445,28 @@
 
 
 - Follow-up constructor inspection corrected model/entity wiring for server-formatted price amounts, financial summary decimal strings, and trial policy version IDs. Added a model test for version history and authoritative decimal strings. These tests have been authored but not executed.
+
+## 2026-11-11 — Platform Billing authoring and policy administration
+
+Repository: smartixit/netsales_dashboard
+Branch: feat/platform-billing-management
+
+### Implemented
+- Added product and plan authoring through the DataSource → Repository → UseCase → GetX Controller flow. Plan creation explicitly orchestrates plan record, Draft version, initial currency-specific price, and optional first feature.
+- Added resumable workflow checkpoints so a failed later step does not intentionally re-create already completed plan/version/price steps on retry.
+- Added Draft-only additional price and feature operations, with currency-precision and duplicate checks before submission. Laravel remains the final validator and the only source of monetary conversion/calculation.
+- Added plan version publication as a distinct billing.manage action. Draft price/feature and policy assignment controls are restricted to billing.edit.
+- Added typed product, trial policy, dunning policy, policy-version, and trial-redemption domain models and wire mappers.
+- Added versioned trial/dunning policy list/history/create/revision/publish flows, assignment of published policy versions to Draft plan versions or prices, pending trial-redemption review, and audited active-trial adjustments.
+- Added a dedicated policies section in the Billing Center. Product/plan and policy forms use shared NetSales custom fields, dropdowns, switches, dialogs, status badges, and buttons.
+- Consolidated duplicate legacy/new policy controller methods into one definition per operation. Added guards against concurrent plan/product and policy mutations.
+- Added focused model contract tests for product/price policy references, trial/dunning policy snapshots, nested trial-redemption context, plan versions, and currency-separated overview figures.
+
+### Authorization and financial invariants
+- Product/plan create, Draft construction, publication, policy administration, and trial decisions map to Laravel permissions: billing.create, billing.edit, billing.manage, and billing.view.
+- Published plan/policy versions are immutable. Policy links can be assigned or cleared only while the plan version or price belongs to a Draft.
+- Currency values are submitted as decimal strings. Flutter validates display precision but does not calculate minor units, convert currencies, determine entitlement, trial expiry, invoice amounts, or accounting entries.
+
+### Verification boundary
+- No local Flutter/Dart SDK is available in this execution environment. The newly added model tests have not been run; formatting, analyzer, complete test suite, Windows Debug compilation, and rendered Light/Dark QA remain unverified.
+- The Dashboard GitHub workflow triggers on pull requests targeting main; a Draft PR is required for exact-head CI evidence. No merge is claimed.
