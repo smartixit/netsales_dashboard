@@ -116,6 +116,16 @@ abstract final class AppPermissions {
   static const String subscriptionsReject = 'subscriptions.reject';
   static const String subscriptionsReport = 'subscriptions.report';
 
+  // 13.1 محرك الفوترة والاشتراكات متعدد العملات (billing)
+  static const String billingView = 'billing.view';
+  static const String billingCreate = 'billing.create';
+  static const String billingEdit = 'billing.edit';
+  static const String billingDelete = 'billing.delete';
+  static const String billingApprove = 'billing.approve';
+  static const String billingReport = 'billing.report';
+  static const String billingExport = 'billing.export';
+  static const String billingManage = 'billing.manage';
+
   // 14. الحسابات البنكية ومحافظ السداد (bank_accounts)
   static const String bankAccountsView = 'bank_accounts.view';
   static const String bankAccountsCreate = 'bank_accounts.create';
