@@ -22,6 +22,13 @@ class PlatformBillingBinding extends Bindings {
     Get.lazyPut(() => GetBillingOverviewUseCase(repository()));
     Get.lazyPut(() => GetBillingCurrenciesUseCase(repository()));
     Get.lazyPut(() => GetBillingPlansUseCase(repository()));
+    Get.lazyPut(() => GetBillingProductsUseCase(repository()));
+    Get.lazyPut(() => CreateBillingProductUseCase(repository()));
+    Get.lazyPut(() => CreateBillingPlanUseCase(repository()));
+    Get.lazyPut(() => CreateBillingDraftVersionUseCase(repository()));
+    Get.lazyPut(() => AddBillingPlanPriceUseCase(repository()));
+    Get.lazyPut(() => AddBillingPlanFeatureUseCase(repository()));
+    Get.lazyPut(() => PublishBillingPlanVersionUseCase(repository()));
     Get.lazyPut(() => GetBillingPlanVersionsUseCase(repository()));
     Get.lazyPut(() => GetBillingAccountsUseCase(repository()));
     Get.lazyPut(() => GetBillingSubscriptionsUseCase(repository()));
@@ -43,6 +50,13 @@ class PlatformBillingBinding extends Bindings {
         getOverview: Get.find<GetBillingOverviewUseCase>(),
         getCurrencies: Get.find<GetBillingCurrenciesUseCase>(),
         getPlans: Get.find<GetBillingPlansUseCase>(),
+        getProducts: Get.find<GetBillingProductsUseCase>(),
+        createProduct: Get.find<CreateBillingProductUseCase>(),
+        createPlan: Get.find<CreateBillingPlanUseCase>(),
+        createDraftVersion: Get.find<CreateBillingDraftVersionUseCase>(),
+        addPlanPrice: Get.find<AddBillingPlanPriceUseCase>(),
+        addPlanFeature: Get.find<AddBillingPlanFeatureUseCase>(),
+        publishPlanVersion: Get.find<PublishBillingPlanVersionUseCase>(),
         getPlanVersions: Get.find<GetBillingPlanVersionsUseCase>(),
         getSubscriptions: Get.find<GetBillingSubscriptionsUseCase>(),
         getInvoices: Get.find<GetBillingInvoicesUseCase>(),
