@@ -424,3 +424,11 @@
 - No Flutter SDK or repository command runner was available in this GitHub-only execution. Formatting, analyzer, unit tests, Windows build, and visual QA remain unverified and must run on the exact PR head SHA.
 - Mutating billing workflows (plan/version authoring, policy lifecycle, account/subscription provisioning, payment review actions, trial adjustment, refunds/credit notes, and reconciliation UI) remain incomplete.
 - No PR has been opened and no merge is claimed.
+
+
+## 2026-11-11 — Billing Search Contract Integration
+
+- Extended subscription search from the presentation controller through GetX use case, domain repository, data repository, and remote datasource.
+- Search refresh now resets the cursor and reloads subscriptions, invoices, and payments; server-side search is authoritative and existing request-generation guards prevent stale results from replacing newer results.
+- The Laravel contract was extended in the paired API branch to search subscriptions by account/network/plan identifiers and names.
+- Verification: no Flutter SDK command execution, analyzer, tests, desktop build, or visual QA was available in this GitHub-only session. Exact-head validation remains mandatory.
