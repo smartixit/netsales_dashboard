@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
+import 'package:netsales_dashboard/core/constants/app_permissions.dart';
+import 'package:netsales_dashboard/core/services/permission_service.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
 import 'package:netsales_dashboard/features/platform_billing/domain/entities/platform_billing_entities.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/controllers/platform_billing_controller.dart';
@@ -368,7 +370,8 @@ class _SubscriptionRow extends StatelessWidget {
                 ? '—'
                 : 'حتى ' + subscription.currentPeriodEnd!.toLocal().toString().split(' ').first,
           ),
-          if (subscription.typedStatus == BillingSubscriptionStatus.trialing)
+          if (subscription.typedStatus == BillingSubscriptionStatus.trialing &&
+              PermissionService.to.can(AppPermissions.billingManage))
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: Padding(
