@@ -103,7 +103,7 @@ class PlatformPlanCatalogSection extends StatelessWidget {
     );
   }
 
-  Future<bool?> _showVersionPolicyAssignment(BillingPlanVersionEntity version) {
+  Future<bool?> _showVersionPolicyAssignment(BillingPlanEntity plan, BillingPlanVersionEntity version) {
     controller.selectedTrialPolicyVersionId.value = version.trialPolicyVersionId;
     controller.selectedDunningPolicyVersionId.value = version.dunningPolicyVersionId;
     return CustomDialog.show(
@@ -113,7 +113,8 @@ class PlatformPlanCatalogSection extends StatelessWidget {
       confirmLabel: 'حفظ الارتباط',
       cancelLabel: 'إلغاء',
       maxWidth: 620,
-      onConfirm: () => unawaited(controller.assignPlanPolicies(
+      onConfirm: () => unawaited(controller.assignPoliciesToPlanVersion(
+        plan.id,
         version.id,
         trialPolicyVersionId: controller.selectedTrialPolicyVersionId.value,
         dunningPolicyVersionId: controller.selectedDunningPolicyVersionId.value,
@@ -121,7 +122,7 @@ class PlatformPlanCatalogSection extends StatelessWidget {
     );
   }
 
-  Future<bool?> _showPricePolicyAssignment(BillingPriceEntity price) {
+  Future<bool?> _showPricePolicyAssignment(BillingPlanEntity plan, BillingPlanVersionEntity version, BillingPriceEntity price) {
     controller.selectedTrialPolicyVersionId.value = price.trialPolicyVersionId;
     controller.selectedDunningPolicyVersionId.value = price.dunningPolicyVersionId;
     return CustomDialog.show(
@@ -131,7 +132,9 @@ class PlatformPlanCatalogSection extends StatelessWidget {
       confirmLabel: 'حفظ الارتباط',
       cancelLabel: 'إلغاء',
       maxWidth: 620,
-      onConfirm: () => unawaited(controller.assignPricePolicies(
+      onConfirm: () => unawaited(controller.assignPoliciesToPrice(
+        plan.id,
+        version.id,
         price.id,
         trialPolicyVersionId: controller.selectedTrialPolicyVersionId.value,
         dunningPolicyVersionId: controller.selectedDunningPolicyVersionId.value,
@@ -219,8 +222,8 @@ class PlatformPlanCatalogSection extends StatelessWidget {
                     onPublish: (version) => _confirmPublish(plan, version),
                     onAddPrice: (version) => _showDraftPriceDialog(plan, version),
                     onAddFeature: (version) => _showDraftFeatureDialog(plan, version),
-                    onAssignVersionPolicies: (version) => _showVersionPolicyAssignment(version),
-                    onAssignPricePolicies: (price) => _showPricePolicyAssignment(price),
+                    onAssignVersionPolicies: (version) => _showVersionPolicyAssignment(plan, version),
+                    onAssignPricePolicies: (version, price) => _showPricePolicyAssignment(plan, version, price),
                   ),
               ],
             );
@@ -256,7 +259,7 @@ class _PlanCard extends StatelessWidget {
   final ValueChanged<BillingPlanVersionEntity> onAddPrice;
   final ValueChanged<BillingPlanVersionEntity> onAddFeature;
   final ValueChanged<BillingPlanVersionEntity> onAssignVersionPolicies;
-  final ValueChanged<BillingPriceEntity> onAssignPricePolicies;
+  final void Function(BillingPlanVersionEntity, BillingPriceEntity) onAssignPricePolicies;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -370,7 +373,7 @@ class _PlanCard extends StatelessWidget {
                                 CustomButton.text(
                                   text: 'السياسات',
                                   size: AppButtonSize.small,
-                                  onPressed: () => onAssignPricePolicies(price),
+                                  onPressed: () => onAssignPricePolicies(version, price),
                                 ),
                             ],
                           ),
