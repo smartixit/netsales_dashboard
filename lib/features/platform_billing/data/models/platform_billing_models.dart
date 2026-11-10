@@ -34,6 +34,8 @@ class BillingPriceModel extends BillingPriceEntity {
     required super.setupFeeMinor,
     required super.isActive,
     super.currency,
+    super.unitAmount,
+    super.setupFee,
   });
 
   factory BillingPriceModel.fromJson(Map<String, dynamic> json) => BillingPriceModel(
