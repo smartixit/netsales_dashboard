@@ -30,6 +30,22 @@ class PlatformBillingBinding extends Bindings {
     Get.lazyPut(() => AddBillingPlanFeatureUseCase(repository()));
     Get.lazyPut(() => PublishBillingPlanVersionUseCase(repository()));
     Get.lazyPut(() => GetBillingPlanVersionsUseCase(repository()));
+    Get.lazyPut(() => GetBillingTrialPoliciesUseCase(repository()));
+    Get.lazyPut(() => GetBillingTrialPolicyVersionsUseCase(repository()));
+    Get.lazyPut(() => GetBillingDunningPoliciesUseCase(repository()));
+    Get.lazyPut(() => GetBillingDunningPolicyVersionsUseCase(repository()));
+    Get.lazyPut(() => GetBillingPendingTrialRedemptionsUseCase(repository()));
+    Get.lazyPut(() => CreateBillingTrialPolicyUseCase(repository()));
+    Get.lazyPut(() => CreateBillingDunningPolicyUseCase(repository()));
+    Get.lazyPut(() => CreateBillingTrialPolicyVersionUseCase(repository()));
+    Get.lazyPut(() => CreateBillingDunningPolicyVersionUseCase(repository()));
+    Get.lazyPut(() => PublishBillingTrialPolicyVersionUseCase(repository()));
+    Get.lazyPut(() => PublishBillingDunningPolicyVersionUseCase(repository()));
+    Get.lazyPut(() => AssignBillingPlanPoliciesUseCase(repository()));
+    Get.lazyPut(() => AssignBillingPricePoliciesUseCase(repository()));
+    Get.lazyPut(() => ApproveBillingTrialRedemptionUseCase(repository()));
+    Get.lazyPut(() => RejectBillingTrialRedemptionUseCase(repository()));
+    Get.lazyPut(() => AdjustBillingSubscriptionTrialUseCase(repository()));
     Get.lazyPut(() => GetBillingAccountsUseCase(repository()));
     Get.lazyPut(() => GetBillingSubscriptionsUseCase(repository()));
     Get.lazyPut(() => GetBillingSubscriptionUseCase(repository()));
@@ -58,6 +74,22 @@ class PlatformBillingBinding extends Bindings {
         addPlanFeature: Get.find<AddBillingPlanFeatureUseCase>(),
         publishPlanVersion: Get.find<PublishBillingPlanVersionUseCase>(),
         getPlanVersions: Get.find<GetBillingPlanVersionsUseCase>(),
+        getTrialPolicies: Get.find<GetBillingTrialPoliciesUseCase>(),
+        getTrialPolicyVersions: Get.find<GetBillingTrialPolicyVersionsUseCase>(),
+        getDunningPolicies: Get.find<GetBillingDunningPoliciesUseCase>(),
+        getDunningPolicyVersions: Get.find<GetBillingDunningPolicyVersionsUseCase>(),
+        getPendingTrialRedemptions: Get.find<GetBillingPendingTrialRedemptionsUseCase>(),
+        createTrialPolicy: Get.find<CreateBillingTrialPolicyUseCase>(),
+        createDunningPolicy: Get.find<CreateBillingDunningPolicyUseCase>(),
+        createTrialPolicyVersion: Get.find<CreateBillingTrialPolicyVersionUseCase>(),
+        createDunningPolicyVersion: Get.find<CreateBillingDunningPolicyVersionUseCase>(),
+        publishTrialPolicyVersion: Get.find<PublishBillingTrialPolicyVersionUseCase>(),
+        publishDunningPolicyVersion: Get.find<PublishBillingDunningPolicyVersionUseCase>(),
+        assignPlanPolicies: Get.find<AssignBillingPlanPoliciesUseCase>(),
+        assignPricePolicies: Get.find<AssignBillingPricePoliciesUseCase>(),
+        approveTrialRedemption: Get.find<ApproveBillingTrialRedemptionUseCase>(),
+        rejectTrialRedemption: Get.find<RejectBillingTrialRedemptionUseCase>(),
+        adjustSubscriptionTrial: Get.find<AdjustBillingSubscriptionTrialUseCase>(),
         getSubscriptions: Get.find<GetBillingSubscriptionsUseCase>(),
         getInvoices: Get.find<GetBillingInvoicesUseCase>(),
         getPayments: Get.find<GetBillingPaymentsUseCase>(),
