@@ -147,6 +147,9 @@ class PlatformBillingController extends GetxController {
   String? _trialPoliciesCursor;
   String? _dunningPoliciesCursor;
   String? _pendingRedemptionsCursor;
+  int _trialPoliciesRequest = 0;
+  int _dunningPoliciesRequest = 0;
+  int _pendingRedemptionsRequest = 0;
   bool get canLoadMoreTrialPolicies => _trialPoliciesCursor != null && !isTrialPoliciesLoading.value;
   bool get canLoadMoreDunningPolicies => _dunningPoliciesCursor != null && !isDunningPoliciesLoading.value;
   bool get canLoadMorePendingRedemptions => _pendingRedemptionsCursor != null && !isPendingRedemptionsLoading.value;
@@ -1158,6 +1161,284 @@ class PlatformBillingController extends GetxController {
     }
     return result;
   }
+
+  Future<void> loadTrialPolicies({bool reset = false, String? search}) async {
+    if (isTrialPoliciesLoading.value) return;
+    if (reset) _trialPoliciesCursor = null;
+    isTrialPoliciesLoading.value = true;
+    final requestId = ++_trialPoliciesRequest;
+    try {
+      final response = await _getTrialPolicies(
+        search: search,
+        cursor: reset ? null : _trialPoliciesCursor,
+        perPage: 30,
+      );
+      if (requestId != _trialPoliciesRequest || !response.success) return;
+      if (reset) {
+        trialPolicies.assignAll(response.data ?? const []);
+      } else {
+        trialPolicies.addAll(response.data ?? const []);
+      }
+      _trialPoliciesCursor = response.nextCursor;
+    } finally {
+      if (requestId == _trialPoliciesRequest) isTrialPoliciesLoading.value = false;
+    }
+  }
+
+  Future<void> loadDunningPolicies({bool reset = false, String? search}) async {
+    if (isDunningPoliciesLoading.value) return;
+    if (reset) _dunningPoliciesCursor = null;
+    isDunningPoliciesLoading.value = true;
+    final requestId = ++_dunningPoliciesRequest;
+    try {
+      final response = await _getDunningPolicies(
+        search: search,
+        cursor: reset ? null : _dunningPoliciesCursor,
+        perPage: 30,
+      );
+      if (requestId != _dunningPoliciesRequest || !response.success) return;
+      if (reset) {
+        dunningPolicies.assignAll(response.data ?? const []);
+      } else {
+        dunningPolicies.addAll(response.data ?? const []);
+      }
+      _dunningPoliciesCursor = response.nextCursor;
+    } finally {
+      if (requestId == _dunningPoliciesRequest) isDunningPoliciesLoading.value = false;
+    }
+  }
+
+  Future<void> loadPendingTrialRedemptions({bool reset = false}) async {
+    if (isPendingRedemptionsLoading.value) return;
+    if (reset) _pendingRedemptionsCursor = null;
+    isPendingRedemptionsLoading.value = true;
+    final requestId = ++_pendingRedemptionsRequest;
+    try {
+      final response = await _getPendingTrialRedemptions(
+        cursor: reset ? null : _pendingRedemptionsCursor,
+        perPage: 30,
+      );
+      if (requestId != _pendingRedemptionsRequest || !response.success) return;
+      if (reset) {
+        pendingTrialRedemptions.assignAll(response.data ?? const []);
+      } else {
+        pendingTrialRedemptions.addAll(response.data ?? const []);
+      }
+      _pendingRedemptionsCursor = response.nextCursor;
+    } finally {
+      if (requestId == _pendingRedemptionsRequest) isPendingRedemptionsLoading.value = false;
+    }
+  }
+
+  Future<void> loadTrialPolicyVersions(int policyId) async {
+    if (isTrialPolicyVersionsLoading.contains(policyId)) return;
+    isTrialPolicyVersionsLoading.add(policyId);
+    isTrialPolicyVersionsLoading.refresh();
+    try {
+      final response = await _getTrialPolicyVersions(policyId, perPage: 30);
+      if (response.success) {
+        trialPolicyVersions[policyId] = response.data ?? const [];
+        trialPolicyVersions.refresh();
+      }
+    } finally {
+      isTrialPolicyVersionsLoading.remove(policyId);
+      isTrialPolicyVersionsLoading.refresh();
+    }
+  }
+
+  Future<void> loadDunningPolicyVersions(int policyId) async {
+    if (isDunningPolicyVersionsLoading.contains(policyId)) return;
+    isDunningPolicyVersionsLoading.add(policyId);
+    isDunningPolicyVersionsLoading.refresh();
+    try {
+      final response = await _getDunningPolicyVersions(policyId, perPage: 30);
+      if (response.success) {
+        dunningPolicyVersions[policyId] = response.data ?? const [];
+        dunningPolicyVersions.refresh();
+      }
+    } finally {
+      isDunningPolicyVersionsLoading.remove(policyId);
+      isDunningPolicyVersionsLoading.refresh();
+    }
+  }
+
+  Future<bool> _runPolicyMutation({
+    required String loadingMessage,
+    required String successMessage,
+    required Future<void> Function() action,
+  }) async {
+    if (isPolicyMutationInProgress.value) return false;
+    isPolicyMutationInProgress.value = true;
+    var succeeded = false;
+    try {
+      await CustomAnimationOverlay.showLoading(message: loadingMessage);
+      await action();
+      succeeded = true;
+    } catch (error) {
+      CustomSnackbar.show(
+        title: 'تعذر تنفيذ العملية',
+        message: error.toString(),
+        type: SnackType.error,
+      );
+    } finally {
+      if (CustomAnimationOverlay.isShowing) {
+        await CustomAnimationOverlay.hide();
+      }
+      isPolicyMutationInProgress.value = false;
+    }
+    if (succeeded) {
+      await CustomAnimationOverlay.showSuccess(message: successMessage);
+    }
+    return succeeded;
+  }
+
+  Future<bool> createTrialPolicy(Map<String, dynamic> data) async =>
+      _runPolicyMutation(
+        loadingMessage: 'إنشاء سياسة التجربة كمسودة...',
+        successMessage: 'تم إنشاء سياسة التجربة كمسودة.',
+        action: () async {
+          final response = await _createTrialPolicy(data);
+          _requireSuccessful(response, 'تعذر إنشاء سياسة التجربة.');
+          await loadTrialPolicies(reset: true);
+        },
+      );
+
+  Future<bool> createDunningPolicy(Map<String, dynamic> data) async =>
+      _runPolicyMutation(
+        loadingMessage: 'إنشاء سياسة التحصيل كمسودة...',
+        successMessage: 'تم إنشاء سياسة التحصيل كمسودة.',
+        action: () async {
+          final response = await _createDunningPolicy(data);
+          _requireSuccessful(response, 'تعذر إنشاء سياسة التحصيل.');
+          await loadDunningPolicies(reset: true);
+        },
+      );
+
+  Future<bool> createTrialPolicyVersion(int policyId, Map<String, dynamic> data) async =>
+      _runPolicyMutation(
+        loadingMessage: 'إنشاء إصدار مسودة لسياسة التجربة...',
+        successMessage: 'تم إنشاء إصدار المسودة.',
+        action: () async {
+          final response = await _createTrialPolicyVersion(policyId, data);
+          _requireSuccessful(response, 'تعذر إنشاء إصدار سياسة التجربة.');
+          await loadTrialPolicyVersions(policyId);
+          await loadTrialPolicies(reset: true);
+        },
+      );
+
+  Future<bool> createDunningPolicyVersion(int policyId, Map<String, dynamic> data) async =>
+      _runPolicyMutation(
+        loadingMessage: 'إنشاء إصدار مسودة لسياسة التحصيل...',
+        successMessage: 'تم إنشاء إصدار المسودة.',
+        action: () async {
+          final response = await _createDunningPolicyVersion(policyId, data);
+          _requireSuccessful(response, 'تعذر إنشاء إصدار سياسة التحصيل.');
+          await loadDunningPolicyVersions(policyId);
+          await loadDunningPolicies(reset: true);
+        },
+      );
+
+  Future<bool> publishTrialPolicyVersion(int policyId, int versionId) async =>
+      _runPolicyMutation(
+        loadingMessage: 'نشر إصدار سياسة التجربة...',
+        successMessage: 'تم نشر إصدار سياسة التجربة.',
+        action: () async {
+          final response = await _publishTrialPolicyVersion(versionId);
+          _requireSuccessful(response, 'تعذر نشر إصدار سياسة التجربة.');
+          await loadTrialPolicyVersions(policyId);
+          await loadTrialPolicies(reset: true);
+        },
+      );
+
+  Future<bool> publishDunningPolicyVersion(int policyId, int versionId) async =>
+      _runPolicyMutation(
+        loadingMessage: 'نشر إصدار سياسة التحصيل...',
+        successMessage: 'تم نشر إصدار سياسة التحصيل.',
+        action: () async {
+          final response = await _publishDunningPolicyVersion(versionId);
+          _requireSuccessful(response, 'تعذر نشر إصدار سياسة التحصيل.');
+          await loadDunningPolicyVersions(policyId);
+          await loadDunningPolicies(reset: true);
+        },
+      );
+
+  Future<bool> assignPlanPolicies(
+    int planVersionId, {
+    int? trialPolicyVersionId,
+    int? dunningPolicyVersionId,
+  }) async =>
+      _runPolicyMutation(
+        loadingMessage: 'ربط سياسات الاشتراك بإصدار الخطة...',
+        successMessage: 'تم حفظ ارتباط السياسات.',
+        action: () async {
+          final response = await _assignPlanPolicies(
+            planVersionId,
+            trialPolicyVersionId: trialPolicyVersionId,
+            dunningPolicyVersionId: dunningPolicyVersionId,
+          );
+          _requireSuccessful(response, 'تعذر ربط سياسات الاشتراك بإصدار الخطة.');
+        },
+      );
+
+  Future<bool> assignPricePolicies(
+    int priceId, {
+    int? trialPolicyVersionId,
+    int? dunningPolicyVersionId,
+  }) async =>
+      _runPolicyMutation(
+        loadingMessage: 'ربط سياسات الاشتراك بالسعر...',
+        successMessage: 'تم حفظ ارتباط السياسات بالسعر.',
+        action: () async {
+          final response = await _assignPricePolicies(
+            priceId,
+            trialPolicyVersionId: trialPolicyVersionId,
+            dunningPolicyVersionId: dunningPolicyVersionId,
+          );
+          _requireSuccessful(response, 'تعذر ربط سياسات الاشتراك بالسعر.');
+        },
+      );
+
+  Future<bool> approveTrialRedemption(int redemptionId) async =>
+      _runPolicyMutation(
+        loadingMessage: 'اعتماد طلب التجربة...',
+        successMessage: 'تم اعتماد طلب التجربة.',
+        action: () async {
+          final response = await _approveTrialRedemption(redemptionId);
+          _requireSuccessful(response, 'تعذر اعتماد طلب التجربة.');
+          await loadPendingTrialRedemptions(reset: true);
+        },
+      );
+
+  Future<bool> rejectTrialRedemption(int redemptionId, String reason) async =>
+      _runPolicyMutation(
+        loadingMessage: 'رفض طلب التجربة...',
+        successMessage: 'تم رفض طلب التجربة وإغلاق الاشتراك المعلق.',
+        action: () async {
+          final response = await _rejectTrialRedemption(redemptionId, reason: reason);
+          _requireSuccessful(response, 'تعذر رفض طلب التجربة.');
+          await loadPendingTrialRedemptions(reset: true);
+        },
+      );
+
+  Future<bool> adjustSubscriptionTrial(
+    int subscriptionId, {
+    required String adjustmentType,
+    int? days,
+    required String reason,
+  }) async =>
+      _runPolicyMutation(
+        loadingMessage: 'تعديل فترة التجربة...',
+        successMessage: 'تم تسجيل تعديل فترة التجربة.',
+        action: () async {
+          final response = await _adjustSubscriptionTrial(
+            subscriptionId,
+            adjustmentType: adjustmentType,
+            days: days,
+            reason: reason,
+          );
+          _requireSuccessful(response, 'تعذر تعديل فترة التجربة.');
+        },
+      );
 
   void prepareDraftPriceEditor() {
     planUnitAmountController.clear();
