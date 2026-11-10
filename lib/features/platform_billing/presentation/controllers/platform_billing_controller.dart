@@ -7,6 +7,7 @@ class PlatformBillingController extends GetxController {
     required GetBillingOverviewUseCase getOverview,
     required GetBillingCurrenciesUseCase getCurrencies,
     required GetBillingPlansUseCase getPlans,
+    required GetBillingPlanVersionsUseCase getPlanVersions,
     required GetBillingSubscriptionsUseCase getSubscriptions,
     required GetBillingInvoicesUseCase getInvoices,
     required GetBillingPaymentsUseCase getPayments,
@@ -14,6 +15,7 @@ class PlatformBillingController extends GetxController {
   }) : _getOverview = getOverview,
        _getCurrencies = getCurrencies,
        _getPlans = getPlans,
+       _getPlanVersions = getPlanVersions,
        _getSubscriptions = getSubscriptions,
        _getInvoices = getInvoices,
        _getPayments = getPayments,
@@ -22,6 +24,7 @@ class PlatformBillingController extends GetxController {
   final GetBillingOverviewUseCase _getOverview;
   final GetBillingCurrenciesUseCase _getCurrencies;
   final GetBillingPlansUseCase _getPlans;
+  final GetBillingPlanVersionsUseCase _getPlanVersions;
   final GetBillingSubscriptionsUseCase _getSubscriptions;
   final GetBillingInvoicesUseCase _getInvoices;
   final GetBillingPaymentsUseCase _getPayments;
@@ -30,6 +33,8 @@ class PlatformBillingController extends GetxController {
   final overview = Rxn<BillingOverviewEntity>();
   final currencies = <BillingCurrencyEntity>[].obs;
   final plans = <BillingPlanEntity>[].obs;
+  final planVersions = <int, List<BillingPlanVersionEntity>>{}.obs;
+  final loadingPlanVersions = <int>{}.obs;
   final subscriptions = <BillingSubscriptionEntity>[].obs;
   final invoices = <BillingInvoiceEntity>[].obs;
   final payments = <BillingPaymentEntity>[].obs;
@@ -113,6 +118,22 @@ class PlatformBillingController extends GetxController {
       if (response.success) plans.assignAll(response.data ?? const []);
     } finally {
       isPlansLoading.value = false;
+    }
+  }
+
+  Future<void> loadPlanVersions(int planId) async {
+    if (loadingPlanVersions.contains(planId)) return;
+    loadingPlanVersions.add(planId);
+    loadingPlanVersions.refresh();
+    try {
+      final response = await _getPlanVersions(planId, perPage: 30);
+      if (response.success) {
+        planVersions[planId] = response.data ?? const [];
+        planVersions.refresh();
+      }
+    } finally {
+      loadingPlanVersions.remove(planId);
+      loadingPlanVersions.refresh();
     }
   }
 
