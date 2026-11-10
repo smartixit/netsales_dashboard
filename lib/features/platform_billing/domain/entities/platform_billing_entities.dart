@@ -85,6 +85,8 @@ class BillingPriceEntity {
     required this.intervalCount,
     required this.unitAmountMinor,
     required this.setupFeeMinor,
+    this.unitAmount,
+    this.setupFee,
     required this.isActive,
     this.currency,
   });
@@ -95,6 +97,8 @@ class BillingPriceEntity {
   final int intervalCount;
   final int unitAmountMinor;
   final int setupFeeMinor;
+  final String? unitAmount;
+  final String? setupFee;
   final bool isActive;
   final BillingCurrencyEntity? currency;
 }
