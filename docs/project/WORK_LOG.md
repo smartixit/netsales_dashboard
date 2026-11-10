@@ -402,3 +402,25 @@
 ### Verification
 - Pending exact-head GitHub Actions: dashboard analysis/tests and Windows Debug compilation.
 - No local Windows build is claimed; the reported MSBuild/AOT diagnostic is the target regression to be checked by CI.
+
+
+## 2026-11-11 — Platform Billing Workspace Foundation
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/platform-billing-management`
+
+### Implemented
+- Added a dedicated `platform_billing` feature with pure domain entities, typed wire-status enums, remote data source, resource models, repository contract/implementation, use cases, GetX controller, and binding.
+- Added the first billing workspace with overview, plans, subscriptions, invoices, payments, treasury, and currency selection surfaces.
+- Replaced the three legacy subscription navigation entries with one `billing.view`-gated Billing Center route.
+- Added focused model tests for exact enum wire values, plan/version/price mapping, and currency-separated overview summaries.
+
+### Contract and financial safety
+- Matched Flutter models to Laravel Billing API Resources rather than the legacy subscription endpoints.
+- Financial summary values are returned as decimal strings by Laravel per currency; Flutter renders these values without calculating or aggregating money.
+- Preserved cursor-based list loading and request-generation guards against stale subscription, invoice, and payment responses.
+
+### Verification boundary
+- No Flutter SDK or repository command runner was available in this GitHub-only execution. Formatting, analyzer, unit tests, Windows build, and visual QA remain unverified and must run on the exact PR head SHA.
+- Mutating billing workflows (plan/version authoring, policy lifecycle, account/subscription provisioning, payment review actions, trial adjustment, refunds/credit notes, and reconciliation UI) remain incomplete.
+- No PR has been opened and no merge is claimed.
