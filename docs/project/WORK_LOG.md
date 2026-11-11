@@ -521,3 +521,23 @@ Branch: feat/platform-billing-management
 - These fixes are committed to the active PR branch. They are not considered verified until a fresh GitHub Actions run completes against the latest PR head SHA.
 - The DataGrid-specific widget tests passed on the previous SHA, but all full-project gates must be rerun after these fixes.
 - Rendered visual QA remains a separate acceptance gate; no visual pass is claimed.
+
+
+## 2026-11-11 — Document Engine correctness repair (in progress)
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `fix/document-engine-production-readiness`
+
+### Confirmed defect and correction
+- The Cartesian chart contract and error message documented a maximum of 24 points per series, while constructor validation accidentally allowed up to 100. The mismatch was corrected to enforce the declared 24-point limit.
+- Added boundary regression coverage for 24 accepted points and 25 rejected points.
+
+### Remaining blockers (not represented as fixed)
+- Production Arabic/complex RTL rendering remains intentionally rejected. The M4 POC identifies Payv only as a research candidate; it is not approved for production, and Web runtime/viewer acceptance is incomplete. No dependency/provider has been added.
+- Template metadata/capabilities are not yet a distinct template-layout execution strategy in the PDF renderer; the generic renderer still composes the content tree. This requires architectural repair and tests before package transfer.
+- Configuration Studio host design-system injection and branding/font/logo contract need further work and verification.
+
+### Verification
+- Source and regression test changes are committed to this branch.
+- No Flutter/Dart SDK is available in this execution environment; these tests, formatting, analyzer, and package test suite have not been executed. Do not treat this correction as package acceptance.
+- No files have been copied to `netsales`; transfer remains blocked until package-level blockers are resolved and verified.
