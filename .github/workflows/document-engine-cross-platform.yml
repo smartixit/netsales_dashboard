@@ -1,0 +1,208 @@
+name: Document Engine Cross-Platform Quality Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/document_engine/**'
+      - 'packages/document_engine_poc/**'
+      - '.github/workflows/document-engine-cross-platform.yml'
+  push:
+    branches: [fix/document-engine-production-readiness]
+    paths:
+      - 'packages/document_engine/**'
+      - 'packages/document_engine_poc/**'
+      - '.github/workflows/document-engine-cross-platform.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: document-engine-platforms-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-package-and-host:
+    name: Windows package tests and Windows host build
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.9'
+          cache: true
+
+      - name: Verify Windows toolchain
+        run: |
+          flutter --version
+          dart --version
+          cmake --version
+
+      - name: Resolve package dependencies
+        working-directory: packages/document_engine
+        run: flutter pub get
+
+      - name: Format document engine
+        run: dart format --output=none --set-exit-if-changed packages/document_engine
+
+      - name: Analyze document engine
+        working-directory: packages/document_engine
+        run: dart analyze
+
+      - name: Run document engine tests
+        working-directory: packages/document_engine
+        run: flutter test test
+
+      - name: Generate Windows host
+        run: flutter create --platforms=windows --project-name document_engine_windows --org com.netsales.documentengine .ci/document_engine_windows
+
+      - name: Install Windows host sample and dependencies
+        working-directory: .ci/document_engine_windows
+        run: |
+          Copy-Item ..\..\packages\document_engine\example\lib\main.dart lib\main.dart -Force
+          flutter pub add document_engine --path ..\..\packages\document_engine
+          flutter pub add 'file_picker:^11.0.2' 'printing:^5.15.1' 'share_plus:^12.0.2'
+          flutter pub get
+
+      - name: Build Windows host application
+        working-directory: .ci/document_engine_windows
+        run: flutter build windows --debug
+
+  android-host-build:
+    name: Android package and plugin integration build
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.9'
+          cache: true
+
+      - name: Verify Android toolchain
+        run: |
+          flutter --version
+          dart --version
+          java -version
+          flutter doctor -v
+
+      - name: Generate Android host
+        run: flutter create --platforms=android --project-name document_engine_android --org com.netsales.documentengine .ci/document_engine_android
+
+      - name: Install Android host sample and dependencies
+        working-directory: .ci/document_engine_android
+        run: |
+          Copy-Item ..\..\packages\document_engine\example\lib\main.dart lib\main.dart -Force
+          flutter pub add document_engine --path ..\..\packages\document_engine
+          flutter pub add 'file_picker:^11.0.2' 'printing:^5.15.1' 'share_plus:^12.0.2'
+          flutter pub get
+
+      - name: Build Android debug APK
+        working-directory: .ci/document_engine_android
+        run: flutter build apk --debug
+
+  ios-host-build:
+    name: iOS package and plugin integration build
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.9'
+          cache: true
+
+      - name: Verify Apple toolchain
+        run: |
+          flutter --version
+          dart --version
+          xcodebuild -version
+          xcrun simctl list devices available
+
+      - name: Generate iOS host
+        run: flutter create --platforms=ios --project-name document_engine_ios --org com.netsales.documentengine .ci/document_engine_ios
+
+      - name: Install iOS host sample and dependencies
+        working-directory: .ci/document_engine_ios
+        run: |
+          cp ../../packages/document_engine/example/lib/main.dart lib/main.dart
+          flutter pub add document_engine --path ../../packages/document_engine
+          flutter pub add file_picker:^11.0.2 printing:^5.15.1 share_plus:^12.0.2
+          flutter pub get
+
+      - name: Build iOS device target without code signing
+        working-directory: .ci/document_engine_ios
+        run: flutter build ios --no-codesign
+
+      - name: Build iOS simulator target
+        working-directory: .ci/document_engine_ios
+        run: flutter build ios --simulator --no-codesign
+
+  arabic-native-poc:
+    name: Arabic typography research POC (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.9'
+          cache: true
+
+      - name: Resolve POC dependencies
+        working-directory: packages/document_engine_poc
+        run: flutter pub get
+
+      - name: Format POC
+        working-directory: packages/document_engine_poc
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze POC
+        working-directory: packages/document_engine_poc
+        run: dart analyze
+
+      - name: Run POC tests
+        working-directory: packages/document_engine_poc
+        run: flutter test test
+
+      - name: Generate Arabic PDF specimens
+        working-directory: packages/document_engine_poc
+        run: dart run bin/generate_poc.dart
+
+      - name: Upload platform specimens
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arabic-pdf-poc-${{ matrix.os }}
+          path: packages/document_engine_poc/build/poc-artifacts/
+          if-no-files-found: warn
+          retention-days: 14
