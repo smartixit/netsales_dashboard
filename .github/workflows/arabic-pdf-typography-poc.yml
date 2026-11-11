@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [windows-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 35
 
@@ -86,7 +86,7 @@ jobs:
 
   payv-web-build:
     name: Payv Web compile
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     timeout-minutes: 35
 
     steps:
@@ -105,5 +105,5 @@ jobs:
       - name: Compile Payv renderer for JavaScript
         working-directory: packages/document_engine_poc
         run: |
-          mkdir -p build
+          New-Item -ItemType Directory -Force -Path build | Out-Null
           dart compile js bin/payv_web_compile.dart -o build/payv_web_compile.js
