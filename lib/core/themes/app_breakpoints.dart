@@ -44,11 +44,7 @@ class AppBreakpoints {
   static const double mobileMax = 600.0;
 
   /// Minimum content width for the shared tabular DataGrid. Below this width,
-  /// AppDataGrid switches to feature-specific record cards using local constraints.
-  static const double dataGridCompactMax = 760.0;
-
-  /// Minimum content width for the shared tabular DataGrid. Below this width,
-  /// AppDataGrid switches to feature-specific record cards using its own constraints.
+  /// AppDataGrid switches to feature-specific record cards using the allocated width.
   static const double dataGridCompactMax = 760.0;
 
   /// الحد الأقصى للأجهزة اللوحية وأجهزة نقاط البيع المتنقلة
