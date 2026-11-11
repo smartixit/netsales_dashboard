@@ -249,7 +249,12 @@ void main() {
     expect(result, isA<DocumentRenderSuccess>());
     expect(
       (result as DocumentRenderSuccess).artifact.sha256,
-      matches(RegExp(r'^[a-f0-9]{64}
+      matches(RegExp(r'^[a-f0-9]{64}$')),
+    );
+  });
+
+  test(
+    'rejects complex RTL text until a shaping provider is approved',
     () async {
       const renderer = PdfDocumentRenderer();
       final result = await renderer.render(
