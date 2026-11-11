@@ -19,6 +19,24 @@ typedef ReportStudioActionBuilder = Widget Function(
   required bool secondary,
 });
 
+/// Lets the host replace all schema filter controls with its own design system.
+typedef ReportStudioFilterSectionBuilder = Widget Function(
+  BuildContext context, {
+  required ReportDefinition definition,
+  required ReportCriteria criteria,
+  required ReportLabelResolver resolveLabel,
+  required ValueChanged<ReportCriteria> onChanged,
+});
+
+/// Lets the host replace all output controls with its own design system.
+typedef ReportStudioPresentationSectionBuilder = Widget Function(
+  BuildContext context, {
+  required ReportDefinition definition,
+  required ReportPresentationOptions presentation,
+  required ReportLabelResolver resolveLabel,
+  required ValueChanged<ReportPresentationOptions> onChanged,
+});
+
 /// Responsive, schema-driven report configuration UI.
 ///
 /// The widget is controlled: the host owns criteria/presentation state and
@@ -35,6 +53,8 @@ class ReportConfigurationStudio extends StatelessWidget {
     this.onPreview,
     this.onSavePreset,
     this.actionBuilder,
+    this.filterSectionBuilder,
+    this.presentationSectionBuilder,
     this.isBusy = false,
     super.key,
   });
@@ -48,6 +68,8 @@ class ReportConfigurationStudio extends StatelessWidget {
   final VoidCallback? onPreview;
   final VoidCallback? onSavePreset;
   final ReportStudioActionBuilder? actionBuilder;
+  final ReportStudioFilterSectionBuilder? filterSectionBuilder;
+  final ReportStudioPresentationSectionBuilder? presentationSectionBuilder;
   final bool isBusy;
 
   @override
@@ -55,8 +77,24 @@ class ReportConfigurationStudio extends StatelessWidget {
     builder: (context, constraints) {
       final colors = Theme.of(context).colorScheme;
       final wide = constraints.maxWidth >= 1080;
-      final filters = _buildFilterSection(context);
-      final output = _buildPresentationSection(context);
+      final filters =
+          filterSectionBuilder?.call(
+            context,
+            definition: definition,
+            criteria: criteria,
+            resolveLabel: resolveLabel,
+            onChanged: onCriteriaChanged,
+          ) ??
+          _buildFilterSection(context);
+      final output =
+          presentationSectionBuilder?.call(
+            context,
+            definition: definition,
+            presentation: presentation,
+            resolveLabel: resolveLabel,
+            onChanged: onPresentationChanged,
+          ) ??
+          _buildPresentationSection(context);
 
       return SingleChildScrollView(
         padding: const EdgeInsets.all(24),
