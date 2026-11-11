@@ -197,7 +197,7 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
         if (data == null) return null;
         final subscription = _unwrap(data, 'subscription');
         final events = data['events'] is List
-            ? (data['events'] as List).whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList(growable: false)
+            ? (data['events'] as List).whereType<Map<String, dynamic>>().toList(growable: false)
             : const <Map<String, dynamic>>[];
         return BillingSubscriptionModel.fromJson(subscription, events: events);
       });
