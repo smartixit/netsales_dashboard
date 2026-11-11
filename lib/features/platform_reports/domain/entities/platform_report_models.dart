@@ -56,6 +56,14 @@ class PlatformReportRun {
 
   bool get isCompleted => status.toUpperCase() == 'COMPLETED';
   bool get isFailed => status.toUpperCase() == 'FAILED';
+  String get statusLabel => switch (status.toUpperCase()) {
+    'QUEUED' => 'في قائمة الانتظار',
+    'RUNNING' => 'قيد التنفيذ',
+    'COMPLETED' => 'مكتمل',
+    'FAILED' => 'فشل التنفيذ',
+    'EXPIRED' => 'انتهت صلاحية الملف',
+    _ => 'حالة غير معروفة',
+  };
 
   factory PlatformReportRun.fromJson(Map<String, dynamic> json) {
     final artifact = json['artifact'] is Map
