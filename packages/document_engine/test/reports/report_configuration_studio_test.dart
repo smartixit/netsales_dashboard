@@ -101,18 +101,19 @@ void main() {
       buildStudio(
         onCriteriaChanged: (_) {},
         onPresentationChanged: (_) {},
-        actionBuilder: (
-          context, {
-          required label,
-          required icon,
-          required onPressed,
-          required secondary,
-        }) => OutlinedButton.icon(
-          key: ValueKey('host-action-$label'),
-          onPressed: onPressed,
-          icon: Icon(icon),
-          label: Text(label),
-        ),
+        actionBuilder:
+            (
+              context, {
+              required label,
+              required icon,
+              required onPressed,
+              required secondary,
+            }) => OutlinedButton.icon(
+              key: ValueKey('host-action-$label'),
+              onPressed: onPressed,
+              icon: Icon(icon),
+              label: Text(label),
+            ),
       ),
     );
 
