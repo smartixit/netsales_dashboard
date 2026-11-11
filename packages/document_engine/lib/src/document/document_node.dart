@@ -342,6 +342,76 @@ final class DocumentPageBreak extends DocumentNode {
   const DocumentPageBreak();
 }
 
+enum DocumentImageFit { contain, cover, fill }
+
+enum DocumentImageAlignment { leading, center, trailing }
+
+/// A bounded image asset supplied by the host; the engine never fetches URLs.
+final class DocumentImage extends DocumentNode {
+  DocumentImage({
+    required Uint8List bytes,
+    this.caption,
+    this.widthPoints,
+    this.heightPoints,
+    this.fit = DocumentImageFit.contain,
+    this.alignment = DocumentImageAlignment.center,
+  }) : _bytes = Uint8List.fromList(bytes) {
+    if (_bytes.isEmpty || _bytes.length > 4 * 1024 * 1024) {
+      throw ArgumentError('Document image must be 1 byte to 4 MiB.');
+    }
+    final isPng =
+        _bytes.length >= 8 &&
+        _bytes[0] == 0x89 &&
+        _bytes[1] == 0x50 &&
+        _bytes[2] == 0x4E &&
+        _bytes[3] == 0x47 &&
+        _bytes[4] == 0x0D &&
+        _bytes[5] == 0x0A &&
+        _bytes[6] == 0x1A &&
+        _bytes[7] == 0x0A;
+    final isJpeg =
+        _bytes.length >= 3 &&
+        _bytes[0] == 0xFF &&
+        _bytes[1] == 0xD8 &&
+        _bytes[2] == 0xFF;
+    if (!isPng && !isJpeg) {
+      throw ArgumentError('Document image must be PNG or JPEG.');
+    }
+    if (caption != null &&
+        (caption!.trim().isEmpty || caption!.length > 240)) {
+      throw ArgumentError.value(
+        caption,
+        'caption',
+        'Must contain 1-240 characters when supplied.',
+      );
+    }
+    for (final entry in {
+      'widthPoints': widthPoints,
+      'heightPoints': heightPoints,
+    }.entries) {
+      if (entry.value != null &&
+          (!entry.value!.isFinite ||
+              entry.value! <= 0 ||
+              entry.value! > 1200)) {
+        throw ArgumentError.value(
+          entry.value,
+          entry.key,
+          'Must be finite and within (0, 1200].',
+        );
+      }
+    }
+  }
+
+  final Uint8List _bytes;
+  final String? caption;
+  final double? widthPoints;
+  final double? heightPoints;
+  final DocumentImageFit fit;
+  final DocumentImageAlignment alignment;
+
+  Uint8List get bytes => Uint8List.fromList(_bytes);
+}
+
 /// Opaque QR content supplied by the host. The engine renders but never
 /// encrypts, signs, validates, or interprets this payload.
 final class DocumentQrCode extends DocumentNode {
