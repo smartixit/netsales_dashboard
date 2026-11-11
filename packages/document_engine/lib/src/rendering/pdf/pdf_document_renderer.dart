@@ -175,7 +175,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (snapshot.metadata.locale.direction ==
             DocumentTextDirection.rightToLeft ||
         RegExp(r'^(ar|fa|ur|he|ps|sd)(-|$)').hasMatch(locale) ||
-        _containsUnshapedRtl(snapshot, options.watermark)) {
+        _containsUnshapedRtl(snapshot, options)) {
       return const DocumentRenderFailure(
         code: DocumentRenderFailureCode.unsupportedTextShaping,
         message:
@@ -243,11 +243,29 @@ final class PdfDocumentRenderer implements DocumentRenderer {
 
   bool _containsUnshapedRtl(
     DocumentSnapshot snapshot,
-    DocumentWatermark? watermark,
+    DocumentRenderOptions options,
   ) {
-    final rtlPattern = RegExp(r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]');
-    if ((watermark != null && rtlPattern.hasMatch(watermark.text)) ||
-        rtlPattern.hasMatch(snapshot.metadata.title) ||
+    final rtlPattern = RegExp(r'[\\u0590-\\u08FF\\uFB1D-\\uFDFF\\uFE70-\\uFEFF]');
+    final branding = options.branding;
+    final optionTexts = <String?>[
+      options.watermark?.text,
+      options.headerText,
+      options.footerText,
+      options.firstPageHeaderText,
+      options.firstPageFooterText,
+      options.coverTitle,
+      options.coverSubtitle,
+      ...options.coverMetadata.keys,
+      ...options.coverMetadata.values,
+      branding?.organizationName,
+      branding?.tagline,
+    ];
+    if (optionTexts.any(
+      (value) => value != null && rtlPattern.hasMatch(value),
+    )) {
+      return true;
+    }
+    if (rtlPattern.hasMatch(snapshot.metadata.title) ||
         (snapshot.metadata.subtitle != null &&
             rtlPattern.hasMatch(snapshot.metadata.subtitle!))) {
       return true;
