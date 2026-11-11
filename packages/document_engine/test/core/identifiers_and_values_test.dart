@@ -60,9 +60,9 @@ void main() {
       );
 
       logo[0] = 0;
-      font[0] = 0;
+      font[1] = 0;
       expect(branding.logoBytes!.first, 0x89);
-      expect(branding.fontBytes(DocumentFontRole.body)!.first, 0x00);
+      expect(branding.fontBytes(DocumentFontRole.body)![1], 0x01);
       final exposedLogo = branding.logoBytes!;
       exposedLogo[0] = 0;
       expect(branding.logoBytes!.first, 0x89);
