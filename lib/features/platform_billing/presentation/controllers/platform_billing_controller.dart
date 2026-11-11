@@ -1412,6 +1412,7 @@ class PlatformBillingController extends GetxController {
     selectedPlanFeatureType.value = 'RESOURCE_LIMIT';
   }
 
+  @override
   Future<void> refresh() => loadInitial();
 
   @override
