@@ -344,3 +344,11 @@ Dashboard branch: smartixit/netsales_dashboard:feat/platform-billing-management
 - Cursor/page pagination wraps on narrow allocations; toolbar count chips wrap; Platform Networks and Platform POS share the same centralized cutoff.
 - Focused widget regression tests cover narrow RTL pagination with long Arabic text and the wide tabular presentation.
 - Exact-head CI, local analyzer/tests, Windows build, and rendered visual QA remain pending. Do not claim the overflow is fully verified until these gates complete.
+
+
+## DataGrid Render Overflow — CI remediation update (2026-11-11)
+
+- Full Windows workflow logs were retrieved and reviewed for the prior PR head. The DataGrid-specific regression tests passed.
+- The prior full-project run exposed independent blockers in Platform Billing compile/analyzer contracts, authentication test initialization/layout, compact sidebar geometry, and a password-route test timeout.
+- Targeted fixes were committed on `fix/dashboard-datagrid-render-overflow`; all exact-head analyzer, full test, and Windows Debug gates must be rerun before acceptance.
+- PR #47 remains Draft and unmerged. Do not mark this issue resolved until the new workflow is green and rendered visual QA is reviewed.
