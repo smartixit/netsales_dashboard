@@ -31,8 +31,7 @@ final class DocumentBranding {
        ),
        _logoBytes = _copyImage(logoBytes),
        _fonts = _copyFonts(fonts) {
-    if (tagline != null &&
-        (tagline!.trim().isEmpty || tagline!.length > 180)) {
+    if (tagline != null && (tagline!.trim().isEmpty || tagline!.length > 180)) {
       throw ArgumentError.value(
         tagline,
         'tagline',
