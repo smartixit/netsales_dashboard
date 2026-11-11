@@ -202,6 +202,52 @@ void main() {
     },
   );
 
+  test('renders bounded image nodes and a branded logo asset', () async {
+    const renderer = PdfDocumentRenderer();
+    final png = Uint8List.fromList([
+      137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0,
+      1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 13, 73, 68, 65,
+      84, 120, 156, 99, 248, 207, 192, 240, 31, 0, 5, 0, 1, 255, 137, 153, 61,
+      29, 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130,
+    ]);
+    final imageTemplate = DocumentTemplateDefinition(
+      id: TemplateId('report.summary.with_images'),
+      version: TemplateVersion(major: 1, minor: 0, patch: 0),
+      documentTypeId: documentType,
+      displayName: 'Image report',
+      supportedLocaleTags: const ['en'],
+      capabilities: TemplateCapabilities([
+        ...template.capabilities.values,
+        TemplateCapability.images,
+      ]),
+    );
+    final result = await renderer.render(
+      snapshot: snapshot(
+        nodes: [
+          DocumentImage(
+            bytes: png,
+            caption: 'Organization mark',
+            widthPoints: 48,
+            heightPoints: 48,
+          ),
+        ],
+      ),
+      template: imageTemplate,
+      options: DocumentRenderOptions(
+        pageProfile: DocumentPageProfile.a4Portrait(),
+        generatedAt: DateTime.utc(2026, 11, 9, 10),
+        branding: DocumentBranding(
+          organizationName: 'Northstar Labs',
+          logoBytes: png,
+          primaryColor: '123456',
+        ),
+      ),
+    );
+
+    expect(result, isA<DocumentRenderSuccess>());
+    expect((result as DocumentRenderSuccess).artifact.byteLength, greaterThan(100));
+  });
+
   test('applies host branding to the rendered document contract', () async {
     const renderer = PdfDocumentRenderer();
     final result = await renderer.render(
