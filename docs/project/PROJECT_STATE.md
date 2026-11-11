@@ -373,3 +373,9 @@ Dashboard branch: smartixit/netsales_dashboard:feat/platform-billing-management
 - Added host-injectable Report Configuration Studio primary actions. Internal filter controls still need a broader host-control integration contract.
 - RTL/Arabic shaping remains a release blocker; do not enable Arabic or copy the package to NetSales while this remains unresolved.
 - Package formatting/analyzer/tests, malformed-asset validation, PDF inspection, and cross-target visual QA are not yet executed. The exact-head GitHub Actions run is pending.
+
+
+### Report Studio host design-system integration
+- Added `filterSectionBuilder` and `presentationSectionBuilder` contracts alongside the existing `actionBuilder`. The host can now replace the complete schema-filter and output-presentation control surfaces, not just Preview/Save buttons.
+- Added widget regression coverage that asserts the injected host sections replace the package-default controls.
+- This removes the package-level injection-point gap; the NetSales adapter still must implement these builders using its approved shared widgets before feature rollout.
