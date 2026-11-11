@@ -75,12 +75,6 @@ jobs:
         working-directory: packages/document_engine
         run: flutter pub get
 
-      - name: Temporary formatter inspection
-        run: |
-          dart format \
-            packages/document_engine/lib/src/rendering/pdf/pdf_document_renderer.dart \
-            packages/document_engine/test/rendering/pdf_document_renderer_test.dart
-          git diff -- packages/document_engine/lib/src/rendering/pdf/pdf_document_renderer.dart packages/document_engine/test/rendering/pdf_document_renderer_test.dart
       - name: Verify document engine formatting
         run: dart format --output=none --set-exit-if-changed packages/document_engine
 
