@@ -470,3 +470,28 @@ Branch: feat/platform-billing-management
 ### Verification boundary
 - No local Flutter/Dart SDK is available in this execution environment. The newly added model tests have not been run; formatting, analyzer, complete test suite, Windows Debug compilation, and rendered Light/Dark QA remain unverified.
 - The Dashboard GitHub workflow triggers on pull requests targeting main; a Draft PR is required for exact-head CI evidence. No merge is claimed.
+
+## 2026-11-11 — Shared DataGrid Render Overflow Remediation
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `fix/dashboard-datagrid-render-overflow`
+
+### Root cause and correction
+- The shared `AppDataGrid` selected its tabular/card presentation from the global MediaQuery device width. When embedded in a narrower desktop content pane, split layout, or resized window, the grid still selected the desktop layout even though its actual allocation was compact.
+- Directory widgets duplicated the numeric 760 dp cutoff instead of referencing a shared breakpoint.
+- The cursor/page pagination footer kept its label and navigation controls in one unbreakable Row. Long localized labels could exceed the actual inner width.
+- Added the centralized `AppBreakpoints.dataGridCompactMax` and made `AppDataGrid` select its compact card presentation, hide grid-only exports, and choose its pager from the actual bounded LayoutBuilder width.
+- Made toolbar count chips wrap and made pagination stack its label above the navigation controls below 480 dp of inner width.
+- Aligned Platform Networks and Platform POS directory presentation with the shared breakpoint.
+- Added widget regression coverage for a 420 dp RTL allocation with a long Arabic cursor label and for a wide allocation retaining the tabular grid.
+- Updated the reusable DataGrid responsive documentation.
+
+### Scope
+- Shared DataGrid presentation and responsive breakpoint only.
+- Platform Networks/POS list breakpoint alignment.
+- No API, data/domain contracts, financial logic, permissions, or pagination semantics changed.
+
+### Verification
+- Widget regression tests have been added but have not yet been executed.
+- Flutter analyzer, complete test suite, and Windows Debug build remain pending exact-head GitHub Actions.
+- No rendered Windows/Web visual QA is claimed from this GitHub-only execution context.
