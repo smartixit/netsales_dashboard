@@ -541,3 +541,29 @@ Branch: feat/platform-billing-management
 - Source and regression test changes are committed to this branch.
 - No Flutter/Dart SDK is available in this execution environment; these tests, formatting, analyzer, and package test suite have not been executed. Do not treat this correction as package acceptance.
 - No files have been copied to `netsales`; transfer remains blocked until package-level blockers are resolved and verified.
+
+
+## 2026-11-11 — Document Engine rendering and host integration repair (in progress)
+
+**Repository:** smartixit/netsales_dashboard  
+**Branch:** fix/document-engine-production-readiness
+
+### Implemented in this increment
+- Enforced the documented 24-point Cartesian chart boundary and added 24/25 regression coverage.
+- Added a bounded DocumentImage node with defensive byte copies, PNG/JPEG signature checks, explicit fit/alignment/caption/size controls, and template capability enforcement.
+- Added host-supplied DocumentBranding to render options: organization identity, semantic colors, logo bytes, and bounded TrueType/OpenType font roles. PDF rendering now uses supplied base/bold fonts, applies brand identity to cover/content composition, and embeds the supplied logo.
+- Added explicit template composition strategies: standard, executive, compact, and receipt. They produce different title hierarchy, density, alignment, logo placement, and brand accent treatment.
+- Added a ReportConfigurationStudio.actionBuilder extension point so the consuming application can supply its own design-system Preview/Save buttons without coupling the package to NetSales widgets or GetX.
+- Added tests for branding/image defensive-copy contracts, image capability rejection, distinct template render digests, brand render path, and host-provided Studio actions.
+
+### Remaining production blockers
+- Arabic/complex RTL remains rejected until a provider passes the full target matrix and searchable/copyable text acceptance.
+- Studio filter/selection controls still use generic Flutter Material widgets; only primary actions are host-injectable so far. A host control-builder strategy is still required before strict design-system integration.
+- Template layouts are now distinct composition modes, but they still share the common content-node renderer. Invoice, receipt, and financial-document-specific design composition and visual QA remain to be completed.
+- Image signature/size checks are not a full decoder safety validation; renderer error handling and malformed image corpus tests remain required.
+- Font embedding, font licensing, fallback behavior, and PDF extraction/searchability require tests with actual licensed NetSales fonts.
+
+### Verification status
+- Changes are committed on the repair branch. No local Flutter/Dart SDK is available in this execution context; formatting, analyzer, tests, PDF artifact inspection, and Windows/Web visual rendering have not yet run.
+- Exact-head GitHub Actions has not yet run for the current HEAD. The repository quality workflow includes document_engine format/analyze/test gates and requires a PR targeting main.
+- Nothing has been copied into smartixit/netsales; transfer remains blocked until package-level CI and acceptance gates pass.
