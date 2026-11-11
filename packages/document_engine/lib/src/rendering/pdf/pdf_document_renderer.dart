@@ -1,8 +1,10 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../document/document_branding.dart';
 import '../../document/document_locale.dart';
 import '../../document/document_node.dart';
 import '../../document/document_snapshot.dart';
@@ -54,6 +56,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       if (options.coverPage) {
         document.addPage(
           pw.Page(
+            theme: _pdfTheme(options.branding),
             pageFormat: pageFormat,
             margin: pw.EdgeInsets.fromLTRB(
               profile.marginLeft,
@@ -68,6 +71,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
 
       document.addPage(
         pw.MultiPage(
+          theme: _pdfTheme(options.branding),
           pageFormat: pageFormat,
           margin: pw.EdgeInsets.fromLTRB(
             profile.marginLeft,
@@ -113,7 +117,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                   ),
                 ),
               ),
-            ..._buildContent(snapshot),
+            ..._buildContent(snapshot, template, options.branding),
           ],
         ),
       );
@@ -338,28 +342,100 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     return false;
   }
 
-  List<pw.Widget> _buildContent(DocumentSnapshot snapshot) {
+  List<pw.Widget> _buildContent(
+    DocumentSnapshot snapshot,
+    DocumentTemplateDefinition template,
+    DocumentBranding? branding,
+  ) {
+    final layout = template.layout;
+    final primary = _pdfColor(branding?.primaryColor ?? '0D7A5F');
+    final muted = _pdfColor(branding?.mutedTextColor ?? '64748B');
+    final titleSize = switch (layout) {
+      DocumentTemplateLayout.standard => 20.0,
+      DocumentTemplateLayout.executive => 28.0,
+      DocumentTemplateLayout.compact => 14.0,
+      DocumentTemplateLayout.receipt => 17.0,
+    };
     final widgets = <pw.Widget>[
+      if (branding?.logoBytes case final logo?)
+        pw.Align(
+          alignment: layout == DocumentTemplateLayout.receipt
+              ? pw.Alignment.center
+              : pw.Alignment.centerLeft,
+          child: pw.Container(
+            height: layout == DocumentTemplateLayout.compact ? 30 : 48,
+            margin: const pw.EdgeInsets.only(bottom: 10),
+            child: pw.Image(pw.MemoryImage(logo), fit: pw.BoxFit.contain),
+          ),
+        ),
+      if (branding != null && layout != DocumentTemplateLayout.compact)
+        pw.Text(
+          branding.organizationName,
+          style: pw.TextStyle(fontSize: 9, color: muted),
+          textAlign: layout == DocumentTemplateLayout.receipt
+              ? pw.TextAlign.center
+              : pw.TextAlign.left,
+        ),
+      if (layout == DocumentTemplateLayout.executive)
+        pw.Container(
+          height: 5,
+          color: primary,
+          margin: const pw.EdgeInsets.only(top: 8, bottom: 16),
+        ),
       pw.Header(
         level: 0,
         child: pw.Text(
           snapshot.metadata.title,
-          style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+          textAlign: layout == DocumentTemplateLayout.receipt
+              ? pw.TextAlign.center
+              : pw.TextAlign.left,
+          style: pw.TextStyle(
+            fontSize: titleSize,
+            fontWeight: pw.FontWeight.bold,
+            color: layout == DocumentTemplateLayout.executive ? primary : null,
+          ),
         ),
       ),
     ];
+    if (branding?.tagline case final tagline?
+        when layout == DocumentTemplateLayout.executive) {
+      widgets.add(
+        pw.Text(tagline, style: pw.TextStyle(fontSize: 9, color: muted)),
+      );
+    }
     if (snapshot.metadata.subtitle case final subtitle?) {
       widgets.add(
         pw.Paragraph(
           text: subtitle,
-          style: const pw.TextStyle(fontSize: 11, color: PdfColors.grey700),
+          style: pw.TextStyle(
+            fontSize: layout == DocumentTemplateLayout.compact ? 8 : 11,
+            color: muted,
+          ),
+          textAlign: layout == DocumentTemplateLayout.receipt
+              ? pw.TextAlign.center
+              : pw.TextAlign.left,
         ),
       );
+    }
+    if (layout == DocumentTemplateLayout.receipt) {
+      widgets.add(pw.Divider(color: primary, thickness: 1.2));
     }
 
     for (final section in snapshot.sections) {
       if (section.title case final title?) {
-        widgets.add(pw.Header(level: 1, child: pw.Text(title)));
+        widgets.add(
+          pw.Header(
+            level: 1,
+            child: pw.Text(
+              title,
+              style: pw.TextStyle(
+                fontSize: layout == DocumentTemplateLayout.compact ? 10 : 14,
+                fontWeight: pw.FontWeight.bold,
+                color: layout == DocumentTemplateLayout.executive ? primary : null,
+              ),
+            ),
+          ),
+        );
       }
       for (final node in section.nodes) {
         switch (node) {
