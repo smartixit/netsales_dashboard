@@ -136,8 +136,8 @@ class PlatformNavigationRegistry {
       route: '/dashboard/financial-reports',
       labelKey: 'reports',
       icon: Icons.query_stats_rounded,
-      permission: AppPermissions.salesReport,
-      groupKey: 'finance',
+      permission: AppPermissions.billingReport,
+      groupKey: 'subscriptions',
     ),
     PlatformNavigationDestination(
       id: 'support_tickets',

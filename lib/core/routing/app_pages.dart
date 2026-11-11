@@ -20,6 +20,8 @@ import 'package:netsales_dashboard/features/platform_dashboard/presentation/scre
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/screens/platform_overview_screen.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/bindings/platform_billing_binding.dart';
 import 'package:netsales_dashboard/features/platform_billing/presentation/screens/platform_billing_screen.dart';
+import 'package:netsales_dashboard/features/platform_reports/presentation/platform_reports_binding.dart';
+import 'package:netsales_dashboard/features/platform_reports/presentation/platform_reports_screen.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/bindings/platform_users_binding.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/bindings/platform_user_detail_binding.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/screens/platform_users_screen.dart';
@@ -102,7 +104,7 @@ abstract final class AppPages {
         _module('/pos-wallets', 'pos_wallets', AppPermissions.posWalletsView),
         _module('/expenses', 'expenses', AppPermissions.expensesView),
         _module('/bank-accounts', 'bank_accounts', AppPermissions.bankAccountsView),
-        _module('/financial-reports', 'reports', AppPermissions.salesReport),
+        GetPage<dynamic>(name: '/financial-reports', page: () => const PlatformReportsScreen(), binding: PlatformReportsBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.billingReport)], transition: Transition.fadeIn),
         _module('/support-tickets', 'support_tickets', AppPermissions.supportView),
         _module('/notifications', 'notifications', AppPermissions.notificationsView),
         _module('/notification-management', 'send_notifications', AppPermissions.notificationsCreate),
