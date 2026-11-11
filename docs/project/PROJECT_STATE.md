@@ -352,3 +352,12 @@ Dashboard branch: smartixit/netsales_dashboard:feat/platform-billing-management
 - The prior full-project run exposed independent blockers in Platform Billing compile/analyzer contracts, authentication test initialization/layout, compact sidebar geometry, and a password-route test timeout.
 - Targeted fixes were committed on `fix/dashboard-datagrid-render-overflow`; all exact-head analyzer, full test, and Windows Debug gates must be rerun before acceptance.
 - PR #47 remains Draft and unmerged. Do not mark this issue resolved until the new workflow is green and rendered visual QA is reviewed.
+
+
+## Document Engine production-readiness repair — IN PROGRESS (2026-11-11)
+
+- Active repair branch: `fix/document-engine-production-readiness`.
+- Corrected the Cartesian chart point-count validation from the accidental 100-point allowance to the documented 24-point maximum; added 24/25 boundary regression coverage.
+- This focused correction is not a production-readiness pass. Arabic/complex RTL remains rejected pending an explicitly approved provider and complete target/viewer evidence. Template-specific layout execution and host-injected branding/design-system contracts remain unresolved.
+- No package transfer to `smartixit/netsales` has started. Do not copy the package until all package defects are resolved and exact-head CI/test evidence passes.
+- Flutter/Dart tests, analyzer, formatting, and visual QA have not been run in this environment.
