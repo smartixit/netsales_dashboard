@@ -57,6 +57,7 @@ void main() {
   Widget buildStudio({
     required ValueChanged<ReportCriteria> onCriteriaChanged,
     required ValueChanged<ReportPresentationOptions> onPresentationChanged,
+    ReportStudioActionBuilder? actionBuilder,
   }) => MaterialApp(
     home: Scaffold(
       body: ReportConfigurationStudio(
@@ -68,6 +69,7 @@ void main() {
         onPresentationChanged: onPresentationChanged,
         onPreview: () {},
         onSavePreset: () {},
+        actionBuilder: actionBuilder,
       ),
     ),
   );
@@ -90,6 +92,34 @@ void main() {
     expect(find.text('columns.reference'), findsOneWidget);
     expect(find.text('columns.created_at'), findsOneWidget);
     expect(find.text('report_configuration.output_design'), findsOneWidget);
+  });
+
+  testWidgets('allows host design-system actions to replace package defaults', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      buildStudio(
+        onCriteriaChanged: (_) {},
+        onPresentationChanged: (_) {},
+        actionBuilder: (
+          context, {
+          required label,
+          required icon,
+          required onPressed,
+          required secondary,
+        }) => OutlinedButton.icon(
+          key: ValueKey('host-action-$label'),
+          onPressed: onPressed,
+          icon: Icon(icon),
+          label: Text(label),
+        ),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('host-action-report_configuration.preview')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('reports controlled text-filter changes to the host', (
