@@ -223,7 +223,8 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (!template.capabilities.supportsAll(requiredCapabilities)) {
       return const DocumentRenderFailure(
         code: DocumentRenderFailureCode.unsupportedCapability,
-        message: 'The selected template does not declare all requested capabilities.',
+        message:
+            'The selected template does not declare all requested capabilities.',
       );
     }
 
@@ -245,7 +246,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     DocumentSnapshot snapshot,
     DocumentRenderOptions options,
   ) {
-    final rtlPattern = RegExp(r'[\\u0590-\\u08FF\\uFB1D-\\uFDFF\\uFE70-\\uFEFF]');
+    final rtlPattern = RegExp(
+      r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]',
+    );
     final branding = options.branding;
     final optionTexts = <String?>[
       options.watermark?.text,

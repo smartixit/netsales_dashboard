@@ -405,6 +405,46 @@ void main() {
     },
   );
 
+
+  test('rejects mixed RTL/LTR text in paragraphs, headings, and table labels', () async {
+    const renderer = PdfDocumentRenderer();
+    final rtlCases = <List<DocumentNode>>[
+      const [DocumentParagraph(text: 'Invoice INV-2026-001 رقم الفاتورة')],
+      const [DocumentHeading(text: 'Customer details بيانات العميل')],
+      [
+        DocumentTable(
+          columns: [
+            DocumentTableColumn(id: 'reference', label: 'Reference المرجع'),
+          ],
+          rows: [
+            DocumentTableRow(
+              id: 'row-1',
+              cells: [
+                DocumentTableCell(
+                  value: DocumentTextValue('INV-2026-001'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ];
+
+    for (final nodes in rtlCases) {
+      final result = await renderer.render(
+        snapshot: snapshot(nodes: nodes),
+        template: template,
+        options: options(),
+      );
+
+      expect(result, isA<DocumentRenderFailure>());
+      expect(
+        (result as DocumentRenderFailure).code,
+        DocumentRenderFailureCode.unsupportedTextShaping,
+      );
+    }
+  });
+
   test('rejects a template registered for another document type', () async {
     const renderer = PdfDocumentRenderer();
     final otherTemplate = DocumentTemplateDefinition(
