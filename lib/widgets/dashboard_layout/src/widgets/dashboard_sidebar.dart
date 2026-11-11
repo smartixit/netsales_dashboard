@@ -164,7 +164,7 @@ class _NavigationTile extends StatelessWidget {
         ? theme.sidebarForeground
         : theme.sidebarMuted;
     final iconWidget = Container(
-      padding: EdgeInsets.all(AppSpacing.xs),
+      padding: EdgeInsets.all(collapsed ? AppSpacing.zero : AppSpacing.xs),
       decoration: BoxDecoration(
         color: selected
             ? theme.sidebarSelectedForeground.withValues(alpha: 0.12)

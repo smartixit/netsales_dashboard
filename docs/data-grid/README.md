@@ -29,7 +29,7 @@ The generic layer has no HTTP, permissions, workspace, financial or business log
 
 ## Responsive and visual behavior
 
-Desktop/tablet use SfDataGrid with horizontal scrolling. Phones use key/value record cards; provide `mobileItemBuilder` for a feature-specific mobile presentation. Mobile selection uses checkboxes, page-based lists use previous/next controls, and guarded load-more/pull-to-refresh callbacks are supported when enabled. Grid-state Excel/PDF export buttons are hidden on mobile because no SfDataGrid is mounted there; mobile features may provide a feature-owned export action. Light/Dark uses the active NetSales AppColors palette. RTL follows Directionality.
+`AppDataGrid` uses its actual allocated width (not the physical monitor/window width) and the centralized `AppBreakpoints.dataGridCompactMax` breakpoint. Below that threshold it renders key/value record cards and hides grid-only export controls; at or above it, it renders `SfDataGrid` with horizontal scrolling. Feature-specific directories must use the same shared breakpoint when choosing between their list and `AppDataGrid`, and provide `mobileItemBuilder` for the compact presentation. Page/cursor pagination reflows vertically below 480 dp of inner width so long Arabic labels cannot force a horizontal `RenderFlex` overflow. Toolbar count chips wrap onto additional runs. Mobile selection uses checkboxes, page-based lists use previous/next controls, and guarded load-more/pull-to-refresh callbacks are supported when enabled. Light/Dark uses the active NetSales AppColors palette. RTL follows Directionality.
 
 ## Syncfusion capabilities surfaced
 

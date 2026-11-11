@@ -986,9 +986,9 @@ class PlatformBillingController extends GetxController {
           if (trialPolicyDescriptionController.text.trim().isNotEmpty)
             'description': trialPolicyDescriptionController.text.trim(),
         });
-        return createTrialPolicy(data);
+        return await createTrialPolicy(data);
       }
-      return createTrialPolicyVersion(policyId, data);
+      return await createTrialPolicyVersion(policyId, data);
     } on FormatException catch (error) {
       CustomSnackbar.show(
         title: 'راجع بيانات سياسة التجربة',
@@ -1031,9 +1031,9 @@ class PlatformBillingController extends GetxController {
           if (dunningPolicyDescriptionController.text.trim().isNotEmpty)
             'description': dunningPolicyDescriptionController.text.trim(),
         });
-        return createDunningPolicy(data);
+        return await createDunningPolicy(data);
       }
-      return createDunningPolicyVersion(policyId, data);
+      return await createDunningPolicyVersion(policyId, data);
     } on FormatException catch (error) {
       CustomSnackbar.show(
         title: 'راجع بيانات سياسة التحصيل',
@@ -1412,6 +1412,7 @@ class PlatformBillingController extends GetxController {
     selectedPlanFeatureType.value = 'RESOURCE_LIMIT';
   }
 
+  @override
   Future<void> refresh() => loadInitial();
 
   @override

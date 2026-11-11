@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/themes/app_themes.dart';
@@ -50,26 +51,31 @@ void main() {
         addTearDown(Get.reset);
 
         await tester.pumpWidget(
-          GetMaterialApp(
-            theme: AppThemes.light,
-            darkTheme: AppThemes.dark,
-            themeMode: scenario.brightness == Brightness.dark
-                ? ThemeMode.dark
-                : ThemeMode.light,
-            home: Directionality(
-              textDirection: scenario.direction,
-              child: AuthScaffold(
-                icon: Icons.shield_rounded,
-                title: 'مرحباً بك مجدداً',
-                subtitle: 'سجّل الدخول إلى لوحة التحكم الإدارية.',
-                progress: const AuthFlowProgress(
-                  currentStep: 2,
-                  totalSteps: 3,
-                  label: 'التحقق من الهوية',
-                ),
-                child: const SizedBox(
-                  height: 420,
-                  child: Center(child: Text('نموذج تسجيل الدخول')),
+          ScreenUtilInit(
+            designSize: const Size(1440, 900),
+            minTextAdapt: true,
+            splitScreenMode: true,
+            builder: (context, child) => GetMaterialApp(
+              theme: AppThemes.light,
+              darkTheme: AppThemes.dark,
+              themeMode: scenario.brightness == Brightness.dark
+                  ? ThemeMode.dark
+                  : ThemeMode.light,
+              home: Directionality(
+                textDirection: scenario.direction,
+                child: AuthScaffold(
+                  icon: Icons.shield_rounded,
+                  title: 'مرحباً بك مجدداً',
+                  subtitle: 'سجّل الدخول إلى لوحة التحكم الإدارية.',
+                  progress: const AuthFlowProgress(
+                    currentStep: 2,
+                    totalSteps: 3,
+                    label: 'التحقق من الهوية',
+                  ),
+                  child: const SizedBox(
+                    height: 420,
+                    child: Center(child: Text('نموذج تسجيل الدخول')),
+                  ),
                 ),
               ),
             ),

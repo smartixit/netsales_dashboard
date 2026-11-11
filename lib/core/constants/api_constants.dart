@@ -320,9 +320,6 @@ abstract final class ApiConstants {
   static String billingPlanVersionPrices(int versionId) => '/platform/billing/plan-versions/$versionId/prices';
   static String billingPlanVersionFeatures(int versionId) => '/platform/billing/plan-versions/$versionId/features';
   static String billingPublishPlanVersion(int versionId) => '/platform/billing/plan-versions/$versionId/publish';
-  static String billingPlanVersionPrices(int versionId) => '/platform/billing/plan-versions/$versionId/prices';
-  static String billingPlanVersionFeatures(int versionId) => '/platform/billing/plan-versions/$versionId/features';
-  static String billingPublishPlanVersion(int versionId) => '/platform/billing/plan-versions/$versionId/publish';
   static String billingVerifyPayment(int id) => '/platform/billing/payments/$id/verify';
   static String billingRejectPayment(int id) => '/platform/billing/payments/$id/reject';
   static String billingVoidInvoice(int id) => '/platform/billing/invoices/$id/void';
@@ -342,8 +339,6 @@ abstract final class ApiConstants {
   static String billingPublishDunningPolicyVersion(int versionId) => '/platform/billing/policies/dunning-versions/$versionId/publish';
   static String billingAssignPlanPolicies(int versionId) => '/platform/billing/policies/plan-versions/$versionId';
   static String billingAssignPricePolicies(int priceId) => '/platform/billing/policies/prices/$priceId';
-  static const String billingDunningPolicies = '/platform/billing/policies/dunning';
-  static const String billingPendingTrialRedemptions = '/platform/billing/policies/trial-redemptions/pending';
 
   // ==========================================================================
   // 17. كتالوج ميزات النظام (System Features)

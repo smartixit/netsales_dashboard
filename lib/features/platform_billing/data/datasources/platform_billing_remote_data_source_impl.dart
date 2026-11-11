@@ -15,7 +15,7 @@ class PlatformBillingRemoteDataSourceImpl implements PlatformBillingRemoteDataSo
 
   Future<ApiResponse<List<Map<String, dynamic>>>> _list(
     String path, {
-    Map<String, dynamic> filters = const {},
+    Map<String, dynamic> filters = const <String, dynamic>{},
     String? cursor,
     int perPage = 20,
   }) => _api.getList<Map<String, dynamic>>(
@@ -93,7 +93,7 @@ class PlatformBillingRemoteDataSourceImpl implements PlatformBillingRemoteDataSo
   Future<ApiResponse<Map<String, dynamic>>> publishPlanVersion(int versionId) =>
       _api.post<Map<String, dynamic>>(
         ApiConstants.billingPublishPlanVersion(versionId),
-        data: const {},
+        data: const <String, dynamic>{},
         fromJson: _map,
       );
 
@@ -139,11 +139,11 @@ class PlatformBillingRemoteDataSourceImpl implements PlatformBillingRemoteDataSo
 
   @override
   Future<ApiResponse<Map<String, dynamic>>> publishTrialPolicyVersion(int versionId) =>
-      _api.post<Map<String, dynamic>>(ApiConstants.billingPublishTrialPolicyVersion(versionId), data: const {}, fromJson: _map);
+      _api.post<Map<String, dynamic>>(ApiConstants.billingPublishTrialPolicyVersion(versionId), data: const <String, dynamic>{}, fromJson: _map);
 
   @override
   Future<ApiResponse<Map<String, dynamic>>> publishDunningPolicyVersion(int versionId) =>
-      _api.post<Map<String, dynamic>>(ApiConstants.billingPublishDunningPolicyVersion(versionId), data: const {}, fromJson: _map);
+      _api.post<Map<String, dynamic>>(ApiConstants.billingPublishDunningPolicyVersion(versionId), data: const <String, dynamic>{}, fromJson: _map);
 
   @override
   Future<ApiResponse<Map<String, dynamic>>> assignPlanVersionPolicies(
@@ -175,7 +175,7 @@ class PlatformBillingRemoteDataSourceImpl implements PlatformBillingRemoteDataSo
 
   @override
   Future<ApiResponse<Map<String, dynamic>>> approveTrialRedemption(int redemptionId) =>
-      _api.post<Map<String, dynamic>>(ApiConstants.billingApproveTrialRedemption(redemptionId), data: const {}, fromJson: _map);
+      _api.post<Map<String, dynamic>>(ApiConstants.billingApproveTrialRedemption(redemptionId), data: const <String, dynamic>{}, fromJson: _map);
 
   @override
   Future<ApiResponse<Map<String, dynamic>>> rejectTrialRedemption(int redemptionId, {required String reason}) =>

@@ -771,13 +771,13 @@ class BillingOverviewModel extends BillingOverviewEntity {
 
 Map<String, dynamic> _map(Object? value) {
   if (value is Map<String, dynamic>) return value;
-  if (value is Map) return Map<String, dynamic>.from(value);
+  if (value is Map<Object?, Object?>) return Map<String, dynamic>.from(value);
   return const <String, dynamic>{};
 }
 
 List<Map<String, dynamic>> _mapList(Object? value) {
   if (value is! List) return const [];
-  return value.whereType<Map>().map((item) => Map<String, dynamic>.from(item)).toList(growable: false);
+  return value.whereType<Map<String, dynamic>>().toList(growable: false);
 }
 
 int _int(Object? value, {int fallback = 0}) =>

@@ -343,7 +343,7 @@ class _SubscriptionRow extends StatelessWidget {
         final days = int.tryParse(controller.trialAdjustmentDaysController.text.trim());
         if (type == null) return;
         unawaited(controller.adjustSubscriptionTrial(
-          subscriptionId: subscription.id,
+          subscription.id,
           adjustmentType: type,
           days: type == 'END_EARLY' ? null : days,
           reason: controller.trialDecisionReasonController.text,

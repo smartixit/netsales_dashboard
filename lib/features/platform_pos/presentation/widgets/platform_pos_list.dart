@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/constants/app_radius.dart';
 import 'package:netsales_dashboard/core/constants/app_spacing.dart';
+import 'package:netsales_dashboard/core/themes/app_breakpoints.dart';
 import 'package:netsales_dashboard/core/localization/app_localizations.dart';
 import 'package:netsales_dashboard/core/routing/app_routes.dart';
 import 'package:netsales_dashboard/core/themes/app_colors.dart';
@@ -28,7 +29,7 @@ class PlatformPosList extends StatelessWidget {
   Widget build(BuildContext context) => Obx(
     () => LayoutBuilder(
       builder: (context, constraints) {
-        if (constraints.maxWidth >= 760) {
+        if (constraints.maxWidth >= AppBreakpoints.dataGridCompactMax) {
           return AppDataGrid<PlatformPosEntity>(
             source: controller.gridSource,
             features: const AppDataGridFeatures(

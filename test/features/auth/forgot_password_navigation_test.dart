@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
@@ -47,7 +49,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await Get.toNamed<void>(AppRoutes.forgotPassword);
+      unawaited(Get.toNamed<void>(AppRoutes.forgotPassword));
       await tester.pumpAndSettle();
 
       Get.find<ForgotPasswordController>().goToLogin();

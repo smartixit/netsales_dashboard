@@ -123,8 +123,14 @@ class AppDataGrid<T> extends StatelessWidget {
   final VoidCallback? noResultsAction;
 
   @override
-  Widget build(BuildContext context) {
-    final selectedGridRows = source.rows
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final availableWidth = constraints.hasBoundedWidth
+          ? constraints.maxWidth
+          : MediaQuery.sizeOf(context).width;
+      final useCompactPresentation =
+          availableWidth < AppBreakpoints.dataGridCompactMax;
+      final selectedGridRows = source.rows
         .where((row) {
           final item = source.itemForRow(row);
           return item != null && selectedItems.contains(item);
@@ -138,7 +144,7 @@ class AppDataGrid<T> extends StatelessWidget {
             searchController != null ||
             headerActions.isNotEmpty ||
             source.items.isNotEmpty ||
-            (!AppBreakpoints.isMobile(context) &&
+            (!useCompactPresentation &&
                 exportController != null &&
                 viewState == AppDataGridViewState.success))
           _GridToolbar(
@@ -150,7 +156,7 @@ class AppDataGrid<T> extends StatelessWidget {
             onClearSearch: onClearSearch,
             actions: headerActions,
             exportController:
-                !AppBreakpoints.isMobile(context) &&
+                !useCompactPresentation &&
                     viewState == AppDataGridViewState.success &&
                     source.items.isNotEmpty
                 ? exportController
@@ -161,11 +167,16 @@ class AppDataGrid<T> extends StatelessWidget {
             selectedRows: selectedGridRows,
             isRemote: features.dataMode == AppDataGridDataMode.remote,
           ),
-        Expanded(child: _buildBody(context)),
+        Expanded(
+          child: _buildBody(
+            context,
+            useCompactPresentation: useCompactPresentation,
+          ),
+        ),
         if (viewState == AppDataGridViewState.success && pagination.isEnabled)
           if (pagination.mode == AppDataGridPaginationMode.pageBased &&
               pagination.delegate != null &&
-              !AppBreakpoints.isMobile(context))
+              !useCompactPresentation)
             SfDataPagerTheme(
               data: SfDataPagerThemeData(
                 backgroundColor: context.colors.surfaceContainerHigh,
@@ -247,10 +258,14 @@ class AppDataGrid<T> extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
+      );
+    },
+  );
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildBody(
+    BuildContext context, {
+    required bool useCompactPresentation,
+  }) {
     switch (viewState) {
       case AppDataGridViewState.loading:
         return const Padding(
@@ -292,7 +307,7 @@ class AppDataGrid<T> extends StatelessWidget {
             onAction: onEmptyAction,
           );
         }
-        if (AppBreakpoints.isMobile(context)) {
+        if (useCompactPresentation) {
           return _MobileGridList<T>(
             key: const ValueKey('data-grid-mobile'),
             source: source,
@@ -642,21 +657,22 @@ class _GridToolbar extends StatelessWidget {
               ],
             ),
           AppSpacing.vXs,
-          Row(
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               CustomChip(
                 label: isRemote ? '$itemCount سجل محمّل' : '$itemCount سجل',
                 icon: Icons.table_rows_outlined,
                 isCompact: true,
               ),
-              if (selectedCount > 0) ...[
-                AppSpacing.hXs,
+              if (selectedCount > 0)
                 CustomChip(
                   label: '$selectedCount محدد',
                   icon: Icons.check_circle_outline_rounded,
                   isCompact: true,
                 ),
-              ],
             ],
           ),
         ],
@@ -854,6 +870,63 @@ class _GridPaginationBar extends StatelessWidget {
     final label = pagination.mode == AppDataGridPaginationMode.pageBased
         ? 'صفحة ${pagination.currentPage} من ${pagination.totalPages}'
         : pagination.pageLabel ?? 'تصفح النتائج';
+    final labelWidget = Text(
+      label,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: AppTypography.caption.copyWith(
+        color: context.colors.onSurfaceVariant,
+      ),
+    );
+    final navigationControls = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CustomButton.icon(
+          icon: Directionality.of(context) == TextDirection.rtl
+              ? Icons.chevron_right_rounded
+              : Icons.chevron_left_rounded,
+          tooltip: 'السابق',
+          size: AppButtonSize.small,
+          enabled:
+              !pagination.isLoading &&
+              (pagination.mode == AppDataGridPaginationMode.pageBased
+                  ? pagination.currentPage > 1
+                  : pagination.hasPrevious),
+          onPressed: pagination.isLoading
+              ? null
+              : () {
+                  if (pagination.mode == AppDataGridPaginationMode.pageBased) {
+                    onPageChanged?.call(pagination.currentPage - 1);
+                  } else {
+                    pagination.onPrevious?.call();
+                  }
+                },
+        ),
+        AppSpacing.hXs,
+        CustomButton.icon(
+          icon: Directionality.of(context) == TextDirection.rtl
+              ? Icons.chevron_left_rounded
+              : Icons.chevron_right_rounded,
+          tooltip: 'التالي',
+          size: AppButtonSize.small,
+          enabled:
+              !pagination.isLoading &&
+              (pagination.mode == AppDataGridPaginationMode.pageBased
+                  ? pagination.currentPage < pagination.totalPages
+                  : pagination.hasNext),
+          onPressed: pagination.isLoading
+              ? null
+              : () {
+                  if (pagination.mode == AppDataGridPaginationMode.pageBased) {
+                    onPageChanged?.call(pagination.currentPage + 1);
+                  } else {
+                    pagination.onNext?.call();
+                  }
+                },
+        ),
+      ],
+    );
+
     return Container(
       padding: EdgeInsetsDirectional.fromSTEB(
         AppSpacing.md,
@@ -864,65 +937,31 @@ class _GridPaginationBar extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: context.colors.outlineVariant)),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: AppTypography.caption.copyWith(
-              color: context.colors.onSurfaceVariant,
-            ),
-          ),
-          Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 480) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                labelWidget,
+                AppSpacing.vXs,
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: navigationControls,
+                ),
+              ],
+            );
+          }
+
+          return Row(
             children: [
-              CustomButton.icon(
-                icon: Directionality.of(context) == TextDirection.rtl
-                    ? Icons.chevron_right_rounded
-                    : Icons.chevron_left_rounded,
-                tooltip: 'السابق',
-                size: AppButtonSize.small,
-                enabled:
-                    !pagination.isLoading &&
-                    (pagination.mode == AppDataGridPaginationMode.pageBased
-                        ? pagination.currentPage > 1
-                        : pagination.hasPrevious),
-                onPressed: pagination.isLoading
-                    ? null
-                    : () {
-                        if (pagination.mode ==
-                            AppDataGridPaginationMode.pageBased) {
-                          onPageChanged?.call(pagination.currentPage - 1);
-                        } else {
-                          pagination.onPrevious?.call();
-                        }
-                      },
-              ),
-              AppSpacing.hXs,
-              CustomButton.icon(
-                icon: Directionality.of(context) == TextDirection.rtl
-                    ? Icons.chevron_left_rounded
-                    : Icons.chevron_right_rounded,
-                tooltip: 'التالي',
-                size: AppButtonSize.small,
-                enabled:
-                    !pagination.isLoading &&
-                    (pagination.mode == AppDataGridPaginationMode.pageBased
-                        ? pagination.currentPage < pagination.totalPages
-                        : pagination.hasNext),
-                onPressed: pagination.isLoading
-                    ? null
-                    : () {
-                        if (pagination.mode ==
-                            AppDataGridPaginationMode.pageBased) {
-                          onPageChanged?.call(pagination.currentPage + 1);
-                        } else {
-                          pagination.onNext?.call();
-                        }
-                      },
-              ),
+              Expanded(child: labelWidget),
+              AppSpacing.hSm,
+              navigationControls,
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
