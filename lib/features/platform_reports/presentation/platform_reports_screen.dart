@@ -78,6 +78,8 @@ class _Filters extends StatelessWidget {
           SizedBox(width: 180, child: CustomTextField(controller: controller.currencyIdController, label: 'العملة', hint: 'Currency ID', keyboardType: TextInputType.number, isRequired: false)),
           SizedBox(width: 180, child: CustomTextField(controller: controller.statusController, label: 'الحالة', hint: 'ACTIVE / PAID ...', isRequired: false)),
           SizedBox(width: 220, child: CustomTextField(controller: controller.searchController, label: 'بحث', hint: 'رقم الفاتورة أو الحساب', isRequired: false)),
+          SizedBox(width: 180, child: CustomTextField(controller: controller.fromDateController, label: 'من تاريخ', hint: 'YYYY-MM-DD', isRequired: false)),
+          SizedBox(width: 180, child: CustomTextField(controller: controller.toDateController, label: 'إلى تاريخ', hint: 'YYYY-MM-DD', isRequired: false)),
         ],
       ),
     ),

@@ -20,6 +20,8 @@ class PlatformReportsController extends GetxController {
   final currencyIdController = TextEditingController();
   final statusController = TextEditingController();
   final searchController = TextEditingController();
+  final fromDateController = TextEditingController();
+  final toDateController = TextEditingController();
 
   @override
   void onClose() {
@@ -28,6 +30,8 @@ class PlatformReportsController extends GetxController {
     currencyIdController.dispose();
     statusController.dispose();
     searchController.dispose();
+    fromDateController.dispose();
+    toDateController.dispose();
     super.onClose();
   }
 
@@ -67,6 +71,14 @@ class PlatformReportsController extends GetxController {
       if (availableFilters.contains('search') &&
           searchController.text.trim().isNotEmpty)
         'search': searchController.text.trim(),
+      if (availableFilters.contains('from') && fromDateController.text.trim().isNotEmpty)
+        'from': fromDateController.text.trim(),
+      if (availableFilters.contains('to') && toDateController.text.trim().isNotEmpty)
+        'to': toDateController.text.trim(),
+      if (availableFilters.contains('from_date') && fromDateController.text.trim().isNotEmpty)
+        'from_date': fromDateController.text.trim(),
+      if (availableFilters.contains('to_date') && toDateController.text.trim().isNotEmpty)
+        'to_date': toDateController.text.trim(),
     }..removeWhere((key, value) => value == null);
     isCreating.value = true;
     try {
