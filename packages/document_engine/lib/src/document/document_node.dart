@@ -377,8 +377,7 @@ final class DocumentImage extends DocumentNode {
     if (!isPng && !isJpeg) {
       throw ArgumentError('Document image must be PNG or JPEG.');
     }
-    if (caption != null &&
-        (caption!.trim().isEmpty || caption!.length > 240)) {
+    if (caption != null && (caption!.trim().isEmpty || caption!.length > 240)) {
       throw ArgumentError.value(
         caption,
         'caption',
