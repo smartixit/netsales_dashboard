@@ -1,8 +1,10 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../document/document_branding.dart';
 import '../../document/document_locale.dart';
 import '../../document/document_node.dart';
 import '../../document/document_snapshot.dart';
@@ -54,6 +56,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       if (options.coverPage) {
         document.addPage(
           pw.Page(
+            theme: _pdfTheme(options.branding),
             pageFormat: pageFormat,
             margin: pw.EdgeInsets.fromLTRB(
               profile.marginLeft,
@@ -68,6 +71,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
 
       document.addPage(
         pw.MultiPage(
+          theme: _pdfTheme(options.branding),
           pageFormat: pageFormat,
           margin: pw.EdgeInsets.fromLTRB(
             profile.marginLeft,
@@ -113,7 +117,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                   ),
                 ),
               ),
-            ..._buildContent(snapshot),
+            ..._buildContent(snapshot, template, options.branding),
           ],
         ),
       );
@@ -171,7 +175,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (snapshot.metadata.locale.direction ==
             DocumentTextDirection.rightToLeft ||
         RegExp(r'^(ar|fa|ur|he|ps|sd)(-|$)').hasMatch(locale) ||
-        _containsUnshapedRtl(snapshot, options.watermark)) {
+        _containsUnshapedRtl(snapshot, options)) {
       return const DocumentRenderFailure(
         code: DocumentRenderFailureCode.unsupportedTextShaping,
         message:
@@ -203,6 +207,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     }
     if (nodes.any((node) => node is DocumentChart)) {
       requiredCapabilities.add(TemplateCapability.charts);
+    }
+    if (nodes.any((node) => node is DocumentImage)) {
+      requiredCapabilities.add(TemplateCapability.images);
     }
     if (nodes.any((node) => node is DocumentQrCode)) {
       requiredCapabilities.add(TemplateCapability.qrCodes);
@@ -236,11 +243,29 @@ final class PdfDocumentRenderer implements DocumentRenderer {
 
   bool _containsUnshapedRtl(
     DocumentSnapshot snapshot,
-    DocumentWatermark? watermark,
+    DocumentRenderOptions options,
   ) {
-    final rtlPattern = RegExp(r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]');
-    if ((watermark != null && rtlPattern.hasMatch(watermark.text)) ||
-        rtlPattern.hasMatch(snapshot.metadata.title) ||
+    final rtlPattern = RegExp(r'[\\u0590-\\u08FF\\uFB1D-\\uFDFF\\uFE70-\\uFEFF]');
+    final branding = options.branding;
+    final optionTexts = <String?>[
+      options.watermark?.text,
+      options.headerText,
+      options.footerText,
+      options.firstPageHeaderText,
+      options.firstPageFooterText,
+      options.coverTitle,
+      options.coverSubtitle,
+      ...options.coverMetadata.keys,
+      ...options.coverMetadata.values,
+      branding?.organizationName,
+      branding?.tagline,
+    ];
+    if (optionTexts.any(
+      (value) => value != null && rtlPattern.hasMatch(value),
+    )) {
+      return true;
+    }
+    if (rtlPattern.hasMatch(snapshot.metadata.title) ||
         (snapshot.metadata.subtitle != null &&
             rtlPattern.hasMatch(snapshot.metadata.subtitle!))) {
       return true;
@@ -299,6 +324,8 @@ final class PdfDocumentRenderer implements DocumentRenderer {
               )) {
             return true;
           }
+        } else if (node case DocumentImage(:final caption)) {
+          if (caption != null && rtlPattern.hasMatch(caption)) return true;
         } else if (node case DocumentQrCode(:final caption)) {
           if (caption != null && rtlPattern.hasMatch(caption)) return true;
         } else if (node case DocumentSignatureArea(
@@ -333,13 +360,97 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     return false;
   }
 
-  List<pw.Widget> _buildContent(DocumentSnapshot snapshot) {
+  List<pw.Widget> _buildContent(
+    DocumentSnapshot snapshot,
+    DocumentTemplateDefinition template,
+    DocumentBranding? branding,
+  ) {
+    final layout = template.layout;
+    final primary = _pdfColor(branding?.primaryColor ?? '0D7A5F');
+    final secondary = _pdfColor(branding?.secondaryColor ?? '1ABC9C');
+    final accent = _pdfColor(branding?.accentColor ?? '2563EB');
+    final surface = _pdfColor(branding?.surfaceColor ?? 'F8FAFC');
+    final textColor = _pdfColor(branding?.textColor ?? '172033');
+    final muted = _pdfColor(branding?.mutedTextColor ?? '64748B');
+    final titleSize = switch (layout) {
+      DocumentTemplateLayout.standard => 20.0,
+      DocumentTemplateLayout.executive => 28.0,
+      DocumentTemplateLayout.compact => 14.0,
+      DocumentTemplateLayout.receipt => 17.0,
+    };
     final widgets = <pw.Widget>[
+      if (branding?.logoBytes case final logo?)
+        pw.Align(
+          alignment: layout == DocumentTemplateLayout.receipt
+              ? pw.Alignment.center
+              : pw.Alignment.centerLeft,
+          child: pw.Container(
+            height: layout == DocumentTemplateLayout.compact ? 30 : 48,
+            margin: const pw.EdgeInsets.only(bottom: 10),
+            child: pw.Image(pw.MemoryImage(logo), fit: pw.BoxFit.contain),
+          ),
+        ),
+      if (branding != null && layout != DocumentTemplateLayout.compact)
+        pw.Container(
+          width: double.infinity,
+          padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+          decoration: pw.BoxDecoration(
+            color: surface,
+            borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
+          ),
+          child: pw.Column(
+            crossAxisAlignment: layout == DocumentTemplateLayout.receipt
+                ? pw.CrossAxisAlignment.center
+                : pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                branding.organizationName,
+                style: pw.TextStyle(fontSize: 9, color: textColor),
+                textAlign: layout == DocumentTemplateLayout.receipt
+                    ? pw.TextAlign.center
+                    : pw.TextAlign.left,
+              ),
+              if (branding.tagline case final tagline?)
+                pw.Padding(
+                  padding: const pw.EdgeInsets.only(top: 2),
+                  child: pw.Text(
+                    tagline,
+                    style: pw.TextStyle(fontSize: 8, color: muted),
+                    textAlign: layout == DocumentTemplateLayout.receipt
+                        ? pw.TextAlign.center
+                        : pw.TextAlign.left,
+                  ),
+                ),
+            ],
+          ),
+        ),
+      if (layout == DocumentTemplateLayout.executive)
+        pw.Container(
+          margin: const pw.EdgeInsets.only(top: 8, bottom: 16),
+          child: pw.Row(
+            children: [
+              pw.Expanded(
+                flex: 3,
+                child: pw.Container(height: 5, color: primary),
+              ),
+              pw.Expanded(child: pw.Container(height: 5, color: accent)),
+            ],
+          ),
+        ),
       pw.Header(
         level: 0,
         child: pw.Text(
           snapshot.metadata.title,
-          style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+          textAlign: layout == DocumentTemplateLayout.receipt
+              ? pw.TextAlign.center
+              : pw.TextAlign.left,
+          style: pw.TextStyle(
+            fontSize: titleSize,
+            fontWeight: pw.FontWeight.bold,
+            color: layout == DocumentTemplateLayout.executive
+                ? primary
+                : textColor,
+          ),
         ),
       ),
     ];
@@ -347,14 +458,37 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       widgets.add(
         pw.Paragraph(
           text: subtitle,
-          style: const pw.TextStyle(fontSize: 11, color: PdfColors.grey700),
+          style: pw.TextStyle(
+            fontSize: layout == DocumentTemplateLayout.compact ? 8 : 11,
+            color: muted,
+          ),
+          textAlign: layout == DocumentTemplateLayout.receipt
+              ? pw.TextAlign.center
+              : pw.TextAlign.left,
         ),
       );
+    }
+    if (layout == DocumentTemplateLayout.receipt) {
+      widgets.add(pw.Divider(color: secondary, thickness: 1.2));
     }
 
     for (final section in snapshot.sections) {
       if (section.title case final title?) {
-        widgets.add(pw.Header(level: 1, child: pw.Text(title)));
+        widgets.add(
+          pw.Header(
+            level: 1,
+            child: pw.Text(
+              title,
+              style: pw.TextStyle(
+                fontSize: layout == DocumentTemplateLayout.compact ? 10 : 14,
+                fontWeight: pw.FontWeight.bold,
+                color: layout == DocumentTemplateLayout.executive
+                    ? primary
+                    : null,
+              ),
+            ),
+          ),
+        );
       }
       for (final node in section.nodes) {
         switch (node) {
@@ -365,13 +499,15 @@ final class PdfDocumentRenderer implements DocumentRenderer {
               pw.Header(level: level > 5 ? 5 : level, child: pw.Text(text)),
             );
           case DocumentMetric(:final label, :final value, :final caption):
-            widgets.add(_metricWidget(label, value, caption));
+            widgets.add(_metricWidget(label, value, caption, branding));
           case DocumentMetricGrid(:final metrics, :final columns):
-            widgets.add(_metricGridWidget(metrics, columns));
+            widgets.add(_metricGridWidget(metrics, columns, branding));
           case DocumentTable(:final columns, :final rows, :final style):
             widgets.add(_tableWidget(columns, rows, style));
           case DocumentChart():
             widgets.addAll(_chartWidgets(node));
+          case DocumentImage():
+            widgets.add(_imageWidget(node));
           case DocumentQrCode():
             widgets.add(_qrCodeWidget(node));
           case DocumentSignatureArea():
@@ -382,6 +518,45 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       }
     }
     return widgets;
+  }
+
+  pw.Widget _imageWidget(DocumentImage node) {
+    final image = pw.Image(
+      pw.MemoryImage(node.bytes),
+      width: node.widthPoints,
+      height: node.heightPoints,
+      fit: switch (node.fit) {
+        DocumentImageFit.contain => pw.BoxFit.contain,
+        DocumentImageFit.cover => pw.BoxFit.cover,
+        DocumentImageFit.fill => pw.BoxFit.fill,
+      },
+    );
+    final aligned = pw.Align(
+      alignment: switch (node.alignment) {
+        DocumentImageAlignment.leading => pw.Alignment.centerLeft,
+        DocumentImageAlignment.center => pw.Alignment.center,
+        DocumentImageAlignment.trailing => pw.Alignment.centerRight,
+      },
+      child: image,
+    );
+    if (node.caption == null) return aligned;
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+      mainAxisSize: pw.MainAxisSize.min,
+      children: [
+        aligned,
+        pw.SizedBox(height: 4),
+        pw.Text(
+          node.caption!,
+          textAlign: switch (node.alignment) {
+            DocumentImageAlignment.leading => pw.TextAlign.left,
+            DocumentImageAlignment.center => pw.TextAlign.center,
+            DocumentImageAlignment.trailing => pw.TextAlign.right,
+          },
+          style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+        ),
+      ],
+    );
   }
 
   pw.Widget _qrCodeWidget(DocumentQrCode node) => pw.Column(
@@ -442,21 +617,57 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     );
   }
 
+  pw.ThemeData? _pdfTheme(DocumentBranding? branding) {
+    if (branding == null) return null;
+    final bodyBytes =
+        branding.fontBytes(DocumentFontRole.body) ??
+        branding.fontBytes(DocumentFontRole.numeric);
+    final headingBytes =
+        branding.fontBytes(DocumentFontRole.heading) ??
+        branding.fontBytes(DocumentFontRole.display) ??
+        bodyBytes;
+    if (bodyBytes == null && headingBytes == null) return null;
+    final baseBytes = bodyBytes ?? headingBytes!;
+    final boldBytes = headingBytes ?? bodyBytes!;
+    return pw.ThemeData.withFont(
+      base: pw.Font.ttf(ByteData.sublistView(baseBytes)),
+      bold: pw.Font.ttf(ByteData.sublistView(boldBytes)),
+    );
+  }
+
   pw.Widget _coverWidget(DocumentRenderOptions options) {
     final entries = options.coverMetadata.entries.toList();
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       mainAxisAlignment: pw.MainAxisAlignment.center,
       children: [
+        if (options.branding?.logoBytes case final logo?)
+          pw.Container(
+            height: 54,
+            margin: const pw.EdgeInsets.only(bottom: 12),
+            child: pw.Image(pw.MemoryImage(logo), fit: pw.BoxFit.contain),
+          ),
+        if (options.branding case final branding?)
+          pw.Text(
+            branding.organizationName,
+            style: pw.TextStyle(
+              fontSize: 10,
+              color: _pdfColor(branding.mutedTextColor),
+            ),
+          ),
         pw.Container(
           width: 64,
           height: 4,
-          color: PdfColors.teal700,
+          color: _pdfColor(options.branding?.primaryColor ?? '0D7A5F'),
           margin: const pw.EdgeInsets.only(bottom: 28),
         ),
         pw.Text(
           options.coverTitle!,
-          style: pw.TextStyle(fontSize: 30, fontWeight: pw.FontWeight.bold),
+          style: pw.TextStyle(
+            fontSize: 30,
+            fontWeight: pw.FontWeight.bold,
+            color: _pdfColor(options.branding?.textColor ?? '172033'),
+          ),
         ),
         if (options.coverSubtitle case final subtitle?)
           pw.Padding(
@@ -552,33 +763,43 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     );
   }
 
-  pw.Widget _metricWidget(String label, DocumentValue value, String? caption) {
+  pw.Widget _metricWidget(
+    String label,
+    DocumentValue value,
+    String? caption,
+    DocumentBranding? branding,
+  ) {
+    final surface = _pdfColor(branding?.surfaceColor ?? 'F1F5F9');
+    final primary = _pdfColor(branding?.primaryColor ?? 'CBD5E1');
+    final text = _pdfColor(branding?.textColor ?? '172033');
+    final muted = _pdfColor(branding?.mutedTextColor ?? '64748B');
     return pw.Container(
       margin: const pw.EdgeInsets.symmetric(vertical: 5),
       padding: const pw.EdgeInsets.all(10),
       decoration: pw.BoxDecoration(
-        color: PdfColors.grey100,
-        border: pw.Border.all(color: PdfColors.grey300, width: 0.6),
+        color: surface,
+        border: pw.Border.all(color: primary, width: 0.6),
         borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
       ),
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Text(label, style: const pw.TextStyle(fontSize: 9)),
+          pw.Text(label, style: pw.TextStyle(fontSize: 9, color: muted)),
           pw.SizedBox(height: 4),
           pw.Text(
             _valueText(value),
-            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+            style: pw.TextStyle(
+              fontSize: 16,
+              fontWeight: pw.FontWeight.bold,
+              color: text,
+            ),
           ),
           if (caption != null)
             pw.Padding(
               padding: const pw.EdgeInsets.only(top: 3),
               child: pw.Text(
                 caption,
-                style: const pw.TextStyle(
-                  fontSize: 8,
-                  color: PdfColors.grey700,
-                ),
+                style: pw.TextStyle(fontSize: 8, color: muted),
               ),
             ),
         ],
@@ -586,7 +807,11 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     );
   }
 
-  pw.Widget _metricGridWidget(List<DocumentMetric> metrics, int columns) {
+  pw.Widget _metricGridWidget(
+    List<DocumentMetric> metrics,
+    int columns,
+    DocumentBranding? branding,
+  ) {
     final rows = <pw.Widget>[];
     for (var start = 0; start < metrics.length; start += columns) {
       final row = metrics.skip(start).take(columns).toList();
@@ -602,6 +827,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                     metric.label,
                     metric.value,
                     metric.caption,
+                    branding,
                   ),
                 ),
               ),

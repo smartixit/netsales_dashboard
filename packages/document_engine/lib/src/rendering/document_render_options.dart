@@ -1,3 +1,4 @@
+import '../document/document_branding.dart';
 import 'document_page_profile.dart';
 
 /// A visible presentation watermark; it does not alter document status.
@@ -51,6 +52,7 @@ final class DocumentRenderOptions {
     this.firstPageFooterText,
     this.coverPage = false,
     this.watermark,
+    this.branding,
     this.coverTitle,
     this.coverSubtitle,
     Map<String, String> coverMetadata = const {},
@@ -88,6 +90,9 @@ final class DocumentRenderOptions {
   final String? firstPageFooterText;
   final bool coverPage;
   final DocumentWatermark? watermark;
+
+  /// Host-provided identity assets; never loaded from disk or network.
+  final DocumentBranding? branding;
   final String? coverTitle;
   final String? coverSubtitle;
   final Map<String, String> coverMetadata;

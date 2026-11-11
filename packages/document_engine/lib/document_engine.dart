@@ -6,6 +6,7 @@ export 'src/core/document_type_id.dart';
 export 'src/core/template_id.dart';
 export 'src/core/template_version.dart';
 export 'src/document/document_locale.dart';
+export 'src/document/document_branding.dart';
 export 'src/document/document_metadata.dart';
 export 'src/document/document_node.dart';
 export 'src/document/document_section.dart';

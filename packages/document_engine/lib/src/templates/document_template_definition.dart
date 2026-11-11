@@ -3,6 +3,9 @@ import '../core/template_id.dart';
 import '../core/template_version.dart';
 import 'template_capabilities.dart';
 
+/// PDF composition strategy selected by a concrete template.
+enum DocumentTemplateLayout { standard, executive, compact, receipt }
+
 /// Immutable metadata describing one exact template version.
 final class DocumentTemplateDefinition {
   DocumentTemplateDefinition({
@@ -14,6 +17,7 @@ final class DocumentTemplateDefinition {
     required this.capabilities,
     this.description,
     this.isDefault = false,
+    this.layout = DocumentTemplateLayout.standard,
   }) : displayName = _requireText(displayName, 'displayName'),
        supportedLocaleTags = _normalizeLocaleTags(supportedLocaleTags);
 
@@ -25,6 +29,9 @@ final class DocumentTemplateDefinition {
   final Set<String> supportedLocaleTags;
   final TemplateCapabilities capabilities;
   final bool isDefault;
+
+  /// Controls real renderer composition, not merely template metadata.
+  final DocumentTemplateLayout layout;
 
   String get versionedKey => '${id.value}@$version';
 

@@ -352,3 +352,30 @@ Dashboard branch: smartixit/netsales_dashboard:feat/platform-billing-management
 - The prior full-project run exposed independent blockers in Platform Billing compile/analyzer contracts, authentication test initialization/layout, compact sidebar geometry, and a password-route test timeout.
 - Targeted fixes were committed on `fix/dashboard-datagrid-render-overflow`; all exact-head analyzer, full test, and Windows Debug gates must be rerun before acceptance.
 - PR #47 remains Draft and unmerged. Do not mark this issue resolved until the new workflow is green and rendered visual QA is reviewed.
+
+
+## Document Engine production-readiness repair — IN PROGRESS (2026-11-11)
+
+- Active repair branch: `fix/document-engine-production-readiness`.
+- Corrected the Cartesian chart point-count validation from the accidental 100-point allowance to the documented 24-point maximum; added 24/25 boundary regression coverage.
+- This focused correction is not a production-readiness pass. Arabic/complex RTL remains rejected pending an explicitly approved provider and complete target/viewer evidence. Template-specific layout execution and host-injected branding/design-system contracts remain unresolved.
+- No package transfer to `smartixit/netsales` has started. Do not copy the package until all package defects are resolved and exact-head CI/test evidence passes.
+- Flutter/Dart tests, analyzer, formatting, and visual QA have not been run in this environment.
+
+
+## Document Engine production-readiness repair — IN PROGRESS (2026-11-11)
+
+- Active branch: fix/document-engine-production-readiness.
+- Chart point-count validation now matches the documented 24-point Cartesian limit; boundary regression test added.
+- Added bounded host-provided image nodes and image template capability enforcement.
+- Added a framework-neutral brand contract for organization name/tagline, semantic colors, logo bytes, and semantic font assets; renderer applies brand fonts/identity.
+- Added four actual PDF composition strategies (standard, executive, compact, receipt) selected by each versioned template.
+- Added host-injectable Report Configuration Studio primary actions. Internal filter controls still need a broader host-control integration contract.
+- RTL/Arabic shaping remains a release blocker; do not enable Arabic or copy the package to NetSales while this remains unresolved.
+- Package formatting/analyzer/tests, malformed-asset validation, PDF inspection, and cross-target visual QA are not yet executed. The exact-head GitHub Actions run is pending.
+
+
+### Report Studio host design-system integration
+- Added `filterSectionBuilder` and `presentationSectionBuilder` contracts alongside the existing `actionBuilder`. The host can now replace the complete schema-filter and output-presentation control surfaces, not just Preview/Save buttons.
+- Added widget regression coverage that asserts the injected host sections replace the package-default controls.
+- This removes the package-level injection-point gap; the NetSales adapter still must implement these builders using its approved shared widgets before feature rollout.

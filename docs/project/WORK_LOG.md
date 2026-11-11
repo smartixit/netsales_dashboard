@@ -521,3 +521,78 @@ Branch: feat/platform-billing-management
 - These fixes are committed to the active PR branch. They are not considered verified until a fresh GitHub Actions run completes against the latest PR head SHA.
 - The DataGrid-specific widget tests passed on the previous SHA, but all full-project gates must be rerun after these fixes.
 - Rendered visual QA remains a separate acceptance gate; no visual pass is claimed.
+
+
+## 2026-11-11 — Document Engine correctness repair (in progress)
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `fix/document-engine-production-readiness`
+
+### Confirmed defect and correction
+- The Cartesian chart contract and error message documented a maximum of 24 points per series, while constructor validation accidentally allowed up to 100. The mismatch was corrected to enforce the declared 24-point limit.
+- Added boundary regression coverage for 24 accepted points and 25 rejected points.
+
+### Remaining blockers (not represented as fixed)
+- Production Arabic/complex RTL rendering remains intentionally rejected. The M4 POC identifies Payv only as a research candidate; it is not approved for production, and Web runtime/viewer acceptance is incomplete. No dependency/provider has been added.
+- Template metadata/capabilities are not yet a distinct template-layout execution strategy in the PDF renderer; the generic renderer still composes the content tree. This requires architectural repair and tests before package transfer.
+- Configuration Studio host design-system injection and branding/font/logo contract need further work and verification.
+
+### Verification
+- Source and regression test changes are committed to this branch.
+- No Flutter/Dart SDK is available in this execution environment; these tests, formatting, analyzer, and package test suite have not been executed. Do not treat this correction as package acceptance.
+- No files have been copied to `netsales`; transfer remains blocked until package-level blockers are resolved and verified.
+
+
+## 2026-11-11 — Document Engine rendering and host integration repair (in progress)
+
+**Repository:** smartixit/netsales_dashboard  
+**Branch:** fix/document-engine-production-readiness
+
+### Implemented in this increment
+- Enforced the documented 24-point Cartesian chart boundary and added 24/25 regression coverage.
+- Added a bounded DocumentImage node with defensive byte copies, PNG/JPEG signature checks, explicit fit/alignment/caption/size controls, and template capability enforcement.
+- Added host-supplied DocumentBranding to render options: organization identity, semantic colors, logo bytes, and bounded TrueType/OpenType font roles. PDF rendering now uses supplied base/bold fonts, applies brand identity to cover/content composition, and embeds the supplied logo.
+- Added explicit template composition strategies: standard, executive, compact, and receipt. They produce different title hierarchy, density, alignment, logo placement, and brand accent treatment.
+- Added a ReportConfigurationStudio.actionBuilder extension point so the consuming application can supply its own design-system Preview/Save buttons without coupling the package to NetSales widgets or GetX.
+- Added tests for branding/image defensive-copy contracts, image capability rejection, distinct template render digests, brand render path, and host-provided Studio actions.
+
+### Remaining production blockers
+- Arabic/complex RTL remains rejected until a provider passes the full target matrix and searchable/copyable text acceptance.
+- Studio filter/selection controls still use generic Flutter Material widgets; only primary actions are host-injectable so far. A host control-builder strategy is still required before strict design-system integration.
+- Template layouts are now distinct composition modes, but they still share the common content-node renderer. Invoice, receipt, and financial-document-specific design composition and visual QA remain to be completed.
+- Image signature/size checks are not a full decoder safety validation; renderer error handling and malformed image corpus tests remain required.
+- Font embedding, font licensing, fallback behavior, and PDF extraction/searchability require tests with actual licensed NetSales fonts.
+
+### Verification status
+- Changes are committed on the repair branch. No local Flutter/Dart SDK is available in this execution context; formatting, analyzer, tests, PDF artifact inspection, and Windows/Web visual rendering have not yet run.
+- Exact-head GitHub Actions has not yet run for the current HEAD. The repository quality workflow includes document_engine format/analyze/test gates and requires a PR targeting main.
+- Nothing has been copied into smartixit/netsales; transfer remains blocked until package-level CI and acceptance gates pass.
+
+
+## 2026-11-11 — Cross-platform validation repair (in progress)
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `fix/document-engine-production-readiness`
+
+### Findings from exact-SHA CI run `59d0a8822b7504032e721648c5b65d73be9f2a97`
+- Windows package format, analyzer, and all document-engine tests passed; the generated Windows host also built successfully.
+- iOS device and simulator builds both passed without code signing.
+- Android validation did not start because the third-party setup action attempted to install the retired Android SDK package named `tools`; replaced that action with explicit use of the runner's preinstalled SDK, license acceptance, and installation of platform-tools / Android 36 / build-tools 36.
+- Arabic POC matrix jobs failed before analysis/tests because the source was not Dart-formatted. Updated the cross-platform workflow to apply canonical formatting before analyzing/testing, rather than aborting before the substantive checks.
+- The dedicated Windows Arabic POC workflow already demonstrated that formatter normalization, static analysis, and Payv JavaScript compilation can run; its PDF generator/test stages are being followed through separately.
+
+### Current acceptance status
+- Windows package tests + Windows host build: PASS on the recorded SHA above.
+- iOS device + simulator builds: PASS on the recorded SHA above.
+- Android: BLOCKED on runner SDK bootstrap; setup was repaired and awaits a fresh exact-SHA run.
+- Arabic renderer/provider: NOT APPROVED. A PDF generator compiling is not sufficient; generated artifacts, extraction/searchability, shaping, mixed-direction values, and visual review on Windows, Android, and iOS remain required.
+- No package copy to `smartixit/netsales` and no legacy invoice renderer replacement have occurred.
+
+
+## 2026-11-11 — Report Configuration Studio host-control integration (in progress)
+
+- Added framework-neutral `ReportStudioFilterSectionBuilder` and `ReportStudioPresentationSectionBuilder` extension points.
+- NetSales can now render every filter and presentation control using its own approved design-system components; the package's generic Material implementation remains a fallback for independent consumers.
+- Added widget regression coverage proving both injected sections replace the built-in controls.
+- This closes the package API extensibility gap, not the consuming-app integration work. No raw Material control is to be used by the NetSales feature adapter.
+- Verification awaits the next exact-HEAD Windows/macOS package CI run.

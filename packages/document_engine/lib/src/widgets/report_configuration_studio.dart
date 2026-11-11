@@ -10,6 +10,33 @@ typedef ReportLabelResolver = String Function(
   String localizationKey,
 );
 
+/// Lets the host replace package-default actions with its design-system buttons.
+typedef ReportStudioActionBuilder = Widget Function(
+  BuildContext context, {
+  required String label,
+  required IconData icon,
+  required VoidCallback? onPressed,
+  required bool secondary,
+});
+
+/// Lets the host replace all schema filter controls with its own design system.
+typedef ReportStudioFilterSectionBuilder = Widget Function(
+  BuildContext context, {
+  required ReportDefinition definition,
+  required ReportCriteria criteria,
+  required ReportLabelResolver resolveLabel,
+  required ValueChanged<ReportCriteria> onChanged,
+});
+
+/// Lets the host replace all output controls with its own design system.
+typedef ReportStudioPresentationSectionBuilder = Widget Function(
+  BuildContext context, {
+  required ReportDefinition definition,
+  required ReportPresentationOptions presentation,
+  required ReportLabelResolver resolveLabel,
+  required ValueChanged<ReportPresentationOptions> onChanged,
+});
+
 /// Responsive, schema-driven report configuration UI.
 ///
 /// The widget is controlled: the host owns criteria/presentation state and
@@ -25,6 +52,9 @@ class ReportConfigurationStudio extends StatelessWidget {
     required this.onPresentationChanged,
     this.onPreview,
     this.onSavePreset,
+    this.actionBuilder,
+    this.filterSectionBuilder,
+    this.presentationSectionBuilder,
     this.isBusy = false,
     super.key,
   });
@@ -37,6 +67,9 @@ class ReportConfigurationStudio extends StatelessWidget {
   final ValueChanged<ReportPresentationOptions> onPresentationChanged;
   final VoidCallback? onPreview;
   final VoidCallback? onSavePreset;
+  final ReportStudioActionBuilder? actionBuilder;
+  final ReportStudioFilterSectionBuilder? filterSectionBuilder;
+  final ReportStudioPresentationSectionBuilder? presentationSectionBuilder;
   final bool isBusy;
 
   @override
@@ -44,8 +77,24 @@ class ReportConfigurationStudio extends StatelessWidget {
     builder: (context, constraints) {
       final colors = Theme.of(context).colorScheme;
       final wide = constraints.maxWidth >= 1080;
-      final filters = _buildFilterSection(context);
-      final output = _buildPresentationSection(context);
+      final filters =
+          filterSectionBuilder?.call(
+            context,
+            definition: definition,
+            criteria: criteria,
+            resolveLabel: resolveLabel,
+            onChanged: onCriteriaChanged,
+          ) ??
+          _buildFilterSection(context);
+      final output =
+          presentationSectionBuilder?.call(
+            context,
+            definition: definition,
+            presentation: presentation,
+            resolveLabel: resolveLabel,
+            onChanged: onPresentationChanged,
+          ) ??
+          _buildPresentationSection(context);
 
       return SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -720,20 +769,44 @@ class ReportConfigurationStudio extends StatelessWidget {
   }
 
   Widget _buildActions(BuildContext context) {
+    Widget buildAction({
+      required String label,
+      required IconData icon,
+      required VoidCallback? onPressed,
+      bool secondary = false,
+    }) {
+      final hostBuilder = actionBuilder;
+      if (hostBuilder != null) {
+        return hostBuilder(
+          context,
+          label: label,
+          icon: icon,
+          onPressed: onPressed,
+          secondary: secondary,
+        );
+      }
+      return _StudioAction(
+        label: label,
+        icon: icon,
+        onPressed: onPressed,
+        secondary: secondary,
+      );
+    }
+
     return Wrap(
       alignment: WrapAlignment.end,
       spacing: 12,
       runSpacing: 8,
       children: [
         if (onSavePreset != null)
-          _StudioAction(
+          buildAction(
             label: resolveLabel(context, 'report_configuration.save_preset'),
             icon: Icons.bookmark_add_outlined,
             onPressed: isBusy ? null : onSavePreset,
             secondary: true,
           ),
         if (onPreview != null)
-          _StudioAction(
+          buildAction(
             label: resolveLabel(context, 'report_configuration.preview'),
             icon: Icons.picture_as_pdf_outlined,
             onPressed: isBusy ? null : onPreview,

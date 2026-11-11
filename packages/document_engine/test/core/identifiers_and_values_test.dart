@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:document_engine/document_engine.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -38,6 +40,85 @@ void main() {
     test('rejects negative components', () {
       expect(
         () => TemplateVersion(major: -1, minor: 0, patch: 0),
+        throwsArgumentError,
+      );
+    });
+  });
+
+  group('DocumentBranding', () {
+    test('defensively copies injected logo and font assets', () {
+      final logo = Uint8List.fromList([
+        0x89,
+        0x50,
+        0x4E,
+        0x47,
+        0x0D,
+        0x0A,
+        0x1A,
+        0x0A,
+      ]);
+      final font = Uint8List.fromList([0x00, 0x01, 0x00, 0x00, 0x01]);
+      final branding = DocumentBranding(
+        organizationName: 'NetSales',
+        tagline: 'Business network',
+        primaryColor: '123456',
+        logoBytes: logo,
+        fonts: {DocumentFontRole.body: font},
+      );
+
+      logo[0] = 0;
+      font[1] = 0;
+      expect(branding.logoBytes!.first, 0x89);
+      expect(branding.fontBytes(DocumentFontRole.body)![1], 0x01);
+      final exposedLogo = branding.logoBytes!;
+      exposedLogo[0] = 0;
+      expect(branding.logoBytes!.first, 0x89);
+      expect(branding.fontRoles, {DocumentFontRole.body});
+    });
+
+    test('rejects invalid brand colors and unsupported asset signatures', () {
+      expect(
+        () => DocumentBranding(
+          organizationName: 'NetSales',
+          primaryColor: '#123456',
+        ),
+        throwsArgumentError,
+      );
+      expect(
+        () => DocumentBranding(
+          organizationName: 'NetSales',
+          logoBytes: Uint8List.fromList([1, 2, 3]),
+        ),
+        throwsArgumentError,
+      );
+    });
+  });
+
+  group('DocumentImage', () {
+    test('bounds and defensively copies image bytes', () {
+      final bytes = Uint8List.fromList([
+        0x89,
+        0x50,
+        0x4E,
+        0x47,
+        0x0D,
+        0x0A,
+        0x1A,
+        0x0A,
+      ]);
+      final image = DocumentImage(
+        bytes: bytes,
+        caption: 'Company logo',
+        widthPoints: 120,
+        heightPoints: 48,
+      );
+      bytes[0] = 0;
+      expect(image.bytes.first, 0x89);
+      final exposed = image.bytes;
+      exposed[0] = 0;
+      expect(image.bytes.first, 0x89);
+      expect(
+        () => DocumentImage(bytes: Uint8List(4 * 1024 * 1024 + 1)),
         throwsArgumentError,
       );
     });
