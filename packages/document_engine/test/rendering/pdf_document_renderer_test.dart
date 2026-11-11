@@ -126,108 +126,81 @@ void main() {
     },
   );
 
-  test('template layout strategies produce distinct PDF compositions', () async {
-    const renderer = PdfDocumentRenderer();
-    final executive = DocumentTemplateDefinition(
-      id: TemplateId('report.summary.executive'),
-      version: TemplateVersion(major: 1, minor: 0, patch: 0),
-      documentTypeId: documentType,
-      displayName: 'Executive summary',
-      supportedLocaleTags: const ['en'],
-      capabilities: template.capabilities,
-      layout: DocumentTemplateLayout.executive,
-    );
-    final compact = DocumentTemplateDefinition(
-      id: TemplateId('report.summary.compact'),
-      version: TemplateVersion(major: 1, minor: 0, patch: 0),
-      documentTypeId: documentType,
-      displayName: 'Compact summary',
-      supportedLocaleTags: const ['en'],
-      capabilities: template.capabilities,
-      layout: DocumentTemplateLayout.compact,
-    );
+  test(
+    'template layout strategies produce distinct PDF compositions',
+    () async {
+      const renderer = PdfDocumentRenderer();
+      final executive = DocumentTemplateDefinition(
+        id: TemplateId('report.summary.executive'),
+        version: TemplateVersion(major: 1, minor: 0, patch: 0),
+        documentTypeId: documentType,
+        displayName: 'Executive summary',
+        supportedLocaleTags: const ['en'],
+        capabilities: template.capabilities,
+        layout: DocumentTemplateLayout.executive,
+      );
+      final compact = DocumentTemplateDefinition(
+        id: TemplateId('report.summary.compact'),
+        version: TemplateVersion(major: 1, minor: 0, patch: 0),
+        documentTypeId: documentType,
+        displayName: 'Compact summary',
+        supportedLocaleTags: const ['en'],
+        capabilities: template.capabilities,
+        layout: DocumentTemplateLayout.compact,
+      );
 
-    final executiveResult = await renderer.render(
-      snapshot: snapshot(),
-      template: executive,
-      options: options(),
-    );
-    final compactResult = await renderer.render(
-      snapshot: snapshot(),
-      template: compact,
-      options: options(),
-    );
+      final executiveResult = await renderer.render(
+        snapshot: snapshot(),
+        template: executive,
+        options: options(),
+      );
+      final compactResult = await renderer.render(
+        snapshot: snapshot(),
+        template: compact,
+        options: options(),
+      );
 
-    expect(executiveResult, isA<DocumentRenderSuccess>());
-    expect(compactResult, isA<DocumentRenderSuccess>());
-    expect(
-      (executiveResult as DocumentRenderSuccess).artifact.sha256,
-      isNot((compactResult as DocumentRenderSuccess).artifact.sha256),
-    );
-  });
+      expect(executiveResult, isA<DocumentRenderSuccess>());
+      expect(compactResult, isA<DocumentRenderSuccess>());
+      expect(
+        (executiveResult as DocumentRenderSuccess).artifact.sha256,
+        isNot((compactResult as DocumentRenderSuccess).artifact.sha256),
+      );
+    },
+  );
 
-  test('template layout strategies produce distinct PDF compositions', () async {
-    const renderer = PdfDocumentRenderer();
-    final executive = DocumentTemplateDefinition(
-      id: TemplateId('report.summary.executive'),
-      version: TemplateVersion(major: 1, minor: 0, patch: 0),
-      documentTypeId: documentType,
-      displayName: 'Executive summary',
-      supportedLocaleTags: const ['en'],
-      capabilities: template.capabilities,
-      layout: DocumentTemplateLayout.executive,
-    );
-    final compact = DocumentTemplateDefinition(
-      id: TemplateId('report.summary.compact'),
-      version: TemplateVersion(major: 1, minor: 0, patch: 0),
-      documentTypeId: documentType,
-      displayName: 'Compact summary',
-      supportedLocaleTags: const ['en'],
-      capabilities: template.capabilities,
-      layout: DocumentTemplateLayout.compact,
-    );
+  test(
+    'rejects image nodes when the selected template lacks image capability',
+    () async {
+      const renderer = PdfDocumentRenderer();
+      final result = await renderer.render(
+        snapshot: snapshot(
+          nodes: [
+            DocumentImage(
+              bytes: Uint8List.fromList([
+                0x89,
+                0x50,
+                0x4E,
+                0x47,
+                0x0D,
+                0x0A,
+                0x1A,
+                0x0A,
+              ]),
+            ),
+          ],
+        ),
+        template: template,
+        options: options(),
+      );
 
-    final executiveResult = await renderer.render(
-      snapshot: snapshot(),
-      template: executive,
-      options: options(),
-    );
-    final compactResult = await renderer.render(
-      snapshot: snapshot(),
-      template: compact,
-      options: options(),
-    );
-
-    expect(executiveResult, isA<DocumentRenderSuccess>());
-    expect(compactResult, isA<DocumentRenderSuccess>());
-    expect(
-      (executiveResult as DocumentRenderSuccess).artifact.sha256,
-      isNot((compactResult as DocumentRenderSuccess).artifact.sha256),
-    );
-  });
-
-  test('rejects image nodes when the selected template lacks image capability', () async {
-    const renderer = PdfDocumentRenderer();
-    final result = await renderer.render(
-      snapshot: snapshot(
-        nodes: [
-          DocumentImage(
-            bytes: Uint8List.fromList([
-              0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
-            ]),
-          ),
-        ],
-      ),
-      template: template,
-      options: options(),
-    );
-
-    expect(result, isA<DocumentRenderFailure>());
-    expect(
-      (result as DocumentRenderFailure).code,
-      DocumentRenderFailureCode.unsupportedCapability,
-    );
-  });
+      expect(result, isA<DocumentRenderFailure>());
+      expect(
+        (result as DocumentRenderFailure).code,
+        DocumentRenderFailureCode.unsupportedCapability,
+      );
+    },
+  );
 
   test('applies host branding to the rendered document contract', () async {
     const renderer = PdfDocumentRenderer();
