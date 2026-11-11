@@ -574,13 +574,11 @@ final class PdfDocumentRenderer implements DocumentRenderer {
         branding.fontBytes(DocumentFontRole.display) ??
         bodyBytes;
     if (bodyBytes == null && headingBytes == null) return null;
+    final baseBytes = bodyBytes ?? headingBytes!;
+    final boldBytes = headingBytes ?? bodyBytes!;
     return pw.ThemeData.withFont(
-      base: bodyBytes == null
-          ? null
-          : pw.Font.ttf(ByteData.sublistView(bodyBytes)),
-      bold: headingBytes == null
-          ? null
-          : pw.Font.ttf(ByteData.sublistView(headingBytes)),
+      base: pw.Font.ttf(ByteData.sublistView(baseBytes)),
+      bold: pw.Font.ttf(ByteData.sublistView(boldBytes)),
     );
   }
 
