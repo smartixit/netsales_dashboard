@@ -128,3 +128,6 @@ flutter test packages/document_engine/test
 - ReportConfigurationStudio accepts an actionBuilder so the host can render Preview/Save actions with its own design-system buttons. The package remains independent from NetSales widgets and GetX.
 
 These additions do not resolve Arabic shaping. Complex RTL still fails closed. The host action builder currently covers primary action buttons; several schema controls still use generic Flutter Material widgets and need a deliberate host-control injection strategy before strict NetSales design-system adoption.
+ 
+
+- `ReportConfigurationStudio` now exposes host builders for the entire filter section and presentation section, in addition to action buttons. NetSales can replace all package-default Material controls with its own design-system fields, selectors, toggles, and buttons while the package remains UI-framework-independent from the host app's GetX architecture.
