@@ -29,6 +29,7 @@ final class DocumentTemplateDefinition {
   final Set<String> supportedLocaleTags;
   final TemplateCapabilities capabilities;
   final bool isDefault;
+
   /// Controls real renderer composition, not merely template metadata.
   final DocumentTemplateLayout layout;
 
