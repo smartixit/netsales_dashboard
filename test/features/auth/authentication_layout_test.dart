@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/core/themes/app_themes.dart';
 import 'package:netsales_dashboard/core/themes/app_breakpoints.dart';
@@ -50,7 +51,11 @@ void main() {
         addTearDown(Get.reset);
 
         await tester.pumpWidget(
-          GetMaterialApp(
+          ScreenUtilInit(
+            designSize: const Size(1440, 900),
+            minTextAdapt: true,
+            splitScreenMode: true,
+            builder: (context, child) => GetMaterialApp(
             theme: AppThemes.light,
             darkTheme: AppThemes.dark,
             themeMode: scenario.brightness == Brightness.dark
@@ -73,6 +78,8 @@ void main() {
                 ),
               ),
             ),
+          ),
+        ),
           ),
         );
         await tester.pumpAndSettle();
