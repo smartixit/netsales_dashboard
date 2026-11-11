@@ -38,6 +38,42 @@ void main() {
     expect(signature.visualSignatureBytes, expected);
   });
 
+  test('Cartesian chart series enforce the documented 24-point limit', () {
+    List<DocumentChartPoint> points(int count) => [
+      for (var index = 0; index < count; index++)
+        DocumentChartPoint(label: 'P$index', value: index.toDouble()),
+    ];
+
+    expect(
+      () => DocumentChart(
+        title: 'Within limit',
+        type: DocumentChartType.line,
+        series: [
+          DocumentChartSeries(
+            id: 'series',
+            label: 'Series',
+            points: points(24),
+          ),
+        ],
+      ),
+      returnsNormally,
+    );
+    expect(
+      () => DocumentChart(
+        title: 'Over limit',
+        type: DocumentChartType.line,
+        series: [
+          DocumentChartSeries(
+            id: 'series',
+            label: 'Series',
+            points: points(25),
+          ),
+        ],
+      ),
+      throwsArgumentError,
+    );
+  });
+
   test('watermark is bounded presentation metadata', () {
     final watermark = DocumentWatermark(text: 'DRAFT', opacity: 0.1);
     expect(watermark.text, 'DRAFT');
