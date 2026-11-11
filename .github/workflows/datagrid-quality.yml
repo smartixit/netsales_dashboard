@@ -77,7 +77,7 @@ jobs:
 
       - name: Temporary formatter inspection
         run: |
-          dart format --write \
+          dart format \
             packages/document_engine/lib/src/document/document_branding.dart \
             packages/document_engine/lib/src/document/document_node.dart \
             packages/document_engine/lib/src/rendering/document_render_options.dart \
