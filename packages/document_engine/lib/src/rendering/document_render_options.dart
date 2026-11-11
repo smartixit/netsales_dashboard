@@ -90,6 +90,7 @@ final class DocumentRenderOptions {
   final String? firstPageFooterText;
   final bool coverPage;
   final DocumentWatermark? watermark;
+
   /// Host-provided identity assets; never loaded from disk or network.
   final DocumentBranding? branding;
   final String? coverTitle;
