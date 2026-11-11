@@ -131,6 +131,40 @@ jobs:
       - name: Generate Android host
         run: flutter create --platforms=android --project-name document_engine_android --org com.netsales.documentengine .ci/document_engine_android
 
+      - name: Align Android smoke host with NetSales toolchain
+        working-directory: .ci/document_engine_android
+        shell: pwsh
+        run: |
+          $settingsPath = 'android/settings.gradle.kts'
+          $settings = Get-Content $settingsPath -Raw
+          $settings = [regex]::Replace(
+            $settings,
+            'id\("com\.android\.application"\)\s+version\s+"[^"]+"',
+            'id("com.android.application") version "8.13.2"'
+          )
+          $settings = [regex]::Replace(
+            $settings,
+            'id\("org\.jetbrains\.kotlin\.android"\)\s+version\s+"[^"]+"',
+            'id("org.jetbrains.kotlin.android") version "2.4.21"'
+          )
+          if ($settings -notmatch 'com\.android\.application.*8\.13\.2') {
+            throw 'Failed to align Android Gradle Plugin with NetSales.'
+          }
+          if ($settings -notmatch 'org\.jetbrains\.kotlin\.android.*2\.4\.21') {
+            throw 'Failed to align Kotlin Gradle Plugin with NetSales.'
+          }
+          Set-Content -Path $settingsPath -Value $settings -Encoding utf8
+          $wrapperPath = 'android/gradle/wrapper/gradle-wrapper.properties'
+          $wrapper = Get-Content $wrapperPath -Raw
+          $wrapper = [regex]::Replace(
+            $wrapper,
+            'gradle-[^/\\]+-all\.zip',
+            'gradle-8.14.3-all.zip'
+          )
+          Set-Content -Path $wrapperPath -Value $wrapper -Encoding utf8
+          Get-Content $settingsPath
+          Get-Content $wrapperPath
+
       - name: Install Android host sample and dependencies
         working-directory: .ci/document_engine_android
         run: |
