@@ -15,7 +15,7 @@ class PlatformBillingRemoteDataSourceImpl implements PlatformBillingRemoteDataSo
 
   Future<ApiResponse<List<Map<String, dynamic>>>> _list(
     String path, {
-    Map<String, dynamic> filters = const {},
+    Map<String, dynamic> filters = const <String, dynamic>{},
     String? cursor,
     int perPage = 20,
   }) => _api.getList<Map<String, dynamic>>(
