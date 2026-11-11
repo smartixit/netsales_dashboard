@@ -204,6 +204,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (nodes.any((node) => node is DocumentChart)) {
       requiredCapabilities.add(TemplateCapability.charts);
     }
+    if (nodes.any((node) => node is DocumentImage)) {
+      requiredCapabilities.add(TemplateCapability.images);
+    }
     if (nodes.any((node) => node is DocumentQrCode)) {
       requiredCapabilities.add(TemplateCapability.qrCodes);
     }
@@ -299,6 +302,8 @@ final class PdfDocumentRenderer implements DocumentRenderer {
               )) {
             return true;
           }
+        } else if (node case DocumentImage(:final caption)) {
+          if (caption != null && rtlPattern.hasMatch(caption)) return true;
         } else if (node case DocumentQrCode(:final caption)) {
           if (caption != null && rtlPattern.hasMatch(caption)) return true;
         } else if (node case DocumentSignatureArea(
@@ -372,6 +377,8 @@ final class PdfDocumentRenderer implements DocumentRenderer {
             widgets.add(_tableWidget(columns, rows, style));
           case DocumentChart():
             widgets.addAll(_chartWidgets(node));
+          case DocumentImage():
+            widgets.add(_imageWidget(node));
           case DocumentQrCode():
             widgets.add(_qrCodeWidget(node));
           case DocumentSignatureArea():
@@ -382,6 +389,45 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       }
     }
     return widgets;
+  }
+
+  pw.Widget _imageWidget(DocumentImage node) {
+    final image = pw.Image(
+      pw.MemoryImage(node.bytes),
+      width: node.widthPoints,
+      height: node.heightPoints,
+      fit: switch (node.fit) {
+        DocumentImageFit.contain => pw.BoxFit.contain,
+        DocumentImageFit.cover => pw.BoxFit.cover,
+        DocumentImageFit.fill => pw.BoxFit.fill,
+      },
+    );
+    final aligned = pw.Align(
+      alignment: switch (node.alignment) {
+        DocumentImageAlignment.leading => pw.Alignment.centerLeft,
+        DocumentImageAlignment.center => pw.Alignment.center,
+        DocumentImageAlignment.trailing => pw.Alignment.centerRight,
+      },
+      child: image,
+    );
+    if (node.caption == null) return aligned;
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+      mainAxisSize: pw.MainAxisSize.min,
+      children: [
+        aligned,
+        pw.SizedBox(height: 4),
+        pw.Text(
+          node.caption!,
+          textAlign: switch (node.alignment) {
+            DocumentImageAlignment.leading => pw.TextAlign.left,
+            DocumentImageAlignment.center => pw.TextAlign.center,
+            DocumentImageAlignment.trailing => pw.TextAlign.right,
+          },
+          style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+        ),
+      ],
+    );
   }
 
   pw.Widget _qrCodeWidget(DocumentQrCode node) => pw.Column(
