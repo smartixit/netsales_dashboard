@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/features/platform_reports/data/platform_reports_repository.dart';
 import 'package:netsales_dashboard/features/platform_reports/domain/entities/platform_report_models.dart';
@@ -14,11 +15,21 @@ class PlatformReportsController extends GetxController {
   final isRefreshing = false.obs;
   final isDownloading = false.obs;
   final error = RxnString();
-  final networkIdController = ''.obs;
-  final accountIdController = ''.obs;
-  final currencyIdController = ''.obs;
-  final statusController = ''.obs;
-  final searchController = ''.obs;
+  final networkIdController = TextEditingController();
+  final accountIdController = TextEditingController();
+  final currencyIdController = TextEditingController();
+  final statusController = TextEditingController();
+  final searchController = TextEditingController();
+
+  @override
+  void onClose() {
+    networkIdController.dispose();
+    accountIdController.dispose();
+    currencyIdController.dispose();
+    statusController.dispose();
+    searchController.dispose();
+    super.onClose();
+  }
 
   @override
   void onInit() {
@@ -42,20 +53,20 @@ class PlatformReportsController extends GetxController {
     final availableFilters = report.filters.keys.toSet();
     final filters = <String, dynamic>{
       if (availableFilters.contains('network_id') &&
-          networkIdController.value.trim().isNotEmpty)
-        'network_id': int.tryParse(networkIdController.value.trim()),
+          networkIdController.text.trim().isNotEmpty)
+        'network_id': int.tryParse(networkIdController.text.trim()),
       if (availableFilters.contains('billing_account_id') &&
-          accountIdController.value.trim().isNotEmpty)
-        'billing_account_id': int.tryParse(accountIdController.value.trim()),
+          accountIdController.text.trim().isNotEmpty)
+        'billing_account_id': int.tryParse(accountIdController.text.trim()),
       if (availableFilters.contains('currency_id') &&
-          currencyIdController.value.trim().isNotEmpty)
-        'currency_id': int.tryParse(currencyIdController.value.trim()),
+          currencyIdController.text.trim().isNotEmpty)
+        'currency_id': int.tryParse(currencyIdController.text.trim()),
       if (availableFilters.contains('status') &&
-          statusController.value.trim().isNotEmpty)
-        'status': statusController.value.trim(),
+          statusController.text.trim().isNotEmpty)
+        'status': statusController.text.trim(),
       if (availableFilters.contains('search') &&
-          searchController.value.trim().isNotEmpty)
-        'search': searchController.value.trim(),
+          searchController.text.trim().isNotEmpty)
+        'search': searchController.text.trim(),
     }..removeWhere((key, value) => value == null);
     isCreating.value = true;
     try {
