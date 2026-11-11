@@ -564,21 +564,59 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     );
   }
 
+  pw.ThemeData? _pdfTheme(DocumentBranding? branding) {
+    if (branding == null) return null;
+    final bodyBytes =
+        branding.fontBytes(DocumentFontRole.body) ??
+        branding.fontBytes(DocumentFontRole.numeric);
+    final headingBytes =
+        branding.fontBytes(DocumentFontRole.heading) ??
+        branding.fontBytes(DocumentFontRole.display) ??
+        bodyBytes;
+    if (bodyBytes == null && headingBytes == null) return null;
+    return pw.ThemeData.withFont(
+      base: bodyBytes == null
+          ? null
+          : pw.Font.ttf(ByteData.sublistView(bodyBytes)),
+      bold: headingBytes == null
+          ? null
+          : pw.Font.ttf(ByteData.sublistView(headingBytes)),
+    );
+  }
+
   pw.Widget _coverWidget(DocumentRenderOptions options) {
     final entries = options.coverMetadata.entries.toList();
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       mainAxisAlignment: pw.MainAxisAlignment.center,
       children: [
+        if (options.branding?.logoBytes case final logo?)
+          pw.Container(
+            height: 54,
+            margin: const pw.EdgeInsets.only(bottom: 12),
+            child: pw.Image(pw.MemoryImage(logo), fit: pw.BoxFit.contain),
+          ),
+        if (options.branding case final branding?)
+          pw.Text(
+            branding.organizationName,
+            style: pw.TextStyle(
+              fontSize: 10,
+              color: _pdfColor(branding.mutedTextColor),
+            ),
+          ),
         pw.Container(
           width: 64,
           height: 4,
-          color: PdfColors.teal700,
+          color: _pdfColor(options.branding?.primaryColor ?? '0D7A5F'),
           margin: const pw.EdgeInsets.only(bottom: 28),
         ),
         pw.Text(
           options.coverTitle!,
-          style: pw.TextStyle(fontSize: 30, fontWeight: pw.FontWeight.bold),
+          style: pw.TextStyle(
+            fontSize: 30,
+            fontWeight: pw.FontWeight.bold,
+            color: _pdfColor(options.branding?.textColor ?? '172033'),
+          ),
         ),
         if (options.coverSubtitle case final subtitle?)
           pw.Padding(
