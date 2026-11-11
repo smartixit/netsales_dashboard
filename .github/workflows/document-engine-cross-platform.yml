@@ -78,10 +78,6 @@ jobs:
     name: Android package and plugin integration build
     runs-on: windows-latest
     timeout-minutes: 60
-    # Keep Pub cache and workspace on the same Windows volume. Kotlin's
-    # incremental compiler otherwise rejects cross-volume cache paths.
-    env:
-      PUB_CACHE: ${{ runner.temp }}\\pub-cache
     steps:
       - uses: actions/checkout@v4
         with:
@@ -107,6 +103,10 @@ jobs:
           if ([string]::IsNullOrWhiteSpace($sdkManager)) {
             throw "sdkmanager.bat was not found under $sdk\cmdline-tools"
           }
+          # Keep Pub cache and workspace on the same Windows volume.
+          $pubCache = Join-Path $env:RUNNER_TEMP 'pub-cache'
+          New-Item -ItemType Directory -Force -Path $pubCache | Out-Null
+          "PUB_CACHE=$pubCache" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           "ANDROID_HOME=$sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           "ANDROID_SDK_ROOT=$sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           (Join-Path $sdk 'platform-tools') | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
