@@ -39,12 +39,23 @@ class PlatformReportsController extends GetxController {
   }
 
   Future<void> create(PlatformReportCatalogItem report) async {
+    final availableFilters = report.filters.keys.toSet();
     final filters = <String, dynamic>{
-      if (networkIdController.value.trim().isNotEmpty) 'network_id': int.tryParse(networkIdController.value.trim()),
-      if (accountIdController.value.trim().isNotEmpty) 'billing_account_id': int.tryParse(accountIdController.value.trim()),
-      if (currencyIdController.value.trim().isNotEmpty) 'currency_id': int.tryParse(currencyIdController.value.trim()),
-      if (statusController.value.trim().isNotEmpty) 'status': statusController.value.trim(),
-      if (searchController.value.trim().isNotEmpty) 'search': searchController.value.trim(),
+      if (availableFilters.contains('network_id') &&
+          networkIdController.value.trim().isNotEmpty)
+        'network_id': int.tryParse(networkIdController.value.trim()),
+      if (availableFilters.contains('billing_account_id') &&
+          accountIdController.value.trim().isNotEmpty)
+        'billing_account_id': int.tryParse(accountIdController.value.trim()),
+      if (availableFilters.contains('currency_id') &&
+          currencyIdController.value.trim().isNotEmpty)
+        'currency_id': int.tryParse(currencyIdController.value.trim()),
+      if (availableFilters.contains('status') &&
+          statusController.value.trim().isNotEmpty)
+        'status': statusController.value.trim(),
+      if (availableFilters.contains('search') &&
+          searchController.value.trim().isNotEmpty)
+        'search': searchController.value.trim(),
     }..removeWhere((key, value) => value == null);
     isCreating.value = true;
     try {
