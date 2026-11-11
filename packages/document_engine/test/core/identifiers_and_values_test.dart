@@ -48,7 +48,14 @@ void main() {
   group('DocumentBranding', () {
     test('defensively copies injected logo and font assets', () {
       final logo = Uint8List.fromList([
-        0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+        0x89,
+        0x50,
+        0x4E,
+        0x47,
+        0x0D,
+        0x0A,
+        0x1A,
+        0x0A,
       ]);
       final font = Uint8List.fromList([0x00, 0x01, 0x00, 0x00, 0x01]);
       final branding = DocumentBranding(
@@ -90,7 +97,14 @@ void main() {
   group('DocumentImage', () {
     test('bounds and defensively copies image bytes', () {
       final bytes = Uint8List.fromList([
-        0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+        0x89,
+        0x50,
+        0x4E,
+        0x47,
+        0x0D,
+        0x0A,
+        0x1A,
+        0x0A,
       ]);
       final image = DocumentImage(
         bytes: bytes,
