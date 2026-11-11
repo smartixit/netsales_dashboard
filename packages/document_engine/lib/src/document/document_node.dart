@@ -298,7 +298,7 @@ final class DocumentChart extends DocumentNode {
         );
       }
     } else {
-      if (this.series.any((item) => item.points.length > 100)) {
+      if (this.series.any((item) => item.points.length > 24)) {
         throw ArgumentError(
           'Cartesian chart series support at most 24 points.',
         );
