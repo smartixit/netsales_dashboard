@@ -431,7 +431,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
               style: pw.TextStyle(
                 fontSize: layout == DocumentTemplateLayout.compact ? 10 : 14,
                 fontWeight: pw.FontWeight.bold,
-                color: layout == DocumentTemplateLayout.executive ? primary : null,
+                color: layout == DocumentTemplateLayout.executive
+                    ? primary
+                    : null,
               ),
             ),
           ),
