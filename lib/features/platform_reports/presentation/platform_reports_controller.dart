@@ -23,13 +23,6 @@ class PlatformReportsController extends GetxController {
   final presentation = ReportPresentationOptions().obs;
   final Map<String, TextEditingController> filterControllers = {};
   final _definitionFactory = const PlatformReportEngineDefinitionFactory();
-  final networkIdController = TextEditingController();
-  final accountIdController = TextEditingController();
-  final currencyIdController = TextEditingController();
-  final statusController = TextEditingController();
-  final searchController = TextEditingController();
-  final fromDateController = TextEditingController();
-  final toDateController = TextEditingController();
 
   @override
   void onClose() {
