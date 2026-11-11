@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:document_engine/document_engine.dart';
+import 'package:netsales_dashboard/features/platform_reports/domain/platform_report_engine_definition_factory.dart';
 import 'package:get/get.dart';
 import 'package:netsales_dashboard/features/platform_reports/data/platform_reports_repository.dart';
 import 'package:netsales_dashboard/features/platform_reports/domain/entities/platform_report_models.dart';
@@ -15,6 +17,12 @@ class PlatformReportsController extends GetxController {
   final isRefreshing = false.obs;
   final isDownloading = false.obs;
   final error = RxnString();
+  final selectedReport = Rxn<PlatformReportCatalogItem>();
+  final engineDefinition = Rxn<ReportDefinition>();
+  final criteria = ReportCriteria().obs;
+  final presentation = ReportPresentationOptions().obs;
+  final Map<String, TextEditingController> filterControllers = {};
+  final _definitionFactory = const PlatformReportEngineDefinitionFactory();
   final networkIdController = TextEditingController();
   final accountIdController = TextEditingController();
   final currencyIdController = TextEditingController();
@@ -25,13 +33,10 @@ class PlatformReportsController extends GetxController {
 
   @override
   void onClose() {
-    networkIdController.dispose();
-    accountIdController.dispose();
-    currencyIdController.dispose();
-    statusController.dispose();
-    searchController.dispose();
-    fromDateController.dispose();
-    toDateController.dispose();
+    for (final field in filterControllers.values) {
+      field.dispose();
+    }
+    filterControllers.clear();
     super.onClose();
   }
 
@@ -53,39 +58,69 @@ class PlatformReportsController extends GetxController {
     }
   }
 
-  Future<void> create(PlatformReportCatalogItem report) async {
-    final availableFilters = report.filters.keys.toSet();
-    final filters = <String, dynamic>{
-      if (availableFilters.contains('network_id') &&
-          networkIdController.text.trim().isNotEmpty)
-        'network_id': int.tryParse(networkIdController.text.trim()),
-      if (availableFilters.contains('billing_account_id') &&
-          accountIdController.text.trim().isNotEmpty)
-        'billing_account_id': int.tryParse(accountIdController.text.trim()),
-      if (availableFilters.contains('currency_id') &&
-          currencyIdController.text.trim().isNotEmpty)
-        'currency_id': int.tryParse(currencyIdController.text.trim()),
-      if (availableFilters.contains('status') &&
-          statusController.text.trim().isNotEmpty)
-        'status': statusController.text.trim(),
-      if (availableFilters.contains('search') &&
-          searchController.text.trim().isNotEmpty)
-        'search': searchController.text.trim(),
-      if (availableFilters.contains('from') && fromDateController.text.trim().isNotEmpty)
-        'from': fromDateController.text.trim(),
-      if (availableFilters.contains('to') && toDateController.text.trim().isNotEmpty)
-        'to': toDateController.text.trim(),
-      if (availableFilters.contains('from_date') && fromDateController.text.trim().isNotEmpty)
-        'from_date': fromDateController.text.trim(),
-      if (availableFilters.contains('to_date') && toDateController.text.trim().isNotEmpty)
-        'to_date': toDateController.text.trim(),
-    }..removeWhere((key, value) => value == null);
+  void configure(PlatformReportCatalogItem report) {
+    for (final field in filterControllers.values) {
+      field.dispose();
+    }
+    filterControllers.clear();
+    selectedReport.value = report;
+    engineDefinition.value = _definitionFactory.create(report);
+    criteria.value = ReportCriteria();
+    presentation.value = ReportPresentationOptions();
+    for (final filter in engineDefinition.value!.filters) {
+      filterControllers[filter.id] = TextEditingController();
+    }
+  }
+
+  TextEditingController textControllerFor(String id) =>
+      filterControllers.putIfAbsent(id, TextEditingController.new);
+
+  void updateCriteria(ReportCriteria value) => criteria.value = value;
+
+  void updateFilter(String id, ReportFilterValue? value) {
+    final next = Map<String, ReportFilterValue>.from(criteria.value.filters);
+    if (value == null) {
+      next.remove(id);
+    } else {
+      next[id] = value;
+    }
+    criteria.value = ReportCriteria(filters: next);
+  }
+
+  void updatePresentation(ReportPresentationOptions value) =>
+      presentation.value = value;
+
+  Future<void> createConfiguredReport() async {
+    final report = selectedReport.value;
+    final definition = engineDefinition.value;
+    if (report == null || definition == null) return;
+    if (criteria.value.validateAgainst(definition).isNotEmpty) {
+      CustomSnackbar.show(
+        title: 'مرشحات غير مكتملة',
+        message: 'راجع الحقول المطلوبة وصيغ المرشحات قبل التنفيذ.',
+        type: SnackType.warning,
+      );
+      return;
+    }
+    final filters = criteria.value.filters.map(
+      (key, value) => MapEntry(key, value.jsonValue),
+    );
     isCreating.value = true;
     try {
       activeRun.value = await repository.create(key: report.key, filters: filters);
-      CustomSnackbar.show(title: 'تم تسجيل التقرير', message: 'يمكن متابعة التنفيذ وتنزيل النتيجة بعد اكتمالها.', type: SnackType.success);
+      selectedReport.value = null;
+      engineDefinition.value = null;
+      CustomSnackbar.show(
+        title: 'تم تسجيل التقرير',
+        message: 'يمكن متابعة التنفيذ وتنزيل النتيجة بعد اكتمالها.',
+        type: SnackType.success,
+      );
     } catch (e) {
-      CustomSnackbar.show(title: 'تعذر إنشاء التقرير', message: e.toString(), type: SnackType.error);
+      CustomSnackbar.show(
+        title: 'تعذر إنشاء التقرير',
+        message: e.toString(),
+        type: SnackType.error,
+      );
     } finally {
       isCreating.value = false;
     }
