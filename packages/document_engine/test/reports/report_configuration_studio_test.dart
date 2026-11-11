@@ -58,6 +58,8 @@ void main() {
     required ValueChanged<ReportCriteria> onCriteriaChanged,
     required ValueChanged<ReportPresentationOptions> onPresentationChanged,
     ReportStudioActionBuilder? actionBuilder,
+    ReportStudioFilterSectionBuilder? filterSectionBuilder,
+    ReportStudioPresentationSectionBuilder? presentationSectionBuilder,
   }) => MaterialApp(
     home: Scaffold(
       body: ReportConfigurationStudio(
@@ -70,6 +72,8 @@ void main() {
         onPreview: () {},
         onSavePreset: () {},
         actionBuilder: actionBuilder,
+        filterSectionBuilder: filterSectionBuilder,
+        presentationSectionBuilder: presentationSectionBuilder,
       ),
     ),
   );
@@ -122,6 +126,48 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets(
+    'allows the host to replace filter and presentation controls entirely',
+    (tester) async {
+      await tester.pumpWidget(
+        buildStudio(
+          onCriteriaChanged: (_) {},
+          onPresentationChanged: (_) {},
+          filterSectionBuilder:
+              (
+                context, {
+                required definition,
+                required criteria,
+                required resolveLabel,
+                required onChanged,
+              }) => const SizedBox(
+                key: ValueKey('host-filter-section'),
+                child: Text('Host filter controls'),
+              ),
+          presentationSectionBuilder:
+              (
+                context, {
+                required definition,
+                required presentation,
+                required resolveLabel,
+                required onChanged,
+              }) => const SizedBox(
+                key: ValueKey('host-presentation-section'),
+                child: Text('Host presentation controls'),
+              ),
+        ),
+      );
+
+      expect(find.byKey(const ValueKey('host-filter-section')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('host-presentation-section')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('report-filter-search')), findsNothing);
+      expect(find.byType(DropdownButtonFormField<String>), findsNothing);
+    },
+  );
 
   testWidgets('reports controlled text-filter changes to the host', (
     tester,
