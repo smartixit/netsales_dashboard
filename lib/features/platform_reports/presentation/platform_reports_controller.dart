@@ -16,6 +16,7 @@ class PlatformReportsController extends GetxController {
   final isCreating = false.obs;
   final isRefreshing = false.obs;
   final isDownloading = false.obs;
+  final isSharing = false.obs;
   final error = RxnString();
   final selectedReport = Rxn<PlatformReportCatalogItem>();
   final engineDefinition = Rxn<ReportDefinition>();
@@ -140,6 +141,19 @@ class PlatformReportsController extends GetxController {
       CustomSnackbar.show(title: 'تعذر تحديث الحالة', message: e.toString(), type: SnackType.error);
     } finally {
       isRefreshing.value = false;
+    }
+  }
+
+  Future<void> shareRun() async {
+    final run = activeRun.value;
+    if (run == null) return;
+    isSharing.value = true;
+    try {
+      await repository.share(run);
+    } catch (e) {
+      CustomSnackbar.show(title: 'تعذر مشاركة التقرير', message: e.toString(), type: SnackType.error);
+    } finally {
+      isSharing.value = false;
     }
   }
 

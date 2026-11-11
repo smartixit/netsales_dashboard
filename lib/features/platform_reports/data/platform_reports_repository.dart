@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:netsales_dashboard/core/services/api_service.dart';
 import 'package:netsales_dashboard/core/services/file_export_service.dart';
+import 'package:netsales_dashboard/core/services/share_service.dart';
 import 'package:netsales_dashboard/features/platform_reports/domain/entities/platform_report_models.dart';
 
 class PlatformReportsRepository {
@@ -50,6 +51,25 @@ class PlatformReportsRepository {
       throw StateError(response.message.isEmpty ? 'تعذر تحديث حالة التقرير.' : response.message);
     }
     return response.data!;
+  }
+
+  Future<void> share(PlatformReportRun run) async {
+    final url = run.downloadUrl;
+    if (!run.isCompleted || url == null || url.isEmpty) {
+      throw StateError('ملف التقرير غير جاهز للمشاركة.');
+    }
+    final response = await ApiService.instance.dio.get<List<int>>(
+      url,
+      options: Options(responseType: ResponseType.bytes),
+    );
+    final bytes = response.data;
+    if (bytes == null || bytes.isEmpty) throw StateError('ملف التقرير فارغ.');
+    await ShareService.instance.shareBytes(
+      bytes: Uint8List.fromList(bytes),
+      fileName: '${run.reportKey}.json',
+      mimeType: 'application/json',
+      subject: 'تقرير فوترة NetSales',
+    );
   }
 
   Future<void> download(PlatformReportRun run) async {

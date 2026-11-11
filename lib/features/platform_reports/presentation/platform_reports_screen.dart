@@ -54,6 +54,8 @@ class PlatformReportsScreen extends GetView<PlatformReportsController> {
               run: controller.activeRun.value!,
               refreshing: controller.isRefreshing.value,
               downloading: controller.isDownloading.value,
+              sharing: controller.isSharing.value,
+              onShare: controller.shareRun,
               onRefresh: controller.refreshRun,
               onDownload: controller.downloadRun,
             ),
@@ -290,10 +292,12 @@ class _ReportCard extends StatelessWidget {
 }
 
 class _RunPanel extends StatelessWidget {
-  const _RunPanel({required this.run, required this.refreshing, required this.downloading, required this.onRefresh, required this.onDownload});
+  const _RunPanel({required this.run, required this.refreshing, required this.downloading, required this.sharing, required this.onShare, required this.onRefresh, required this.onDownload});
   final PlatformReportRun run;
   final bool refreshing;
   final bool downloading;
+  final bool sharing;
+  final VoidCallback onShare;
   final VoidCallback onRefresh;
   final VoidCallback onDownload;
 
@@ -312,6 +316,7 @@ class _RunPanel extends StatelessWidget {
           Wrap(spacing: 8, children: [
             CustomButton.secondary(text: 'تحديث الحالة', prefix: Icons.refresh_rounded, loading: refreshing, onPressed: refreshing ? null : onRefresh),
             if (run.isCompleted) CustomButton.primary(text: 'تنزيل JSON', prefix: Icons.download_rounded, loading: downloading, onPressed: downloading ? null : onDownload),
+            if (run.isCompleted) CustomButton.secondary(text: 'مشاركة JSON', prefix: Icons.share_rounded, loading: sharing, onPressed: sharing ? null : onShare),
           ]),
         ],
       ),
