@@ -88,7 +88,28 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - uses: android-actions/setup-android@v3
+      - name: Configure preinstalled Android SDK
+        shell: pwsh
+        run: |
+          $sdk = $env:ANDROID_HOME
+          if ([string]::IsNullOrWhiteSpace($sdk)) {
+            $sdk = 'C:\Android\android-sdk'
+          }
+          if (-not (Test-Path $sdk)) {
+            throw "Android SDK directory was not found: $sdk"
+          }
+          $sdkManager = Get-ChildItem (Join-Path $sdk 'cmdline-tools') -Filter sdkmanager.bat -Recurse |
+            Select-Object -First 1 -ExpandProperty FullName
+          if ([string]::IsNullOrWhiteSpace($sdkManager)) {
+            throw "sdkmanager.bat was not found under $sdk\cmdline-tools"
+          }
+          "ANDROID_HOME=$sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "ANDROID_SDK_ROOT=$sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          (Join-Path $sdk 'platform-tools') | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          & $sdkManager --licenses
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $sdkManager 'platform-tools' 'platforms;android-36' 'build-tools;36.0.0'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - uses: subosito/flutter-action@v2
         with:
