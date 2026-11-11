@@ -310,7 +310,7 @@ class _RunPanel extends StatelessWidget {
         children: [
           Text('نتيجة التقرير: ${run.title}', style: Theme.of(context).textTheme.titleMedium),
           AppSpacing.vXs,
-          Text(run.isFailed ? (run.errorMessage ?? 'فشل التنفيذ') : run.status),
+          Text(run.isFailed ? (run.errorMessage ?? 'فشل التنفيذ') : run.statusLabel),
           if (run.isCompleted) Text('السجلات: ${run.recordsCount}${run.isTruncated ? ' (النتيجة محدودة)' : ''}'),
           AppSpacing.vSm,
           Wrap(spacing: 8, children: [
