@@ -81,8 +81,7 @@ class _PlatformReportConfiguration extends StatelessWidget {
             text: 'العودة إلى كتالوج التقارير',
             prefix: Icons.arrow_back_rounded,
             onPressed: () {
-              controller.selectedReport.value = null;
-              controller.engineDefinition.value = null;
+              controller.clearConfiguration();
             },
           ),
         ),
