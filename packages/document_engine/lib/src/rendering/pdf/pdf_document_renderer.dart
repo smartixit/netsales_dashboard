@@ -448,9 +448,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
               pw.Header(level: level > 5 ? 5 : level, child: pw.Text(text)),
             );
           case DocumentMetric(:final label, :final value, :final caption):
-            widgets.add(_metricWidget(label, value, caption));
+            widgets.add(_metricWidget(label, value, caption, branding));
           case DocumentMetricGrid(:final metrics, :final columns):
-            widgets.add(_metricGridWidget(metrics, columns));
+            widgets.add(_metricGridWidget(metrics, columns, branding));
           case DocumentTable(:final columns, :final rows, :final style):
             widgets.add(_tableWidget(columns, rows, style));
           case DocumentChart():
@@ -712,33 +712,43 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     );
   }
 
-  pw.Widget _metricWidget(String label, DocumentValue value, String? caption) {
+  pw.Widget _metricWidget(
+    String label,
+    DocumentValue value,
+    String? caption,
+    DocumentBranding? branding,
+  ) {
+    final surface = _pdfColor(branding?.surfaceColor ?? 'F1F5F9');
+    final primary = _pdfColor(branding?.primaryColor ?? 'CBD5E1');
+    final text = _pdfColor(branding?.textColor ?? '172033');
+    final muted = _pdfColor(branding?.mutedTextColor ?? '64748B');
     return pw.Container(
       margin: const pw.EdgeInsets.symmetric(vertical: 5),
       padding: const pw.EdgeInsets.all(10),
       decoration: pw.BoxDecoration(
-        color: PdfColors.grey100,
-        border: pw.Border.all(color: PdfColors.grey300, width: 0.6),
+        color: surface,
+        border: pw.Border.all(color: primary, width: 0.6),
         borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
       ),
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Text(label, style: const pw.TextStyle(fontSize: 9)),
+          pw.Text(label, style: pw.TextStyle(fontSize: 9, color: muted)),
           pw.SizedBox(height: 4),
           pw.Text(
             _valueText(value),
-            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+            style: pw.TextStyle(
+              fontSize: 16,
+              fontWeight: pw.FontWeight.bold,
+              color: text,
+            ),
           ),
           if (caption != null)
             pw.Padding(
               padding: const pw.EdgeInsets.only(top: 3),
               child: pw.Text(
                 caption,
-                style: const pw.TextStyle(
-                  fontSize: 8,
-                  color: PdfColors.grey700,
-                ),
+                style: pw.TextStyle(fontSize: 8, color: muted),
               ),
             ),
         ],
@@ -746,7 +756,11 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     );
   }
 
-  pw.Widget _metricGridWidget(List<DocumentMetric> metrics, int columns) {
+  pw.Widget _metricGridWidget(
+    List<DocumentMetric> metrics,
+    int columns,
+    DocumentBranding? branding,
+  ) {
     final rows = <pw.Widget>[];
     for (var start = 0; start < metrics.length; start += columns) {
       final row = metrics.skip(start).take(columns).toList();
@@ -762,6 +776,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                     metric.label,
                     metric.value,
                     metric.caption,
+                    branding,
                   ),
                 ),
               ),
