@@ -567,3 +567,23 @@ Branch: feat/platform-billing-management
 - Changes are committed on the repair branch. No local Flutter/Dart SDK is available in this execution context; formatting, analyzer, tests, PDF artifact inspection, and Windows/Web visual rendering have not yet run.
 - Exact-head GitHub Actions has not yet run for the current HEAD. The repository quality workflow includes document_engine format/analyze/test gates and requires a PR targeting main.
 - Nothing has been copied into smartixit/netsales; transfer remains blocked until package-level CI and acceptance gates pass.
+
+
+## 2026-11-11 — Cross-platform validation repair (in progress)
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `fix/document-engine-production-readiness`
+
+### Findings from exact-SHA CI run `59d0a8822b7504032e721648c5b65d73be9f2a97`
+- Windows package format, analyzer, and all document-engine tests passed; the generated Windows host also built successfully.
+- iOS device and simulator builds both passed without code signing.
+- Android validation did not start because the third-party setup action attempted to install the retired Android SDK package named `tools`; replaced that action with explicit use of the runner's preinstalled SDK, license acceptance, and installation of platform-tools / Android 36 / build-tools 36.
+- Arabic POC matrix jobs failed before analysis/tests because the source was not Dart-formatted. Updated the cross-platform workflow to apply canonical formatting before analyzing/testing, rather than aborting before the substantive checks.
+- The dedicated Windows Arabic POC workflow already demonstrated that formatter normalization, static analysis, and Payv JavaScript compilation can run; its PDF generator/test stages are being followed through separately.
+
+### Current acceptance status
+- Windows package tests + Windows host build: PASS on the recorded SHA above.
+- iOS device + simulator builds: PASS on the recorded SHA above.
+- Android: BLOCKED on runner SDK bootstrap; setup was repaired and awaits a fresh exact-SHA run.
+- Arabic renderer/provider: NOT APPROVED. A PDF generator compiling is not sufficient; generated artifacts, extraction/searchability, shaping, mixed-direction values, and visual review on Windows, Android, and iOS remain required.
+- No package copy to `smartixit/netsales` and no legacy invoice renderer replacement have occurred.
