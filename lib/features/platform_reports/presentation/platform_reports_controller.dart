@@ -65,6 +65,17 @@ class PlatformReportsController extends GetxController {
     }
   }
 
+  void clearConfiguration() {
+    for (final field in filterControllers.values) {
+      field.dispose();
+    }
+    filterControllers.clear();
+    selectedReport.value = null;
+    engineDefinition.value = null;
+    criteria.value = ReportCriteria();
+    presentation.value = ReportPresentationOptions();
+  }
+
   TextEditingController textControllerFor(String id) =>
       filterControllers.putIfAbsent(id, TextEditingController.new);
 
@@ -102,8 +113,7 @@ class PlatformReportsController extends GetxController {
     isCreating.value = true;
     try {
       activeRun.value = await repository.create(key: report.key, filters: filters);
-      selectedReport.value = null;
-      engineDefinition.value = null;
+      clearConfiguration();
       CustomSnackbar.show(
         title: 'تم تسجيل التقرير',
         message: 'يمكن متابعة التنفيذ وتنزيل النتيجة بعد اكتمالها.',
