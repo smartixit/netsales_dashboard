@@ -349,6 +349,10 @@ final class PdfDocumentRenderer implements DocumentRenderer {
   ) {
     final layout = template.layout;
     final primary = _pdfColor(branding?.primaryColor ?? '0D7A5F');
+    final secondary = _pdfColor(branding?.secondaryColor ?? '1ABC9C');
+    final accent = _pdfColor(branding?.accentColor ?? '2563EB');
+    final surface = _pdfColor(branding?.surfaceColor ?? 'F8FAFC');
+    final textColor = _pdfColor(branding?.textColor ?? '172033');
     final muted = _pdfColor(branding?.mutedTextColor ?? '64748B');
     final titleSize = switch (layout) {
       DocumentTemplateLayout.standard => 20.0,
@@ -369,18 +373,53 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           ),
         ),
       if (branding != null && layout != DocumentTemplateLayout.compact)
-        pw.Text(
-          branding.organizationName,
-          style: pw.TextStyle(fontSize: 9, color: muted),
-          textAlign: layout == DocumentTemplateLayout.receipt
-              ? pw.TextAlign.center
-              : pw.TextAlign.left,
+        pw.Container(
+          width: double.infinity,
+          padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+          decoration: pw.BoxDecoration(
+            color: surface,
+            borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
+          ),
+          child: pw.Column(
+            crossAxisAlignment: layout == DocumentTemplateLayout.receipt
+                ? pw.CrossAxisAlignment.center
+                : pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                branding.organizationName,
+                style: pw.TextStyle(fontSize: 9, color: textColor),
+                textAlign: layout == DocumentTemplateLayout.receipt
+                    ? pw.TextAlign.center
+                    : pw.TextAlign.left,
+              ),
+              if (branding.tagline case final tagline?)
+                pw.Padding(
+                  padding: const pw.EdgeInsets.only(top: 2),
+                  child: pw.Text(
+                    tagline,
+                    style: pw.TextStyle(fontSize: 8, color: muted),
+                    textAlign: layout == DocumentTemplateLayout.receipt
+                        ? pw.TextAlign.center
+                        : pw.TextAlign.left,
+                  ),
+                ),
+            ],
+          ),
         ),
       if (layout == DocumentTemplateLayout.executive)
         pw.Container(
-          height: 5,
-          color: primary,
           margin: const pw.EdgeInsets.only(top: 8, bottom: 16),
+          child: pw.Row(
+            children: [
+              pw.Expanded(
+                flex: 3,
+                child: pw.Container(height: 5, color: primary),
+              ),
+              pw.Expanded(
+                child: pw.Container(height: 5, color: accent),
+              ),
+            ],
+          ),
         ),
       pw.Header(
         level: 0,
@@ -392,17 +431,11 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           style: pw.TextStyle(
             fontSize: titleSize,
             fontWeight: pw.FontWeight.bold,
-            color: layout == DocumentTemplateLayout.executive ? primary : null,
+            color: layout == DocumentTemplateLayout.executive ? primary : textColor,
           ),
         ),
       ),
     ];
-    if (branding?.tagline case final tagline?
-        when layout == DocumentTemplateLayout.executive) {
-      widgets.add(
-        pw.Text(tagline, style: pw.TextStyle(fontSize: 9, color: muted)),
-      );
-    }
     if (snapshot.metadata.subtitle case final subtitle?) {
       widgets.add(
         pw.Paragraph(
@@ -418,7 +451,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       );
     }
     if (layout == DocumentTemplateLayout.receipt) {
-      widgets.add(pw.Divider(color: primary, thickness: 1.2));
+      widgets.add(pw.Divider(color: secondary, thickness: 1.2));
     }
 
     for (final section in snapshot.sections) {
