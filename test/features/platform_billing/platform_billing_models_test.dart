@@ -267,7 +267,7 @@ void main() {
             'verified_collections_this_month': {'count': 1, 'amount_minor': 2000, 'amount': '20.00'},
           },
         ],
-        'payment_review_queue': [],
+        'payment_review_queue': <Map<String, dynamic>>[],
       });
 
       expect(overview.billingAccountsCount, 8);
