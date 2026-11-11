@@ -164,6 +164,46 @@ void main() {
     );
   });
 
+  test('template layout strategies produce distinct PDF compositions', () async {
+    const renderer = PdfDocumentRenderer();
+    final executive = DocumentTemplateDefinition(
+      id: TemplateId('report.summary.executive'),
+      version: TemplateVersion(major: 1, minor: 0, patch: 0),
+      documentTypeId: documentType,
+      displayName: 'Executive summary',
+      supportedLocaleTags: const ['en'],
+      capabilities: template.capabilities,
+      layout: DocumentTemplateLayout.executive,
+    );
+    final compact = DocumentTemplateDefinition(
+      id: TemplateId('report.summary.compact'),
+      version: TemplateVersion(major: 1, minor: 0, patch: 0),
+      documentTypeId: documentType,
+      displayName: 'Compact summary',
+      supportedLocaleTags: const ['en'],
+      capabilities: template.capabilities,
+      layout: DocumentTemplateLayout.compact,
+    );
+
+    final executiveResult = await renderer.render(
+      snapshot: snapshot(),
+      template: executive,
+      options: options(),
+    );
+    final compactResult = await renderer.render(
+      snapshot: snapshot(),
+      template: compact,
+      options: options(),
+    );
+
+    expect(executiveResult, isA<DocumentRenderSuccess>());
+    expect(compactResult, isA<DocumentRenderSuccess>());
+    expect(
+      (executiveResult as DocumentRenderSuccess).artifact.sha256,
+      isNot((compactResult as DocumentRenderSuccess).artifact.sha256),
+    );
+  });
+
   test(
     'rejects complex RTL text until a shaping provider is approved',
     () async {
