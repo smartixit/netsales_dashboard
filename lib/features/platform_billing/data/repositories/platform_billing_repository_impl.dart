@@ -32,7 +32,7 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
     if (data == null) return const {};
     final value = key == null ? data : data[key];
     if (value is Map<String, dynamic>) return value;
-    if (value is Map) return Map<String, dynamic>.from(value);
+    if (value is Map<Object?, Object?>) return Map<String, dynamic>.from(value);
     return data;
   }
 
