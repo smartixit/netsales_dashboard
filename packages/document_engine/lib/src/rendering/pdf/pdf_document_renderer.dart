@@ -415,9 +415,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                 flex: 3,
                 child: pw.Container(height: 5, color: primary),
               ),
-              pw.Expanded(
-                child: pw.Container(height: 5, color: accent),
-              ),
+              pw.Expanded(child: pw.Container(height: 5, color: accent)),
             ],
           ),
         ),
@@ -431,7 +429,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           style: pw.TextStyle(
             fontSize: titleSize,
             fontWeight: pw.FontWeight.bold,
-            color: layout == DocumentTemplateLayout.executive ? primary : textColor,
+            color: layout == DocumentTemplateLayout.executive
+                ? primary
+                : textColor,
           ),
         ),
       ),
