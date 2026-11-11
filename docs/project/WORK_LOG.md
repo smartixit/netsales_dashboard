@@ -587,3 +587,12 @@ Branch: feat/platform-billing-management
 - Android: BLOCKED on runner SDK bootstrap; setup was repaired and awaits a fresh exact-SHA run.
 - Arabic renderer/provider: NOT APPROVED. A PDF generator compiling is not sufficient; generated artifacts, extraction/searchability, shaping, mixed-direction values, and visual review on Windows, Android, and iOS remain required.
 - No package copy to `smartixit/netsales` and no legacy invoice renderer replacement have occurred.
+
+
+## 2026-11-11 — Report Configuration Studio host-control integration (in progress)
+
+- Added framework-neutral `ReportStudioFilterSectionBuilder` and `ReportStudioPresentationSectionBuilder` extension points.
+- NetSales can now render every filter and presentation control using its own approved design-system components; the package's generic Material implementation remains a fallback for independent consumers.
+- Added widget regression coverage proving both injected sections replace the built-in controls.
+- This closes the package API extensibility gap, not the consuming-app integration work. No raw Material control is to be used by the NetSales feature adapter.
+- Verification awaits the next exact-HEAD Windows/macOS package CI run.
