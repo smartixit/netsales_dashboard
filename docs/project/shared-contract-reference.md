@@ -29,3 +29,23 @@ This document provides direct mapping from Flutter feature domains to their cano
    - Use `lib/core/themes/` and `lib/core/constants/` for tokens (`AppColors`, `AppTypography`, `AppRadius`, `AppSpacing`, `AppElevation`, `AppGradients`, `AppMotion`, `AppThemes`).
 3. **Use GetX exclusively:** Prohibit Provider, Riverpod, Bloc, or stateful widget state machines.
 4. **Desktop and Web Adaptation:** Build from actual window/viewport constraints; keep native window management inside `packages/desktop_windowing` and do not attempt to resize browser windows.
+
+## 3. Platform Billing — versioned catalogue and policy contracts
+
+The Dashboard consumes canonical Laravel Platform Billing resources and routes. These operations are Platform Scope only; do not route them through operational Network/POS workspaces.
+
+| Operation | API contract | Permission |
+|---|---|---|
+| Read products, plans, plan versions, currencies | GET /platform/billing/products, /plans, /plans/{planId}/versions, /currencies | billing.view |
+| Create product or plan record | POST /platform/billing/products, /plans | billing.create |
+| Build a Draft plan version | POST /platform/billing/plans/{planId}/versions, /plan-versions/{versionId}/prices, /features | billing.edit |
+| Publish a plan version | POST /platform/billing/plan-versions/{versionId}/publish | billing.manage |
+| Read trial/dunning policies and histories | GET /platform/billing/policies/trials, /dunning, and each /{policyId}/versions | billing.view |
+| Create/revise/publish trial or dunning policies | POST /platform/billing/policies/trials, /dunning, each /{policyId}/versions, and the corresponding version publish route | billing.manage |
+| Assign published policy versions to a Draft plan version or Draft price | PUT /platform/billing/policies/plan-versions/{versionId}, /prices/{priceId} | billing.manage |
+| Review pending trial redemptions and adjust an active trial | GET /platform/billing/policies/trial-redemptions/pending; approve/reject and subscription trial-adjustment routes | billing.view for reads; billing.manage for decisions |
+
+- A plan record, plan version, price, and feature are separate server resources. Creating a plan does not create its first Draft version or price.
+- A price belongs to one currency and billing interval. Preserve the currency ID and server-provided decimal string; never sum unlike currencies or convert money in Flutter.
+- Published plan/policy versions are immutable. New commercial terms require a new Draft version; assignments must target Draft plan versions/prices and reference published policy versions only.
+- Approval/rejection, eligibility, trial start/end, invoice generation, grace periods, suspension, and accounting outcomes are server-owned. The client sends only explicit decisions and required reasons.

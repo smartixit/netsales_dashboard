@@ -1,0 +1,47 @@
+import 'package:netsales_dashboard/core/models/api_response.dart';
+
+abstract interface class PlatformBillingRemoteDataSource {
+  Future<ApiResponse<Map<String, dynamic>>> getOverview({int? currencyId});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getCurrencies();
+  Future<ApiResponse<List<Map<String, dynamic>>>> getPlans({String? search, String? status, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getProducts({String? search, String? cursor, int perPage = 20});
+  Future<ApiResponse<Map<String, dynamic>>> createProduct(Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> createPlan(Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> createDraftVersion(int planId, {int? trialPolicyVersionId, int? dunningPolicyVersionId});
+  Future<ApiResponse<Map<String, dynamic>>> addPlanPrice(int versionId, Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> addPlanFeature(int versionId, Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> publishPlanVersion(int versionId);
+  Future<ApiResponse<List<Map<String, dynamic>>>> getTrialPolicies({String? search, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getTrialPolicyVersions(int policyId, {String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getDunningPolicies({String? search, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getDunningPolicyVersions(int policyId, {String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getPendingTrialRedemptions({String? cursor, int perPage = 20});
+  Future<ApiResponse<Map<String, dynamic>>> createTrialPolicy(Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> createDunningPolicy(Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> createTrialPolicyVersion(int policyId, Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> createDunningPolicyVersion(int policyId, Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> publishTrialPolicyVersion(int versionId);
+  Future<ApiResponse<Map<String, dynamic>>> publishDunningPolicyVersion(int versionId);
+  Future<ApiResponse<Map<String, dynamic>>> assignPlanVersionPolicies(int versionId, {int? trialPolicyVersionId, int? dunningPolicyVersionId});
+  Future<ApiResponse<Map<String, dynamic>>> assignPricePolicies(int priceId, {int? trialPolicyVersionId, int? dunningPolicyVersionId});
+  Future<ApiResponse<Map<String, dynamic>>> approveTrialRedemption(int redemptionId);
+  Future<ApiResponse<Map<String, dynamic>>> rejectTrialRedemption(int redemptionId, {required String reason});
+  Future<ApiResponse<Map<String, dynamic>>> adjustSubscriptionTrial(int subscriptionId, {required String adjustmentType, int? days, required String reason});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getPlanVersions(int planId, {String? status, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getAccounts({int? networkId, int? currencyId, String? status, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getSubscriptions({int? networkId, int? accountId, int? currencyId, String? status, String? search, String? cursor, int perPage = 20});
+  Future<ApiResponse<Map<String, dynamic>>> getSubscription(int id);
+  Future<ApiResponse<List<Map<String, dynamic>>>> getInvoices({int? networkId, int? accountId, int? currencyId, String? status, String? search, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getPayments({int? networkId, int? accountId, int? invoiceId, int? currencyId, String? status, String? search, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getTreasuryAccounts({int? currencyId, String? status, String? search, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getJournalEntries({int? currencyId, String? sourceType, String? fromDate, String? toDate, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getExchangeRates({int? baseCurrencyId, int? quoteCurrencyId, String? cursor, int perPage = 20});
+  Future<ApiResponse<List<Map<String, dynamic>>>> getConversions({int? fromCurrencyId, int? toCurrencyId, String? cursor, int perPage = 20});
+  Future<ApiResponse<Map<String, dynamic>>> createBillingAccount({required int networkId, required int currencyId});
+  Future<ApiResponse<Map<String, dynamic>>> createSubscription({required int accountId, required int priceId});
+  Future<ApiResponse<Map<String, dynamic>>> cancelSubscription(int id, {required bool atPeriodEnd, required String reason});
+  Future<ApiResponse<Map<String, dynamic>>> verifyPayment(int id, {required int treasuryAccountId, String? note});
+  Future<ApiResponse<Map<String, dynamic>>> rejectPayment(int id, {required String reason});
+  Future<ApiResponse<Map<String, dynamic>>> createTreasuryAccount(Map<String, dynamic> data);
+  Future<ApiResponse<Map<String, dynamic>>> setTreasuryStatus(int id, String status);
+}

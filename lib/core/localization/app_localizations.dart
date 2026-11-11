@@ -141,7 +141,7 @@ class AppLocalizations {
 
     'workspace_summary':'ملخص الحالة',
     'overview':'نظرة عامة','platform_management':'إدارة المنصة','users':'المستخدمون','roles':'الأدوار والصلاحيات','networks':'مزودو الشبكات','pos':'نقاط البيع','geography':'المحافظات والمديريات',
-    'subscriptions':'الاشتراكات والتراخيص','subscription_plans':'خطط الاشتراك','provider_subscriptions':'اشتراكات المزودين','subscription_requests':'طلبات الاشتراك والترقية',
+    'subscriptions':'الاشتراكات والتراخيص','billing_center':'مركز الفوترة والاشتراكات','subscription_plans':'خطط الاشتراك','provider_subscriptions':'اشتراكات المزودين','subscription_requests':'طلبات الاشتراك والترقية',
     'finance':'المالية والتقارير','sales':'تقارير المبيعات','network_wallets':'محافظ الشبكات','pos_wallets':'محافظ نقاط البيع','expenses':'المصروفات','bank_accounts':'الحسابات البنكية والتسويات','reports':'التقارير المالية',
     'support':'الدعم والتواصل','support_tickets':'تذاكر الدعم الفني','notifications':'الإشعارات والتنبيهات','send_notifications':'إدارة الإشعارات',
     'system':'النظام والأمان','audit_logs':'سجلات التدقيق','settings':'إعدادات النظام','sessions':'الجلسات والأجهزة','backups':'النسخ الاحتياطي','scheduled_tasks':'المهام المجدولة',
@@ -459,7 +459,7 @@ class AppLocalizations {
     'period_90d':'Last 90 days',
     'period_12m':'Last 12 months',
     'overview':'Overview','platform_management':'Platform management','users':'Users','roles':'Roles & permissions','networks':'Network providers','pos':'Points of sale','geography':'Governorates & directorates',
-    'subscriptions':'Subscriptions & licensing','subscription_plans':'Subscription plans','provider_subscriptions':'Provider subscriptions','subscription_requests':'Subscription requests',
+    'subscriptions':'Subscriptions & licensing','billing_center':'Billing & subscriptions','subscription_plans':'Subscription plans','provider_subscriptions':'Provider subscriptions','subscription_requests':'Subscription requests',
     'finance':'Finance & reports','sales':'Sales reports','network_wallets':'Network wallets','pos_wallets':'POS wallets','expenses':'Expenses','bank_accounts':'Bank accounts & settlements','reports':'Financial reports',
     'support':'Support & communications','support_tickets':'Support tickets','notifications':'Notifications','send_notifications':'Notification management',
     'system':'System & security','audit_logs':'Audit logs','settings':'System settings','sessions':'Sessions & devices','backups':'Backups','scheduled_tasks':'Scheduled tasks',

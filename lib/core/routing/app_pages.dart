@@ -18,6 +18,8 @@ import 'package:netsales_dashboard/features/platform_dashboard/presentation/bind
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/screens/platform_dashboard_screen.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/screens/platform_module_placeholder_screen.dart';
 import 'package:netsales_dashboard/features/platform_dashboard/presentation/screens/platform_overview_screen.dart';
+import 'package:netsales_dashboard/features/platform_billing/presentation/bindings/platform_billing_binding.dart';
+import 'package:netsales_dashboard/features/platform_billing/presentation/screens/platform_billing_screen.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/bindings/platform_users_binding.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/bindings/platform_user_detail_binding.dart';
 import 'package:netsales_dashboard/features/platform_users/presentation/screens/platform_users_screen.dart';
@@ -32,8 +34,6 @@ import 'package:netsales_dashboard/features/platform_network_pos_links/presentat
 import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/bindings/platform_network_pos_link_detail_binding.dart';
 import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/screens/platform_network_pos_links_screen.dart';
 import 'package:netsales_dashboard/features/platform_network_pos_links/presentation/screens/platform_network_pos_link_detail_screen.dart';
-import 'package:netsales_dashboard/features/platform_subscriptions/presentation/bindings/platform_subscriptions_binding.dart';
-import 'package:netsales_dashboard/features/platform_subscriptions/presentation/screens/platform_subscriptions_screen.dart';
 import 'package:netsales_dashboard/features/splash/presentation/bindings/splash_binding.dart';
 import 'package:netsales_dashboard/features/splash/presentation/screens/splash_screen.dart';
 import 'package:netsales_dashboard/widgets/dashboard_metrics/showcase/dashboard_metrics_showcase_binding.dart';
@@ -96,9 +96,7 @@ abstract final class AppPages {
         GetPage<dynamic>(name: '/network-pos-links', page: () => const PlatformNetworkPosLinksScreen(), binding: PlatformNetworkPosLinksBinding(), middlewares: [PermissionGuardMiddleware(requiredRole: AppRoles.superAdmin)], transition: Transition.fadeIn),
         GetPage<dynamic>(name: '/network-pos-links/:id', page: () => const PlatformNetworkPosLinkDetailScreen(), binding: PlatformNetworkPosLinkDetailBinding(), middlewares: [PermissionGuardMiddleware(requiredRole: AppRoles.superAdmin)], transition: Transition.fadeIn),
         _module('/geography', 'geography', AppPermissions.geographyView),
-        GetPage<dynamic>(name: '/subscription-plans', page: () => const PlatformSubscriptionsScreen(section: SubscriptionWorkspaceSection.plans), binding: PlatformSubscriptionsBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.subscriptionsView)], transition: Transition.fadeIn),
-        GetPage<dynamic>(name: '/provider-subscriptions', page: () => const PlatformSubscriptionsScreen(section: SubscriptionWorkspaceSection.subscriptions), binding: PlatformSubscriptionsBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.subscriptionsView)], transition: Transition.fadeIn),
-        GetPage<dynamic>(name: '/subscription-requests', page: () => const PlatformSubscriptionsScreen(section: SubscriptionWorkspaceSection.requests), binding: PlatformSubscriptionsBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.subscriptionsView)], transition: Transition.fadeIn),
+        GetPage<dynamic>(name: '/billing', page: () => const PlatformBillingScreen(), binding: PlatformBillingBinding(), middlewares: [PermissionGuardMiddleware(requiredPermission: AppPermissions.billingView)], transition: Transition.fadeIn),
         _module('/sales', 'sales', AppPermissions.salesView),
         _module('/network-wallets', 'network_wallets', AppPermissions.networkWalletsView),
         _module('/pos-wallets', 'pos_wallets', AppPermissions.posWalletsView),

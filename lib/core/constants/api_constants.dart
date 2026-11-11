@@ -297,6 +297,55 @@ abstract final class ApiConstants {
       '/subscription-plans/batch-force-delete';
 
   // ==========================================================================
+  // Platform Billing — New multi-currency subscription engine
+  // All endpoints below are scoped under /platform/billing.
+  // ==========================================================================
+  static const String billingCurrencies = '/platform/billing/currencies';
+  static const String billingOverview = '/platform/billing/overview';
+  static const String billingReconciliation = '/platform/billing/reconciliation';
+  static const String billingPlans = '/platform/billing/plans';
+  static const String billingAccounts = '/platform/billing/accounts';
+  static const String billingSubscriptions = '/platform/billing/subscriptions';
+  static String billingSubscription(int id) => '/platform/billing/subscriptions/$id';
+  static String billingSubscriptionCancel(int id) => '/platform/billing/subscriptions/$id/cancel';
+  static const String billingInvoices = '/platform/billing/invoices';
+  static const String billingPayments = '/platform/billing/payments';
+  static const String billingPaymentMethods = '/platform/billing/payment-methods';
+  static const String billingTreasuryAccounts = '/platform/billing/treasury-accounts';
+  static const String billingJournalEntries = '/platform/billing/journal-entries';
+  static const String billingExchangeRates = '/platform/billing/exchange-rates';
+  static const String billingConversions = '/platform/billing/conversions';
+  static const String billingProducts = '/platform/billing/products';
+  static String billingPlanVersions(int planId) => '/platform/billing/plans/$planId/versions';
+  static String billingPlanVersionPrices(int versionId) => '/platform/billing/plan-versions/$versionId/prices';
+  static String billingPlanVersionFeatures(int versionId) => '/platform/billing/plan-versions/$versionId/features';
+  static String billingPublishPlanVersion(int versionId) => '/platform/billing/plan-versions/$versionId/publish';
+  static String billingPlanVersionPrices(int versionId) => '/platform/billing/plan-versions/$versionId/prices';
+  static String billingPlanVersionFeatures(int versionId) => '/platform/billing/plan-versions/$versionId/features';
+  static String billingPublishPlanVersion(int versionId) => '/platform/billing/plan-versions/$versionId/publish';
+  static String billingVerifyPayment(int id) => '/platform/billing/payments/$id/verify';
+  static String billingRejectPayment(int id) => '/platform/billing/payments/$id/reject';
+  static String billingVoidInvoice(int id) => '/platform/billing/invoices/$id/void';
+  static String billingInvoiceCreditNotes(int id) => '/platform/billing/invoices/$id/credit-notes';
+  static String billingPaymentRefunds(int id) => '/platform/billing/payments/$id/refunds';
+  static const String billingTrialPolicies = '/platform/billing/policies/trials';
+  static String billingTrialPolicyVersions(int policyId) => '/platform/billing/policies/trials/$policyId/versions';
+  static const String billingDunningPolicies = '/platform/billing/policies/dunning';
+  static String billingDunningPolicyVersions(int policyId) => '/platform/billing/policies/dunning/$policyId/versions';
+  static const String billingPendingTrialRedemptions = '/platform/billing/policies/trial-redemptions/pending';
+  static String billingApproveTrialRedemption(int redemptionId) => '/platform/billing/policies/trial-redemptions/$redemptionId/approve';
+  static String billingRejectTrialRedemption(int redemptionId) => '/platform/billing/policies/trial-redemptions/$redemptionId/reject';
+  static String billingAdjustSubscriptionTrial(int subscriptionId) => '/platform/billing/policies/subscriptions/$subscriptionId/trial-adjustments';
+  static String billingCreateTrialPolicyVersion(int policyId) => '/platform/billing/policies/trials/$policyId/versions';
+  static String billingPublishTrialPolicyVersion(int versionId) => '/platform/billing/policies/trial-versions/$versionId/publish';
+  static String billingCreateDunningPolicyVersion(int policyId) => '/platform/billing/policies/dunning/$policyId/versions';
+  static String billingPublishDunningPolicyVersion(int versionId) => '/platform/billing/policies/dunning-versions/$versionId/publish';
+  static String billingAssignPlanPolicies(int versionId) => '/platform/billing/policies/plan-versions/$versionId';
+  static String billingAssignPricePolicies(int priceId) => '/platform/billing/policies/prices/$priceId';
+  static const String billingDunningPolicies = '/platform/billing/policies/dunning';
+  static const String billingPendingTrialRedemptions = '/platform/billing/policies/trial-redemptions/pending';
+
+  // ==========================================================================
   // 17. كتالوج ميزات النظام (System Features)
   // ==========================================================================
   static const String features = '/features';

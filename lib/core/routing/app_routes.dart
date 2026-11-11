@@ -20,10 +20,7 @@ abstract final class AppRoutes {
   static String networkPosLinkDetail(int id) =>
       '/dashboard/network-pos-links/$id';
   static const String geography = '/dashboard/geography';
-  static const String subscriptionPlans = '/dashboard/subscription-plans';
-  static const String providerSubscriptions =
-      '/dashboard/provider-subscriptions';
-  static const String subscriptionRequests = '/dashboard/subscription-requests';
+  static const String billing = '/dashboard/billing';
   static const String sales = '/dashboard/sales';
   static const String networkWallets = '/dashboard/network-wallets';
   static const String posWallets = '/dashboard/pos-wallets';

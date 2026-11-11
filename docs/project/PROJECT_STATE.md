@@ -324,3 +324,15 @@ The reusable desktop windowing foundation and the first production Splash/Authen
 ### M9 additional evidence
 - Added a second independent Flutter host example, branded Northstar Labs, with its own save/share/print adapters and no GetX dependency.
 - Migrated the existing MediaPdfViewerCard preview surface to the shared `DocumentPdfBytesPreview` widget. Existing byte loading, cache behavior, and external-open action remain unchanged; the migration does not fabricate DocumentArtifact provenance for imported files.
+
+## Platform Billing administration — ACTIVE / VALIDATION PENDING (2026-11-11)
+
+API branch: smartixit/netsales_api:feat/platform-billing-admin-contracts
+Dashboard branch: smartixit/netsales_dashboard:feat/platform-billing-management
+
+- The Billing Center now has dedicated product/plan authoring, immutable plan-version history/publication, trial/dunning policy administration, published-policy assignment, pending trial-redemption review, and audited active-trial adjustment surfaces.
+- GetX bindings/controllers and typed Data/Domain contracts are used for the new workflows. Presentation is composed from existing NetSales custom design-system widgets.
+- Financial amounts are submitted and displayed as API-authoritative decimal strings per currency. No client-side currency conversion, financial arithmetic, entitlement decisions, or trial date calculations are introduced.
+- Access is aligned with the API: billing.view for reads, billing.create for product/plan records, billing.edit for Draft construction/assignment, and billing.manage for publication, policies, and trial review.
+- Acceptance is blocked on exact-head CI: model tests, full flutter analyze lib test integration_test, complete flutter test, and Windows Debug compile must pass. Rendered Light/Dark and LTR/RTL QA remains unverified until reviewed.
+- Keep both PRs in Draft until CI failures are repaired; do not merge or call the implementation production-ready before exact-head checks pass.

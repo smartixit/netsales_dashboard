@@ -402,3 +402,71 @@
 ### Verification
 - Pending exact-head GitHub Actions: dashboard analysis/tests and Windows Debug compilation.
 - No local Windows build is claimed; the reported MSBuild/AOT diagnostic is the target regression to be checked by CI.
+
+
+## 2026-11-11 — Platform Billing Workspace Foundation
+
+**Repository:** `smartixit/netsales_dashboard`  
+**Branch:** `feat/platform-billing-management`
+
+### Implemented
+- Added a dedicated `platform_billing` feature with pure domain entities, typed wire-status enums, remote data source, resource models, repository contract/implementation, use cases, GetX controller, and binding.
+- Added the first billing workspace with overview, plans, subscriptions, invoices, payments, treasury, and currency selection surfaces.
+- Replaced the three legacy subscription navigation entries with one `billing.view`-gated Billing Center route.
+- Added focused model tests for exact enum wire values, plan/version/price mapping, and currency-separated overview summaries.
+
+### Contract and financial safety
+- Matched Flutter models to Laravel Billing API Resources rather than the legacy subscription endpoints.
+- Financial summary values are returned as decimal strings by Laravel per currency; Flutter renders these values without calculating or aggregating money.
+- Preserved cursor-based list loading and request-generation guards against stale subscription, invoice, and payment responses.
+
+### Verification boundary
+- No Flutter SDK or repository command runner was available in this GitHub-only execution. Formatting, analyzer, unit tests, Windows build, and visual QA remain unverified and must run on the exact PR head SHA.
+- Mutating billing workflows (plan/version authoring, policy lifecycle, account/subscription provisioning, payment review actions, trial adjustment, refunds/credit notes, and reconciliation UI) remain incomplete.
+- No PR has been opened and no merge is claimed.
+
+
+## 2026-11-11 — Billing Search Contract Integration
+
+- Extended subscription search from the presentation controller through GetX use case, domain repository, data repository, and remote datasource.
+- Search refresh now resets the cursor and reloads subscriptions, invoices, and payments; server-side search is authoritative and existing request-generation guards prevent stale results from replacing newer results.
+- The Laravel contract was extended in the paired API branch to search subscriptions by account/network/plan identifiers and names.
+- Verification: no Flutter SDK command execution, analyzer, tests, desktop build, or visual QA was available in this GitHub-only session. Exact-head validation remains mandatory.
+
+
+## Platform billing plan version history integration — 2026-11-11
+
+- Added the Dashboard data/domain contract for cursor-paginated plan version history and connected it to Laravel's `GET /platform/billing/plans/{planId}/versions` endpoint through RemoteDataSource, Repository, UseCase, and GetX Binding.
+- Added an expandable version-history view to plan catalogue cards, showing exact server-sourced status, currency-specific decimal prices, and plan feature values. The client does not calculate or convert amounts.
+- Corrected model constructors so price decimal strings and per-currency financial summary decimal strings are accepted and mapped consistently. Added the trial policy version ID to the plan-version entity/model.
+- Expanded model tests for version history, unlimited resource limit values, and server-formatted price amounts.
+- Relevant commits: `e1bb4b59`, `8324ffca`, `64dc5532`, `42163e83`, `b3734805`, `318d32c0`, `2cc17d75`, `b246f0d2`, `546783e0`, `8152a712`, `b2aef067`, `18ffd387`, `99f2298c`.
+- Commands executed: GitHub source reads and file/commit operations only. Flutter format/analyzer/tests/Windows build and rendered visual QA were not executed.
+
+
+- Follow-up constructor inspection corrected model/entity wiring for server-formatted price amounts, financial summary decimal strings, and trial policy version IDs. Added a model test for version history and authoritative decimal strings. These tests have been authored but not executed.
+
+## 2026-11-11 — Platform Billing authoring and policy administration
+
+Repository: smartixit/netsales_dashboard
+Branch: feat/platform-billing-management
+
+### Implemented
+- Added product and plan authoring through the DataSource → Repository → UseCase → GetX Controller flow. Plan creation explicitly orchestrates plan record, Draft version, initial currency-specific price, and optional first feature.
+- Added resumable workflow checkpoints so a failed later step does not intentionally re-create already completed plan/version/price steps on retry.
+- Added Draft-only additional price and feature operations, with currency-precision and duplicate checks before submission. Laravel remains the final validator and the only source of monetary conversion/calculation.
+- Added plan version publication as a distinct billing.manage action. Draft price/feature and policy assignment controls are restricted to billing.edit.
+- Added typed product, trial policy, dunning policy, policy-version, and trial-redemption domain models and wire mappers.
+- Added versioned trial/dunning policy list/history/create/revision/publish flows, assignment of published policy versions to Draft plan versions or prices, pending trial-redemption review, and audited active-trial adjustments.
+- Added a dedicated policies section in the Billing Center. Product/plan and policy forms use shared NetSales custom fields, dropdowns, switches, dialogs, status badges, and buttons.
+- Consolidated duplicate legacy/new policy controller methods into one definition per operation. Added guards against concurrent plan/product and policy mutations.
+- Added focused model contract tests for product/price policy references, trial/dunning policy snapshots, nested trial-redemption context, plan versions, and currency-separated overview figures.
+
+### Authorization and financial invariants
+- Product/plan create, Draft construction, publication, policy administration, and trial decisions map to Laravel permissions: billing.create, billing.edit, billing.manage, and billing.view.
+- Published plan/policy versions are immutable. Policy links can be assigned or cleared only while the plan version or price belongs to a Draft.
+- Currency values are submitted as decimal strings. Flutter validates display precision but does not calculate minor units, convert currencies, determine entitlement, trial expiry, invoice amounts, or accounting entries.
+
+### Verification boundary
+- No local Flutter/Dart SDK is available in this execution environment. The newly added model tests have not been run; formatting, analyzer, complete test suite, Windows Debug compilation, and rendered Light/Dark QA remain unverified.
+- The Dashboard GitHub workflow triggers on pull requests targeting main; a Draft PR is required for exact-head CI evidence. No merge is claimed.
