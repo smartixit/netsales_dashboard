@@ -362,6 +362,49 @@ void main() {
     },
   );
 
+  test(
+    'rejects RTL in host-supplied headers, cover metadata, and branding',
+    () async {
+      const renderer = PdfDocumentRenderer();
+      final invalidOptions = <DocumentRenderOptions>[
+        options(headerText: 'تقرير المبيعات'),
+        DocumentRenderOptions(
+          pageProfile: DocumentPageProfile.a4Portrait(),
+          generatedAt: DateTime.utc(2026, 11, 9, 10),
+          firstPageFooterText: 'نسخة داخلية',
+        ),
+        DocumentRenderOptions(
+          pageProfile: DocumentPageProfile.a4Portrait(),
+          generatedAt: DateTime.utc(2026, 11, 9, 10),
+          coverPage: true,
+          coverTitle: 'Quarterly report',
+          coverMetadata: const {'الجهة': 'شركة النور'},
+        ),
+        DocumentRenderOptions(
+          pageProfile: DocumentPageProfile.a4Portrait(),
+          generatedAt: DateTime.utc(2026, 11, 9, 10),
+          branding: DocumentBranding(
+            organizationName: 'شركة النور',
+            tagline: 'Business services',
+          ),
+        ),
+      ];
+
+      for (final invalidOption in invalidOptions) {
+        final result = await renderer.render(
+          snapshot: snapshot(),
+          template: template,
+          options: invalidOption,
+        );
+        expect(result, isA<DocumentRenderFailure>());
+        expect(
+          (result as DocumentRenderFailure).code,
+          DocumentRenderFailureCode.unsupportedTextShaping,
+        );
+      }
+    },
+  );
+
   test('rejects a template registered for another document type', () async {
     const renderer = PdfDocumentRenderer();
     final otherTemplate = DocumentTemplateDefinition(
