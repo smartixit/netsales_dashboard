@@ -631,3 +631,13 @@ Branch: feat/platform-billing-management
 - Updated the package README and recorded decision DOC-012.
 - Remaining production blockers: integrate the provider into every text-bearing node in PdfDocumentRenderer; implement measured paragraph wrapping and multipage flow; repeated table headers/cell wrapping; metadata/header/footer/cover/watermark/chart/QR/signature paths; searchable/selectable text tagging and extraction; viewer/print/save/share parity; and final Windows/Android/iOS/Web verification.
 - No tests, formatter, analyzer, build, or GitHub Actions were executed, per the user's explicit final-stage verification instruction.
+
+
+## 2026-11-12 — Shaped PDF path and measured paragraph flow
+
+- Verified the exact upstream pdf 3.12.0 graphics API and corrected the glyph painter: Payv's `GlyphPath.toPdfPath()` emits PDF content syntax, whereas `PdfGraphics.drawShape()` parses SVG path syntax. The painter now emits MoveTo/LineTo/CubicTo/ClosePath commands directly to PdfGraphics, using Payv's cubic-converted outline commands.
+- Added ShapedPdfParagraph. It shapes and measures candidate lines before wrapping, keeps the requested paragraph base direction for each line, handles explicit paragraph separators, and uses the PDF package's spanning Column layout so the paragraph can continue across MultiPage pages.
+- Added a conservative grapheme-boundary fallback for long unspaced identifiers and focused tests for the paragraph contract. Tests remain unexecuted.
+- Exported the paragraph widget and documented the integration boundary.
+- Production RTL remains fail-closed: these primitives are not yet injected into all PdfDocumentRenderer node builders, table cells, running headers/footers, cover fields, watermark, chart labels, signature/QR captions, and other text-bearing output paths. Unicode extraction/search/accessibility tagging is also still unresolved.
+- No tests, formatter, analyzer, builds, or Actions were run.
