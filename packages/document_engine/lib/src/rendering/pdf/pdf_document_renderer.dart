@@ -1573,9 +1573,11 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     pw.TextDirection? textDirection,
     bool? softWrap,
     int? maxLines,
+    DocumentTextDirection direction = DocumentTextDirection.auto,
   }) {
     final provider = textShapingProvider;
-    final containsRtl = RegExp(
+    final containsRtl = direction == DocumentTextDirection.rightToLeft ||
+        RegExp(
       r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]',
     ).hasMatch(text);
     if (provider == null || !containsRtl) {
@@ -1610,7 +1612,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           width: width,
           fontSize: style?.fontSize ?? 10,
           color: style?.color ?? PdfColors.black,
-          direction: DocumentTextDirection.auto,
+          direction: direction,
           alignment: alignment,
         );
       },
@@ -1621,7 +1623,13 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     String text, {
     pw.TextStyle? style,
     pw.TextAlign? textAlign,
-  }) => _text(text, style: style, textAlign: textAlign);
+    DocumentTextDirection direction = DocumentTextDirection.auto,
+  }) => _text(
+    text,
+    style: style,
+    textAlign: textAlign,
+    direction: direction,
+  );
 
   String _valueText(DocumentValue value) => switch (value) {
     DocumentTextValue(:final value) => value,
