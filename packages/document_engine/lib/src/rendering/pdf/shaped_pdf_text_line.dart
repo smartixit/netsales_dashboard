@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:payv/payv.dart' as payv;
@@ -74,9 +76,16 @@ final class ShapedPdfTextLine extends pw.StatelessWidget {
       ShapedPdfTextAlignment.right => freeSpace,
     };
 
-    return pw.CustomPaint(
-      size: PdfPoint(width, boxHeight),
-      painter: (canvas, size) {
+    final unicodeFont = pw.Font.ttf(
+      ByteData.sublistView(provider.fontBytes),
+    );
+
+    return pw.Stack(
+      fit: pw.StackFit.expand,
+      children: [
+        pw.CustomPaint(
+          size: PdfPoint(width, boxHeight),
+          painter: (canvas, size) {
         var penX = startX;
         final baseline = (boxHeight - fontSize) / 2;
         for (final run in shaped.visualRuns) {
@@ -123,6 +132,27 @@ final class ShapedPdfTextLine extends pw.StatelessWidget {
           }
         }
       },
+        ),
+        // Preserve the original logical Unicode string in the PDF content
+        // stream. This invisible text layer supplies extraction/search/copy
+        // semantics; the visible layer is drawn from Payv-shaped glyph paths.
+        // LTR is intentional: logical source order must not be visually
+        // reordered in the text layer.
+        pw.Positioned.fill(
+          child: pw.Text(
+            text,
+            textDirection: pw.TextDirection.ltr,
+            textAlign: pw.TextAlign.left,
+            softWrap: false,
+            maxLines: 1,
+            style: pw.TextStyle(
+              font: unicodeFont,
+              fontSize: fontSize,
+              renderingMode: PdfTextRenderingMode.invisible,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
