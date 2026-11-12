@@ -1241,6 +1241,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                 columns[index].alignment,
                 false,
                 style.compact,
+                entry.$2.cells[index].direction,
               ),
           ],
         ),
@@ -1270,8 +1271,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     String text,
     DocumentCellAlignment alignment,
     bool isHeader,
-    bool compact,
-  ) {
+    bool compact, [
+    DocumentTextDirection direction = DocumentTextDirection.auto,
+  ]) {
     final textAlign = switch (alignment) {
       DocumentCellAlignment.leading => pw.TextAlign.left,
       DocumentCellAlignment.center => pw.TextAlign.center,
@@ -1283,6 +1285,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       child: _text(
         text,
         textAlign: textAlign,
+        direction: direction,
         style: pw.TextStyle(
           fontSize: isHeader ? 9 : 8,
           fontWeight: isHeader ? pw.FontWeight.bold : pw.FontWeight.normal,
