@@ -20,8 +20,8 @@ import 'shaped_pdf_paragraph.dart';
 
 /// PDF backend for bounded, non-official client-side documents.
 ///
-/// Complex RTL scripts are rejected until a shaping provider is selected and
-/// validated in the dedicated typography milestone.
+/// RTL and mixed-direction text require an explicitly injected, licensed
+/// OpenType shaping provider. The default configuration remains fail-closed.
 final class PdfDocumentRenderer implements DocumentRenderer {
   const PdfDocumentRenderer({this.textShapingProvider});
 
@@ -174,6 +174,22 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       return const DocumentRenderFailure(
         code: DocumentRenderFailureCode.unsupportedLocale,
         message: 'The selected template does not support this document locale.',
+      );
+    }
+
+    final rtlPattern = RegExp(
+      r'[\\u0590-\\u08FF\\uFB1D-\\uFDFF\\uFE70-\\uFEFF]',
+    );
+    // Watermark.text is painted by the PDF package's page-level decoration
+    // path and cannot currently be replaced by our shaped paragraph widget.
+    // Keep that one case fail-closed instead of silently rendering Arabic
+    // watermark text with the legacy fallback.
+    if (textShapingProvider != null &&
+        options.watermark != null &&
+        rtlPattern.hasMatch(options.watermark!.text)) {
+      return const DocumentRenderFailure(
+        code: DocumentRenderFailureCode.unsupportedTextShaping,
+        message: 'RTL watermark text is not supported by this PDF backend yet.',
       );
     }
 
