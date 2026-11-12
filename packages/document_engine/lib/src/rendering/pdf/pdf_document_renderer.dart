@@ -110,19 +110,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           },
           build: (_) => [
             if (options.watermark != null)
-              pw.Watermark.text(
-                options.watermark!.text,
-                angle: options.watermark!.angleRadians,
-                style: pw.TextStyle(
-                  fontSize: 38,
-                  color: PdfColor(
-                    _pdfColor(options.watermark!.color).red,
-                    _pdfColor(options.watermark!.color).green,
-                    _pdfColor(options.watermark!.color).blue,
-                    options.watermark!.opacity,
-                  ),
-                ),
-              ),
+              _watermarkWidget(options.watermark!, profile),
             ..._buildContent(snapshot, template, options.branding),
           ],
         ),
@@ -180,19 +168,6 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     final rtlPattern = RegExp(
       r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]',
     );
-    // Watermark.text is painted by the PDF package's page-level decoration
-    // path and cannot currently be replaced by our shaped paragraph widget.
-    // Keep that one case fail-closed instead of silently rendering Arabic
-    // watermark text with the legacy fallback.
-    if (textShapingProvider != null &&
-        options.watermark != null &&
-        rtlPattern.hasMatch(options.watermark!.text)) {
-      return const DocumentRenderFailure(
-        code: DocumentRenderFailureCode.unsupportedTextShaping,
-        message: 'RTL watermark text is not supported by this PDF backend yet.',
-      );
-    }
-
     final locale = snapshot.metadata.locale.languageTag.toLowerCase();
     if (textShapingProvider == null &&
         (snapshot.metadata.locale.direction ==
@@ -1090,6 +1065,45 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey500),
         ),
       ],
+    );
+  }
+
+  pw.Widget _watermarkWidget(
+    DocumentWatermark watermark,
+    DocumentPageProfile profile,
+  ) {
+    final baseColor = _pdfColor(watermark.color);
+    final color = PdfColor(
+      baseColor.red,
+      baseColor.green,
+      baseColor.blue,
+      watermark.opacity,
+    );
+    final provider = textShapingProvider;
+    final containsRtl = RegExp(
+      r'[\\u0590-\\u08FF\\uFB1D-\\uFDFF\\uFE70-\\uFEFF]',
+    ).hasMatch(watermark.text);
+    if (provider != null && containsRtl) {
+      // Keep the same full-page fitted/rotated decoration semantics as
+      // Watermark.text, but route the child through the OpenType shaper.
+      return pw.Watermark(
+        angle: watermark.angleRadians,
+        fit: pw.BoxFit.contain,
+        child: ShapedPdfParagraph(
+          text: watermark.text,
+          provider: provider,
+          width: profile.widthPoints * 0.88,
+          fontSize: 38,
+          color: color,
+          direction: DocumentTextDirection.auto,
+          alignment: ShapedPdfTextAlignment.center,
+        ),
+      );
+    }
+    return pw.Watermark.text(
+      watermark.text,
+      angle: watermark.angleRadians,
+      style: pw.TextStyle(fontSize: 38, color: color),
     );
   }
 
