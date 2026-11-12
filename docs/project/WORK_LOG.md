@@ -615,3 +615,5 @@ Branch: feat/platform-billing-management
 - Added hard limits for snapshot sections/content nodes, section nodes, table rows/columns/cells, chart series/points, semantic collections, and binary image/signature payload copies.
 - Added focused regression cases for oversized snapshots, tables, and image assets. Tests were authored only; they were not executed, in accordance with the requested final-stage verification freeze.
 - This increment does not resolve Arabic shaping. Complex RTL remains fail-closed and the package is not yet declared production-ready.
+
+- Follow-up hardening normalized the bounded-input implementations, added a 100-entry bound for table column weights, and added a lazy-iterable regression case proving that the section limit is enforced before the entire iterable is consumed. No test or CI command was run.

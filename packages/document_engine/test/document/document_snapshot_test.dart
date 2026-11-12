@@ -69,8 +69,30 @@ void main() {
   });
 
   test('rejects documents exceeding bounded section and node counts', () {
-    expect(() => createSnapshot(sections: [for (var i = 0; i < 251; i++) DocumentSection(id: 's-$i', nodes: const [])]), throwsArgumentError);
-    expect(() => createSnapshot(sections: [DocumentSection(id: 'large', nodes: List<DocumentNode>.filled(20001, const DocumentPageBreak()))]), throwsArgumentError);
+    Iterable<DocumentSection> unboundedSections() sync* {
+      for (var index = 0; ; index++) {
+        yield DocumentSection(id: 'section-$index', nodes: const []);
+      }
+    }
+
+    expect(
+      () => createSnapshot(sections: unboundedSections()),
+      throwsArgumentError,
+    );
+    expect(
+      () => createSnapshot(
+        sections: [
+          DocumentSection(
+            id: 'large',
+            nodes: List<DocumentNode>.filled(
+              20001,
+              const DocumentPageBreak(),
+            ),
+          ),
+        ],
+      ),
+      throwsArgumentError,
+    );
   });
 
   test('rejects invalid heading levels and schema versions', () {

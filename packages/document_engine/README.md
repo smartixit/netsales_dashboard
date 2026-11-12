@@ -33,7 +33,13 @@ Reusable, framework-agnostic document contracts, template registry, and bounded 
 
 ## Bounded input contracts
 
-Document snapshots accept at most 250 sections and 20,000 content nodes. Each section accepts at most 20,000 nodes; tables accept at most 100 columns and 10,000 rows. Charts and semantic collections are bounded by their typed contracts. Collection limits are enforced while copying lazy iterables. Large result sets belong in server-side report jobs and protected artifact delivery.
+Document snapshots accept at most 250 sections and 20,000 content nodes.
+Each section accepts at most 20,000 nodes; tables accept at most 100 columns
+and 10,000 rows. Binary image and visual-signature payloads are capped before
+their defensive copies are allocated. Charts and semantic collections are
+bounded by their typed contracts. Collection limits are enforced while
+copying lazy iterables. Large result sets belong in server-side report jobs
+and protected artifact delivery.
 
 ## Deliberate non-goals
 

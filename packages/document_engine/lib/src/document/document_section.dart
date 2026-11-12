@@ -9,7 +9,19 @@ final class DocumentSection {
     this.title,
     required Iterable<DocumentNode> nodes,
   }) : id = validateStableIdentifier(id, parameterName: 'sectionId'),
-       nodes = copyBoundedDocumentList(nodes, maxLength: 20000, fieldName: 'nodes') { if (title != null && (title!.trim().isEmpty || title!.length > 300)) { throw ArgumentError.value(title, 'title', 'Must contain 1-300 characters.'); } }
+       nodes = copyBoundedDocumentList(
+         nodes,
+         maxLength: 20000,
+         fieldName: 'nodes',
+       ) {
+    if (title != null && (title!.trim().isEmpty || title!.length > 300)) {
+      throw ArgumentError.value(
+        title,
+        'title',
+        'Must contain 1-300 characters.',
+      );
+    }
+  }
 
   final String id;
   final String? title;
