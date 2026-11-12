@@ -26,23 +26,48 @@ final class PayvTextShapingProvider {
 
     return PayvTextShapingProvider._(
       font: font,
+      fontBytes: Uint8List.fromList(fontBytes),
       shaper: payv.Shaper(font.raw),
       language: _openTypeLanguageTag(languageTag),
     );
   }
 
-  const PayvTextShapingProvider._({
+  PayvTextShapingProvider._({
     required this.font,
+    required Uint8List fontBytes,
     required payv.Shaper shaper,
     required int language,
-  }) : _shaper = shaper,
+  }) : _fontBytes = Uint8List.fromList(fontBytes),
+       _shaper = shaper,
        _language = language;
 
   /// The validated font face used for shaping and later PDF embedding.
   final payv.PayvFont font;
+  final Uint8List _fontBytes;
+
+  /// Original validated font bytes shared with the PDF Unicode text layer.
+  /// A defensive copy prevents a caller from mutating the shaping face after
+  /// it has been parsed.
+  Uint8List get fontBytes => Uint8List.fromList(_fontBytes);
 
   final payv.Shaper _shaper;
   final int _language;
+
+  /// Resolves the paragraph's base direction once, before line wrapping.
+  ///
+  /// UAX #9 determines the base direction from the first strong character.
+  /// Passing this resolved value to every wrapped line prevents a continuation
+  /// beginning with an invoice code or Latin word from flipping an RTL block.
+  DocumentTextDirection resolveDirection(
+    String text, {
+    DocumentTextDirection requested = DocumentTextDirection.auto,
+  }) {
+    if (requested != DocumentTextDirection.auto) return requested;
+    final result = payv.Bidi.resolve(text.runes.toList(growable: false));
+    return result.paragraphLevel.isOdd
+        ? DocumentTextDirection.rightToLeft
+        : DocumentTextDirection.leftToRight;
+  }
 
   /// Shapes one logical line into visual-order bidi and script runs.
   ///
