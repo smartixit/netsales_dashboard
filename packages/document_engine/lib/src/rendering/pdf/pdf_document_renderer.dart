@@ -1081,7 +1081,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     );
     final provider = textShapingProvider;
     final containsRtl = RegExp(
-      r'[\\u0590-\\u08FF\\uFB1D-\\uFDFF\\uFE70-\\uFEFF]',
+      r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]',
     ).hasMatch(watermark.text);
     if (provider != null && containsRtl) {
       // Keep the same full-page fitted/rotated decoration semantics as
