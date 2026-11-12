@@ -408,7 +408,7 @@ void main() {
     );
   });
 
-  test('renders Arabic page watermark through the shaped decoration path', () async {
+  test('renders supplied image logo watermark through the PDF decoration path', () async {
     final renderer = PdfDocumentRenderer(textShapingProvider: shapingProvider);
     final result = await renderer.render(
       snapshot: snapshot(),
@@ -416,7 +416,9 @@ void main() {
       options: DocumentRenderOptions(
         pageProfile: DocumentPageProfile.a4Portrait(),
         generatedAt: DateTime.utc(2026, 11, 9, 10),
-        watermark: DocumentWatermark(text: 'نسخة داخلية INV-2026/0017'),
+        watermark: DocumentWatermark(
+          imageBytes: Uint8List.fromList(base64.decode('$b64')),
+        ),
       ),
     );
     expect(result, isA<DocumentRenderSuccess>());

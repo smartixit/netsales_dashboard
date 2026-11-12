@@ -249,7 +249,6 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     );
     final branding = options.branding;
     final optionTexts = <String?>[
-      options.watermark?.text,
       options.headerText,
       options.footerText,
       options.firstPageHeaderText,
@@ -1072,38 +1071,18 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     DocumentWatermark watermark,
     DocumentPageProfile profile,
   ) {
-    final baseColor = _pdfColor(watermark.color);
-    final color = PdfColor(
-      baseColor.red,
-      baseColor.green,
-      baseColor.blue,
-      watermark.opacity,
-    );
-    final provider = textShapingProvider;
-    final containsRtl = RegExp(
-      r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]',
-    ).hasMatch(watermark.text);
-    if (provider != null && containsRtl) {
-      // Keep the same full-page fitted/rotated decoration semantics as
-      // Watermark.text, but route the child through the OpenType shaper.
-      return pw.Watermark(
-        angle: watermark.angleRadians,
-        fit: pw.BoxFit.contain,
-        child: ShapedPdfParagraph(
-          text: watermark.text,
-          provider: provider,
-          width: profile.widthPoints * 0.88,
-          fontSize: 38,
-          color: color,
-          direction: DocumentTextDirection.auto,
-          alignment: ShapedPdfTextAlignment.center,
-        ),
-      );
-    }
-    return pw.Watermark.text(
-      watermark.text,
+    return pw.Watermark(
       angle: watermark.angleRadians,
-      style: pw.TextStyle(fontSize: 38, color: color),
+      fit: pw.BoxFit.contain,
+      child: pw.Opacity(
+        opacity: watermark.opacity,
+        child: pw.Image(
+          pw.MemoryImage(watermark.imageBytes),
+          width: profile.widthPoints * watermark.widthFactor,
+          height: profile.heightPoints * watermark.heightFactor,
+          fit: pw.BoxFit.contain,
+        ),
+      ),
     );
   }
 

@@ -426,3 +426,10 @@ Dashboard branch: smartixit/netsales_dashboard:feat/platform-billing-management
 - Running headers/footers and table cells are routed through the shaping gateway. Explicit table-cell direction is preserved; header labels use automatic direction resolution.
 - Search/copy semantics use an invisible logical-order Unicode text run with a ToUnicode-enabled embedded font beneath visible vector glyph outlines. A structural regression test checks the ToUnicode resource and invisible text mode.
 - Cross-viewer extraction order and visual parity are not claimed as runtime-verified because tests/builds are intentionally deferred to the final stage. The test is authored, not executed.
+
+
+### Watermark contract correction (2026-11-12)
+
+- Watermarks are image-only. The host supplies the active Network or POS logo bytes; the bundled application icon is the fallback when a workspace logo is unavailable.
+- The document engine does not resolve tenant identity, load assets, or download image URLs. It validates and defensively copies PNG/JPEG bytes (maximum 2 MiB), then renders with opacity, angle and bounded relative dimensions.
+- Text watermarks are removed from the public contract and PDF renderer. Image-watermark regression tests are authored but not executed until the final validation stage.

@@ -117,16 +117,15 @@ flutter test packages/document_engine/test
 
 - `DocumentQrCode` renders an opaque, bounded payload supplied by the host.
   It does not encrypt, sign, or verify the payload.
-- `DocumentWatermark` is a constrained visual overlay for draft/copy/
-  confidential/cancelled presentation. It never changes authoritative status.
+- `DocumentWatermark` is an image-only visual overlay. The host supplies bounded PNG/JPEG bytes, selecting the active Network logo, POS logo, or bundled application icon fallback. The engine does not select tenants, fetch URLs, or load host assets. Opacity, angle, and relative image bounds are configurable; the watermark never changes authoritative status.
 - `DocumentSignatureArea` supports supplied signer identity, role, approval
   reference/time, and an optional bounded visual signature image. A visual
   mark or printed approval reference is not a cryptographic signature.
 - Fixed-height 58 mm and 80 mm receipt PDF profiles are available. They define
   PDF page geometry only and are not ESC/POS or thermal-printer drivers.
 - Template capabilities are enforced for QR, watermark, and signature areas.
-  RTL text in captions/labels/watermarks continues to fail closed until a
-  production shaping provider is separately approved.
+  Watermarks do not accept text. Arabic shaping applies to text-bearing document
+  content, not watermark branding.
 
 
 ## Production-readiness repair additions (2026-11-11)
@@ -210,7 +209,7 @@ verification stage passes.
 - `ShapedPdfParagraph` now measures candidate lines using Payv's actual shaped advances, wraps at whitespace, preserves paragraph direction across all generated lines, and delegates page continuation to the PDF package's spanning `Column` layout.
 - Unspaced long identifiers use a conservative grapheme-boundary fallback; a single unbreakable grapheme wider than the box fails rather than being clipped.
 - `ShapedPdfTextLine` now emits Payv's cubic glyph-outline commands directly through `PdfGraphics`. It no longer passes Payv's PDF path-content string to the PDF package's SVG-path parser; those are different path syntaxes.
-- These are reusable primitives. They are not yet wired into every `PdfDocumentRenderer` node or the table cell/header/footer/chart/cover/watermark paths. The renderer-wide RTL guard therefore remains enabled.
+- These are reusable primitives. They are not yet wired into every `PdfDocumentRenderer` node or the table cell/header/footer/chart/cover paths. The renderer-wide RTL guard therefore remains enabled.
 - Vector outlines alone do not provide searchable/selectable Unicode text or a ToUnicode map. Extraction/accessibility remains a production blocker.
 
 
@@ -222,11 +221,11 @@ verification stage passes.
 - Each paragraph resolves UAX #9 base direction once before wrapping. The same resolved direction is used for all wrapped lines; whitespace is preserved between words and long unspaced values split only at Unicode grapheme boundaries.
 - Visible glyph outlines are paired with an invisible logical Unicode text layer using the same licensed font. This retains the original logical codepoint sequence in the PDF text stream for search/copy/extraction while the visible glyphs use Payv's GSUB/GPOS shaping and visual bidi order.
 - The PDF Unicode font object is cached per shaping-provider instance, not reparsed for every line.
-- RTL watermark text remains fail-closed because the PDF package's page-level watermark decoration is a separate rendering path and is not yet wired to the shaped text gateway. Do not bypass this guard.
+- Watermarks are image-only and use the host-supplied Network/POS logo or application icon fallback; they do not pass through the text shaping gateway.
 - The default renderer remains fail-closed for RTL when no provider is injected. Hosts must load `loadDocumentEngineArabicFont()` or supply another appropriately licensed TrueType font and inject the provider.
 - The current bundled face is IBM Plex Sans Arabic Regular. Bold/italic face selection, full extraction/search validation, complex font coverage/fallback, visual baselines, and Windows/Android/iOS output verification remain final-stage validation work. Tests have been authored but not run by instruction.
 
-- Arabic and mixed-direction page watermarks use the same injected Payv shaping provider inside the PDF package's fitted/rotated watermark decoration; no legacy Arabic text fallback is allowed.
+- Page watermarks are image-only, with the active Network/POS logo selected by the host and the bundled application icon used as fallback. The engine accepts defensive-copied PNG/JPEG bytes only, enforces a 2 MiB limit, and renders through the PDF package's fitted/rotated watermark decoration with configurable opacity.
 - Running headers and footers, including first-page overrides, route through the shared shaping gateway. Table cells pass explicit cell direction where provided; table headers and chart-table labels use automatic first-strong direction detection.
 - Each shaped line writes visible glyph outlines and a second invisible logical-order text run using the same embedded Unicode font. The text run uses LTR source order intentionally, with the font's ToUnicode map, so PDF extraction/search/copy can recover the original logical Unicode rather than visual bidi run order.
 - A renderer test now inspects the generated PDF for a ToUnicode map and decodes Flate page streams to assert the invisible PDF text rendering mode. This is a structural regression test; it must still be executed in the final validation stage and supplemented by pdftotext/viewer extraction checks on Windows, Android and iOS.

@@ -170,3 +170,15 @@
 - Paragraph direction is resolved once using UAX #9 and preserved over wrapping. Explicit RTL direction is propagated from paragraph/heading/info-grid/table-cell contracts.
 - The page-level PDF watermark decorator remains fail-closed for RTL because it bypasses the shared shaped text gateway.
 - The default renderer remains fail-closed without an injected provider. The host may load the bundled IBM Plex Sans Arabic Regular font through the Flutter asset helper or inject another font whose licence permits embedding/subsetting.
+
+
+| DOC-014 | 2026-11-12 | Watermarks are image-only; the host selects Network/POS logo or app-icon fallback and injects PNG/JPEG bytes. No text watermark rendering. | APPROVED |
+
+## DOC-014 — Image-only watermark identity
+
+- Network workspace documents use the active Network profile logo when available.
+- POS workspace documents use the active POS profile logo when available.
+- If the corresponding profile logo is absent or cannot be loaded, use the bundled NetSales application icon from assets/images/brand_icon.png.
+- The engine receives bytes only; it never resolves tenant context, makes network requests, or loads application assets.
+- PNG/JPEG only, defensive copy, 2 MiB maximum, configurable opacity, angle, and bounded relative image dimensions.
+- Watermark is a visual mark only and must never imply or alter the authoritative invoice/report status.
