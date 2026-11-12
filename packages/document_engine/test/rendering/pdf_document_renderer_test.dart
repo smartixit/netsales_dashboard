@@ -353,6 +353,40 @@ void main() {
     );
   });
 
+  test('keeps RTL fail-closed when no shaping provider is injected', () async {
+    const renderer = PdfDocumentRenderer();
+    final result = await renderer.render(
+      snapshot: snapshot(
+        nodes: const [DocumentParagraph(text: 'تقرير المبيعات')],
+      ),
+      template: template,
+      options: options(),
+    );
+    expect(result, isA<DocumentRenderFailure>());
+    expect(
+      (result as DocumentRenderFailure).code,
+      DocumentRenderFailureCode.unsupportedTextShaping,
+    );
+  });
+
+  test('keeps RTL page watermark fail-closed until its decoration path is shaped', () async {
+    final renderer = PdfDocumentRenderer(textShapingProvider: shapingProvider);
+    final result = await renderer.render(
+      snapshot: snapshot(),
+      template: template,
+      options: DocumentRenderOptions(
+        pageProfile: DocumentPageProfile.a4Portrait(),
+        generatedAt: DateTime.utc(2026, 11, 9, 10),
+        watermark: const DocumentWatermark(text: 'نسخة داخلية'),
+      ),
+    );
+    expect(result, isA<DocumentRenderFailure>());
+    expect(
+      (result as DocumentRenderFailure).code,
+      DocumentRenderFailureCode.unsupportedTextShaping,
+    );
+  });
+
   test('renders Arabic text when a shaping provider is injected', () async {
     final renderer = PdfDocumentRenderer(textShapingProvider: shapingProvider);
     final result = await renderer.render(
