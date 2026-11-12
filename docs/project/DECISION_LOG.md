@@ -158,3 +158,15 @@
 - The first implementation increment adds a shaped visual-run contract and a single-line vector-outline PDF painter. It does NOT authorize enabling RTL in the main renderer yet.
 - The main renderer remains fail-closed until paragraphs, line wrapping, multipage flow, tables, headers/footers, chart labels, semantic nodes, extraction/search/accessibility tagging, and output/preview paths all use the same provider.
 - Tests are authored but remain unexecuted by the user's explicit instruction. No CI, analyzer, formatting, or builds are run during implementation.
+
+
+| DOC-013 | 2026-11-12 | Integrate Payv through an injected shaping provider across renderer-owned text nodes, retain logical Unicode with an invisible text layer, and keep the PDF page-watermark path fail-closed for RTL. | APPROVED |
+
+## DOC-013 — Renderer-wide Payv integration and text semantics
+
+- The host injects a PayvTextShapingProvider constructed from a validated, licensed TrueType font. PdfDocumentRenderer does not load Flutter assets or fetch fonts.
+- Renderer-owned RTL/mixed text is routed through one shaped paragraph gateway. This includes semantic content, tables, charts, metadata, cover content, branding and running headers/footers.
+- Visible glyphs are emitted as Payv-shaped vector outlines. A same-font invisible PDF text layer retains the original logical Unicode string for search/copy/extraction. This is a semantic layer design, not yet a claim that every viewer returns identical extraction order; the final viewer corpus remains required.
+- Paragraph direction is resolved once using UAX #9 and preserved over wrapping. Explicit RTL direction is propagated from paragraph/heading/info-grid/table-cell contracts.
+- The page-level PDF watermark decorator remains fail-closed for RTL because it bypasses the shared shaped text gateway.
+- The default renderer remains fail-closed without an injected provider. The host may load the bundled IBM Plex Sans Arabic Regular font through the Flutter asset helper or inject another font whose licence permits embedding/subsetting.
