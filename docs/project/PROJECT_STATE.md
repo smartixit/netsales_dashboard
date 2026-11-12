@@ -401,3 +401,11 @@ Dashboard branch: smartixit/netsales_dashboard:feat/platform-billing-management
 - Implemented the provider contract, visual bidi/script run shaping, glyph cluster source mapping, TrueType outline checks, and a fixed single-line vector PDF painter. IBM Plex Sans Arabic Regular is bundled with its SIL OFL 1.1 notice.
 - The production PdfDocumentRenderer continues to reject Arabic and mixed-direction documents. This is intentional until the provider is integrated across every text-bearing node and paragraph/table/multipage layout, extraction/accessibility tagging, and output workflows are complete.
 - No tests, formatter, analyzer, builds, or GitHub Actions have been run. Final verification remains deferred by user instruction.
+
+
+### Additional shaping implementation increment (2026-11-12)
+
+- Corrected vector outline emission against the exact pdf 3.12.0 PdfGraphics API; glyph outlines are emitted as direct path commands rather than passed between incompatible PDF/SVG path syntaxes.
+- Added measured paragraph wrapping with Payv shaping advances, preserved paragraph base direction, explicit paragraph breaks, and PDF MultiPage spanning through Column.
+- Added grapheme-boundary fallback for unspaced long tokens and focused tests (not run).
+- Still not production-enabled or renderer-integrated. All text-bearing renderer paths and Unicode extraction/accessibility tagging remain outstanding. Keep the fail-closed guard.
