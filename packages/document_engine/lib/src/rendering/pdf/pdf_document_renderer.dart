@@ -546,11 +546,14 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       }
       for (final node in section.nodes) {
         switch (node) {
-          case DocumentParagraph(:final text):
-            widgets.add(_paragraph(text: text));
-          case DocumentHeading(:final text, :final level):
+          case DocumentParagraph(:final text, :final direction):
+            widgets.add(_paragraph(text, direction: direction));
+          case DocumentHeading(:final text, :final level, :final direction):
             widgets.add(
-              pw.Header(level: level > 5 ? 5 : level, child: _text(text)),
+              pw.Header(
+                level: level > 5 ? 5 : level,
+                child: _text(text, direction: direction),
+              ),
             );
           case DocumentMetric(:final label, :final value, :final caption):
             widgets.add(_metricWidget(label, value, caption, branding));
@@ -627,6 +630,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                       pw.SizedBox(height: node.compact ? 3 : 5),
                       _text(
                         _valueText(item.value),
+                        direction: item.direction,
                         style: pw.TextStyle(
                           fontSize: node.compact ? 8 : 9,
                           fontWeight: pw.FontWeight.bold,
