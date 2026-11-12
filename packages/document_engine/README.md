@@ -19,7 +19,7 @@ Reusable, framework-agnostic document contracts, template registry, and bounded 
 - Concrete PDF backend with multipage layout, headers, footers, page numbers, metrics, and structured tables.
 - Artifact provenance, byte length, SHA-256 digest, and defensive byte copies.
 - Template/document type, locale, capability, and orientation validation before rendering.
-- Complex RTL scripts are explicitly rejected until the Arabic shaping milestone; this renderer does not claim Arabic PDF support.
+- The renderer keeps the fail-closed guard for complex RTL until the shaped-line adapter is integrated into every document node and the final output/accessibility matrix is accepted.
 
 ## M3 — Reusable visual components
 
@@ -166,3 +166,67 @@ lays out the supplied content.
 The generic PDF renderer continues to fail closed for complex RTL text until a
 validated shaping provider is integrated. Adding semantic nodes does not relax
 that safety boundary.
+
+
+## Arabic shaping provider — integration foundation
+
+The package pins `payv: 0.1.2` as the selected pure-Dart OpenType shaping
+provider. It supplies UAX #9 bidirectional resolution (including isolates and
+paired brackets), script itemization, Arabic joining and GSUB/GPOS shaping,
+glyph advances/offsets, and TrueType glyph outlines. It has no FFI, native
+platform channel, or runtime dependency, and its package supports Dart VM and
+JavaScript compilation.
+
+The internal `PayvTextShapingProvider` converts one logical line into visual
+bidi/script runs and shaped glyph programs. `ShapedPdfTextLine` paints those
+glyph outlines as vector paths inside the existing `pdf` widget tree. The
+provider refuses fonts whose embedding/subsetting flags disallow PDF use and
+rejects CFF/CFF2 outlines rather than silently drawing missing glyphs.
+
+The package bundles IBM Plex Sans Arabic Regular with its SIL Open Font
+License 1.1 text. Flutter hosts can load it through
+`loadDocumentEngineArabicFont()` from `document_engine_flutter.dart`, then
+supply the bytes to `PayvTextShapingProvider` or `DocumentBranding`.
+
+### Current integration boundary
+
+This is the shaping and single-line vector-painting foundation, not yet the
+production renderer-wide RTL enablement. The main `PdfDocumentRenderer`
+continues to fail closed for Arabic and mixed-direction content until all
+text-bearing nodes (metadata, headers/footers, paragraphs, headings, table
+headers/cells, metrics, chart labels, signatures, QR captions, callouts,
+watermarks, and cover fields) use the same shaping adapter.
+
+The shaped-line widget currently requires a fixed single-line box and rejects
+overflow; it does not yet perform paragraph line breaking, cross-page flow,
+repeated table-cell layout, or extraction/accessibility text tagging. Do not
+remove the renderer guard or use this widget for official financial documents
+until those remaining integrations are completed and the final cross-platform
+verification stage passes.
+
+
+### Measured paragraph flow and PDF path emission
+
+- `ShapedPdfParagraph` now measures candidate lines using Payv's actual shaped advances, wraps at whitespace, preserves paragraph direction across all generated lines, and delegates page continuation to the PDF package's spanning `Column` layout.
+- Unspaced long identifiers use a conservative grapheme-boundary fallback; a single unbreakable grapheme wider than the box fails rather than being clipped.
+- `ShapedPdfTextLine` now emits Payv's cubic glyph-outline commands directly through `PdfGraphics`. It no longer passes Payv's PDF path-content string to the PDF package's SVG-path parser; those are different path syntaxes.
+- These are reusable primitives. They are not yet wired into every `PdfDocumentRenderer` node or the table cell/header/footer/chart/cover/watermark paths. The renderer-wide RTL guard therefore remains enabled.
+- Vector outlines alone do not provide searchable/selectable Unicode text or a ToUnicode map. Extraction/accessibility remains a production blocker.
+
+
+### RTL and mixed-direction PDF rendering integration
+
+- `PdfDocumentRenderer` accepts an explicitly injected `PayvTextShapingProvider`. The host loads a licensed TrueType font and creates the provider; the core renderer does not reach into Flutter's asset bundle.
+- All renderer-owned text nodes now pass through one text gateway. Arabic/Hebrew-range strings in document title/subtitle, sections, paragraphs, headings, metrics, info grids, financial summaries, callouts, table headers/cells, chart labels/legends, image and QR captions, signature labels, branding, cover fields, and running headers/footers use the shaped paragraph path.
+- Explicit RTL direction on paragraph, heading, and info-grid/table-cell nodes is preserved even when a value contains only Latin identifiers.
+- Each paragraph resolves UAX #9 base direction once before wrapping. The same resolved direction is used for all wrapped lines; whitespace is preserved between words and long unspaced values split only at Unicode grapheme boundaries.
+- Visible glyph outlines are paired with an invisible logical Unicode text layer using the same licensed font. This retains the original logical codepoint sequence in the PDF text stream for search/copy/extraction while the visible glyphs use Payv's GSUB/GPOS shaping and visual bidi order.
+- The PDF Unicode font object is cached per shaping-provider instance, not reparsed for every line.
+- RTL watermark text remains fail-closed because the PDF package's page-level watermark decoration is a separate rendering path and is not yet wired to the shaped text gateway. Do not bypass this guard.
+- The default renderer remains fail-closed for RTL when no provider is injected. Hosts must load `loadDocumentEngineArabicFont()` or supply another appropriately licensed TrueType font and inject the provider.
+- The current bundled face is IBM Plex Sans Arabic Regular. Bold/italic face selection, full extraction/search validation, complex font coverage/fallback, visual baselines, and Windows/Android/iOS output verification remain final-stage validation work. Tests have been authored but not run by instruction.
+
+- Arabic and mixed-direction page watermarks use the same injected Payv shaping provider inside the PDF package's fitted/rotated watermark decoration; no legacy Arabic text fallback is allowed.
+- Running headers and footers, including first-page overrides, route through the shared shaping gateway. Table cells pass explicit cell direction where provided; table headers and chart-table labels use automatic first-strong direction detection.
+- Each shaped line writes visible glyph outlines and a second invisible logical-order text run using the same embedded Unicode font. The text run uses LTR source order intentionally, with the font's ToUnicode map, so PDF extraction/search/copy can recover the original logical Unicode rather than visual bidi run order.
+- A renderer test now inspects the generated PDF for a ToUnicode map and decodes Flate page streams to assert the invisible PDF text rendering mode. This is a structural regression test; it must still be executed in the final validation stage and supplemented by pdftotext/viewer extraction checks on Windows, Android and iOS.

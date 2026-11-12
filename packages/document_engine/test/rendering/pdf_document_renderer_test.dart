@@ -1,9 +1,60 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:document_engine/document_engine.dart';
+import 'package:document_engine/document_engine_flutter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  late PayvTextShapingProvider shapingProvider;
+
+  setUpAll(() async {
+    shapingProvider = PayvTextShapingProvider(
+      await loadDocumentEngineArabicFont(),
+      languageTag: 'ar-YE',
+    );
+  });
+
+
+  List<String> decodedPdfStreams(Uint8List bytes) {
+    final source = latin1.decode(bytes);
+    final decoded = <String>[];
+    var cursor = 0;
+    while (true) {
+      final streamIndex = source.indexOf('stream', cursor);
+      if (streamIndex < 0) break;
+      var dataStart = streamIndex + 'stream'.length;
+      if (source.startsWith('\\r\\n', dataStart)) {
+        dataStart += 2;
+      } else if (source.startsWith('\\n', dataStart)) {
+        dataStart += 1;
+      }
+      final end = source.indexOf('endstream', dataStart);
+      if (end < 0) break;
+      final dictionaryStart = source.lastIndexOf('<<', streamIndex);
+      final dictionary = dictionaryStart < 0
+          ? ''
+          : source.substring(dictionaryStart, streamIndex);
+      if (dictionary.contains('/FlateDecode')) {
+        try {
+          decoded.add(
+            latin1.decode(
+              ZLibDecoder().convert(bytes.sublist(dataStart, end)),
+            ),
+          );
+        } on FormatException {
+          // Ignore non-zlib streams; the test asserts the expected page stream
+          // was decoded below rather than treating unrelated streams as text.
+        }
+      }
+      cursor = end + 'endstream'.length;
+    }
+    return decoded;
+  }
+
   final documentType = DocumentTypeId('report.summary');
   final template = DocumentTemplateDefinition(
     id: TemplateId('report.summary.standard'),
@@ -341,73 +392,118 @@ void main() {
     );
   });
 
-  test(
-    'rejects complex RTL text until a shaping provider is approved',
-    () async {
-      const renderer = PdfDocumentRenderer();
-      final result = await renderer.render(
-        snapshot: snapshot(
-          languageTag: 'en-US',
-          nodes: const [DocumentParagraph(text: 'تقرير المبيعات')],
-        ),
-        template: template,
-        options: options(),
-      );
-
-      expect(result, isA<DocumentRenderFailure>());
-      expect(
-        (result as DocumentRenderFailure).code,
-        DocumentRenderFailureCode.unsupportedTextShaping,
-      );
-    },
-  );
-
-  test(
-    'rejects RTL in host-supplied headers, cover metadata, and branding',
-    () async {
-      const renderer = PdfDocumentRenderer();
-      final invalidOptions = <DocumentRenderOptions>[
-        options(headerText: 'تقرير المبيعات'),
-        DocumentRenderOptions(
-          pageProfile: DocumentPageProfile.a4Portrait(),
-          generatedAt: DateTime.utc(2026, 11, 9, 10),
-          firstPageFooterText: 'نسخة داخلية',
-        ),
-        DocumentRenderOptions(
-          pageProfile: DocumentPageProfile.a4Portrait(),
-          generatedAt: DateTime.utc(2026, 11, 9, 10),
-          coverPage: true,
-          coverTitle: 'Quarterly report',
-          coverMetadata: const {'الجهة': 'شركة النور'},
-        ),
-        DocumentRenderOptions(
-          pageProfile: DocumentPageProfile.a4Portrait(),
-          generatedAt: DateTime.utc(2026, 11, 9, 10),
-          branding: DocumentBranding(
-            organizationName: 'شركة النور',
-            tagline: 'Business services',
-          ),
-        ),
-      ];
-
-      for (final invalidOption in invalidOptions) {
-        final result = await renderer.render(
-          snapshot: snapshot(),
-          template: template,
-          options: invalidOption,
-        );
-        expect(result, isA<DocumentRenderFailure>());
-        expect(
-          (result as DocumentRenderFailure).code,
-          DocumentRenderFailureCode.unsupportedTextShaping,
-        );
-      }
-    },
-  );
-
-
-  test('rejects mixed RTL/LTR text in paragraphs, headings, and table labels', () async {
+  test('keeps RTL fail-closed when no shaping provider is injected', () async {
     const renderer = PdfDocumentRenderer();
+    final result = await renderer.render(
+      snapshot: snapshot(
+        nodes: const [DocumentParagraph(text: 'تقرير المبيعات')],
+      ),
+      template: template,
+      options: options(),
+    );
+    expect(result, isA<DocumentRenderFailure>());
+    expect(
+      (result as DocumentRenderFailure).code,
+      DocumentRenderFailureCode.unsupportedTextShaping,
+    );
+  });
+
+  test('renders Arabic page watermark through the shaped decoration path', () async {
+    final renderer = PdfDocumentRenderer(textShapingProvider: shapingProvider);
+    final result = await renderer.render(
+      snapshot: snapshot(),
+      template: template,
+      options: DocumentRenderOptions(
+        pageProfile: DocumentPageProfile.a4Portrait(),
+        generatedAt: DateTime.utc(2026, 11, 9, 10),
+        watermark: DocumentWatermark(text: 'نسخة داخلية INV-2026/0017'),
+      ),
+    );
+    expect(result, isA<DocumentRenderSuccess>());
+    expect(
+      (result as DocumentRenderSuccess).artifact.byteLength,
+      greaterThan(100),
+    );
+  });
+
+  test('renders Arabic text when a shaping provider is injected', () async {
+    final renderer = PdfDocumentRenderer(textShapingProvider: shapingProvider);
+    final result = await renderer.render(
+      snapshot: snapshot(
+        languageTag: 'en-US',
+        nodes: const [
+          DocumentParagraph(
+            text: 'تقرير المبيعات Invoice INV-2026/0017',
+            direction: DocumentTextDirection.rightToLeft,
+          ),
+        ],
+      ),
+      template: template,
+      options: options(),
+    );
+    expect(result, isA<DocumentRenderSuccess>());
+    expect((result as DocumentRenderSuccess).artifact.byteLength, greaterThan(100));
+  });
+
+  test('keeps logical Unicode text searchable through an invisible PDF text layer', () async {
+    const logicalText = 'فاتورة INV-2026/0017 — إجمالي المبيعات';
+    final renderer = PdfDocumentRenderer(textShapingProvider: shapingProvider);
+    final result = await renderer.render(
+      snapshot: snapshot(
+        nodes: [DocumentParagraph(text: logicalText)],
+      ),
+      template: template,
+      options: options(),
+    );
+    expect(result, isA<DocumentRenderSuccess>());
+    final bytes = (result as DocumentRenderSuccess).artifact.bytes;
+    final rawPdf = latin1.decode(bytes);
+    expect(rawPdf, contains('/ToUnicode'));
+
+    final pageStreams = decodedPdfStreams(bytes);
+    expect(pageStreams, isNotEmpty);
+    // PDF text rendering mode 3 is invisible: glyph outlines are the visible
+    // output, while this logical-order text run is retained for extraction.
+    expect(pageStreams.any((stream) => RegExp(r'\b3\s+Tr\b').hasMatch(stream)), isTrue);
+  });
+
+  test('shapes RTL in headers, cover metadata, and branding', () async {
+    final renderer = PdfDocumentRenderer(textShapingProvider: shapingProvider);
+    final rtlOptions = <DocumentRenderOptions>[
+      options(headerText: 'تقرير المبيعات'),
+      DocumentRenderOptions(
+        pageProfile: DocumentPageProfile.a4Portrait(),
+        generatedAt: DateTime.utc(2026, 11, 9, 10),
+        firstPageFooterText: 'نسخة داخلية',
+      ),
+      DocumentRenderOptions(
+        pageProfile: DocumentPageProfile.a4Portrait(),
+        generatedAt: DateTime.utc(2026, 11, 9, 10),
+        coverPage: true,
+        coverTitle: 'Quarterly report',
+        coverMetadata: const {'الجهة': 'شركة النور'},
+      ),
+      DocumentRenderOptions(
+        pageProfile: DocumentPageProfile.a4Portrait(),
+        generatedAt: DateTime.utc(2026, 11, 9, 10),
+        branding: DocumentBranding(
+          organizationName: 'شركة النور',
+          tagline: 'Business services',
+        ),
+      ),
+    ];
+    for (final rtlOption in rtlOptions) {
+      final result = await renderer.render(
+        snapshot: snapshot(),
+        template: template,
+        options: rtlOption,
+      );
+      expect(result, isA<DocumentRenderSuccess>());
+    }
+  });
+
+  test('shapes mixed RTL/LTR paragraphs, headings, and table labels', () async {
+    final renderer = PdfDocumentRenderer(textShapingProvider: shapingProvider);
     final rtlCases = <List<DocumentNode>>[
       const [DocumentParagraph(text: 'Invoice INV-2026-001 رقم الفاتورة')],
       const [DocumentHeading(text: 'Customer details بيانات العميل')],
@@ -421,7 +517,7 @@ void main() {
               id: 'row-1',
               cells: [
                 DocumentTableCell(
-                  value: DocumentTextValue('INV-2026-001'),
+                  value: DocumentTextValue('فاتورة INV-2026-001'),
                 ),
               ],
             ),
@@ -429,19 +525,13 @@ void main() {
         ),
       ],
     ];
-
     for (final nodes in rtlCases) {
       final result = await renderer.render(
         snapshot: snapshot(nodes: nodes),
         template: template,
         options: options(),
       );
-
-      expect(result, isA<DocumentRenderFailure>());
-      expect(
-        (result as DocumentRenderFailure).code,
-        DocumentRenderFailureCode.unsupportedTextShaping,
-      );
+      expect(result, isA<DocumentRenderSuccess>());
     }
   });
 
@@ -567,8 +657,8 @@ void main() {
     );
   });
 
-  test('rejects RTL in all new semantic document nodes', () async {
-    const renderer = PdfDocumentRenderer();
+  test('shapes RTL in all semantic document nodes', () async {
+    final renderer = PdfDocumentRenderer(textShapingProvider: shapingProvider);
     final cases = <List<DocumentNode>>[
       [
         DocumentInfoGrid(
@@ -580,9 +670,7 @@ void main() {
           ],
         ),
       ],
-      [
-        DocumentStatusBanner(label: 'مدفوع بالكامل'),
-      ],
+      [DocumentStatusBanner(label: 'مدفوع بالكامل')],
       [
         DocumentFinancialSummary(
           lines: [
@@ -593,22 +681,15 @@ void main() {
           ],
         ),
       ],
-      [
-        DocumentCallout(title: 'ملاحظة', body: 'بيانات توضيحية'),
-      ],
+      [DocumentCallout(title: 'ملاحظة', body: 'بيانات توضيحية')],
     ];
-
     for (final nodes in cases) {
       final result = await renderer.render(
-        snapshot(nodes: nodes),
+        snapshot: snapshot(nodes: nodes),
         template: template,
         options: options(),
       );
-      expect(result, isA<DocumentRenderFailure>());
-      expect(
-        (result as DocumentRenderFailure).code,
-        DocumentRenderFailureCode.unsupportedTextShaping,
-      );
+      expect(result, isA<DocumentRenderSuccess>());
     }
   });
 
@@ -764,7 +845,7 @@ void main() {
       final artifact = (result as DocumentRenderSuccess).artifact;
       expect(artifact.bytes.take(5), [37, 80, 68, 70, 45]);
       expect(artifact.byteLength, greaterThan(500));
-      expect(artifact.rendererVersion, '1.2.0');
+      expect(artifact.rendererVersion, '1.3.0');
     },
   );
 
