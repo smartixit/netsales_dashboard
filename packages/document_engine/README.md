@@ -203,3 +203,12 @@ repeated table-cell layout, or extraction/accessibility text tagging. Do not
 remove the renderer guard or use this widget for official financial documents
 until those remaining integrations are completed and the final cross-platform
 verification stage passes.
+
+
+### Measured paragraph flow and PDF path emission
+
+- `ShapedPdfParagraph` now measures candidate lines using Payv's actual shaped advances, wraps at whitespace, preserves paragraph direction across all generated lines, and delegates page continuation to the PDF package's spanning `Column` layout.
+- Unspaced long identifiers use a conservative grapheme-boundary fallback; a single unbreakable grapheme wider than the box fails rather than being clipped.
+- `ShapedPdfTextLine` now emits Payv's cubic glyph-outline commands directly through `PdfGraphics`. It no longer passes Payv's PDF path-content string to the PDF package's SVG-path parser; those are different path syntaxes.
+- These are reusable primitives. They are not yet wired into every `PdfDocumentRenderer` node or the table cell/header/footer/chart/cover/watermark paths. The renderer-wide RTL guard therefore remains enabled.
+- Vector outlines alone do not provide searchable/selectable Unicode text or a ToUnicode map. Extraction/accessibility remains a production blocker.
