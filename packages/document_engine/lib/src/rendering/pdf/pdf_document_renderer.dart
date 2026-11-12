@@ -33,7 +33,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
   String get rendererId => 'document-engine.pdf';
 
   @override
-  String get rendererVersion => '1.2.0';
+  String get rendererVersion => '1.3.0';
 
   @override
   Future<DocumentRenderResult> render({
