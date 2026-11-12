@@ -464,7 +464,7 @@ void main() {
     expect(pageStreams, isNotEmpty);
     // PDF text rendering mode 3 is invisible: glyph outlines are the visible
     // output, while this logical-order text run is retained for extraction.
-    expect(pageStreams.any((stream) => RegExp(r'\\b3\\s+Tr\\b').hasMatch(stream)), isTrue);
+    expect(pageStreams.any((stream) => RegExp(r'\b3\s+Tr\b').hasMatch(stream)), isTrue);
   });
 
   test('shapes RTL in headers, cover metadata, and branding', () async {
