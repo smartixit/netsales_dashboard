@@ -23,6 +23,7 @@ export 'src/rendering/document_renderer.dart';
 export 'src/rendering/pdf/pdf_document_renderer.dart';
 export 'src/rendering/pdf/payv_text_shaping_provider.dart';
 export 'src/rendering/pdf/shaped_pdf_text_line.dart';
+export 'src/rendering/pdf/shaped_pdf_paragraph.dart';
 
 export 'src/reports/report_id.dart';
 export 'src/reports/report_filter_value.dart';
