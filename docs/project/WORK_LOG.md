@@ -641,3 +641,16 @@ Branch: feat/platform-billing-management
 - Exported the paragraph widget and documented the integration boundary.
 - Production RTL remains fail-closed: these primitives are not yet injected into all PdfDocumentRenderer node builders, table cells, running headers/footers, cover fields, watermark, chart labels, signature/QR captions, and other text-bearing output paths. Unicode extraction/search/accessibility tagging is also still unresolved.
 - No tests, formatter, analyzer, builds, or Actions were run.
+
+
+## 2026-11-12 — Renderer-wide RTL and searchable text integration
+
+- Added provider injection to PdfDocumentRenderer so the host explicitly supplies a validated, embeddable/subsettable OpenType face. The renderer no longer blocks all RTL when this provider is present; it continues to fail closed without one.
+- Routed every renderer-owned Text/Paragraph call through a central text gateway. RTL/mixed strings in metadata, titles, section headings, semantic nodes, tables, chart labels/legends, captions, signatures, branding, cover data, and running headers/footers now use Payv shaping and paragraph flow.
+- Propagated explicit paragraph/heading direction and per-cell/info-grid direction into the shaped text path.
+- Added a hidden Unicode text layer under each visible vector-outline line. The original logical Unicode sequence is written LTR/in logical order using the same licensed font and PDF invisible text rendering mode, while Payv supplies the visible glyph outline geometry and bidi order.
+- Cached the PDF font object per shaping-provider instance to avoid reparsing and embedding font data for every line.
+- Improved paragraph flow: resolve UAX #9 paragraph base direction once, preserve inter-word whitespace, wrap by measured shaped advances, and use the characters package for full Unicode grapheme segmentation.
+- Kept Arabic watermark text fail-closed because the PDF package's page-level watermark decorator bypasses the shared shaped text gateway.
+- Updated renderer tests to cover injected-provider rendering across paragraphs, headings, tables, headers, cover metadata, branding, and semantic nodes. Added paragraph direction resolution tests. Tests remain unexecuted.
+- No tests, formatter, analyzer, builds, or GitHub Actions were run.
