@@ -654,3 +654,6 @@ Branch: feat/platform-billing-management
 - Kept Arabic watermark text fail-closed because the PDF package's page-level watermark decorator bypasses the shared shaped text gateway.
 - Updated renderer tests to cover injected-provider rendering across paragraphs, headings, tables, headers, cover metadata, branding, and semantic nodes. Added paragraph direction resolution tests. Tests remain unexecuted.
 - No tests, formatter, analyzer, builds, or GitHub Actions were run.
+
+
+- Follow-up hardening: the renderer's shared text gateway now resolves explicit PDF/semantic direction, uses measured intrinsic width for unbounded row labels, and caches the Unicode PDF font per provider. Renderer version advanced to 1.3.0. Tests now explicitly retain the no-provider and RTL-watermark fail-closed cases while covering successful injected-provider rendering. Still no tests, formatter, analyzer, builds, or Actions executed.
