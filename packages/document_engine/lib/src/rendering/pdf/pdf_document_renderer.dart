@@ -1583,10 +1583,18 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     DocumentTextDirection direction = DocumentTextDirection.auto,
   }) {
     final provider = textShapingProvider;
-    final containsRtl = direction == DocumentTextDirection.rightToLeft ||
+    final requestedDirection = direction != DocumentTextDirection.auto
+        ? direction
+        : switch (textDirection) {
+            pw.TextDirection.rtl => DocumentTextDirection.rightToLeft,
+            pw.TextDirection.ltr => DocumentTextDirection.leftToRight,
+            null => DocumentTextDirection.auto,
+          };
+    final containsRtl =
+        requestedDirection == DocumentTextDirection.rightToLeft ||
         RegExp(
-      r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]',
-    ).hasMatch(text);
+          r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]',
+        ).hasMatch(text);
     if (provider == null || !containsRtl) {
       return pw.Text(
         text,
@@ -1601,11 +1609,22 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     return pw.LayoutBuilder(
       builder: (context, constraints) {
         final availableWidth = constraints?.maxWidth;
+        final fontSize = style?.fontSize ?? 10.0;
+        final resolvedDirection = provider.resolveDirection(
+          text,
+          requested: requestedDirection,
+        );
+        final intrinsicWidth = provider.shapeLine(
+              text,
+              direction: resolvedDirection,
+            ).advance *
+            fontSize /
+            provider.font.unitsPerEm;
         final width = availableWidth != null &&
                 availableWidth.isFinite &&
                 availableWidth > 0
             ? availableWidth
-            : 220.0;
+            : math.max(1.0, intrinsicWidth);
         final alignment = switch (textAlign) {
           pw.TextAlign.left => ShapedPdfTextAlignment.left,
           pw.TextAlign.right => ShapedPdfTextAlignment.right,
@@ -1617,9 +1636,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           text: text,
           provider: provider,
           width: width,
-          fontSize: style?.fontSize ?? 10,
+          fontSize: fontSize,
           color: style?.color ?? PdfColors.black,
-          direction: direction,
+          direction: resolvedDirection,
           alignment: alignment,
         );
       },
