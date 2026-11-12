@@ -393,3 +393,11 @@ Dashboard branch: smartixit/netsales_dashboard:feat/platform-billing-management
 - Tests for the new contracts and renderer paths are authored but not run. All test execution, GitHub Actions, cross-platform builds, and final PR reviews are explicitly deferred to the final stage as requested.
 - No legacy invoice domain feature has been deleted. Legacy PDF generation will be removed only when its shared replacement is integrated and its operational entry points are preserved.
 - Operational reporting and documents are implemented before Platform Billing reporting/documents. Platform subscription billing content remains Dashboard-only.
+
+
+## Active implementation — Arabic shaping provider (2026-11-12)
+
+- Payv 0.1.2 is selected and pinned as the pure-Dart OpenType shaping and UAX #9 bidirectional provider (DOC-012 APPROVED).
+- Implemented the provider contract, visual bidi/script run shaping, glyph cluster source mapping, TrueType outline checks, and a fixed single-line vector PDF painter. IBM Plex Sans Arabic Regular is bundled with its SIL OFL 1.1 notice.
+- The production PdfDocumentRenderer continues to reject Arabic and mixed-direction documents. This is intentional until the provider is integrated across every text-bearing node and paragraph/table/multipage layout, extraction/accessibility tagging, and output workflows are complete.
+- No tests, formatter, analyzer, builds, or GitHub Actions have been run. Final verification remains deferred by user instruction.
