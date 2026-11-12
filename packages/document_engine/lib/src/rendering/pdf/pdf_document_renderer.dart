@@ -178,7 +178,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     }
 
     final rtlPattern = RegExp(
-      r'[\\u0590-\\u08FF\\uFB1D-\\uFDFF\\uFE70-\\uFEFF]',
+      r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]',
     );
     // Watermark.text is painted by the PDF package's page-level decoration
     // path and cannot currently be replaced by our shaped paragraph widget.
