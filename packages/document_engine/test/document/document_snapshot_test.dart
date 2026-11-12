@@ -68,6 +68,11 @@ void main() {
     );
   });
 
+  test('rejects documents exceeding bounded section and node counts', () {
+    expect(() => createSnapshot(sections: [for (var i = 0; i < 251; i++) DocumentSection(id: 's-$i', nodes: const [])]), throwsArgumentError);
+    expect(() => createSnapshot(sections: [DocumentSection(id: 'large', nodes: List<DocumentNode>.filled(20001, const DocumentPageBreak()))]), throwsArgumentError);
+  });
+
   test('rejects invalid heading levels and schema versions', () {
     expect(
       () => DocumentHeading(text: 'Invalid', level: 7),

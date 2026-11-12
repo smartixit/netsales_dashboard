@@ -31,6 +31,10 @@ Reusable, framework-agnostic document contracts, template registry, and bounded 
 - Optional standalone cover page, cover metadata, and first-content-page-specific headers/footers.
 - Cover pages are included in the configured maximum page budget.
 
+## Bounded input contracts
+
+Document snapshots accept at most 250 sections and 20,000 content nodes. Each section accepts at most 20,000 nodes; tables accept at most 100 columns and 10,000 rows. Charts and semantic collections are bounded by their typed contracts. Collection limits are enforced while copying lazy iterables. Large result sets belong in server-side report jobs and protected artifact delivery.
+
 ## Deliberate non-goals
 
 - No Arabic shaping provider selection or RTL PDF output.

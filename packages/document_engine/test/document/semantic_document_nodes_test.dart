@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:document_engine/document_engine.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -88,6 +90,11 @@ void main() {
       ),
       throwsArgumentError,
     );
+  });
+
+  test('image and table collections enforce hard bounds', () {
+    expect(() => DocumentImage(bytes: Uint8List(4 * 1024 * 1024 + 1)), throwsArgumentError);
+    expect(() => DocumentTable(columns: [for (var i = 0; i < 101; i++) DocumentTableColumn(id: 'c-$i', label: 'Column $i')], rows: const []), throwsArgumentError);
   });
 
   test('divider validates color, thickness, and spacing', () {

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import '../core/stable_identifier.dart';
+import 'bounded_document_input.dart';
 import 'document_locale.dart';
 import 'document_value.dart';
 
@@ -58,7 +59,7 @@ final class DocumentMetricGrid extends DocumentNode {
   DocumentMetricGrid({
     required Iterable<DocumentMetric> metrics,
     this.columns = 2,
-  }) : metrics = List<DocumentMetric>.unmodifiable(metrics) {
+  }) : metrics = copyBoundedDocumentList(metrics, maxLength: 20, fieldName: 'metrics') {
     if (this.metrics.isEmpty || this.metrics.length > 20) {
       throw ArgumentError(
         'A metric grid must contain between one and twenty metrics.',
@@ -148,7 +149,7 @@ final class DocumentTableRow {
     required String id,
     required Iterable<DocumentTableCell> cells,
   }) : id = validateStableIdentifier(id, parameterName: 'rowId'),
-       cells = List<DocumentTableCell>.unmodifiable(cells);
+       cells = copyBoundedDocumentList(cells, maxLength: 100, fieldName: 'cells');
 
   final String id;
   final List<DocumentTableCell> cells;
@@ -160,8 +161,8 @@ final class DocumentTable extends DocumentNode {
     required Iterable<DocumentTableColumn> columns,
     required Iterable<DocumentTableRow> rows,
     DocumentTableStyle? style,
-  }) : columns = List<DocumentTableColumn>.unmodifiable(columns),
-       rows = List<DocumentTableRow>.unmodifiable(rows),
+  }) : columns = copyBoundedDocumentList(columns, maxLength: 100, fieldName: 'columns'),
+       rows = copyBoundedDocumentList(rows, maxLength: 10000, fieldName: 'rows'),
        style = style ?? DocumentTableStyle() {
     final columnIds = this.columns.map((column) => column.id).toSet();
     if (this.columns.isEmpty || columnIds.length != this.columns.length) {
@@ -236,7 +237,7 @@ final class DocumentChartSeries {
     this.color = '0D7A5F',
   }) : id = validateStableIdentifier(id, parameterName: 'seriesId'),
        label = _requireText(label, 'label'),
-       points = List<DocumentChartPoint>.unmodifiable(points) {
+       points = copyBoundedDocumentList(points, maxLength: 24, fieldName: 'points') {
     if (this.points.isEmpty) {
       throw ArgumentError('A chart series must contain at least one point.');
     }
@@ -272,7 +273,7 @@ final class DocumentChart extends DocumentNode {
     this.showLegend = true,
     this.showGrid = true,
   }) : title = _requireText(title, 'title'),
-       series = List<DocumentChartSeries>.unmodifiable(series) {
+       series = copyBoundedDocumentList(series, maxLength: 8, fieldName: 'series') {
     if (this.series.isEmpty || this.series.length > 8) {
       throw ArgumentError('A chart must contain between one and eight series.');
     }
@@ -355,7 +356,7 @@ final class DocumentImage extends DocumentNode {
     this.heightPoints,
     this.fit = DocumentImageFit.contain,
     this.alignment = DocumentImageAlignment.center,
-  }) : _bytes = Uint8List.fromList(bytes) {
+  }) : _bytes = copyBoundedDocumentBytes(bytes, maxBytes: 4 * 1024 * 1024, fieldName: 'documentImage') {
     if (_bytes.isEmpty || _bytes.length > 4 * 1024 * 1024) {
       throw ArgumentError('Document image must be 1 byte to 4 MiB.');
     }
@@ -447,7 +448,7 @@ final class DocumentSignatureArea extends DocumentNode {
     Uint8List? visualSignatureBytes,
   }) : _visualSignatureBytes = visualSignatureBytes == null
            ? null
-           : Uint8List.fromList(visualSignatureBytes) {
+           : copyBoundedDocumentBytes(visualSignatureBytes, maxBytes: 1024 * 1024, fieldName: 'visualSignatureBytes') {
     if (label.trim().isEmpty || label.length > 120) {
       throw ArgumentError.value(label, 'label', 'Must contain 1-120 chars.');
     }
@@ -531,7 +532,7 @@ final class DocumentInfoGrid extends DocumentNode {
     required Iterable<DocumentInfoItem> items,
     this.columns = 2,
     this.compact = false,
-  }) : items = List<DocumentInfoItem>.unmodifiable(items) {
+  }) : items = copyBoundedDocumentList(items, maxLength: 18, fieldName: 'items') {
     if (this.items.isEmpty || this.items.length > 18) {
       throw ArgumentError(
         'An information grid must contain between one and eighteen items.',
@@ -593,7 +594,7 @@ final class DocumentFinancialSummary extends DocumentNode {
   }) : title = title == null
            ? null
            : _requireSemanticDocumentText(title, 'title', maxLength: 120),
-       lines = List<DocumentFinancialLine>.unmodifiable(lines) {
+       lines = copyBoundedDocumentList(lines, maxLength: 12, fieldName: 'lines') {
     if (this.lines.isEmpty || this.lines.length > 12) {
       throw ArgumentError(
         'A financial summary must contain between one and twelve lines.',
