@@ -657,3 +657,11 @@ Branch: feat/platform-billing-management
 
 
 - Follow-up hardening: the renderer's shared text gateway now resolves explicit PDF/semantic direction, uses measured intrinsic width for unbounded row labels, and caches the Unicode PDF font per provider. Renderer version advanced to 1.3.0. Tests now explicitly retain the no-provider and RTL-watermark fail-closed cases while covering successful injected-provider rendering. Still no tests, formatter, analyzer, builds, or Actions executed.
+
+## 2026-11-12 — Complete Payv transfer, watermark, and text-layer integration
+
+- Transferred the complete renderer integration change set from the previous working branch onto the clean branch using Git tree/blob identities, preserving binary font and OFL licence assets and all implementation/test files.
+- Replaced the Arabic watermark rejection with a shaped watermark child inside the PDF package's own full-page fitted/rotated Watermark widget. Watermark angle, fit, opacity and color remain controlled by the existing contract.
+- Running headers/footers and first-page overrides use the same shaped text gateway. Table data cells propagate explicit direction; headers and chart table labels use first-strong auto direction.
+- Preserved logical Unicode source order with an invisible text run, a same-font ToUnicode map and visible Payv glyph outlines. Added a structural PDF regression test that checks the ToUnicode resource and decodes Flate streams to verify PDF invisible text rendering mode.
+- No tests, formatter, analyzer, builds or GitHub Actions were run, per the execution order. Actual text extraction and copy/paste must be checked against PDF viewers on Windows, Android and iOS in the final validation phase.
