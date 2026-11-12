@@ -131,3 +131,17 @@
 ## DOC-010 — M9 additional acceptance evidence
 - The existing media-gallery PDF viewer is migrated to the shared raw-bytes preview primitive. Its source loading/cache and external-open behaviors are preserved.
 - A second sample Flutter host (Northstar Labs) must remain independent of GetX and NetSales-specific services; it demonstrates a different branding profile and host-owned output adapters.
+
+
+## DOC-011 — NetSales Document Engine Adoption and Product Reporting Scope
+
+**Status:** APPROVED — 2026-11-11
+
+- The generic `packages/document_engine` implementation in this repository is the reusable document foundation. Operational NetSales reporting is implemented first in the Network/POS application and shared Laravel API. Platform subscription reporting and billing documents are implemented only in the Platform Dashboard after the operational reporting and document flows are established.
+- The package remains domain-neutral. It owns typed document composition, rendering, immutable client artifacts, output coordination contracts, template versioning, and reusable visual primitives. Laravel owns business report providers, financial calculations, authorization, tenant/platform scope, report execution, official document snapshots, and protected artifacts.
+- The host applications own business-specific report definitions, API adapters, template composition, host design-system widgets, and user-facing preset workflows.
+- Legacy PDF/report presentation paths in `netsales` are removed only after their replacement is wired and their business flows are preserved. Operational invoice domain models, APIs, repositories, use cases, screens, and transaction workflows are retained. The obsolete invoice PDF generator is not a business invoice domain component and is replaced by the shared document path.
+- Platform Billing invoices, payments, credit notes, refunds, subscriptions, trials, dunning, deferred/revenue recognition, ledger, and reconciliation reports remain in Platform Scope and are not exposed in the Network/POS application.
+- Implementation sequence: finish the reusable package foundation; transfer and integrate it into NetSales; implement operational Laravel reporting contracts/providers; build the NetSales report workspace and operational document templates; migrate invoice and other document entry points and remove legacy generators; implement Platform Billing report/document experiences in Dashboard last.
+- GitHub Actions, test execution, cross-platform builds, and final PR reviews are intentionally held until the final verification stage, after planned source implementation has been completed. Tests may be authored during implementation but are not run before that stage.
+- No client-side invoice, repayment, expense, wallet, debt-aging, FX, or revenue calculations are permitted. Currency totals must remain separated unless the API supplies an approved conversion basis and exact converted values.

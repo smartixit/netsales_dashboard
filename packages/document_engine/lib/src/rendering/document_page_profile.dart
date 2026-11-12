@@ -63,6 +63,37 @@ final class DocumentPageProfile {
     marginLeft: marginLeft,
   );
 
+  /// ISO A5 portrait page (148 × 210 mm), expressed in PDF points.
+  factory DocumentPageProfile.a5Portrait({
+    double marginTop = 28,
+    double marginRight = 28,
+    double marginBottom = 28,
+    double marginLeft = 28,
+  }) => DocumentPageProfile(
+    widthPoints: 419.53,
+    heightPoints: 595.28,
+    marginTop: marginTop,
+    marginRight: marginRight,
+    marginBottom: marginBottom,
+    marginLeft: marginLeft,
+  );
+
+  /// ISO A5 landscape page (210 × 148 mm), expressed in PDF points.
+  factory DocumentPageProfile.a5Landscape({
+    double marginTop = 28,
+    double marginRight = 28,
+    double marginBottom = 28,
+    double marginLeft = 28,
+  }) => DocumentPageProfile(
+    widthPoints: 595.28,
+    heightPoints: 419.53,
+    orientation: DocumentPageOrientation.landscape,
+    marginTop: marginTop,
+    marginRight: marginRight,
+    marginBottom: marginBottom,
+    marginLeft: marginLeft,
+  );
+
   /// Fixed-height receipt page profile for 58 mm thermal paper.
   /// This controls PDF geometry only; it is not an ESC/POS printer driver.
   factory DocumentPageProfile.receipt58mm({

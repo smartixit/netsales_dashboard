@@ -131,3 +131,28 @@ These additions do not resolve Arabic shaping. Complex RTL still fails closed. T
  
 
 - `ReportConfigurationStudio` now exposes host builders for the entire filter section and presentation section, in addition to action buttons. NetSales can replace all package-default Material controls with its own design-system fields, selectors, toggles, and buttons while the package remains UI-framework-independent from the host app's GetX architecture.
+
+
+## Semantic composition primitives
+
+The generic node model includes reusable, domain-neutral building blocks for
+business documents:
+
+- `DocumentInfoGrid` groups supplied party, account, reference, and date values.
+- `DocumentStatusBanner` gives a transaction or document an explicit visual state.
+- `DocumentFinancialSummary` displays supplied financial lines with total and
+  outstanding emphasis. It never derives or recalculates an amount.
+- `DocumentCallout` highlights explanatory or policy text.
+- `DocumentDivider` provides controlled visual separation.
+- `DocumentPageProfile.a5Portrait` and `a5Landscape` support compact
+  business vouchers and receipts.
+
+These primitives are deliberately generic. A host application composes them
+into distinct invoice, repayment, expense, statement, and report templates.
+Business labels, source values, currency rules, permissions, and financial
+calculations remain owned by the host API and domain layer. The renderer only
+lays out the supplied content.
+
+The generic PDF renderer continues to fail closed for complex RTL text until a
+validated shaping provider is integrated. Adding semantic nodes does not relax
+that safety boundary.

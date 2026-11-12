@@ -502,3 +502,159 @@ final class DocumentSignatureArea extends DocumentNode {
       ? null
       : Uint8List.fromList(_visualSignatureBytes);
 }
+
+
+/// Semantic visual tone for document status and callout components.
+enum DocumentStatusTone { neutral, info, success, warning, danger }
+
+/// A compact, immutable information item for party, invoice, or account data.
+///
+/// The value is supplied by the host. The engine only formats its layout.
+final class DocumentInfoItem {
+  DocumentInfoItem({
+    required String label,
+    required this.value,
+    this.direction = DocumentTextDirection.auto,
+  }) : label = _requireSemanticDocumentText(label, 'label', maxLength: 120);
+
+  final String label;
+  final DocumentValue value;
+  final DocumentTextDirection direction;
+}
+
+/// A responsive grid of related document metadata.
+///
+/// Use this for invoice parties, account identities, references, and date ranges.
+/// It deliberately does not know what an invoice or an account is.
+final class DocumentInfoGrid extends DocumentNode {
+  DocumentInfoGrid({
+    required Iterable<DocumentInfoItem> items,
+    this.columns = 2,
+    this.compact = false,
+  }) : items = List<DocumentInfoItem>.unmodifiable(items) {
+    if (this.items.isEmpty || this.items.length > 18) {
+      throw ArgumentError(
+        'An information grid must contain between one and eighteen items.',
+      );
+    }
+    if (columns < 1 || columns > 3) {
+      throw ArgumentError.value(columns, 'columns', 'Must be between 1 and 3.');
+    }
+  }
+
+  final List<DocumentInfoItem> items;
+  final int columns;
+  final bool compact;
+}
+
+/// A clearly visible state label for a document, transaction, or report.
+final class DocumentStatusBanner extends DocumentNode {
+  DocumentStatusBanner({
+    required String label,
+    this.tone = DocumentStatusTone.neutral,
+    String? detail,
+  }) : label = _requireSemanticDocumentText(label, 'label', maxLength: 120),
+       detail = detail == null
+           ? null
+           : _requireSemanticDocumentText(detail, 'detail', maxLength: 240);
+
+  final String label;
+  final String? detail;
+  final DocumentStatusTone tone;
+}
+
+enum DocumentFinancialEmphasis { normal, secondary, total, outstanding }
+
+/// One server-supplied line in a financial summary.
+///
+/// No amount is added, subtracted, rounded, or inferred by the renderer.
+final class DocumentFinancialLine {
+  DocumentFinancialLine({
+    required String label,
+    required this.value,
+    this.emphasis = DocumentFinancialEmphasis.normal,
+    String? note,
+  }) : label = _requireSemanticDocumentText(label, 'label', maxLength: 120),
+       note = note == null
+           ? null
+           : _requireSemanticDocumentText(note, 'note', maxLength: 240);
+
+  final String label;
+  final DocumentValue value;
+  final DocumentFinancialEmphasis emphasis;
+  final String? note;
+}
+
+/// A premium financial summary made only from values provided by the host.
+final class DocumentFinancialSummary extends DocumentNode {
+  DocumentFinancialSummary({
+    String? title,
+    required Iterable<DocumentFinancialLine> lines,
+  }) : title = title == null
+           ? null
+           : _requireSemanticDocumentText(title, 'title', maxLength: 120),
+       lines = List<DocumentFinancialLine>.unmodifiable(lines) {
+    if (this.lines.isEmpty || this.lines.length > 12) {
+      throw ArgumentError(
+        'A financial summary must contain between one and twelve lines.',
+      );
+    }
+    final totals = this.lines
+        .where((line) => line.emphasis == DocumentFinancialEmphasis.total)
+        .length;
+    if (totals > 1) {
+      throw ArgumentError('A financial summary may contain one total line.');
+    }
+  }
+
+  final String? title;
+  final List<DocumentFinancialLine> lines;
+}
+
+/// A highlighted note whose semantic tone is provided by the host.
+final class DocumentCallout extends DocumentNode {
+  DocumentCallout({
+    required String title,
+    required String body,
+    this.tone = DocumentStatusTone.info,
+  }) : title = _requireSemanticDocumentText(title, 'title', maxLength: 120),
+       body = _requireSemanticDocumentText(body, 'body', maxLength: 1200);
+
+  final String title;
+  final String body;
+  final DocumentStatusTone tone;
+}
+
+/// A restrained visual separator between document composition blocks.
+final class DocumentDivider extends DocumentNode {
+  DocumentDivider({this.color = 'CBD5E1', this.thickness = 0.6, this.spacing = 8}) {
+    if (!RegExp(r'^[0-9A-Fa-f]{6}$').hasMatch(color)) {
+      throw ArgumentError.value(color, 'color', 'Use a six-digit RGB hex value.');
+    }
+    if (!thickness.isFinite || thickness <= 0 || thickness > 4) {
+      throw ArgumentError.value(thickness, 'thickness', 'Must be in (0, 4].');
+    }
+    if (!spacing.isFinite || spacing < 0 || spacing > 40) {
+      throw ArgumentError.value(spacing, 'spacing', 'Must be in [0, 40].');
+    }
+  }
+
+  final String color;
+  final double thickness;
+  final double spacing;
+}
+
+String _requireSemanticDocumentText(
+  String value,
+  String name, {
+  required int maxLength,
+}) {
+  if (value.trim().isEmpty || value.length > maxLength) {
+    throw ArgumentError.value(
+      value,
+      name,
+      'Must contain 1-$maxLength characters.',
+    );
+  }
+  return value;
+}

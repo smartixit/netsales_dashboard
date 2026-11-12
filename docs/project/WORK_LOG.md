@@ -596,3 +596,14 @@ Branch: feat/platform-billing-management
 - Added widget regression coverage proving both injected sections replace the built-in controls.
 - This closes the package API extensibility gap, not the consuming-app integration work. No raw Material control is to be used by the NetSales feature adapter.
 - Verification awaits the next exact-HEAD Windows/macOS package CI run.
+
+
+## 2026-11-11 — Approved NetSales Reporting and Document Engine Scope
+
+- User approved the complete staged adoption plan, including operational reporting and business documents first, followed by Platform Billing reports and invoices in the Dashboard as the final product-domain stage.
+- User explicitly requires removal of legacy report and invoice-document generation paths from the NetSales app, while preserving operational invoice entities, APIs, repositories, use cases, screens, and accounting workflows.
+- The package source branch is `fix/document-engine-premium-rendering`. The package was extended with generic semantic document composition nodes: information grid, status banner, financial summary, callout, and divider; A5 portrait/landscape page profiles were added for compact vouchers.
+- PDF renderer support was added for these semantic nodes. The existing fail-closed Arabic shaping guard is extended to inspect every newly added text-bearing node. Arabic output remains blocked until a shaping provider is integrated and verified.
+- Added focused tests for semantic-node validation/immutability, PDF rendering, RTL rejection, and A5 geometry. These tests are authored but deliberately not executed because the user requested all tests, reviews, and GitHub Actions to run only at the final stage.
+- No operational reports, subscription reports, or billing invoice providers have been implemented in this step. The work is following the approved order: package foundations first, then NetSales integration, shared API operational reporting, operational document flows, legacy output cleanup, and Platform Billing reports/documents last.
+- No GitHub Actions workflow, PR review, or build has been triggered during this implementation stage.

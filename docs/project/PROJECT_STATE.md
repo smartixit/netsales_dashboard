@@ -379,3 +379,17 @@ Dashboard branch: smartixit/netsales_dashboard:feat/platform-billing-management
 - Added `filterSectionBuilder` and `presentationSectionBuilder` contracts alongside the existing `actionBuilder`. The host can now replace the complete schema-filter and output-presentation control surfaces, not just Preview/Save buttons.
 - Added widget regression coverage that asserts the injected host sections replace the package-default controls.
 - This removes the package-level injection-point gap; the NetSales adapter still must implement these builders using its approved shared widgets before feature rollout.
+
+
+## Approved Reporting and Document Engine Program — 2026-11-11
+
+**Status:** IMPLEMENTATION IN PROGRESS — package foundation first.
+
+- Active package branch: `fix/document-engine-premium-rendering`.
+- Active NetSales branch: `feat/netsales-document-engine-integration`.
+- Active shared API branch: `feat/netsales-reporting-api`.
+- Scope and sequence are approved in DOC-011. The package remains generic; business-specific reporting and official financial artifacts belong to the host/API boundary.
+- First package foundation increment adds reusable semantic document nodes and A5 page profiles. The PDF renderer now lays out these nodes and keeps Arabic text fail-closed across their labels and values.
+- Tests for the new contracts and renderer paths are authored but not run. All test execution, GitHub Actions, cross-platform builds, and final PR reviews are explicitly deferred to the final stage as requested.
+- No legacy invoice domain feature has been deleted. Legacy PDF generation will be removed only when its shared replacement is integrated and its operational entry points are preserved.
+- Operational reporting and documents are implemented before Platform Billing reporting/documents. Platform subscription billing content remains Dashboard-only.
