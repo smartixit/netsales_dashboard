@@ -619,3 +619,15 @@ Branch: feat/platform-billing-management
 - Follow-up hardening normalized the bounded-input implementations, added a 100-entry bound for table column weights, and added a lazy-iterable regression case proving that the section limit is enforced before the entire iterable is consumed. No test or CI command was run.
 
 - Added a snapshot-wide text budget: individual text fields are capped at 100,000 characters and all caller-supplied document text at 2,000,000 characters, including table cells, chart labels, metadata, and semantic nodes. Regression tests were authored for per-field and aggregate overflow; verification remains deferred.
+
+
+## 2026-11-12 — Payv Arabic shaping provider integration foundation
+
+- Selected and pinned Payv 0.1.2 as the pure-Dart OpenType and UAX #9 provider following the project owner's explicit request to settle Arabic shaping and mixed-direction handling.
+- Added PayvTextShapingProvider: paragraph-direction-aware bidi resolution, visual bidi run ordering, script itemization, per-run Arabic/Latin shaping, OpenType GSUB/GPOS, cluster source mapping, missing-glyph rejection, and TrueType outline validation.
+- Added ShapedPdfTextLine to paint shaped glyph outlines as vector paths in the existing pdf widget tree. It is intentionally fixed single-line and rejects overflow; it does not silently clip or reverse mixed runs.
+- Bundled IBM Plex Sans Arabic Regular and the upstream SIL OFL 1.1 notice, declared the assets in the package manifest, and exposed a Flutter asset loader.
+- Added focused tests for Arabic joining, mixed Arabic/Latin/currency/identifier runs, LTR isolates, Arabic-Indic/Western digits, and the single-line contract. Tests were authored but NOT run.
+- Updated the package README and recorded decision DOC-012.
+- Remaining production blockers: integrate the provider into every text-bearing node in PdfDocumentRenderer; implement measured paragraph wrapping and multipage flow; repeated table headers/cell wrapping; metadata/header/footer/cover/watermark/chart/QR/signature paths; searchable/selectable text tagging and extraction; viewer/print/save/share parity; and final Windows/Android/iOS/Web verification.
+- No tests, formatter, analyzer, build, or GitHub Actions were executed, per the user's explicit final-stage verification instruction.
