@@ -212,3 +212,16 @@ verification stage passes.
 - `ShapedPdfTextLine` now emits Payv's cubic glyph-outline commands directly through `PdfGraphics`. It no longer passes Payv's PDF path-content string to the PDF package's SVG-path parser; those are different path syntaxes.
 - These are reusable primitives. They are not yet wired into every `PdfDocumentRenderer` node or the table cell/header/footer/chart/cover/watermark paths. The renderer-wide RTL guard therefore remains enabled.
 - Vector outlines alone do not provide searchable/selectable Unicode text or a ToUnicode map. Extraction/accessibility remains a production blocker.
+
+
+### RTL and mixed-direction PDF rendering integration
+
+- `PdfDocumentRenderer` accepts an explicitly injected `PayvTextShapingProvider`. The host loads a licensed TrueType font and creates the provider; the core renderer does not reach into Flutter's asset bundle.
+- All renderer-owned text nodes now pass through one text gateway. Arabic/Hebrew-range strings in document title/subtitle, sections, paragraphs, headings, metrics, info grids, financial summaries, callouts, table headers/cells, chart labels/legends, image and QR captions, signature labels, branding, cover fields, and running headers/footers use the shaped paragraph path.
+- Explicit RTL direction on paragraph, heading, and info-grid/table-cell nodes is preserved even when a value contains only Latin identifiers.
+- Each paragraph resolves UAX #9 base direction once before wrapping. The same resolved direction is used for all wrapped lines; whitespace is preserved between words and long unspaced values split only at Unicode grapheme boundaries.
+- Visible glyph outlines are paired with an invisible logical Unicode text layer using the same licensed font. This retains the original logical codepoint sequence in the PDF text stream for search/copy/extraction while the visible glyphs use Payv's GSUB/GPOS shaping and visual bidi order.
+- The PDF Unicode font object is cached per shaping-provider instance, not reparsed for every line.
+- RTL watermark text remains fail-closed because the PDF package's page-level watermark decoration is a separate rendering path and is not yet wired to the shaped text gateway. Do not bypass this guard.
+- The default renderer remains fail-closed for RTL when no provider is injected. Hosts must load `loadDocumentEngineArabicFont()` or supply another appropriately licensed TrueType font and inject the provider.
+- The current bundled face is IBM Plex Sans Arabic Regular. Bold/italic face selection, full extraction/search validation, complex font coverage/fallback, visual baselines, and Windows/Android/iOS output verification remain final-stage validation work. Tests have been authored but not run by instruction.
