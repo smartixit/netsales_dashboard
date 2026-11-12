@@ -7,6 +7,10 @@ import 'package:payv/payv.dart' as payv;
 import '../../document/document_locale.dart';
 import 'payv_text_shaping_provider.dart';
 
+final Expando<pw.Font> _unicodeFontCache = Expando<pw.Font>(
+  'document-engine-shaped-text-font',
+);
+
 /// A single-line, vector-outline PDF text widget.
 ///
 /// Shaped glyph commands are emitted directly to PdfGraphics. Payv's
@@ -76,7 +80,7 @@ final class ShapedPdfTextLine extends pw.StatelessWidget {
       ShapedPdfTextAlignment.right => freeSpace,
     };
 
-    final unicodeFont = pw.Font.ttf(
+    final unicodeFont = _unicodeFontCache[provider] ??= pw.Font.ttf(
       ByteData.sublistView(provider.fontBytes),
     );
 
