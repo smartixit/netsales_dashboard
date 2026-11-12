@@ -145,3 +145,16 @@
 - Implementation sequence: finish the reusable package foundation; transfer and integrate it into NetSales; implement operational Laravel reporting contracts/providers; build the NetSales report workspace and operational document templates; migrate invoice and other document entry points and remove legacy generators; implement Platform Billing report/document experiences in Dashboard last.
 - GitHub Actions, test execution, cross-platform builds, and final PR reviews are intentionally held until the final verification stage, after planned source implementation has been completed. Tests may be authored during implementation but are not run before that stage.
 - No client-side invoice, repayment, expense, wallet, debt-aging, FX, or revenue calculations are permitted. Currency totals must remain separated unless the API supplies an approved conversion basis and exact converted values.
+
+
+| DOC-012 | 2026-11-12 | Select Payv 0.1.2 as the pure-Dart OpenType shaping and UAX #9 bidi provider for the document engine; retain the production RTL fail-closed gate until renderer-wide integration and final target verification are complete. | APPROVED |
+
+## DOC-012 — Payv Arabic shaping provider selection
+
+- The project owner explicitly requested resolution of Arabic shaping and mixed-direction handling. Payv 0.1.2 is selected as the shaping provider because it supplies Arabic joining, GSUB/GPOS, script itemization, UAX #9 bidi resolution, TrueType glyph outlines, and pure-Dart VM/Web-compatible implementation without FFI or platform channels.
+- The package is pinned to payv: 0.1.2; provider source remains an external dependency and is not copied or forked into document_engine.
+- The provider integration must use the same bidi and shaping pipeline for Windows, Android, iOS, and Web. Font embedding/subsetting permission is checked before rendering. CFF/CFF2 fonts are rejected until supported.
+- IBM Plex Sans Arabic Regular is bundled with its SIL Open Font License 1.1 notice. Hosts may supply another licensed font.
+- The first implementation increment adds a shaped visual-run contract and a single-line vector-outline PDF painter. It does NOT authorize enabling RTL in the main renderer yet.
+- The main renderer remains fail-closed until paragraphs, line wrapping, multipage flow, tables, headers/footers, chart labels, semantic nodes, extraction/search/accessibility tagging, and output/preview paths all use the same provider.
+- Tests are authored but remain unexecuted by the user's explicit instruction. No CI, analyzer, formatting, or builds are run during implementation.
