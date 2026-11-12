@@ -665,3 +665,11 @@ Branch: feat/platform-billing-management
 - Running headers/footers and first-page overrides use the same shaped text gateway. Table data cells propagate explicit direction; headers and chart table labels use first-strong auto direction.
 - Preserved logical Unicode source order with an invisible text run, a same-font ToUnicode map and visible Payv glyph outlines. Added a structural PDF regression test that checks the ToUnicode resource and decodes Flate streams to verify PDF invisible text rendering mode.
 - No tests, formatter, analyzer, builds or GitHub Actions were run, per the execution order. Actual text extraction and copy/paste must be checked against PDF viewers on Windows, Android and iOS in the final validation phase.
+
+
+## 2026-11-12 — Image-only document watermark contract
+
+- Replaced the text watermark contract with a required defensive-copied PNG/JPEG image payload (maximum 2 MiB). Empty, malformed-signature, unsupported-format and oversized assets are rejected.
+- The host application owns logo selection: active Network logo for Network workspace documents, active POS logo for POS workspace documents, and the bundled application icon as fallback. The engine does not know tenant identity, fetch URLs, or load application assets.
+- PDF watermark rendering now uses the PDF package's fitted/rotated Watermark widget with an image child and bounded opacity/relative dimensions. No watermark text is rendered.
+- Updated tests for defensive copies, invalid/empty bytes, opacity bounds and image watermark PDF rendering. Tests remain unexecuted by the agreed final-stage policy.
