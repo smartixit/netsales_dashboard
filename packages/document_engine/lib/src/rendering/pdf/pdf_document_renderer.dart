@@ -511,7 +511,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (snapshot.metadata.subtitle case final subtitle?) {
       widgets.add(
         _paragraph(
-          text: subtitle,
+          subtitle,
           style: pw.TextStyle(
             fontSize: layout == DocumentTemplateLayout.compact ? 8 : 11,
             color: muted,
@@ -1310,7 +1310,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       ),
       if (chart.subtitle != null)
         _paragraph(
-          text: chart.subtitle!,
+          chart.subtitle!,
           style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
         ),
       pw.SvgImage(svg: _chartSvg(chart), height: 180),
