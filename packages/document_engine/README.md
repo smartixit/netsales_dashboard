@@ -19,7 +19,7 @@ Reusable, framework-agnostic document contracts, template registry, and bounded 
 - Concrete PDF backend with multipage layout, headers, footers, page numbers, metrics, and structured tables.
 - Artifact provenance, byte length, SHA-256 digest, and defensive byte copies.
 - Template/document type, locale, capability, and orientation validation before rendering.
-- Complex RTL scripts are explicitly rejected until the Arabic shaping milestone; this renderer does not claim Arabic PDF support.
+- The renderer keeps the fail-closed guard for complex RTL until the shaped-line adapter is integrated into every document node and the final output/accessibility matrix is accepted.
 
 ## M3 — Reusable visual components
 
@@ -166,3 +166,40 @@ lays out the supplied content.
 The generic PDF renderer continues to fail closed for complex RTL text until a
 validated shaping provider is integrated. Adding semantic nodes does not relax
 that safety boundary.
+
+
+## Arabic shaping provider — integration foundation
+
+The package pins `payv: 0.1.2` as the selected pure-Dart OpenType shaping
+provider. It supplies UAX #9 bidirectional resolution (including isolates and
+paired brackets), script itemization, Arabic joining and GSUB/GPOS shaping,
+glyph advances/offsets, and TrueType glyph outlines. It has no FFI, native
+platform channel, or runtime dependency, and its package supports Dart VM and
+JavaScript compilation.
+
+The internal `PayvTextShapingProvider` converts one logical line into visual
+bidi/script runs and shaped glyph programs. `ShapedPdfTextLine` paints those
+glyph outlines as vector paths inside the existing `pdf` widget tree. The
+provider refuses fonts whose embedding/subsetting flags disallow PDF use and
+rejects CFF/CFF2 outlines rather than silently drawing missing glyphs.
+
+The package bundles IBM Plex Sans Arabic Regular with its SIL Open Font
+License 1.1 text. Flutter hosts can load it through
+`loadDocumentEngineArabicFont()` from `document_engine_flutter.dart`, then
+supply the bytes to `PayvTextShapingProvider` or `DocumentBranding`.
+
+### Current integration boundary
+
+This is the shaping and single-line vector-painting foundation, not yet the
+production renderer-wide RTL enablement. The main `PdfDocumentRenderer`
+continues to fail closed for Arabic and mixed-direction content until all
+text-bearing nodes (metadata, headers/footers, paragraphs, headings, table
+headers/cells, metrics, chart labels, signatures, QR captions, callouts,
+watermarks, and cover fields) use the same shaping adapter.
+
+The shaped-line widget currently requires a fixed single-line box and rejects
+overflow; it does not yet perform paragraph line breaking, cross-page flow,
+repeated table-cell layout, or extraction/accessibility text tagging. Do not
+remove the renderer guard or use this widget for official financial documents
+until those remaining integrations are completed and the final cross-platform
+verification stage passes.
