@@ -418,3 +418,11 @@ Dashboard branch: smartixit/netsales_dashboard:feat/platform-billing-management
 - Explicit RTL direction is propagated from paragraph/heading/info-grid/table-cell contracts. RTL watermark remains blocked by design until its page-decoration path is integrated.
 - The default renderer remains fail-closed without a provider. The bundled IBM Plex Sans Arabic Regular asset is available through the Flutter font loader.
 - Final-stage checks still needed: PDF extraction/search/copy across viewers, bold/italic font faces and script fallback, visual RTL baselines/table wrapping, watermark path, and Windows/Android/iOS output parity. No tests/builds/Actions were run.
+
+### Payv shaping closure update (2026-11-12)
+
+- The clean integration branch now contains the complete renderer transfer, font asset and OFL licence.
+- Arabic/mixed-direction watermarks are rendered through the shaped child inside the PDF Watermark widget; Arabic watermark rendering is no longer rejected.
+- Running headers/footers and table cells are routed through the shaping gateway. Explicit table-cell direction is preserved; header labels use automatic direction resolution.
+- Search/copy semantics use an invisible logical-order Unicode text run with a ToUnicode-enabled embedded font beneath visible vector glyph outlines. A structural regression test checks the ToUnicode resource and invisible text mode.
+- Cross-viewer extraction order and visual parity are not claimed as runtime-verified because tests/builds are intentionally deferred to the final stage. The test is authored, not executed.
