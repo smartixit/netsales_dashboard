@@ -1560,7 +1560,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
   }) {
     final provider = textShapingProvider;
     final containsRtl = RegExp(
-      r'[\\u0590-\\u08FF\\uFB1D-\\uFDFF\\uFE70-\\uFEFF]',
+      r'[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]',
     ).hasMatch(text);
     if (provider == null || !containsRtl) {
       return pw.Text(
