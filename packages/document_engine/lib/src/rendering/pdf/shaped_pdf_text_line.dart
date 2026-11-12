@@ -1,20 +1,17 @@
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:payv/payv.dart' as payv;
 
 import '../../document/document_locale.dart';
-
-import 'dart:typed_data';
-
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-
 import 'payv_text_shaping_provider.dart';
 
 /// A single-line, vector-outline PDF text widget.
 ///
-/// This is the first layout adapter over [PayvTextShapingProvider]. It accepts
-/// a bounded fixed box; paragraph wrapping and multipage flow remain owned by
-/// the surrounding document layout. The painter draws actual shaped glyph
-/// outlines, not Unicode presentation-form substitutions.
+/// Shaped glyph commands are emitted directly to PdfGraphics. Payv's
+/// GlyphPath.toPdfPath() returns a PDF content-stream fragment, while
+/// PdfGraphics.drawShape() accepts SVG path syntax; mixing those two formats
+/// would produce invalid outlines. This adapter deliberately maps each
+/// command to the corresponding PdfGraphics operation instead.
 final class ShapedPdfTextLine extends pw.StatelessWidget {
   ShapedPdfTextLine({
     required this.text,
@@ -26,7 +23,8 @@ final class ShapedPdfTextLine extends pw.StatelessWidget {
     this.direction = DocumentTextDirection.auto,
     this.alignment = ShapedPdfTextAlignment.start,
   }) {
-    if (text.contains('\n') || text.contains('\r')) {
+    if (text.contains('\n') || text.contains('\r') ||
+        text.contains('\u2028') || text.contains('\u2029')) {
       throw ArgumentError.value(text, 'text', 'Only one line is accepted.');
     }
     if (!width.isFinite || width <= 0 || width > 2000) {
@@ -85,65 +83,47 @@ final class ShapedPdfTextLine extends pw.StatelessWidget {
           for (final glyph in run.glyphs) {
             final originX = penX + glyph.xOffset * scale;
             final originY = baseline + glyph.yOffset * scale;
-            final path = _transformGlyphPath(
-              glyph.outline,
-              scale: scale,
-              offsetX: originX,
-              offsetY: originY,
-            );
-            if (path.isNotEmpty) {
-              canvas
-                ..setFillColor(color)
-                ..drawShape(path.toPdfPath())
-                ..fillPath();
+            canvas.setFillColor(color);
+
+            for (final command in glyph.outline.cubicCommands) {
+              switch (command) {
+                case payv.MoveTo():
+                  canvas.moveTo(
+                    originX + command.x * scale,
+                    originY + command.y * scale,
+                  );
+                case payv.LineTo():
+                  canvas.lineTo(
+                    originX + command.x * scale,
+                    originY + command.y * scale,
+                  );
+                case payv.CubicTo():
+                  canvas.curveTo(
+                    originX + command.c1x * scale,
+                    originY + command.c1y * scale,
+                    originX + command.c2x * scale,
+                    originY + command.c2y * scale,
+                    originX + command.x * scale,
+                    originY + command.y * scale,
+                  );
+                case payv.QuadTo():
+                  // cubicCommands converts every quadratic exactly. Keep this
+                  // defensive branch so a future Payv API change fails loudly.
+                  throw StateError(
+                    'Payv cubicCommands returned an unconverted quadratic.',
+                  );
+                case payv.ClosePath():
+                  canvas.closePath();
+              }
+            }
+            if (glyph.outline.isNotEmpty) {
+              canvas.fillPath();
             }
             penX += glyph.xAdvance * scale;
           }
         }
       },
     );
-  }
-
-  static payv.GlyphPath _transformGlyphPath(
-    payv.GlyphPath source, {
-    required double scale,
-    required double offsetX,
-    required double offsetY,
-  }) {
-    final result = payv.GlyphPath();
-    for (final command in source.commands) {
-      switch (command) {
-        case payv.MoveTo():
-          result.moveTo(
-            offsetX + command.x * scale,
-            offsetY + command.y * scale,
-          );
-        case payv.LineTo():
-          result.lineTo(
-            offsetX + command.x * scale,
-            offsetY + command.y * scale,
-          );
-        case payv.QuadTo():
-          result.quadraticTo(
-            offsetX + command.cx * scale,
-            offsetY + command.cy * scale,
-            offsetX + command.x * scale,
-            offsetY + command.y * scale,
-          );
-        case payv.CubicTo():
-          result.cubicTo(
-            offsetX + command.c1x * scale,
-            offsetY + command.c1y * scale,
-            offsetX + command.c2x * scale,
-            offsetY + command.c2y * scale,
-            offsetX + command.x * scale,
-            offsetY + command.y * scale,
-          );
-        case payv.ClosePath():
-          result.close();
-      }
-    }
-    return result;
   }
 }
 
