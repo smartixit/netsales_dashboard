@@ -409,3 +409,12 @@ Dashboard branch: smartixit/netsales_dashboard:feat/platform-billing-management
 - Added measured paragraph wrapping with Payv shaping advances, preserved paragraph base direction, explicit paragraph breaks, and PDF MultiPage spanning through Column.
 - Added grapheme-boundary fallback for unspaced long tokens and focused tests (not run).
 - Still not production-enabled or renderer-integrated. All text-bearing renderer paths and Unicode extraction/accessibility tagging remain outstanding. Keep the fail-closed guard.
+
+
+### Renderer-wide shaping integration (2026-11-12)
+
+- PdfDocumentRenderer now accepts an injected PayvTextShapingProvider and routes RTL/mixed text through the same shaped paragraph gateway across renderer-owned text components.
+- Visible glyph outlines are paired with a logical Unicode invisible text layer to preserve copy/search/extraction semantics. Paragraph base direction is resolved once and retained through wrapping; whitespace and grapheme clusters are handled safely.
+- Explicit RTL direction is propagated from paragraph/heading/info-grid/table-cell contracts. RTL watermark remains blocked by design until its page-decoration path is integrated.
+- The default renderer remains fail-closed without a provider. The bundled IBM Plex Sans Arabic Regular asset is available through the Flutter font loader.
+- Final-stage checks still needed: PDF extraction/search/copy across viewers, bold/italic font faces and script fallback, visual RTL baselines/table wrapping, watermark path, and Windows/Android/iOS output parity. No tests/builds/Actions were run.
