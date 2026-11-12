@@ -617,3 +617,5 @@ Branch: feat/platform-billing-management
 - This increment does not resolve Arabic shaping. Complex RTL remains fail-closed and the package is not yet declared production-ready.
 
 - Follow-up hardening normalized the bounded-input implementations, added a 100-entry bound for table column weights, and added a lazy-iterable regression case proving that the section limit is enforced before the entire iterable is consumed. No test or CI command was run.
+
+- Added a snapshot-wide text budget: individual text fields are capped at 100,000 characters and all caller-supplied document text at 2,000,000 characters, including table cells, chart labels, metadata, and semantic nodes. Regression tests were authored for per-field and aggregate overflow; verification remains deferred.
