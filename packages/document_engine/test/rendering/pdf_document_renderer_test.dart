@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:document_engine/document_engine.dart';
@@ -15,6 +17,43 @@ void main() {
       languageTag: 'ar-YE',
     );
   });
+
+
+  List<String> decodedPdfStreams(Uint8List bytes) {
+    final source = latin1.decode(bytes);
+    final decoded = <String>[];
+    var cursor = 0;
+    while (true) {
+      final streamIndex = source.indexOf('stream', cursor);
+      if (streamIndex < 0) break;
+      var dataStart = streamIndex + 'stream'.length;
+      if (source.startsWith('\\r\\n', dataStart)) {
+        dataStart += 2;
+      } else if (source.startsWith('\\n', dataStart)) {
+        dataStart += 1;
+      }
+      final end = source.indexOf('endstream', dataStart);
+      if (end < 0) break;
+      final dictionaryStart = source.lastIndexOf('<<', streamIndex);
+      final dictionary = dictionaryStart < 0
+          ? ''
+          : source.substring(dictionaryStart, streamIndex);
+      if (dictionary.contains('/FlateDecode')) {
+        try {
+          decoded.add(
+            latin1.decode(
+              ZLibDecoder().convert(bytes.sublist(dataStart, end)),
+            ),
+          );
+        } on FormatException {
+          // Ignore non-zlib streams; the test asserts the expected page stream
+          // was decoded below rather than treating unrelated streams as text.
+        }
+      }
+      cursor = end + 'endstream'.length;
+    }
+    return decoded;
+  }
 
   final documentType = DocumentTypeId('report.summary');
   final template = DocumentTemplateDefinition(
@@ -369,7 +408,7 @@ void main() {
     );
   });
 
-  test('keeps RTL page watermark fail-closed until its decoration path is shaped', () async {
+  test('renders Arabic page watermark through the shaped decoration path', () async {
     final renderer = PdfDocumentRenderer(textShapingProvider: shapingProvider);
     final result = await renderer.render(
       snapshot: snapshot(),
@@ -377,13 +416,13 @@ void main() {
       options: DocumentRenderOptions(
         pageProfile: DocumentPageProfile.a4Portrait(),
         generatedAt: DateTime.utc(2026, 11, 9, 10),
-        watermark: DocumentWatermark(text: 'نسخة داخلية'),
+        watermark: DocumentWatermark(text: 'نسخة داخلية INV-2026/0017'),
       ),
     );
-    expect(result, isA<DocumentRenderFailure>());
+    expect(result, isA<DocumentRenderSuccess>());
     expect(
-      (result as DocumentRenderFailure).code,
-      DocumentRenderFailureCode.unsupportedTextShaping,
+      (result as DocumentRenderSuccess).artifact.byteLength,
+      greaterThan(100),
     );
   });
 
@@ -404,6 +443,28 @@ void main() {
     );
     expect(result, isA<DocumentRenderSuccess>());
     expect((result as DocumentRenderSuccess).artifact.byteLength, greaterThan(100));
+  });
+
+  test('keeps logical Unicode text searchable through an invisible PDF text layer', () async {
+    const logicalText = 'فاتورة INV-2026/0017 — إجمالي المبيعات';
+    final renderer = PdfDocumentRenderer(textShapingProvider: shapingProvider);
+    final result = await renderer.render(
+      snapshot: snapshot(
+        nodes: [DocumentParagraph(text: logicalText)],
+      ),
+      template: template,
+      options: options(),
+    );
+    expect(result, isA<DocumentRenderSuccess>());
+    final bytes = (result as DocumentRenderSuccess).artifact.bytes;
+    final rawPdf = latin1.decode(bytes);
+    expect(rawPdf, contains('/ToUnicode'));
+
+    final pageStreams = decodedPdfStreams(bytes);
+    expect(pageStreams, isNotEmpty);
+    // PDF text rendering mode 3 is invisible: glyph outlines are the visible
+    // output, while this logical-order text run is retained for extraction.
+    expect(pageStreams.any((stream) => RegExp(r'\\b3\\s+Tr\\b').hasMatch(stream)), isTrue);
   });
 
   test('shapes RTL in headers, cover metadata, and branding', () async {
