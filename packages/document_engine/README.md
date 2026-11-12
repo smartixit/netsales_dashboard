@@ -117,16 +117,15 @@ flutter test packages/document_engine/test
 
 - `DocumentQrCode` renders an opaque, bounded payload supplied by the host.
   It does not encrypt, sign, or verify the payload.
-- `DocumentWatermark` is a constrained visual overlay for draft/copy/
-  confidential/cancelled presentation. It never changes authoritative status.
+- `DocumentWatermark` is an image-only visual overlay. The host supplies bounded PNG/JPEG bytes, selecting the active Network logo, POS logo, or bundled application icon fallback. The engine does not select tenants, fetch URLs, or load host assets. Opacity, angle, and relative image bounds are configurable; the watermark never changes authoritative status.
 - `DocumentSignatureArea` supports supplied signer identity, role, approval
   reference/time, and an optional bounded visual signature image. A visual
   mark or printed approval reference is not a cryptographic signature.
 - Fixed-height 58 mm and 80 mm receipt PDF profiles are available. They define
   PDF page geometry only and are not ESC/POS or thermal-printer drivers.
 - Template capabilities are enforced for QR, watermark, and signature areas.
-  RTL text in captions/labels/watermarks continues to fail closed until a
-  production shaping provider is separately approved.
+  Watermarks do not accept text. Arabic shaping applies to text-bearing document
+  content, not watermark branding.
 
 
 ## Production-readiness repair additions (2026-11-11)
@@ -210,7 +209,7 @@ verification stage passes.
 - `ShapedPdfParagraph` now measures candidate lines using Payv's actual shaped advances, wraps at whitespace, preserves paragraph direction across all generated lines, and delegates page continuation to the PDF package's spanning `Column` layout.
 - Unspaced long identifiers use a conservative grapheme-boundary fallback; a single unbreakable grapheme wider than the box fails rather than being clipped.
 - `ShapedPdfTextLine` now emits Payv's cubic glyph-outline commands directly through `PdfGraphics`. It no longer passes Payv's PDF path-content string to the PDF package's SVG-path parser; those are different path syntaxes.
-- These are reusable primitives. They are not yet wired into every `PdfDocumentRenderer` node or the table cell/header/footer/chart/cover/watermark paths. The renderer-wide RTL guard therefore remains enabled.
+- These are reusable primitives. They are not yet wired into every `PdfDocumentRenderer` node or the table cell/header/footer/chart/cover paths. The renderer-wide RTL guard therefore remains enabled.
 - Vector outlines alone do not provide searchable/selectable Unicode text or a ToUnicode map. Extraction/accessibility remains a production blocker.
 
 
