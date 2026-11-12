@@ -15,6 +15,11 @@ dependencies:
   printing: ^5.15.1
   payv: 0.1.2
 
+flutter:
+  assets:
+    - assets/fonts/IBMPlexSansArabic-Regular.ttf
+    - assets/licenses/IBM-Plex-Sans-Arabic-OFL.txt
+
 dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:
