@@ -85,7 +85,6 @@ final class ShapedPdfTextLine extends pw.StatelessWidget {
     );
 
     return pw.Stack(
-      fit: pw.StackFit.expand,
       children: [
         pw.CustomPaint(
           size: PdfPoint(width, boxHeight),
