@@ -1,3 +1,4 @@
+import 'package:characters/characters.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -7,9 +8,9 @@ import 'shaped_pdf_text_line.dart';
 
 /// Paragraph flow for shaped text.
 ///
-/// Lines are measured after OpenType shaping, so ligatures and contextual
-/// Arabic forms are never split by a character-count approximation. The
-/// returned Column is a spanning PDF widget and can flow through MultiPage.
+/// Each logical paragraph resolves its UAX #9 base direction once. Candidate
+/// lines are measured after OpenType shaping, and wrapping preserves source
+/// whitespace while never splitting a Unicode grapheme cluster.
 final class ShapedPdfParagraph extends pw.StatelessWidget {
   ShapedPdfParagraph({
     required this.text,
@@ -52,27 +53,43 @@ final class ShapedPdfParagraph extends pw.StatelessWidget {
   final double lineHeight;
   final double paragraphSpacing;
 
+  double _measure(String value, DocumentTextDirection resolvedDirection) {
+    return provider.shapeLine(value, direction: resolvedDirection).advance *
+        fontSize /
+        provider.font.unitsPerEm;
+  }
+
   @override
   pw.Widget build(pw.Context context) {
     final widgets = <pw.Widget>[];
-    final paragraphLines = text
+    final paragraphs = text
         .replaceAll('\r\n', '\n')
         .replaceAll('\r', '\n')
         .split(RegExp('[\u2028\u2029\n]'));
 
     for (var paragraphIndex = 0;
-        paragraphIndex < paragraphLines.length;
+        paragraphIndex < paragraphs.length;
         paragraphIndex++) {
-      final paragraph = paragraphLines[paragraphIndex];
+      final paragraph = paragraphs[paragraphIndex];
       if (paragraph.isEmpty) {
         widgets.add(pw.SizedBox(height: fontSize * lineHeight));
         continue;
       }
 
-      final words = paragraph.split(RegExp(r'\s+')).where((w) => w.isNotEmpty);
+      // Resolve once for the whole paragraph. A wrapped line beginning with
+      // an English invoice number must not flip an Arabic paragraph to LTR.
+      final resolvedDirection = provider.resolveDirection(
+        paragraph,
+        requested: direction,
+      );
+      final tokens = RegExp(r'\s+|\S+')
+          .allMatches(paragraph)
+          .map((match) => match.group(0)!)
+          .toList(growable: false);
       var current = '';
 
       void emit(String value) {
+        if (value.isEmpty) return;
         widgets.add(
           ShapedPdfTextLine(
             text: value,
@@ -81,60 +98,62 @@ final class ShapedPdfParagraph extends pw.StatelessWidget {
             fontSize: fontSize,
             height: fontSize * lineHeight,
             color: color,
-            direction: direction,
+            direction: resolvedDirection,
             alignment: alignment,
           ),
         );
       }
 
-      for (final word in words) {
-        final candidate = current.isEmpty ? word : '$current $word';
-        final candidateWidth =
-            provider.shapeLine(candidate, direction: direction).advance *
-            fontSize /
-            provider.font.unitsPerEm;
+      for (final token in tokens) {
+        final isWhitespace = token.trim().isEmpty;
+        if (current.isEmpty && isWhitespace) continue;
 
-        if (candidateWidth <= width) {
+        final candidate = '$current$token';
+        if (_measure(candidate, resolvedDirection) <= width) {
           current = candidate;
           continue;
         }
 
         if (current.isNotEmpty) {
-          emit(current);
+          emit(current.trimRight());
           current = '';
         }
+        if (isWhitespace) continue;
 
-        final wordWidth =
-            provider.shapeLine(word, direction: direction).advance *
-            fontSize /
-            provider.font.unitsPerEm;
-        if (wordWidth <= width) {
-          current = word;
+        if (_measure(token, resolvedDirection) <= width) {
+          current = token;
           continue;
         }
 
-        // Long identifiers/URLs have no natural whitespace. Split only at
-        // Unicode grapheme boundaries, never inside a combining sequence.
-        final graphemes = _graphemes(word);
+        // Long URLs and identifiers have no legal whitespace break. Use
+        // Unicode grapheme clusters so combining marks and emoji sequences
+        // remain indivisible. Arabic shaping is recalculated for each fragment.
         var fragment = '';
-        for (final grapheme in graphemes) {
+        for (final grapheme in token.characters) {
           final next = '$fragment$grapheme';
-          final nextWidth =
-              provider.shapeLine(next, direction: direction).advance *
-              fontSize /
-              provider.font.unitsPerEm;
-          if (fragment.isNotEmpty && nextWidth > width) {
+          if (fragment.isNotEmpty &&
+              _measure(next, resolvedDirection) > width) {
             emit(fragment);
             fragment = grapheme;
+            if (_measure(fragment, resolvedDirection) > width) {
+              throw ArgumentError(
+                'An unbreakable grapheme exceeds the allocated line width.',
+              );
+            }
           } else {
             fragment = next;
+            if (_measure(fragment, resolvedDirection) > width) {
+              throw ArgumentError(
+                'An unbreakable grapheme exceeds the allocated line width.',
+              );
+            }
           }
         }
         current = fragment;
       }
 
-      if (current.isNotEmpty) emit(current);
-      if (paragraphIndex < paragraphLines.length - 1 &&
+      if (current.isNotEmpty) emit(current.trimRight());
+      if (paragraphIndex < paragraphs.length - 1 &&
           paragraphSpacing > 0) {
         widgets.add(pw.SizedBox(height: paragraphSpacing));
       }
@@ -144,32 +163,5 @@ final class ShapedPdfParagraph extends pw.StatelessWidget {
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: widgets,
     );
-  }
-
-  static List<String> _graphemes(String value) {
-    // Combining marks, variation selectors, emoji modifiers and ZWJ sequences
-    // remain attached to their preceding base scalar. This bounded fallback
-    // is deliberately conservative for identifiers without whitespace.
-    final result = <String>[];
-    var current = '';
-    var joinNext = false;
-    for (final scalar in value.runes) {
-      final isMark =
-          (scalar >= 0x0300 && scalar <= 0x036F) ||
-          (scalar >= 0x064B && scalar <= 0x065F) ||
-          scalar == 0x0670 ||
-          (scalar >= 0x06D6 && scalar <= 0x06ED) ||
-          (scalar >= 0xFE00 && scalar <= 0xFE0F) ||
-          (scalar >= 0x1F3FB && scalar <= 0x1F3FF);
-      if (current.isEmpty || isMark || joinNext || scalar == 0x200D) {
-        current += String.fromCharCode(scalar);
-      } else {
-        result.add(current);
-        current = String.fromCharCode(scalar);
-      }
-      joinNext = scalar == 0x200D;
-    }
-    if (current.isNotEmpty) result.add(current);
-    return result;
   }
 }
