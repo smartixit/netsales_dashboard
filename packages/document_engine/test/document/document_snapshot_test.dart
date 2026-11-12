@@ -68,6 +68,51 @@ void main() {
     );
   });
 
+  test('rejects documents exceeding bounded section and node counts', () {
+    Iterable<DocumentSection> unboundedSections() sync* {
+      for (var index = 0; ; index++) {
+        yield DocumentSection(id: 'section-$index', nodes: const []);
+      }
+    }
+
+    expect(
+      () => createSnapshot(sections: unboundedSections()),
+      throwsArgumentError,
+    );
+    expect(
+      () => createSnapshot(
+        sections: [
+          DocumentSection(
+            id: 'large',
+            nodes: List<DocumentNode>.filled(
+              20001,
+              const DocumentPageBreak(),
+            ),
+          ),
+        ],
+      ),
+      throwsArgumentError,
+    );
+  });
+
+  test('rejects oversized text fields and aggregate document text', () {
+    expect(
+      () => createSnapshot(sections: [
+        DocumentSection(id: 'large-field', nodes: [DocumentParagraph(text: 'x' * 100001)]),
+      ]),
+      throwsArgumentError,
+    );
+    expect(
+      () => createSnapshot(sections: [
+        DocumentSection(id: 'large-total', nodes: [
+          for (var index = 0; index < 21; index++)
+            DocumentParagraph(text: 'x' * 100000),
+        ]),
+      ]),
+      throwsArgumentError,
+    );
+  });
+
   test('rejects invalid heading levels and schema versions', () {
     expect(
       () => DocumentHeading(text: 'Invalid', level: 7),

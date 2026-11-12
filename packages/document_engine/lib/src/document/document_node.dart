@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import '../core/stable_identifier.dart';
+import 'bounded_document_input.dart';
 import 'document_locale.dart';
 import 'document_value.dart';
 
@@ -58,11 +59,13 @@ final class DocumentMetricGrid extends DocumentNode {
   DocumentMetricGrid({
     required Iterable<DocumentMetric> metrics,
     this.columns = 2,
-  }) : metrics = List<DocumentMetric>.unmodifiable(metrics) {
-    if (this.metrics.isEmpty || this.metrics.length > 20) {
-      throw ArgumentError(
-        'A metric grid must contain between one and twenty metrics.',
-      );
+  }) : metrics = copyBoundedDocumentList(
+         metrics,
+         maxLength: 20,
+         fieldName: 'metrics',
+       ) {
+    if (this.metrics.isEmpty) {
+      throw ArgumentError('A metric grid must contain at least one metric.');
     }
     if (columns < 1 || columns > 4) {
       throw ArgumentError.value(columns, 'columns', 'Must be between 1 and 4.');
@@ -86,7 +89,11 @@ final class DocumentTableStyle {
     Iterable<double>? columnWeights,
   }) : columnWeights = columnWeights == null
            ? null
-           : List<double>.unmodifiable(columnWeights) {
+           : copyBoundedDocumentList(
+               columnWeights,
+               maxLength: 100,
+               fieldName: 'columnWeights',
+             ) {
     _validateColor(headerColor, 'headerColor');
     _validateColor(alternateRowColor, 'alternateRowColor');
     if (this.columnWeights != null &&
@@ -148,7 +155,11 @@ final class DocumentTableRow {
     required String id,
     required Iterable<DocumentTableCell> cells,
   }) : id = validateStableIdentifier(id, parameterName: 'rowId'),
-       cells = List<DocumentTableCell>.unmodifiable(cells);
+       cells = copyBoundedDocumentList(
+         cells,
+         maxLength: 100,
+         fieldName: 'cells',
+       );
 
   final String id;
   final List<DocumentTableCell> cells;
@@ -160,8 +171,16 @@ final class DocumentTable extends DocumentNode {
     required Iterable<DocumentTableColumn> columns,
     required Iterable<DocumentTableRow> rows,
     DocumentTableStyle? style,
-  }) : columns = List<DocumentTableColumn>.unmodifiable(columns),
-       rows = List<DocumentTableRow>.unmodifiable(rows),
+  }) : columns = copyBoundedDocumentList(
+         columns,
+         maxLength: 100,
+         fieldName: 'columns',
+       ),
+       rows = copyBoundedDocumentList(
+         rows,
+         maxLength: 10000,
+         fieldName: 'rows',
+       ),
        style = style ?? DocumentTableStyle() {
     final columnIds = this.columns.map((column) => column.id).toSet();
     if (this.columns.isEmpty || columnIds.length != this.columns.length) {
@@ -236,7 +255,11 @@ final class DocumentChartSeries {
     this.color = '0D7A5F',
   }) : id = validateStableIdentifier(id, parameterName: 'seriesId'),
        label = _requireText(label, 'label'),
-       points = List<DocumentChartPoint>.unmodifiable(points) {
+       points = copyBoundedDocumentList(
+         points,
+         maxLength: 24,
+         fieldName: 'points',
+       ) {
     if (this.points.isEmpty) {
       throw ArgumentError('A chart series must contain at least one point.');
     }
@@ -272,9 +295,13 @@ final class DocumentChart extends DocumentNode {
     this.showLegend = true,
     this.showGrid = true,
   }) : title = _requireText(title, 'title'),
-       series = List<DocumentChartSeries>.unmodifiable(series) {
-    if (this.series.isEmpty || this.series.length > 8) {
-      throw ArgumentError('A chart must contain between one and eight series.');
+       series = copyBoundedDocumentList(
+         series,
+         maxLength: 8,
+         fieldName: 'series',
+       ) {
+    if (this.series.isEmpty) {
+      throw ArgumentError('A chart must contain at least one series.');
     }
     final ids = this.series.map((item) => item.id).toSet();
     if (ids.length != this.series.length) {
@@ -355,10 +382,11 @@ final class DocumentImage extends DocumentNode {
     this.heightPoints,
     this.fit = DocumentImageFit.contain,
     this.alignment = DocumentImageAlignment.center,
-  }) : _bytes = Uint8List.fromList(bytes) {
-    if (_bytes.isEmpty || _bytes.length > 4 * 1024 * 1024) {
-      throw ArgumentError('Document image must be 1 byte to 4 MiB.');
-    }
+  }) : _bytes = copyBoundedDocumentBytes(
+         bytes,
+         maxBytes: 4 * 1024 * 1024,
+         fieldName: 'documentImage',
+       ) {
     final isPng =
         _bytes.length >= 8 &&
         _bytes[0] == 0x89 &&
@@ -447,7 +475,11 @@ final class DocumentSignatureArea extends DocumentNode {
     Uint8List? visualSignatureBytes,
   }) : _visualSignatureBytes = visualSignatureBytes == null
            ? null
-           : Uint8List.fromList(visualSignatureBytes) {
+           : copyBoundedDocumentBytes(
+               visualSignatureBytes,
+               maxBytes: 1024 * 1024,
+               fieldName: 'visualSignatureBytes',
+             ) {
     if (label.trim().isEmpty || label.length > 120) {
       throw ArgumentError.value(label, 'label', 'Must contain 1-120 chars.');
     }
@@ -466,10 +498,7 @@ final class DocumentSignatureArea extends DocumentNode {
       }
     }
     if (_visualSignatureBytes != null) {
-      final bytes = _visualSignatureBytes;
-      if (bytes.isEmpty || bytes.length > 1024 * 1024) {
-        throw ArgumentError('Visual signature image must be 1 byte to 1 MiB.');
-      }
+      final bytes = _visualSignatureBytes!;
       final isPng =
           bytes.length >= 8 &&
           bytes[0] == 0x89 &&
@@ -501,4 +530,164 @@ final class DocumentSignatureArea extends DocumentNode {
   Uint8List? get visualSignatureBytes => _visualSignatureBytes == null
       ? null
       : Uint8List.fromList(_visualSignatureBytes);
+}
+
+
+/// Semantic visual tone for document status and callout components.
+enum DocumentStatusTone { neutral, info, success, warning, danger }
+
+/// A compact, immutable information item for party, invoice, or account data.
+///
+/// The value is supplied by the host. The engine only formats its layout.
+final class DocumentInfoItem {
+  DocumentInfoItem({
+    required String label,
+    required this.value,
+    this.direction = DocumentTextDirection.auto,
+  }) : label = _requireSemanticDocumentText(label, 'label', maxLength: 120);
+
+  final String label;
+  final DocumentValue value;
+  final DocumentTextDirection direction;
+}
+
+/// A responsive grid of related document metadata.
+///
+/// Use this for invoice parties, account identities, references, and date ranges.
+/// It deliberately does not know what an invoice or an account is.
+final class DocumentInfoGrid extends DocumentNode {
+  DocumentInfoGrid({
+    required Iterable<DocumentInfoItem> items,
+    this.columns = 2,
+    this.compact = false,
+  }) : items = copyBoundedDocumentList(
+         items,
+         maxLength: 18,
+         fieldName: 'items',
+       ) {
+    if (this.items.isEmpty) {
+      throw ArgumentError('An information grid must contain at least one item.');
+    }
+    if (columns < 1 || columns > 3) {
+      throw ArgumentError.value(columns, 'columns', 'Must be between 1 and 3.');
+    }
+  }
+
+  final List<DocumentInfoItem> items;
+  final int columns;
+  final bool compact;
+}
+
+/// A clearly visible state label for a document, transaction, or report.
+final class DocumentStatusBanner extends DocumentNode {
+  DocumentStatusBanner({
+    required String label,
+    this.tone = DocumentStatusTone.neutral,
+    String? detail,
+  }) : label = _requireSemanticDocumentText(label, 'label', maxLength: 120),
+       detail = detail == null
+           ? null
+           : _requireSemanticDocumentText(detail, 'detail', maxLength: 240);
+
+  final String label;
+  final String? detail;
+  final DocumentStatusTone tone;
+}
+
+enum DocumentFinancialEmphasis { normal, secondary, total, outstanding }
+
+/// One server-supplied line in a financial summary.
+///
+/// No amount is added, subtracted, rounded, or inferred by the renderer.
+final class DocumentFinancialLine {
+  DocumentFinancialLine({
+    required String label,
+    required this.value,
+    this.emphasis = DocumentFinancialEmphasis.normal,
+    String? note,
+  }) : label = _requireSemanticDocumentText(label, 'label', maxLength: 120),
+       note = note == null
+           ? null
+           : _requireSemanticDocumentText(note, 'note', maxLength: 240);
+
+  final String label;
+  final DocumentValue value;
+  final DocumentFinancialEmphasis emphasis;
+  final String? note;
+}
+
+/// A premium financial summary made only from values provided by the host.
+final class DocumentFinancialSummary extends DocumentNode {
+  DocumentFinancialSummary({
+    String? title,
+    required Iterable<DocumentFinancialLine> lines,
+  }) : title = title == null
+           ? null
+           : _requireSemanticDocumentText(title, 'title', maxLength: 120),
+       lines = copyBoundedDocumentList(
+         lines,
+         maxLength: 12,
+         fieldName: 'lines',
+       ) {
+    if (this.lines.isEmpty) {
+      throw ArgumentError('A financial summary must contain at least one line.');
+    }
+    final totals = this.lines
+        .where((line) => line.emphasis == DocumentFinancialEmphasis.total)
+        .length;
+    if (totals > 1) {
+      throw ArgumentError('A financial summary may contain one total line.');
+    }
+  }
+
+  final String? title;
+  final List<DocumentFinancialLine> lines;
+}
+
+/// A highlighted note whose semantic tone is provided by the host.
+final class DocumentCallout extends DocumentNode {
+  DocumentCallout({
+    required String title,
+    required String body,
+    this.tone = DocumentStatusTone.info,
+  }) : title = _requireSemanticDocumentText(title, 'title', maxLength: 120),
+       body = _requireSemanticDocumentText(body, 'body', maxLength: 1200);
+
+  final String title;
+  final String body;
+  final DocumentStatusTone tone;
+}
+
+/// A restrained visual separator between document composition blocks.
+final class DocumentDivider extends DocumentNode {
+  DocumentDivider({this.color = 'CBD5E1', this.thickness = 0.6, this.spacing = 8}) {
+    if (!RegExp(r'^[0-9A-Fa-f]{6}$').hasMatch(color)) {
+      throw ArgumentError.value(color, 'color', 'Use a six-digit RGB hex value.');
+    }
+    if (!thickness.isFinite || thickness <= 0 || thickness > 4) {
+      throw ArgumentError.value(thickness, 'thickness', 'Must be in (0, 4].');
+    }
+    if (!spacing.isFinite || spacing < 0 || spacing > 40) {
+      throw ArgumentError.value(spacing, 'spacing', 'Must be in [0, 40].');
+    }
+  }
+
+  final String color;
+  final double thickness;
+  final double spacing;
+}
+
+String _requireSemanticDocumentText(
+  String value,
+  String name, {
+  required int maxLength,
+}) {
+  if (value.trim().isEmpty || value.length > maxLength) {
+    throw ArgumentError.value(
+      value,
+      name,
+      'Must contain 1-$maxLength characters.',
+    );
+  }
+  return value;
 }

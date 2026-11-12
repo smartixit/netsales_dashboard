@@ -357,6 +357,34 @@ final class PdfDocumentRenderer implements DocumentRenderer {
               return true;
             }
           }
+        } else if (node case DocumentInfoGrid(:final items)) {
+          if (items.any(
+            (item) =>
+                item.direction == DocumentTextDirection.rightToLeft ||
+                rtlPattern.hasMatch(item.label) ||
+                rtlPattern.hasMatch(_valueText(item.value)),
+          )) {
+            return true;
+          }
+        } else if (node case DocumentStatusBanner(:final label, :final detail)) {
+          if (rtlPattern.hasMatch(label) ||
+              (detail != null && rtlPattern.hasMatch(detail))) {
+            return true;
+          }
+        } else if (node case DocumentFinancialSummary(:final title, :final lines)) {
+          if ((title != null && rtlPattern.hasMatch(title)) ||
+              lines.any(
+                (line) =>
+                    rtlPattern.hasMatch(line.label) ||
+                    rtlPattern.hasMatch(_valueText(line.value)) ||
+                    (line.note != null && rtlPattern.hasMatch(line.note!)),
+              )) {
+            return true;
+          }
+        } else if (node case DocumentCallout(:final title, :final body)) {
+          if (rtlPattern.hasMatch(title) || rtlPattern.hasMatch(body)) {
+            return true;
+          }
         }
       }
     }
@@ -515,6 +543,16 @@ final class PdfDocumentRenderer implements DocumentRenderer {
             widgets.add(_qrCodeWidget(node));
           case DocumentSignatureArea():
             widgets.add(_signatureAreaWidget(node));
+          case DocumentInfoGrid():
+            widgets.add(_infoGridWidget(node, branding));
+          case DocumentStatusBanner():
+            widgets.add(_statusBannerWidget(node, branding));
+          case DocumentFinancialSummary():
+            widgets.add(_financialSummaryWidget(node, branding));
+          case DocumentCallout():
+            widgets.add(_calloutWidget(node, branding));
+          case DocumentDivider():
+            widgets.add(_dividerWidget(node));
           case DocumentPageBreak():
             widgets.add(pw.NewPage());
         }
@@ -522,6 +560,311 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     }
     return widgets;
   }
+
+  pw.Widget _infoGridWidget(
+    DocumentInfoGrid node,
+    DocumentBranding? branding,
+  ) {
+    final surface = _pdfColor(branding?.surfaceColor ?? 'F8FAFC');
+    final textColor = _pdfColor(branding?.textColor ?? '172033');
+    final muted = _pdfColor(branding?.mutedTextColor ?? '64748B');
+    final rows = <pw.Widget>[];
+
+    for (var start = 0; start < node.items.length; start += node.columns) {
+      final row = node.items.skip(start).take(node.columns).toList();
+      rows.add(
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            for (final item in row)
+              pw.Expanded(
+                child: pw.Container(
+                  margin: const pw.EdgeInsets.all(3),
+                  padding: pw.EdgeInsets.all(node.compact ? 7 : 10),
+                  decoration: pw.BoxDecoration(
+                    color: surface,
+                    border: pw.Border.all(
+                      color: _pdfColor('E2E8F0'),
+                      width: 0.55,
+                    ),
+                    borderRadius: const pw.BorderRadius.all(
+                      pw.Radius.circular(5),
+                    ),
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        item.label,
+                        style: pw.TextStyle(
+                          fontSize: node.compact ? 7 : 8,
+                          color: muted,
+                        ),
+                      ),
+                      pw.SizedBox(height: node.compact ? 3 : 5),
+                      pw.Text(
+                        _valueText(item.value),
+                        style: pw.TextStyle(
+                          fontSize: node.compact ? 8 : 9,
+                          fontWeight: pw.FontWeight.bold,
+                          color: textColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            for (var empty = row.length; empty < node.columns; empty++)
+              pw.Expanded(child: pw.SizedBox()),
+          ],
+        ),
+      );
+    }
+    return pw.Column(children: rows);
+  }
+
+  pw.Widget _statusBannerWidget(
+    DocumentStatusBanner node,
+    DocumentBranding? branding,
+  ) {
+    final (toneColor, toneSurface) = _toneColors(node.tone, branding);
+    final textColor = _pdfColor(branding?.textColor ?? '172033');
+    final muted = _pdfColor(branding?.mutedTextColor ?? '64748B');
+    return pw.Container(
+      margin: const pw.EdgeInsets.symmetric(vertical: 6),
+      padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: pw.BoxDecoration(
+        color: toneSurface,
+        border: pw.Border.all(color: toneColor, width: 0.65),
+        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(5)),
+      ),
+      child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Container(
+            width: 3,
+            height: 24,
+            margin: const pw.EdgeInsets.only(right: 9, top: 1),
+            decoration: pw.BoxDecoration(
+              color: toneColor,
+              borderRadius: const pw.BorderRadius.all(pw.Radius.circular(2)),
+            ),
+          ),
+          pw.Expanded(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  node.label,
+                  style: pw.TextStyle(
+                    color: textColor,
+                    fontSize: 9,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                if (node.detail != null)
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.only(top: 3),
+                    child: pw.Text(
+                      node.detail!,
+                      style: pw.TextStyle(fontSize: 8, color: muted),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  pw.Widget _financialSummaryWidget(
+    DocumentFinancialSummary node,
+    DocumentBranding? branding,
+  ) {
+    final primary = _pdfColor(branding?.primaryColor ?? '0D7A5F');
+    final surface = _pdfColor(branding?.surfaceColor ?? 'F8FAFC');
+    final textColor = _pdfColor(branding?.textColor ?? '172033');
+    final muted = _pdfColor(branding?.mutedTextColor ?? '64748B');
+    final rows = <pw.Widget>[];
+
+    for (final line in node.lines) {
+      final isTotal = line.emphasis == DocumentFinancialEmphasis.total;
+      final isOutstanding =
+          line.emphasis == DocumentFinancialEmphasis.outstanding;
+      final isSecondary =
+          line.emphasis == DocumentFinancialEmphasis.secondary;
+      rows.add(
+        pw.Container(
+          width: double.infinity,
+          padding: pw.EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: isTotal ? 9 : 6,
+          ),
+          decoration: pw.BoxDecoration(
+            color: isTotal ? surface : null,
+            border: isTotal
+                ? pw.Border(
+                    top: pw.BorderSide(color: primary, width: 1.1),
+                    bottom: pw.BorderSide(
+                      color: _pdfColor('E2E8F0'),
+                      width: 0.45,
+                    ),
+                  )
+                : null,
+          ),
+          child: pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Expanded(
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      line.label,
+                      style: pw.TextStyle(
+                        color: isSecondary ? muted : textColor,
+                        fontSize: isTotal ? 10 : 8.5,
+                        fontWeight: isTotal
+                            ? pw.FontWeight.bold
+                            : pw.FontWeight.normal,
+                      ),
+                    ),
+                    if (line.note != null)
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.only(top: 2),
+                        child: pw.Text(
+                          line.note!,
+                          style: pw.TextStyle(fontSize: 7, color: muted),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              pw.SizedBox(width: 12),
+              pw.Text(
+                _valueText(line.value),
+                textAlign: pw.TextAlign.right,
+                style: pw.TextStyle(
+                  color: isOutstanding ? _pdfColor('B91C1C') : textColor,
+                  fontSize: isTotal ? 13 : 9,
+                  fontWeight: isTotal || isOutstanding
+                      ? pw.FontWeight.bold
+                      : pw.FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return pw.Container(
+      margin: const pw.EdgeInsets.symmetric(vertical: 8),
+      decoration: pw.BoxDecoration(
+        color: PdfColors.white,
+        border: pw.Border.all(color: _pdfColor('CBD5E1'), width: 0.7),
+        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+      ),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+        children: [
+          pw.Container(
+            height: 4,
+            decoration: pw.BoxDecoration(
+              color: primary,
+              borderRadius: const pw.BorderRadius.only(
+                topLeft: pw.Radius.circular(6),
+                topRight: pw.Radius.circular(6),
+              ),
+            ),
+          ),
+          if (node.title != null)
+            pw.Padding(
+              padding: const pw.EdgeInsets.fromLTRB(10, 9, 10, 4),
+              child: pw.Text(
+                node.title!,
+                style: pw.TextStyle(
+                  color: primary,
+                  fontSize: 10,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ),
+          ...rows,
+          pw.SizedBox(height: 3),
+        ],
+      ),
+    );
+  }
+
+  pw.Widget _calloutWidget(
+    DocumentCallout node,
+    DocumentBranding? branding,
+  ) {
+    final (toneColor, toneSurface) = _toneColors(node.tone, branding);
+    final textColor = _pdfColor(branding?.textColor ?? '172033');
+    final muted = _pdfColor(branding?.mutedTextColor ?? '64748B');
+    return pw.Container(
+      margin: const pw.EdgeInsets.symmetric(vertical: 6),
+      padding: const pw.EdgeInsets.all(10),
+      decoration: pw.BoxDecoration(
+        color: toneSurface,
+        border: pw.Border(left: pw.BorderSide(color: toneColor, width: 3)),
+      ),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text(
+            node.title,
+            style: pw.TextStyle(
+              color: textColor,
+              fontSize: 9,
+              fontWeight: pw.FontWeight.bold,
+            ),
+          ),
+          pw.SizedBox(height: 4),
+          pw.Text(
+            node.body,
+            style: pw.TextStyle(color: muted, fontSize: 8.5),
+          ),
+        ],
+      ),
+    );
+  }
+
+  (PdfColor, PdfColor) _toneColors(
+    DocumentStatusTone tone,
+    DocumentBranding? branding,
+  ) => switch (tone) {
+    DocumentStatusTone.neutral => (
+      _pdfColor('64748B'),
+      _pdfColor('F1F5F9'),
+    ),
+    DocumentStatusTone.info => (
+      _pdfColor(branding?.accentColor ?? '2563EB'),
+      _pdfColor('EFF6FF'),
+    ),
+    DocumentStatusTone.success => (
+      _pdfColor(branding?.primaryColor ?? '0D7A5F'),
+      _pdfColor('ECFDF5'),
+    ),
+    DocumentStatusTone.warning => (
+      _pdfColor('B45309'),
+      _pdfColor('FFFBEB'),
+    ),
+    DocumentStatusTone.danger => (
+      _pdfColor('B91C1C'),
+      _pdfColor('FEF2F2'),
+    ),
+  };
+
+  pw.Widget _dividerWidget(DocumentDivider node) => pw.Container(
+    width: double.infinity,
+    height: node.thickness,
+    margin: pw.EdgeInsets.symmetric(vertical: node.spacing),
+    color: _pdfColor(node.color),
+  );
 
   pw.Widget _imageWidget(DocumentImage node) {
     final image = pw.Image(

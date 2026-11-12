@@ -31,6 +31,16 @@ Reusable, framework-agnostic document contracts, template registry, and bounded 
 - Optional standalone cover page, cover metadata, and first-content-page-specific headers/footers.
 - Cover pages are included in the configured maximum page budget.
 
+## Bounded input contracts
+
+Document snapshots accept at most 250 sections and 20,000 content nodes.
+Each section accepts at most 20,000 nodes; tables accept at most 100 columns
+and 10,000 rows. Binary image and visual-signature payloads are capped before
+their defensive copies are allocated. Charts and semantic collections are
+bounded by their typed contracts. Collection limits are enforced while
+copying lazy iterables. Large result sets belong in server-side report jobs
+and protected artifact delivery.
+
 ## Deliberate non-goals
 
 - No Arabic shaping provider selection or RTL PDF output.
@@ -131,3 +141,28 @@ These additions do not resolve Arabic shaping. Complex RTL still fails closed. T
  
 
 - `ReportConfigurationStudio` now exposes host builders for the entire filter section and presentation section, in addition to action buttons. NetSales can replace all package-default Material controls with its own design-system fields, selectors, toggles, and buttons while the package remains UI-framework-independent from the host app's GetX architecture.
+
+
+## Semantic composition primitives
+
+The generic node model includes reusable, domain-neutral building blocks for
+business documents:
+
+- `DocumentInfoGrid` groups supplied party, account, reference, and date values.
+- `DocumentStatusBanner` gives a transaction or document an explicit visual state.
+- `DocumentFinancialSummary` displays supplied financial lines with total and
+  outstanding emphasis. It never derives or recalculates an amount.
+- `DocumentCallout` highlights explanatory or policy text.
+- `DocumentDivider` provides controlled visual separation.
+- `DocumentPageProfile.a5Portrait` and `a5Landscape` support compact
+  business vouchers and receipts.
+
+These primitives are deliberately generic. A host application composes them
+into distinct invoice, repayment, expense, statement, and report templates.
+Business labels, source values, currency rules, permissions, and financial
+calculations remain owned by the host API and domain layer. The renderer only
+lays out the supplied content.
+
+The generic PDF renderer continues to fail closed for complex RTL text until a
+validated shaping provider is integrated. Adding semantic nodes does not relax
+that safety boundary.

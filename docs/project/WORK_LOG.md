@@ -596,3 +596,26 @@ Branch: feat/platform-billing-management
 - Added widget regression coverage proving both injected sections replace the built-in controls.
 - This closes the package API extensibility gap, not the consuming-app integration work. No raw Material control is to be used by the NetSales feature adapter.
 - Verification awaits the next exact-HEAD Windows/macOS package CI run.
+
+
+## 2026-11-11 — Approved NetSales Reporting and Document Engine Scope
+
+- User approved the complete staged adoption plan, including operational reporting and business documents first, followed by Platform Billing reports and invoices in the Dashboard as the final product-domain stage.
+- User explicitly requires removal of legacy report and invoice-document generation paths from the NetSales app, while preserving operational invoice entities, APIs, repositories, use cases, screens, and accounting workflows.
+- The package source branch is `fix/document-engine-premium-rendering`. The package was extended with generic semantic document composition nodes: information grid, status banner, financial summary, callout, and divider; A5 portrait/landscape page profiles were added for compact vouchers.
+- PDF renderer support was added for these semantic nodes. The existing fail-closed Arabic shaping guard is extended to inspect every newly added text-bearing node. Arabic output remains blocked until a shaping provider is integrated and verified.
+- Added focused tests for semantic-node validation/immutability, PDF rendering, RTL rejection, and A5 geometry. These tests are authored but deliberately not executed because the user requested all tests, reviews, and GitHub Actions to run only at the final stage.
+- No operational reports, subscription reports, or billing invoice providers have been implemented in this step. The work is following the approved order: package foundations first, then NetSales integration, shared API operational reporting, operational document flows, legacy output cleanup, and Platform Billing reports/documents last.
+- No GitHub Actions workflow, PR review, or build has been triggered during this implementation stage.
+
+
+## 2026-11-12 — Document Input Resource Bounds
+
+- Added a shared bounded-copy helper so section, snapshot, table, chart, information-grid, and financial-summary collections are checked while iterating, before the full collection is materialized.
+- Added hard limits for snapshot sections/content nodes, section nodes, table rows/columns/cells, chart series/points, semantic collections, and binary image/signature payload copies.
+- Added focused regression cases for oversized snapshots, tables, and image assets. Tests were authored only; they were not executed, in accordance with the requested final-stage verification freeze.
+- This increment does not resolve Arabic shaping. Complex RTL remains fail-closed and the package is not yet declared production-ready.
+
+- Follow-up hardening normalized the bounded-input implementations, added a 100-entry bound for table column weights, and added a lazy-iterable regression case proving that the section limit is enforced before the entire iterable is consumed. No test or CI command was run.
+
+- Added a snapshot-wide text budget: individual text fields are capped at 100,000 characters and all caller-supplied document text at 2,000,000 characters, including table cells, chart labels, metadata, and semantic nodes. Regression tests were authored for per-field and aggregate overflow; verification remains deferred.

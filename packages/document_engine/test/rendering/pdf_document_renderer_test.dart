@@ -501,6 +501,129 @@ void main() {
     },
   );
 
+  test('renders semantic financial and information components', () async {
+    const renderer = PdfDocumentRenderer();
+    final result = await renderer.render(
+      snapshot: snapshot(
+        nodes: [
+          DocumentStatusBanner(
+            label: 'Partially paid',
+            detail: 'The server-reported remaining amount is shown below.',
+            tone: DocumentStatusTone.warning,
+          ),
+          DocumentInfoGrid(
+            columns: 2,
+            items: [
+              DocumentInfoItem(
+                label: 'Invoice reference',
+                value: const DocumentTextValue('INV-2026-001'),
+              ),
+              DocumentInfoItem(
+                label: 'Issue date',
+                value: DocumentDateTimeValue(DateTime.utc(2026, 11, 11)),
+              ),
+            ],
+          ),
+          DocumentDivider(),
+          DocumentFinancialSummary(
+            title: 'Financial summary',
+            lines: [
+              DocumentFinancialLine(
+                label: 'Subtotal',
+                value: DocumentDecimalValue('1500.00'),
+                emphasis: DocumentFinancialEmphasis.secondary,
+              ),
+              DocumentFinancialLine(
+                label: 'Paid',
+                value: DocumentDecimalValue('500.00'),
+              ),
+              DocumentFinancialLine(
+                label: 'Outstanding',
+                value: DocumentDecimalValue('1000.00'),
+                emphasis: DocumentFinancialEmphasis.outstanding,
+              ),
+              DocumentFinancialLine(
+                label: 'Grand total',
+                value: DocumentDecimalValue('1500.00'),
+                emphasis: DocumentFinancialEmphasis.total,
+              ),
+            ],
+          ),
+          DocumentCallout(
+            title: 'Payment terms',
+            body: 'This note is supplied by the host business workflow.',
+            tone: DocumentStatusTone.info,
+          ),
+        ],
+      ),
+      template: template,
+      options: options(),
+    );
+
+    expect(result, isA<DocumentRenderSuccess>());
+    expect(
+      (result as DocumentRenderSuccess).artifact.byteLength,
+      greaterThan(500),
+    );
+  });
+
+  test('rejects RTL in all new semantic document nodes', () async {
+    const renderer = PdfDocumentRenderer();
+    final cases = <List<DocumentNode>>[
+      [
+        DocumentInfoGrid(
+          items: [
+            DocumentInfoItem(
+              label: 'بيانات العميل',
+              value: const DocumentTextValue('POS-001'),
+            ),
+          ],
+        ),
+      ],
+      [
+        DocumentStatusBanner(label: 'مدفوع بالكامل'),
+      ],
+      [
+        DocumentFinancialSummary(
+          lines: [
+            DocumentFinancialLine(
+              label: 'الإجمالي',
+              value: DocumentDecimalValue('100.00'),
+            ),
+          ],
+        ),
+      ],
+      [
+        DocumentCallout(title: 'ملاحظة', body: 'بيانات توضيحية'),
+      ],
+    ];
+
+    for (final nodes in cases) {
+      final result = await renderer.render(
+        snapshot(nodes: nodes),
+        template: template,
+        options: options(),
+      );
+      expect(result, isA<DocumentRenderFailure>());
+      expect(
+        (result as DocumentRenderFailure).code,
+        DocumentRenderFailureCode.unsupportedTextShaping,
+      );
+    }
+  });
+
+  test('adds standard A5 portrait and landscape profiles', () {
+    final portrait = DocumentPageProfile.a5Portrait();
+    final landscape = DocumentPageProfile.a5Landscape();
+
+    expect(portrait.widthPoints, closeTo(419.53, 0.01));
+    expect(portrait.heightPoints, closeTo(595.28, 0.01));
+    expect(portrait.orientation, DocumentPageOrientation.portrait);
+    expect(landscape.widthPoints, closeTo(595.28, 0.01));
+    expect(landscape.heightPoints, closeTo(419.53, 0.01));
+    expect(landscape.orientation, DocumentPageOrientation.landscape);
+  });
+
   test('validates printable area and page limits', () {
     expect(
       () => DocumentPageProfile(
