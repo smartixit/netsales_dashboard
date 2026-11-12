@@ -74,11 +74,29 @@ void main() {
     );
   });
 
-  test('watermark is bounded presentation metadata', () {
-    final watermark = DocumentWatermark(text: 'DRAFT', opacity: 0.1);
-    expect(watermark.text, 'DRAFT');
+  test('watermark uses bounded defensive-copied PNG/JPEG image bytes', () {
+    final source = Uint8List.fromList(base64.decode('$b64'));
+    final watermark = DocumentWatermark(imageBytes: source, opacity: 0.1);
+    source[0] = 0;
+    expect(watermark.imageBytes.first, 0x89);
+    final returned = watermark.imageBytes;
+    returned[0] = 0;
+    expect(watermark.imageBytes.first, 0x89);
     expect(
-      () => DocumentWatermark(text: 'DRAFT', opacity: 0.9),
+      () => DocumentWatermark(imageBytes: Uint8List(0)),
+      throwsArgumentError,
+    );
+    expect(
+      () => DocumentWatermark(
+        imageBytes: Uint8List.fromList([1, 2, 3]),
+      ),
+      throwsArgumentError,
+    );
+    expect(
+      () => DocumentWatermark(
+        imageBytes: Uint8List.fromList(base64.decode('$b64')),
+        opacity: 0.9,
+      ),
       throwsArgumentError,
     );
   });
