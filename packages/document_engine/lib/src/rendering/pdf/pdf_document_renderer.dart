@@ -16,6 +16,7 @@ import '../document_render_options.dart';
 import '../document_render_result.dart';
 import '../document_renderer.dart';
 import 'payv_text_shaping_provider.dart';
+import 'document_font_weight.dart';
 import 'shaped_pdf_paragraph.dart';
 
 /// PDF backend for bounded, non-official client-side documents.
@@ -437,6 +438,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                 textAlign: layout == DocumentTemplateLayout.receipt
                     ? pw.TextAlign.center
                     : pw.TextAlign.left,
+                fontWeight: DocumentFontWeight.medium,
               ),
               if (branding.tagline case final tagline?)
                 pw.Padding(
@@ -514,6 +516,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                     ? primary
                     : null,
               ),
+              fontWeight: DocumentFontWeight.semiBold,
             ),
           ),
         );
@@ -526,7 +529,11 @@ final class PdfDocumentRenderer implements DocumentRenderer {
             widgets.add(
               pw.Header(
                 level: level > 5 ? 5 : level,
-                child: _text(text, direction: direction),
+                child: _text(
+                  text,
+                  direction: direction,
+                  fontWeight: DocumentFontWeight.semiBold,
+                ),
               ),
             );
           case DocumentMetric(:final label, :final value, :final caption):
@@ -600,6 +607,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                           fontSize: node.compact ? 7 : 8,
                           color: muted,
                         ),
+                        fontWeight: DocumentFontWeight.medium,
                       ),
                       pw.SizedBox(height: node.compact ? 3 : 5),
                       _text(
@@ -610,6 +618,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                           fontWeight: pw.FontWeight.bold,
                           color: textColor,
                         ),
+                        fontWeight: DocumentFontWeight.semiBold,
                       ),
                     ],
                   ),
@@ -662,6 +671,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                     fontSize: 9,
                     fontWeight: pw.FontWeight.bold,
                   ),
+                  fontWeight: DocumentFontWeight.semiBold,
                 ),
                 if (node.detail != null)
                   pw.Padding(
@@ -730,6 +740,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                             ? pw.FontWeight.bold
                             : pw.FontWeight.normal,
                       ),
+                      fontWeight: isTotal
+                          ? DocumentFontWeight.semiBold
+                          : DocumentFontWeight.medium,
                     ),
                     if (line.note != null)
                       pw.Padding(
@@ -753,6 +766,9 @@ final class PdfDocumentRenderer implements DocumentRenderer {
                       ? pw.FontWeight.bold
                       : pw.FontWeight.normal,
                 ),
+                fontWeight: isTotal || isOutstanding
+                    ? DocumentFontWeight.bold
+                    : DocumentFontWeight.medium,
               ),
             ],
           ),
@@ -823,6 +839,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
               fontSize: 9,
               fontWeight: pw.FontWeight.bold,
             ),
+            fontWeight: DocumentFontWeight.semiBold,
           ),
           pw.SizedBox(height: 4),
           _text(
@@ -968,10 +985,18 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     if (branding == null) return null;
     final bodyBytes =
         branding.fontBytes(DocumentFontRole.body) ??
-        branding.fontBytes(DocumentFontRole.numeric);
-    final headingBytes =
+        branding.fontBytes(DocumentFontRole.medium) ??
+        branding.fontBytes(DocumentFontRole.semiBold) ??
         branding.fontBytes(DocumentFontRole.heading) ??
         branding.fontBytes(DocumentFontRole.display) ??
+        branding.fontBytes(DocumentFontRole.numeric) ??
+        branding.fontBytes(DocumentFontRole.bold);
+    final headingBytes =
+        branding.fontBytes(DocumentFontRole.bold) ??
+        branding.fontBytes(DocumentFontRole.heading) ??
+        branding.fontBytes(DocumentFontRole.display) ??
+        branding.fontBytes(DocumentFontRole.semiBold) ??
+        branding.fontBytes(DocumentFontRole.medium) ??
         bodyBytes;
     if (bodyBytes == null && headingBytes == null) return null;
     final baseBytes = bodyBytes ?? headingBytes!;
@@ -1097,6 +1122,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     child: _text(
       text,
       style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
+      fontWeight: DocumentFontWeight.medium,
     ),
   );
 
@@ -1150,7 +1176,11 @@ final class PdfDocumentRenderer implements DocumentRenderer {
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          _text(label, style: pw.TextStyle(fontSize: 9, color: muted)),
+          _text(
+            label,
+            style: pw.TextStyle(fontSize: 9, color: muted),
+            fontWeight: DocumentFontWeight.medium,
+          ),
           pw.SizedBox(height: 4),
           _text(
             _valueText(value),
@@ -1299,6 +1329,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
         child: _text(
           chart.title,
           style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+          fontWeight: DocumentFontWeight.semiBold,
         ),
       ),
       if (chart.subtitle != null)
@@ -1574,8 +1605,13 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     bool? softWrap,
     int? maxLines,
     DocumentTextDirection direction = DocumentTextDirection.auto,
+    DocumentFontWeight? fontWeight,
   }) {
     final provider = textShapingProvider;
+    final resolvedFontWeight = fontWeight ??
+        (style?.fontWeight == pw.FontWeight.bold
+            ? DocumentFontWeight.bold
+            : DocumentFontWeight.regular);
     final requestedDirection = direction != DocumentTextDirection.auto
         ? direction
         : switch (textDirection) {
@@ -1610,9 +1646,10 @@ final class PdfDocumentRenderer implements DocumentRenderer {
         final intrinsicWidth = provider.shapeLine(
               text,
               direction: resolvedDirection,
+              fontWeight: resolvedFontWeight,
             ).advance *
             fontSize /
-            provider.font.unitsPerEm;
+            provider.fontFor(resolvedFontWeight).unitsPerEm;
         final width = availableWidth != null &&
                 availableWidth.isFinite &&
                 availableWidth > 0
@@ -1632,6 +1669,7 @@ final class PdfDocumentRenderer implements DocumentRenderer {
           fontSize: fontSize,
           color: style?.color ?? PdfColors.black,
           direction: resolvedDirection,
+          fontWeight: resolvedFontWeight,
           alignment: alignment,
         );
       },
@@ -1643,11 +1681,13 @@ final class PdfDocumentRenderer implements DocumentRenderer {
     pw.TextStyle? style,
     pw.TextAlign? textAlign,
     DocumentTextDirection direction = DocumentTextDirection.auto,
+    DocumentFontWeight? fontWeight,
   }) => _text(
     text,
     style: style,
     textAlign: textAlign,
     direction: direction,
+    fontWeight: fontWeight,
   );
 
   String _valueText(DocumentValue value) => switch (value) {
