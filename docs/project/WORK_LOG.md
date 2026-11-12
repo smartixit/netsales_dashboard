@@ -607,3 +607,11 @@ Branch: feat/platform-billing-management
 - Added focused tests for semantic-node validation/immutability, PDF rendering, RTL rejection, and A5 geometry. These tests are authored but deliberately not executed because the user requested all tests, reviews, and GitHub Actions to run only at the final stage.
 - No operational reports, subscription reports, or billing invoice providers have been implemented in this step. The work is following the approved order: package foundations first, then NetSales integration, shared API operational reporting, operational document flows, legacy output cleanup, and Platform Billing reports/documents last.
 - No GitHub Actions workflow, PR review, or build has been triggered during this implementation stage.
+
+
+## 2026-11-12 — Document Input Resource Bounds
+
+- Added a shared bounded-copy helper so section, snapshot, table, chart, information-grid, and financial-summary collections are checked while iterating, before the full collection is materialized.
+- Added hard limits for snapshot sections/content nodes, section nodes, table rows/columns/cells, chart series/points, semantic collections, and binary image/signature payload copies.
+- Added focused regression cases for oversized snapshots, tables, and image assets. Tests were authored only; they were not executed, in accordance with the requested final-stage verification freeze.
+- This increment does not resolve Arabic shaping. Complex RTL remains fail-closed and the package is not yet declared production-ready.
