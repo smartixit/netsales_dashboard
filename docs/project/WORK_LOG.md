@@ -619,3 +619,41 @@ Branch: feat/platform-billing-management
 - Follow-up hardening normalized the bounded-input implementations, added a 100-entry bound for table column weights, and added a lazy-iterable regression case proving that the section limit is enforced before the entire iterable is consumed. No test or CI command was run.
 
 - Added a snapshot-wide text budget: individual text fields are capped at 100,000 characters and all caller-supplied document text at 2,000,000 characters, including table cells, chart labels, metadata, and semantic nodes. Regression tests were authored for per-field and aggregate overflow; verification remains deferred.
+
+
+## 2026-11-12 — Payv Arabic shaping provider integration foundation
+
+- Selected and pinned Payv 0.1.2 as the pure-Dart OpenType and UAX #9 provider following the project owner's explicit request to settle Arabic shaping and mixed-direction handling.
+- Added PayvTextShapingProvider: paragraph-direction-aware bidi resolution, visual bidi run ordering, script itemization, per-run Arabic/Latin shaping, OpenType GSUB/GPOS, cluster source mapping, missing-glyph rejection, and TrueType outline validation.
+- Added ShapedPdfTextLine to paint shaped glyph outlines as vector paths in the existing pdf widget tree. It is intentionally fixed single-line and rejects overflow; it does not silently clip or reverse mixed runs.
+- Bundled IBM Plex Sans Arabic Regular and the upstream SIL OFL 1.1 notice, declared the assets in the package manifest, and exposed a Flutter asset loader.
+- Added focused tests for Arabic joining, mixed Arabic/Latin/currency/identifier runs, LTR isolates, Arabic-Indic/Western digits, and the single-line contract. Tests were authored but NOT run.
+- Updated the package README and recorded decision DOC-012.
+- Remaining production blockers: integrate the provider into every text-bearing node in PdfDocumentRenderer; implement measured paragraph wrapping and multipage flow; repeated table headers/cell wrapping; metadata/header/footer/cover/watermark/chart/QR/signature paths; searchable/selectable text tagging and extraction; viewer/print/save/share parity; and final Windows/Android/iOS/Web verification.
+- No tests, formatter, analyzer, build, or GitHub Actions were executed, per the user's explicit final-stage verification instruction.
+
+
+## 2026-11-12 — Shaped PDF path and measured paragraph flow
+
+- Verified the exact upstream pdf 3.12.0 graphics API and corrected the glyph painter: Payv's `GlyphPath.toPdfPath()` emits PDF content syntax, whereas `PdfGraphics.drawShape()` parses SVG path syntax. The painter now emits MoveTo/LineTo/CubicTo/ClosePath commands directly to PdfGraphics, using Payv's cubic-converted outline commands.
+- Added ShapedPdfParagraph. It shapes and measures candidate lines before wrapping, keeps the requested paragraph base direction for each line, handles explicit paragraph separators, and uses the PDF package's spanning Column layout so the paragraph can continue across MultiPage pages.
+- Added a conservative grapheme-boundary fallback for long unspaced identifiers and focused tests for the paragraph contract. Tests remain unexecuted.
+- Exported the paragraph widget and documented the integration boundary.
+- Production RTL remains fail-closed: these primitives are not yet injected into all PdfDocumentRenderer node builders, table cells, running headers/footers, cover fields, watermark, chart labels, signature/QR captions, and other text-bearing output paths. Unicode extraction/search/accessibility tagging is also still unresolved.
+- No tests, formatter, analyzer, builds, or Actions were run.
+
+
+## 2026-11-12 — Renderer-wide RTL and searchable text integration
+
+- Added provider injection to PdfDocumentRenderer so the host explicitly supplies a validated, embeddable/subsettable OpenType face. The renderer no longer blocks all RTL when this provider is present; it continues to fail closed without one.
+- Routed every renderer-owned Text/Paragraph call through a central text gateway. RTL/mixed strings in metadata, titles, section headings, semantic nodes, tables, chart labels/legends, captions, signatures, branding, cover data, and running headers/footers now use Payv shaping and paragraph flow.
+- Propagated explicit paragraph/heading direction and per-cell/info-grid direction into the shaped text path.
+- Added a hidden Unicode text layer under each visible vector-outline line. The original logical Unicode sequence is written LTR/in logical order using the same licensed font and PDF invisible text rendering mode, while Payv supplies the visible glyph outline geometry and bidi order.
+- Cached the PDF font object per shaping-provider instance to avoid reparsing and embedding font data for every line.
+- Improved paragraph flow: resolve UAX #9 paragraph base direction once, preserve inter-word whitespace, wrap by measured shaped advances, and use the characters package for full Unicode grapheme segmentation.
+- Kept Arabic watermark text fail-closed because the PDF package's page-level watermark decorator bypasses the shared shaped text gateway.
+- Updated renderer tests to cover injected-provider rendering across paragraphs, headings, tables, headers, cover metadata, branding, and semantic nodes. Added paragraph direction resolution tests. Tests remain unexecuted.
+- No tests, formatter, analyzer, builds, or GitHub Actions were run.
+
+
+- Follow-up hardening: the renderer's shared text gateway now resolves explicit PDF/semantic direction, uses measured intrinsic width for unbounded row labels, and caches the Unicode PDF font per provider. Renderer version advanced to 1.3.0. Tests now explicitly retain the no-provider and RTL-watermark fail-closed cases while covering successful injected-provider rendering. Still no tests, formatter, analyzer, builds, or Actions executed.
