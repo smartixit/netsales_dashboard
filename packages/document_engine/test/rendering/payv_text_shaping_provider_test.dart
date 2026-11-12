@@ -13,6 +13,23 @@ void main() {
     provider = PayvTextShapingProvider(fontBytes, languageTag: 'ar-YE');
   });
 
+  test('resolves paragraph base direction before wrapping', () {
+    expect(
+      provider.resolveDirection('فاتورة INV-2026/0017'),
+      DocumentTextDirection.rightToLeft,
+    );
+    expect(
+      provider.resolveDirection('Invoice INV-2026/0017'),
+      DocumentTextDirection.leftToRight,
+    );
+    expect(
+      provider.resolveDirection(
+        'INV-2026/0017 فاتورة',
+      ),
+      DocumentTextDirection.leftToRight,
+    );
+  });
+
   test('shapes connected Arabic letters into non-empty vector glyphs', () {
     final line = provider.shapeLine(
       'مرحبا بكم في نظام NetSales',
