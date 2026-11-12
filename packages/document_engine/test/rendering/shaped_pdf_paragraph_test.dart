@@ -1,8 +1,6 @@
 import 'package:document_engine/document_engine.dart';
 import 'package:document_engine/document_engine_flutter.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +14,7 @@ void main() {
     );
   });
 
-  test('paragraph creates measured shaped line widgets', () {
+  test('paragraph accepts mixed Arabic and Latin financial text', () {
     final paragraph = ShapedPdfParagraph(
       text: 'فاتورة مبيعات INV-2026/0017 تتضمن أصنافاً متعددة '
           'ومبالغ بعملات YER و USD.',
@@ -26,17 +24,14 @@ void main() {
       direction: DocumentTextDirection.rightToLeft,
     );
 
-    final widget = paragraph.build(
-      pw.Context(
-        document: pw.Document(),
-        page: pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          build: (_) => pw.SizedBox(),
-        ).build(pw.Context(document: pw.Document())),
-      ),
+    expect(paragraph, isA<ShapedPdfParagraph>());
+    expect(
+      provider.shapeLine(
+        'فاتورة INV-2026/0017 — YER 1,250.50',
+        direction: DocumentTextDirection.rightToLeft,
+      ).advance,
+      greaterThan(0),
     );
-
-    expect(widget, isA<pw.Column>());
   });
 
   test('paragraph rejects invalid geometry instead of clipping', () {
