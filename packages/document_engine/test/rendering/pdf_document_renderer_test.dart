@@ -377,7 +377,7 @@ void main() {
       options: DocumentRenderOptions(
         pageProfile: DocumentPageProfile.a4Portrait(),
         generatedAt: DateTime.utc(2026, 11, 9, 10),
-        watermark: const DocumentWatermark(text: 'نسخة داخلية'),
+        watermark: DocumentWatermark(text: 'نسخة داخلية'),
       ),
     );
     expect(result, isA<DocumentRenderFailure>());
