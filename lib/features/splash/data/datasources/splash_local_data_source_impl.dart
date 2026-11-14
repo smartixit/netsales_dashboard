@@ -1,18 +1,20 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:netsales_dashboard/core/constants/api_constants.dart';
-import 'package:netsales_dashboard/core/constants/storage_keys.dart';
-import 'package:netsales_dashboard/core/models/user_model.dart';
-import 'package:netsales_dashboard/core/services/api_service.dart';
-import 'package:netsales_dashboard/core/services/app_crypto_service.dart';
-import 'package:netsales_dashboard/core/services/device_service.dart';
-import 'package:netsales_dashboard/core/services/internet_connection_service.dart';
-import 'package:netsales_dashboard/core/services/public_settings_service.dart';
-import 'package:netsales_dashboard/core/services/push_notification_service.dart';
-import 'package:netsales_dashboard/core/services/session_service.dart';
-import 'package:netsales_dashboard/core/services/storage_service.dart';
-import 'package:netsales_dashboard/features/splash/data/datasources/splash_local_data_source.dart';
+import 'package:netsales/core/constants/api_constants.dart';
+import 'package:netsales/core/constants/storage_keys.dart';
+import 'package:netsales/core/models/user_model.dart';
+import 'package:netsales/core/services/api_service.dart';
+import 'package:netsales/core/services/app_crypto_service.dart';
+import 'package:netsales/core/services/device_service.dart';
+import 'package:netsales/core/services/internet_connection_service.dart';
+import 'package:netsales/core/services/package_info_service.dart';
+import 'package:netsales/core/services/public_settings_service.dart';
+import 'package:netsales/core/services/push_notification_service.dart';
+import 'package:netsales/core/services/server_task_runner_service.dart';
+import 'package:netsales/core/services/session_service.dart';
+import 'package:netsales/core/services/storage_service.dart';
+import 'package:netsales/features/splash/data/datasources/splash_local_data_source.dart';
 
 /// تطبيق مصدر البيانات المحلي لشاشة الإقلاع وتنسيق الخدمات الأساسية
 class SplashLocalDataSourceImpl implements SplashLocalDataSource {
@@ -22,6 +24,7 @@ class SplashLocalDataSourceImpl implements SplashLocalDataSource {
   Future<void> initializeInfrastructureServices() async {
     // تشغيل التهيئة المتوازية للخدمات الأساسية في طبقة البنية التحتية
     await Future.wait([
+      PackageInfoService.instance.init(),
       DeviceService.instance.init(),
       AppCryptoService.instance.init(),
       PushNotificationService.instance.init(),
@@ -38,6 +41,12 @@ class SplashLocalDataSourceImpl implements SplashLocalDataSource {
         dio: ApiService.instance.dio,
       ),
     );
+
+    // ── تشغيل النبض واستدراك مهام السيرفر في الخلفية عند وجود جلسة سارية ──
+    if (SessionService.to.isAuthenticated) {
+      unawaited(ServerTaskRunnerService.to.runCatchupTasks());
+      ServerTaskRunnerService.to.startForegroundHeartbeat();
+    }
 
     // تفعيل مراقبة الاتصال الشبكي بعد اكتمال واجهات التطبيق بأمان
     InternetConnectionService.instance.showInternetConnectionState();
@@ -74,10 +83,24 @@ class SplashLocalDataSourceImpl implements SplashLocalDataSource {
         final profileData = response.data!;
         final rawUser = profileData['user'];
         if (rawUser is Map) {
-          final updatedUser = UserModel.fromJson(
-            Map<String, dynamic>.from(rawUser),
+          final updatedUser = UserModel.fromJson({
+            ...Map<String, dynamic>.from(rawUser),
+            'workspace_roles':
+                profileData['workspace_roles'] ?? const <dynamic>[],
+            'is_super_admin': profileData['is_super_admin'],
+            'role_key': profileData['role_key'],
+          });
+
+          final rawPerms = profileData['permissions'];
+          final permissions = rawPerms is List
+              ? rawPerms.map((e) => e.toString()).toList()
+              : const <String>[];
+
+          await SessionService.to.syncSessionProfile(
+            user: updatedUser,
+            permissions: permissions,
+            roleKey: profileData['role_key']?.toString(),
           );
-          await SessionService.to.updateCurrentUser(updatedUser);
         }
         return true;
       }
@@ -100,12 +123,18 @@ class SplashLocalDataSourceImpl implements SplashLocalDataSource {
             json is Map ? Map<String, dynamic>.from(json) : <String, dynamic>{},
       );
       if (response.success) {
-        log('🟢 [Backend Health Warm-up] Server is active & ready: ${response.message}');
+        log(
+          '🟢 [Backend Health Warm-up] Server is active & ready: ${response.message}',
+        );
       } else {
-        log('🟡 [Backend Health Warm-up] Server responded with notice: ${response.message}');
+        log(
+          '🟡 [Backend Health Warm-up] Server responded with notice: ${response.message}',
+        );
       }
     } catch (e) {
-      log('⚠️ [Backend Health Warm-up] Server warm-up ping failed (tolerated): $e');
+      log(
+        '⚠️ [Backend Health Warm-up] Server warm-up ping failed (tolerated): $e',
+      );
     }
   }
 }

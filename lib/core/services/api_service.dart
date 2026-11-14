@@ -5,17 +5,18 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
-import 'package:netsales_dashboard/core/config/app_environment.dart';
-import 'package:netsales_dashboard/core/constants/api_constants.dart';
-import 'package:netsales_dashboard/core/exceptions/app_exception.dart';
-import 'package:netsales_dashboard/core/models/api_response.dart';
-import 'package:netsales_dashboard/core/services/app_crypto_service.dart';
-import 'package:netsales_dashboard/core/services/device_service.dart';
-import 'package:netsales_dashboard/core/services/internet_connection_service.dart';
-import 'package:netsales_dashboard/core/services/infinityfree_challenge_solver.dart';
-import 'package:netsales_dashboard/core/services/sms_retriever_service.dart';
-import 'package:netsales_dashboard/core/services/storage_service.dart';
-import 'package:netsales_dashboard/core/utils/connection_failure.dart';
+import 'package:netsales/core/config/app_environment.dart';
+import 'package:netsales/core/constants/api_constants.dart';
+import 'package:netsales/core/exceptions/app_exception.dart';
+import 'package:netsales/core/models/api_response.dart';
+import 'package:netsales/core/services/app_crypto_service.dart';
+import 'package:netsales/core/services/device_service.dart';
+import 'package:netsales/core/services/infinityfree_challenge_solver.dart';
+import 'package:netsales/core/services/internet_connection_service.dart';
+import 'package:netsales/core/services/package_info_service.dart';
+import 'package:netsales/core/services/sms_retriever_service.dart';
+import 'package:netsales/core/services/storage_service.dart';
+import 'package:netsales/core/utils/connection_failure.dart';
 import 'package:sodium/sodium.dart' show KeyPair;
 
 /// ============================================================================
@@ -110,10 +111,15 @@ class ApiService {
         options: options,
         cancelToken: cancelToken,
       );
+      log('📍 Response -> ${response.data}');
       return _processResponse<T>(response, fromJson);
     } on DioException catch (e) {
+      log(
+        '⚠️ DioException on [$endpoint]: type=${e.type}, error=${e.error}, message=${e.message}, status=${e.response?.statusCode} -> data=${e.response?.data}',
+      );
       return _handleDioError<T>(e, endpoint);
     } catch (e) {
+      log('📍 Error -> $e');
       return _handleUnexpectedError<T>(e, endpoint);
     }
   }
@@ -161,11 +167,16 @@ class ApiService {
             return list.map((item) => fromJson(item)).toList();
           }
         }
+        log('📍 Response -> ${response.data}');
         return <T>[];
       });
     } on DioException catch (e) {
+      log(
+        '⚠️ DioException on [$endpoint]: type=${e.type}, error=${e.error}, message=${e.message}, status=${e.response?.statusCode} -> data=${e.response?.data}',
+      );
       return _handleDioError<List<T>>(e, endpoint);
     } catch (e) {
+      log('📍 Error -> $e');
       return _handleUnexpectedError<List<T>>(e, endpoint);
     }
   }
@@ -183,7 +194,7 @@ class ApiService {
   }) async {
     try {
       final effectiveOptions = (options ?? Options()).copyWith(
-        extra: {...?options?.extra, 'idempotency_key': ?idempotencyKey},
+        extra: {...?options?.extra, 'idempotency_key': idempotencyKey},
       );
 
       final response = await _dio.post<dynamic>(
@@ -194,6 +205,7 @@ class ApiService {
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
       );
+      log('📍 Response -> ${response.data}');
       return _processResponse<T>(response, fromJson);
     } on DioException catch (e) {
       log(
@@ -201,6 +213,7 @@ class ApiService {
       );
       return _handleDioError<T>(e, endpoint);
     } catch (e) {
+      log('📍 Error -> $e');
       return _handleUnexpectedError<T>(e, endpoint);
     }
   }
@@ -217,7 +230,7 @@ class ApiService {
   }) async {
     try {
       final effectiveOptions = (options ?? Options()).copyWith(
-        extra: {...?options?.extra, 'idempotency_key': ?idempotencyKey},
+        extra: {...?options?.extra, 'idempotency_key': idempotencyKey},
       );
 
       final response = await _dio.put<dynamic>(
@@ -227,10 +240,15 @@ class ApiService {
         options: effectiveOptions,
         cancelToken: cancelToken,
       );
+      log('📍 Response -> ${response.data}');
       return _processResponse<T>(response, fromJson);
     } on DioException catch (e) {
+      log(
+        '⚠️ DioException on [$endpoint]: type=${e.type}, error=${e.error}, message=${e.message}, status=${e.response?.statusCode} -> data=${e.response?.data}',
+      );
       return _handleDioError<T>(e, endpoint);
     } catch (e) {
+      log('📍 Error -> $e');
       return _handleUnexpectedError<T>(e, endpoint);
     }
   }
@@ -247,7 +265,7 @@ class ApiService {
   }) async {
     try {
       final effectiveOptions = (options ?? Options()).copyWith(
-        extra: {...?options?.extra, 'idempotency_key': ?idempotencyKey},
+        extra: {...?options?.extra, 'idempotency_key': idempotencyKey},
       );
 
       final response = await _dio.patch<dynamic>(
@@ -257,10 +275,15 @@ class ApiService {
         options: effectiveOptions,
         cancelToken: cancelToken,
       );
+      log('📍 Response -> ${response.data}');
       return _processResponse<T>(response, fromJson);
     } on DioException catch (e) {
+      log(
+        '⚠️ DioException on [$endpoint]: type=${e.type}, error=${e.error}, message=${e.message}, status=${e.response?.statusCode} -> data=${e.response?.data}',
+      );
       return _handleDioError<T>(e, endpoint);
     } catch (e) {
+      log('📍 Error -> $e');
       return _handleUnexpectedError<T>(e, endpoint);
     }
   }
@@ -277,7 +300,7 @@ class ApiService {
   }) async {
     try {
       final effectiveOptions = (options ?? Options()).copyWith(
-        extra: {...?options?.extra, 'idempotency_key': ?idempotencyKey},
+        extra: {...?options?.extra, 'idempotency_key': idempotencyKey},
       );
 
       final response = await _dio.delete<dynamic>(
@@ -287,10 +310,15 @@ class ApiService {
         options: effectiveOptions,
         cancelToken: cancelToken,
       );
+      log('📍 Response -> ${response.data}');
       return _processResponse<T>(response, fromJson);
     } on DioException catch (e) {
+      log(
+        '⚠️ DioException on [$endpoint]: type=${e.type}, error=${e.error}, message=${e.message}, status=${e.response?.statusCode} -> data=${e.response?.data}',
+      );
       return _handleDioError<T>(e, endpoint);
     } catch (e) {
+      log('📍 Error -> $e');
       return _handleUnexpectedError<T>(e, endpoint);
     }
   }
@@ -327,13 +355,57 @@ class ApiService {
       });
 
       final effectiveOptions = Options(
-        extra: {'idempotency_key': ?idempotencyKey},
+        extra: {'idempotency_key': idempotencyKey},
       );
 
       final response = await _dio.post<T>(
         endpoint,
         data: formData,
         options: effectiveOptions,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+      );
+      log('📍 Response -> ${response.data}');
+      return _processResponse<T>(response, fromJson);
+    } on DioException catch (e) {
+      log(
+        '⚠️ DioException on [$endpoint]: type=${e.type}, error=${e.error}, message=${e.message}, status=${e.response?.statusCode} -> data=${e.response?.data}',
+      );
+      return _handleDioError<T>(e, endpoint);
+    } catch (e) {
+      log('📍 Error -> $e');
+      return _handleUnexpectedError<T>(e, endpoint);
+    }
+  }
+
+  /// رفع بايتات ملف مباشرة دون إنشاء نسخة مؤقتة على القرص.
+  Future<ApiResponse<T>> uploadBytes<T>(
+    String endpoint, {
+    required Uint8List bytes,
+    required String fileName,
+    required String fileField,
+    Map<String, dynamic>? extraFields,
+    T Function(dynamic json)? fromJson,
+    String? idempotencyKey,
+    ProgressCallback? onSendProgress,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      if (bytes.isEmpty) {
+        return ApiResponse<T>(success: false, message: 'محتوى الملف فارغ');
+      }
+      final multipartFile = MultipartFile.fromBytes(
+        bytes,
+        filename: fileName,
+      );
+      final formData = FormData.fromMap({
+        fileField: multipartFile,
+        ...?extraFields,
+      });
+      final response = await _dio.post<dynamic>(
+        endpoint,
+        data: formData,
+        options: Options(extra: {'idempotency_key': idempotencyKey}),
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
       );
@@ -619,6 +691,9 @@ class _SessionAuthInterceptor extends Interceptor {
     if (deviceUuid.isNotEmpty) {
       options.headers['X-Device-Uuid'] = deviceUuid;
     }
+
+    // حقن ترويسات إصدار وبيانات حزمة التطبيق لتعريف الخادم بنسخة العميل بدقة
+    options.headers.addAll(PackageInfoService.instance.apiHeaders);
 
     // حقن مفتاح عدم التكرار إن وُجد
     final idempotencyKey = options.extra['idempotency_key'];

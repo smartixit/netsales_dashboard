@@ -42,4 +42,19 @@ abstract final class StorageKeys {
 
   /// مساحة العمل النشطة المحفوظة (network | pos)
   static const String activeWorkspaceKey = 'active_workspace_key';
+
+  /// نقطة البيع النشطة لكل مستخدم.
+  static const String activePosTenantPrefix = 'active_pos_tenant';
+
+  /// الشبكة النشطة لكل مستخدم (Network Workspace Tenant).
+  static const String activeNetworkTenantPrefix = 'active_network_tenant';
+
+  /// بادئة تخزين الشبكة المختارة لكل مستخدم ونقطة بيع.
+  static const String activePosNetworkPrefix = 'active_pos_network';
+
+  /// آخر توقيت تم فيه تشغيل محرك استدراك مهام السيرفر بالملي ثانية
+  static const String lastServerCatchupRun = 'last_server_catchup_run_ms';
+
+  /// عدد مرات الفشل المتتالية لاستدعاء مهام السيرفر لحساب التراجع الأسي (Circuit Breaker)
+  static const String serverCatchupFailuresCount = 'server_catchup_failures_count';
 }

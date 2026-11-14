@@ -1,21 +1,24 @@
 import 'dart:developer';
 
 import 'package:get/get.dart';
-import 'package:netsales_dashboard/core/constants/storage_keys.dart';
-import 'package:netsales_dashboard/core/models/user_model.dart';
-import 'package:netsales_dashboard/core/models/user_session_model.dart';
-import 'package:netsales_dashboard/core/routing/app_routes.dart';
-import 'package:netsales_dashboard/core/services/api_service.dart';
-import 'package:netsales_dashboard/core/services/device_service.dart';
-import 'package:netsales_dashboard/core/services/permission_service.dart';
-import 'package:netsales_dashboard/core/services/push_notification_service.dart';
-import 'package:netsales_dashboard/core/services/storage_service.dart';
+import 'package:netsales/core/constants/storage_keys.dart';
+import 'package:netsales/core/models/user_model.dart';
+import 'package:netsales/core/models/user_session_model.dart';
+import 'package:netsales/core/routing/app_routes.dart';
+import 'package:netsales/core/services/api_service.dart';
+import 'package:netsales/core/services/device_service.dart';
+import 'package:netsales/core/services/permission_service.dart';
+import 'package:netsales/core/services/push_notification_service.dart';
+import 'package:netsales/core/services/server_task_runner_service.dart';
+import 'package:netsales/core/services/storage_service.dart';
+import 'package:netsales/core/services/workspace_service.dart';
+import 'package:netsales/features/notifications/presentation/controllers/notification_controller.dart';
 
 /// ============================================================================
 /// خدمة إدارة الجلسة والهوية (Enterprise Identity & Session Lifecycle Service)
 /// ============================================================================
 /// تمثل المصدر الأوحد للحقيقة (Single Source of Truth) لحالة تسجيل الدخول
-/// وهوية المستخدم وصلاحياته النشطة، مع المعالجة التلقائية لانتهاء الجلسة.
+/// وهوية المستخدم وصلاحياته وعضوياته النشطة، مع المعالجة التلقائية لانتهاء الجلسة.
 class SessionService extends GetxService {
   SessionService._();
 
@@ -69,7 +72,7 @@ class SessionService extends GetxService {
       );
       if (Get.isRegistered<PermissionService>()) {
         PermissionService.to.updateAccess(
-          roleKey: cachedUser.role?.roleKey ?? '',
+          roleKey: cachedUser.primaryWorkspaceRoleKey ?? '',
           permissions: cachedPermissions,
         );
       }
@@ -78,8 +81,12 @@ class SessionService extends GetxService {
         await PushNotificationService.to.syncTokenWithBackend();
       }
 
+      if (Get.isRegistered<WorkspaceService>()) {
+        await WorkspaceService.to.syncWithUserMemberships(cachedUser);
+      }
+
       log(
-        '🔑 [SessionService] Session restored for user #${cachedUser.userId} (${cachedUser.userFullName})',
+        '🔑 [SessionService] Session restored for user #${cachedUser.userId} (${cachedUser.userFullName}) with ${cachedUser.workspaceMemberships.length} memberships',
       );
     } else {
       _isAuthenticated.value = false;
@@ -105,6 +112,7 @@ class SessionService extends GetxService {
     required UserModel user,
     required UserSessionModel session,
     required List<String> permissions,
+    String? roleKey,
   }) async {
     final storage = StorageService.instance;
 
@@ -120,7 +128,7 @@ class SessionService extends GetxService {
 
     if (Get.isRegistered<PermissionService>()) {
       PermissionService.to.updateAccess(
-        roleKey: user.role?.roleKey ?? '',
+        roleKey: roleKey ?? user.primaryWorkspaceRoleKey ?? '',
         permissions: permissions,
       );
     }
@@ -129,8 +137,44 @@ class SessionService extends GetxService {
       await PushNotificationService.to.syncTokenWithBackend();
     }
 
+    if (Get.isRegistered<WorkspaceService>()) {
+      await WorkspaceService.to.syncWithUserMemberships(user);
+    }
+
+    if (Get.isRegistered<ServerTaskRunnerService>()) {
+      ServerTaskRunnerService.to.startForegroundHeartbeat();
+    }
+
     log(
       '✅ [SessionService] Session started successfully for user #${user.userId}',
+    );
+  }
+
+  /// تحديث ومزامنة سياق جلسة المستخدم بالكامل وبشكل ذري
+  Future<void> syncSessionProfile({
+    required UserModel user,
+    required List<String> permissions,
+    String? roleKey,
+  }) async {
+    final storage = StorageService.instance;
+
+    _user.value = user;
+    await storage.setModel(StorageKeys.userData, user, (u) => u.toJson());
+    await storage.setStringList(StorageKeys.permissionsStorage, permissions);
+
+    if (Get.isRegistered<PermissionService>()) {
+      PermissionService.to.updateAccess(
+        roleKey: roleKey ?? user.primaryWorkspaceRoleKey ?? '',
+        permissions: permissions,
+      );
+    }
+
+    if (Get.isRegistered<WorkspaceService>()) {
+      await WorkspaceService.to.syncWithUserMemberships(user);
+    }
+
+    log(
+      '🔄 [SessionService] User profile and workspace memberships synced successfully for user #${user.userId}',
     );
   }
 
@@ -142,6 +186,10 @@ class SessionService extends GetxService {
       updatedUser,
       (u) => u.toJson(),
     );
+
+    if (Get.isRegistered<WorkspaceService>()) {
+      await WorkspaceService.to.syncWithUserMemberships(updatedUser);
+    }
   }
 
   /// تحديث حالة تغيير كلمة المرور عند اكتمال تعيين كلمة المرور الجديدة
@@ -161,6 +209,9 @@ class SessionService extends GetxService {
         statusLabel: current.statusLabel,
         lastLoginAt: current.lastLoginAt,
         role: current.role,
+        rawIsSuperAdmin: current.rawIsSuperAdmin,
+        generalRoleKey: current.generalRoleKey,
+        workspaceMemberships: current.workspaceMemberships,
       );
       await updateCurrentUser(updated);
     }
@@ -175,6 +226,14 @@ class SessionService extends GetxService {
     await storage.remove(StorageKeys.permissionsStorage);
     await storage.setLoggedIn(false);
 
+    final previousUserId = _user.value?.userId;
+    if (previousUserId != null) {
+      await storage.remove(
+        '${StorageKeys.activePosTenantPrefix}_$previousUserId',
+      );
+      await storage.remove(StorageKeys.activeWorkspaceKey);
+    }
+
     _user.value = null;
     _session.value = null;
     _isAuthenticated.value = false;
@@ -186,6 +245,19 @@ class SessionService extends GetxService {
     if (Get.isRegistered<PushNotificationService>()) {
       await PushNotificationService.to.clearFcmToken();
     }
+
+    if (Get.isRegistered<NotificationController>()) {
+      NotificationController.to.unreadCount.value = 0;
+      NotificationController.to.notifications.clear();
+    }
+
+    if (Get.isRegistered<ServerTaskRunnerService>()) {
+      await ServerTaskRunnerService.to.reset();
+    }
+
+    // if (Get.isRegistered<WorkspaceService>()) {
+    //   await WorkspaceService.to.setActiveWorkspace(AppWorkspace.unsupported);
+    // }
 
     log('🚪 [SessionService] Session terminated.');
   }

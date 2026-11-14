@@ -1,8 +1,11 @@
 import 'package:get/get.dart';
-import 'package:netsales_dashboard/core/services/app_exit_service.dart';
-import 'package:netsales_dashboard/core/services/credential_service.dart';
-import 'package:netsales_dashboard/core/services/date_picker_service.dart';
-import 'package:netsales_dashboard/core/services/file_picker_service.dart';
+import 'package:netsales/core/services/app_exit_service.dart';
+import 'package:netsales/core/services/credential_service.dart';
+import 'package:netsales/core/services/date_picker_service.dart';
+import 'package:netsales/core/services/file_picker_service.dart';
+import 'package:netsales/core/services/package_info_service.dart';
+import 'package:netsales/core/services/server_task_runner_service.dart';
+import 'package:netsales/features/notifications/presentation/bindings/notification_binding.dart';
 
 /// ============================================================================
 /// حقن الاعتماديات العام الموحد للتطبيق (Global Application Bindings)
@@ -30,6 +33,21 @@ class InitialBinding extends Bindings {
     // 4. خدمة إدارة الاعتماد المشفرة والمصادقة الحيوية
     Get.lazyPut<CredentialService>(
       () => CredentialService.instance,
+      fenix: true,
+    );
+
+    // 5. مركز الإشعارات والتنبيهات الموجهة
+    NotificationBinding().dependencies();
+
+    // 6. خدمة مشغل مهام السيرفر ومحرك الاستدراك الذكي
+    Get.lazyPut<ServerTaskRunnerService>(
+      () => ServerTaskRunnerService.instance,
+      fenix: true,
+    );
+
+    // 7. خدمة معلومات حزمة التطبيق والإصدار
+    Get.lazyPut<PackageInfoService>(
+      () => PackageInfoService.instance,
       fenix: true,
     );
   }
